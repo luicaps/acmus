@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="acmus"
+   name="Acmus Plug-in"
+   version="1.0.1"
+   provider-name=""
+   class="acmus.AcmusPlugin">
+
+   <runtime>
+      <library name="acmus.jar"/>
+      <library name="lib/jmf.jar"/>
+      <library name="lib/Jama-1.0.2.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.jface" export="true"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.ui.forms"/>
+   </requires>
+   
+   <extension-point
+    name="Audio Device Extension Point"
+       id="audioDevice"/>
+
+<extension id="ide" point="org.eclipse.core.runtime.products"> 
+	<product
+       name="AcMus" application="acmus">
+    <property
+          name="appName"
+          value="AcMus"/>
+    <property
+          name="preferenceCustomization"
+          value="plugin_customization.ini"/>
+ </product> 
+</extension> 
+
+<extension
+	id="acmus"
+	point="org.eclipse.core.runtime.applications">
+	<application>
+		<run
+			class="acmus.AcmusApplication">
+		</run>
+	</application>
+</extension> 
+
+   <extension point="org.eclipse.ui.perspectives">
+     <perspective
+       id="acmus.perspective"
+       name="Acmus Perspective"
+       class="acmus.AcmusPerspective">
+     </perspective>
+   </extension>
+
+   <extension
+      point="org.eclipse.core.resources.natures"
+      id="acmus.acmusNature"
+      name="Acmus Nature">
+      <runtime>
+         <run class="acmus.AcmusNature">
+         </run>
+      </runtime>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Acmus"
+            id="acmus">
+      </category>
+      <view
+            name="Acmus Project Explorer"
+            icon="icons/full/eview16/package.gif"
+            category="acmus"
+            class="acmus.view.ProjectExplorer"
+            id="acmus.view.ProjectExplorer">
+      </view>
+   </extension>
+
+
+
+   <extension
+       point = "org.eclipse.ui.newWizards">
+     <category 
+	   id = "acmus"
+	   name="AcMus">
+	 </category>
+     <category 
+	   id = "acmus.signals"
+	   name="Signals"
+       parentCategory="acmus"
+	   >
+	 </category>
+ 	 <wizard
+	   id = "acmus.new.measurementProject"
+       name = "Measurement Project"
+	   class="acmus.wizard.AcmusMeasurementProjectWizard"
+	   category="acmus"
+	   icon="icons/full/etool16/newprj_wiz.gif"
+       preferredPerspectives="acmus.perspective"
+	   project="true">
+       <description>AcMus Project</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+	 </wizard>
+
+      <wizard
+            name="New Measurement Session"
+            icon="icons/full/etool16/newsession_wiz.gif"
+            category="acmus"
+            class="acmus.wizard.AcmusMeasurementSessionWizard"
+            id="acmus.new.measurementSession">
+         <description>
+            New measurement session
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
+      </wizard>
+
+      <wizard
+            name="New Measurement Set"
+            icon="icons/full/etool16/newmeasurementset_wiz.gif"
+            category="acmus"
+            class="acmus.wizard.AcmusMeasurementSetWizard"
+            id="acmus.new.measurementSet">
+         <description>
+            New measurement set
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFolder">
+         </selection>
+      </wizard>
+
+      <wizard
+            name="New Measurement"
+            icon="icons/full/etool16/newmeasurement_wiz.gif"
+            category="acmus"
+            class="acmus.wizard.AcmusMeasurementWizard"
+            id="acmus.new.measurement">
+         <description>
+            New measurement
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFolder">
+         </selection>
+      </wizard>
+
+      <wizard
+            name="New Sweep"
+            icon="icons/full/etool16/newsignal_wiz.gif"
+            category="acmus/acmus.signals"
+            class="acmus.wizard.SweepWizard"
+            id="acmus.new.signal.sweep">
+         <description>
+            New Sine Sweep
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFolder">
+         </selection>
+      </wizard>
+
+      <wizard
+            name="New MLS"
+            icon="icons/full/etool16/newsignal_wiz.gif"
+            category="acmus/acmus.signals"
+            class="acmus.wizard.MlsWizard"
+            id="acmus.new.signal.mls">
+         <description>
+            New MLS
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFolder">
+         </selection>
+      </wizard>
+
+   </extension>
+   
+   
+      <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Position Editor"
+            icon="icons/full/obj16/positioneditor.gif"
+            extensions="positions"
+            class="acmus.editor.PositionEditor"
+            id="acmus.editor.PositionEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Audio Editor"
+            icon="icons/full/obj16/audioeditor.gif"
+            extensions="wav"
+            class="acmus.editor.AudioEditor"
+            id="acmus.editor.AudioEditor">
+      </editor>
+   </extension>
+   
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Measurement Editor"
+            icon="icons/full/res16/measurement.gif"
+            filenames="measurement.properties"
+            class="acmus.editor.MeasurementEditor"
+            id="acmus.editor.MeasurementEditor">
+      </editor>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Project Properties Editor"
+            icon="icons/full/res16/project.gif"
+            filenames="project.properties"
+            class="acmus.editor.ProjectEditor"
+            id="acmus.editor.ProjectPropertiesEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Session Properties Editor"
+            icon="icons/full/res16/session.gif"
+            filenames="session.properties"
+            class="acmus.editor.SessionPropertiesEditor"
+            id="acmus.editor.SessionPropertiesEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Set Properties Editor"
+            icon="icons/full/res16/set.gif"
+            filenames="set.properties"
+            class="acmus.editor.SetPropertiesEditor"
+            id="acmus.editor.SetPropertiesEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Measurement Properties Editor"
+            icon="icons/full/res16/measurement.gif"
+            filenames="measurement.properties"
+            class="acmus.editor.MeasurementPropertiesEditor"
+            id="acmus.editor.MeasurementPropertiesEditor">
+      </editor>
+   </extension>
+
+   
+   <extension point = "org.eclipse.ui.actionSets">
+	   <actionSet id="acmus_actionSet"
+		   label="AcMus Tools"
+		   visible="true">
+		   <menu id="acmus_tools"
+			   label="Tools"
+			   path=""> 
+			   <separator name="slot1"/>
+		   	   <separator name="slot2"/>
+		   </menu>
+
+
+	   	   <action id="acmus_tools_speed"
+			   menubarPath="acmus_tools/slot1"
+			   label="Speed of Sound"
+			   tooltip="AcMus Tools - Speed of Sound"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.SpeedOfSound">
+		   </action>
+	   	   <action id="acmus_tools_rev"
+			   menubarPath="acmus_tools/slot1"
+			   label="Reverberation Time Graph"
+			   tooltip="AcMus Tools - Reverberation Time Graph"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.GraphRT60">
+		   </action>
+	   	   <action id="acmus_tools_reverb"
+			   menubarPath="acmus_tools/slot1"
+			   label="Reverberation Time"
+			   tooltip="AcMus Tools - Reverberation Time"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.ReverberationTimeActionDelegate">
+		   </action>
+	   	   <action id="acmus_tools_resonance"
+			   menubarPath="acmus_tools/slot1"
+			   label="Resonance Frequency"
+			   tooltip="AcMus Tools - Descobre a Frequencia de ressonancia do arquivo WAV... legal"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.ResonanceFrequency">
+		   </action>
+	   	   <action id="acmus_tools_convolution"
+			   menubarPath="acmus_tools/slot1"
+			   label="Convolution"
+			   tooltip="AcMus Tools - Convolution"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.ConvolutionActionDelegate">
+		   </action>
+	   	   <action id="acmus_tools_compareWaveforms"
+			   menubarPath="acmus_tools/slot1"
+			   label="Compare Waveforms"
+			   tooltip="AcMus Tools - Compare Waveforms"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.CompareWaveformsActionDelegate">
+		   </action>
+	   	   <action id="acmus_tools_compareWavefo"
+			   menubarPath="acmus_tools/slot1"
+			   label="Compare"
+			   tooltip="AcMus Tools - Compare Waveforms"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.CompareWaveformsActionDelegate">
+		   </action>
+		   <action id="acmus_tools_rayTracing"
+			   menubarPath="acmus_tools/slot2"
+			   label="Ray Tracing-Acoustic Simulation"
+			   tooltip="AcMus Tools - Tracado de Raios"
+			   icon="icons/full/ctool16/tools.gif"
+			   class="acmus.tools.RayTracingActionDelegate">
+		   </action>
+
+	   </actionSet>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.session"
+            id="acmus">
+         <action
+               label="Calculate IR"
+               icon="icons/ctool16/openbrwsr.gif"
+               class="acmus.PopupMenuCalculateIrActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="acmus.action1">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.session"
+            id="acmus">
+         <action
+               label="Calculate Parameters"
+               icon="icons/ctool16/openbrwsr.gif"
+               class="acmus.PopupMenuCalculateParametersActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="acmus.action2">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.signal"
+            id="acmus">
+		   <menu id="acmus_signal"
+			   label="New Signal"
+			   path="fileStart"
+			   > 
+			   <separator name="slot1"/>
+		   </menu>
+         <action
+               label="New Sweep"
+               icon="icons/full/etool16/newsignal_wiz.gif"
+               class="acmus.wizard.NewSweepActionDelegate"
+               menubarPath="acmus_signal/slot1"
+               enablesFor="1"
+               id="acmus.action.newSweep">
+         </action>
+         <action
+               label="New MLS"
+               icon="icons/full/etool16/newsignal_wiz.gif"
+               class="acmus.wizard.NewMlsActionDelegate"
+               menubarPath="acmus_signal/slot1"
+               enablesFor="1"
+               id="acmus.action.newMls">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            id="acmus">
+         <action
+               label="New Measurement Project"
+               icon="icons/full/etool16/newprj_wiz.gif"
+               class="acmus.wizard.NewMeasurementProjectActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="*"
+               id="acmus.action.newMeasurementProject">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            id="acmus">
+         <action
+               label="New Measurement Session"
+               icon="icons/full/etool16/newsession_wiz.gif"
+               class="acmus.wizard.NewMeasurementSessionActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="1"
+               id="acmus.action.newMeasurementSession">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.session"
+            id="acmus">
+         <action
+               label="New Measurement Set"
+               icon="icons/full/etool16/newmeasurementset_wiz.gif"
+               class="acmus.wizard.NewMeasurementSetActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="1"
+               id="acmus.action.newMeasurementSet">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.set"
+            id="acmus">
+         <action
+               label="New Measurement"
+               icon="icons/full/etool16/newmeasurement_wiz.gif"
+               class="acmus.wizard.NewMeasurementActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="1"
+               id="acmus.action.newMeasurement">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.wav"
+            id="acmus">
+         <action
+               label="Compare waveforms"
+			   icon="icons/full/ctool16/tools.gif"
+               class="acmus.tools.CompareWaveformsActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="+"
+               id="acmus.action.compareWaveforms">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.wav"
+            id="acmus">
+         <action
+               label="Convolve"
+			   icon="icons/full/ctool16/tools.gif"
+               class="acmus.tools.ConvolutionActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="2"
+               id="acmus.action.convolution">
+         </action>
+      </objectContribution>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.set"
+            id="acmus">
+         <action
+               label="Calculate average IR"
+               icon="icons/full/etool16/newmeasurement_wiz.gif"
+               class="acmus.AverageIrActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="acmus.action.averageIr">
+         </action>
+      </objectContribution>
+   </extension>
+
+
+
+
+   <extension
+         id="acmus"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="acmus.acmus"
+            name="AcMus">
+         <property
+               name="aboutImage"
+               value="images/logo3.gif"/>
+         <property
+               name="aboutText"
+               value="AcMus ver 20060730, Copyright (C) 2006 AcMus Group.&#x0A;&#x0A;This program is free software; you can redistribute it&#x0A;and/or modify it under the terms of the GNU General&#x0A;Public License as published by the Free Software&#x0A;Foundation; either version 2 of the License, or (at&#x0A;your option) any later version.&#x0A;&#x0A;This program is distributed in the hope that it will be&#x0A;useful, but WITHOUT ANY WARRANTY; without even&#x0A;the implied warranty of MERCHANTABILITY or&#x0A;FITNESS FOR A PARTICULAR PURPOSE.  See the&#x0A;GNU General Public License for more details.&#x0A;&#x0A;http://gsd.ime.usp.br/acmus&#x0A;&#x0A;AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,&#x0A;Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,&#x0A;Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,&#x0A;Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,&#x0A;Thiago C. de Souza."/>
+         <property
+               name="windowImages"
+               value="icons/appIcon16x16.gif,icons/appIcon32x32.gif"/>
+      </product>
+   </extension>
+
+
+
+</plugin>

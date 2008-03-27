@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.1"?>
+
+<product name="AcMus" id="acmus.acmus" application="acmus.acmus" useFeatures="false">
+
+   <aboutInfo>
+      <image path="/acmus/images/logo3.gif"/>
+      <text>
+         AcMus ver 20060730, Copyright (C) 2006 AcMus Group.
+
+This program is free software; you can redistribute it
+and/or modify it under the terms of the GNU General
+Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+http://gsd.ime.usp.br/acmus
+
+AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,
+Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,
+Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,
+Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,
+Thiago C. de Souza.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default"/>
+
+   <launcherArgs>
+      <vmArgs>-Xmx256m</vmArgs>
+   </launcherArgs>
+
+   <windowImages small="/acmus/icons/appIcon16x16.gif" large="/acmus/icons/appIcon32x32.gif"/>
+
+   <splash location="acmus"/>
+
+   <launcher name="acmus">
+      <linux icon="/acmus/icons/appIcon.xpm"/>
+      <macosx icon="/acmus/icons/appIcon.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="/acmus/icons/appIcon.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+   <plugins>
+      <plugin id="acmus"/>
+      <plugin id="macosxAudioDevice"/>
+      <plugin id="org.eclipse.ant.core"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.filebuffers"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.resources.compatibility"/>
+      <plugin id="org.eclipse.core.resources.hpux"/>
+      <plugin id="org.eclipse.core.resources.linux"/>
+      <plugin id="org.eclipse.core.resources.macosx"/>
+      <plugin id="org.eclipse.core.resources.win32"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility"/>
+      <plugin id="org.eclipse.core.variables"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.text"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.carbon.macosx.ppc"/>
+      <plugin id="org.eclipse.swt.gtk.linux.ppc"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64"/>
+      <plugin id="org.eclipse.swt.gtk.solaris.sparc"/>
+      <plugin id="org.eclipse.swt.motif.aix.ppc"/>
+      <plugin id="org.eclipse.swt.motif.hpux.PA_RISC"/>
+      <plugin id="org.eclipse.swt.motif.linux.x86"/>
+      <plugin id="org.eclipse.swt.motif.solaris.sparc"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86"/>
+      <plugin id="org.eclipse.text"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.carbon"/>
+      <plugin id="org.eclipse.ui.editors"/>
+      <plugin id="org.eclipse.ui.forms"/>
+      <plugin id="org.eclipse.ui.ide"/>
+      <plugin id="org.eclipse.ui.views"/>
+      <plugin id="org.eclipse.ui.win32"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.eclipse.update.configurator"/>
+      <plugin id="org.eclipse.update.core"/>
+      <plugin id="org.eclipse.update.core.linux"/>
+      <plugin id="org.eclipse.update.core.win32"/>
+      <plugin id="org.eclipse.update.ui"/>
+   </plugins>
+
+</product>

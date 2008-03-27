@@ -1,0 +1,115 @@
+##########################################
+# COEFICIENTES DE ABSORÇÃO DE SUPEFÍCIES #
+##########################################
+
+# DESCRIÇÃO DO MATERIAL; ESP(mm); NRC; 125; 250; 500; 1000; 2000; 4000; FONTE
+
+$ Materiais para pisos
+
+Cerâmica; ;0.015;0.01;0.01;0.01;0.02;0.02;0.02;PRADO
+Cortiça em placas sobre concreto; ;0.03;0.02;0.02;0.03;0.03;0.04;0.04;SILVA
+Madeira com espaço livre por baixo; ;0.205;0.4;0.3;0.2;0.17;0.15;0.1;SILVA
+Parquet sobre areia; ;0.1225;0.2;0.15;0.13;0.12;0.09;0.06;PRADO
+Parquet sobre asfalto; ;0.0575;0.04;0.04;0.07;0.06;0.06;0.07;PRADO
+Parquet sobre sarrafos de madeira; ;0.115;0.16;0.14;0.12;0.11;0.09;0.07;SILVA
+Pastilha de cerâmica; ;0.01525;0.012;0.013;0.015;0.016;0.017;0.018;RIBA
+Taco colado; ;0.08;0.04;0.04;0.06;0.12;0.1;0.17;NBR12179
+Tapete;5;0.25;0.04;0.04;0.15;0.29;0.52;0.59;I Simpósio 
+Tapete de 5 mm sobre base de feltro de 5 mm;10;0.5675;0.07;0.21;0.57;0.68;0.81;0.72;I Simpósio 
+Tapete de borracha sobre concreto; ;0.0325;0.02;0.03;0.04;0.04;0.02;0.02;PRADO
+Tapete de borracha sobre concreto; ;0.0675;0.04;0.04;0.08;0.12;0.03;0.1;I Simpósio 
+Tapete de lã forrado;16;0.375;0.2;0.25;0.35;0.4;0.5;0.75;SILVA
+Carpete;9;0.205;0.09;0.08;0.21;0.26;0.27;0.37;PRADO. Luis Cintra do. Acústica
+Carpete forrado;16;0.375;0.2;0.25;0.35;0.4;0.5;0.75;PRADO
+Tábuas de madeira ;16;0.0975;0.18;0.12;0.1;0.09;0.08;0.07;PRADO
+Tábuas de madeira ;21;0.0925;0.1;0.11;0.1;0.08;0.08;0.07;PRADO
+Azulejo; ;0.003;0.01; ;0.012; ;0; ;SILVA
+Concreto aparente não pintado; ;0.0175;0.01;0.01;0.02;0.02;0.02;0.03;SILVA
+
+$ Materiais para forros
+
+Fibra de madeira Eucatex com perfuraçao regular ;12.7;0.515;0.32;0.35;0.41;0.74;0.56;0.69;I Simpósio 
+Fibra de madeira Eucatex com perfuraçao regular ;19;0.6925;0.48;0.76;0.62;0.63;0.76;0.86;I Simpósio 
+Eucatex - forro metálico - 25 mm lã de vidro 40 kg/m3 ensacada em polietileno. ;31;0.645;0.12;0.2;0.55;0.95;0.88;0.51;Eucatex S.A
+Eucatex - forro metálico - 25 mm lã de vidro 65 kg/m3 ensacada em polietileno. coberta por chapa metálica 0.6 mm de esp.perfurada com 21% da área.;31;0.6275;0.1;0.2;0.56;0.98;0.77;0.65;Eucatex S. A
+Eucatex - forro metálico - 50 mm lã de vidro 40 kg/m3 ensacada em polietileno. coberta por chapa metálica 0.6 mm de esp.perfurada com 21% da área.;56;0.7325;0.18;0.55;0.98;0.97;0.43;0.65;Eucatex S. A
+Eucatex - forro metálico - 50 mm lã de vidro 65 kg/m3 ensacada em polietileno. coberta por chapa metálica 0.6 mm de esp.perfurada com 21% da área.;56;0.8;0.17;0.5;0.99;0.94;0.77;0.75;Eucatex S. A
+Eucatex - forro metálico - 50 mm lã de vidro 60 kg/m3 revestida com papel Kraft;56;0.985;0.44;0.96;0.98;1;1;1;Eucatex S. A
+Forro pesado suspenso. de gesso; ;0.02;0.02; ;0.03; ;0.05; ;NBR12179
+Aço perfurado 22% com 45 mm de lã mineral; ;0.875;0.38;0.87;0.93;0.86;0.84;0.85;SILVA
+Chapa papelão-gesso (9.5 mm) sem furos com espaço 50 mm de lã mineral;59.5;0.0825;0.36;0.12;0.08;0.07;0.06;0.1;I Simpósio 
+Gesso; ;0.025;0.01;0.01;0.02;0.03;0.04;0.05;PRADO
+
+$ Materiais para vedação/ superfícies
+
+Cortina de algodão com dobras de 50% de sua área; ;0.5675;0.07;0.31;0.49;0.81;0.66;0.54;SILVA
+Cortina de algodão com dobras de 75% de sua área; ;0.4325;0.04;0.23;0.4;0.57;0.53;0.4;SILVA
+Cortina de veludo com dobras de 50% de sua área; ;0.58;0.14;0.35;0.55;0.72;0.7;0.65;SILVA
+Cortina de veludo esticada a 10cm da parede; ;0.4025;0.06;0.27;0.44;0.5;0.4;0.35;SILVA
+Feltro de fibra natural;5;0.2875;0.09;0.12;0.18;0.3;0.55;0.59;I Simpósio 
+Compensado (3mm) com espaço vazio de 50 mm da parede;53;0.18;0.25;0.34;0.18;0.1;0.1;0.06;I Simpósio 
+Compensado (3mm) com espaço vazio de 50 mm da parede com amortecimento nas bordas;53;0.23;0.46;0.47;0.23;0.12;0.1;0.06;I Simpósio 
+Compensado (2.5 mm) com espaço de 50 mm da parede preenchido com lã mineral 40kg/m³;52.5;0.1875;0.21;0.37;0.24;0.12;0.02;0.08;I Simpósio 
+Compensado (3 mm) com espaço de 50 mm da parede preenchido com lã mineral 40kg/m³;53;0.2775;0.61;0.65;0.24;0.12;0.1;0.06;I Simpósio 
+Compensado (6 mm) preenchido com 100 mm de lã de vidro;106;0.06;0.3;0.11;0.06;0.05;0.02;0.02;SILVA
+Chapa (3mm) perfurada com lã vidro na frente de 40-50 mm de espaço vazio; ;0.12;0.01;0.03;0.1;0.18;0.17;0.2;I Simpósio 
+Chapa (3 mm) perfurada em 16% com lã mineral na frente 40-50mm de espaço vazio; ;0.25;0.01;0.1;0.19;0.25;0.46;0.21;I Simpósio 
+Espuma de urfa 15 kg/m3. diretamente em parede densa;50;0.5;0.12;0.2;0.45;0.65;0.7;0.75;I Simpósio 
+Feltro de fibras naturais de 5 mm diretamente na parede;5;0.2875;0.09;0.12;0.18;0.3;0.55;0.59;I Simpósio 
+La mineral 5 cm coberta com papelao denso; ;0.38;0.74;0.54;0.36;0.32;0.3;0.17;I Simpósio 
+Chapa papelão-gesso (9.5 mm) sem furos com espaço 50 mm de lã mineral;59.5;0.0825;0.36;0.12;0.08;0.07;0.06;0.1;I Simpósio 
+Placa absorvente fina e microporosa com espaço vazio entre a parede de 50 mm;50;0.6375;0.04;0.15;0.52;0.95;0.93;0.58;I Simpósio 
+Tijolo Selecta furos 25mm a 150 mm de parede dura (dimensões em cm: 21x11x5) ;210;0.5625;0.1;0.25;0.6;0.8;0.6;0.35;Ambiental
+Tijolo (180 mm) furos;180;0.405;0.38;0.95;0.42;0.18;0.07;0.01;Ambiental
+Tijolo vazado;100;0.15;0.05; ;0.28; ;0.32; ;PRADO
+Argamassa de areia; ;0.0575;0.04;0.05;0.06;0.08;0.04;0.06;PRADO
+Reboco áspero. cal; ;0.0325;0.03;0.03;0.03;0.03;0.04;0.07;I Simpósio 
+Reboco caiado sobre tela (estuque);20;0.0575;0.04;0.05;0.06;0.08;0.04;0.06;SILVA
+Reboco de vermiculite acústico;30;0.3925;0.23;0.3;0.37;0.42;0.48;0.46;SILVA
+Reboco de vermiculite nao acústico;30;0.0825;0.12;0.1;0.07;0.09;0.07;0.07;SILVA
+Reboco liso; ;0.0225;0.02;0.02;0.02;0.02;0.03;0.06;I Simpósio 
+Reboco de gesso sobre alvenaria pintado ou não; ;0.0275;0.02;0.02;0.02;0.03;0.04;0.04;SILVA
+Alvenaria não pintada;450;0.035;0.02;0.02;0.03;0.04;0.05;0.07;SILVA
+Alvenaria pintada;450;0.0175;0.01;0.01;0.02;0.02;0.02;0.02;SILVA
+Azulejo; ;0.003;0.01; ;0.012; ;0; ;SILVA
+Concreto aparente não pintado; ;0.0175;0.01;0.01;0.02;0.02;0.02;0.03;SILVA
+Feltro solto ;12;0.23;0.02;0.04;0.1;0.21;0.57;0.92;SILVA
+Gesso; ;0.025;0.01;0.01;0.02;0.03;0.04;0.05;PRADO
+Papel sobre parede; ;0.0275;0.02; ;0.04; ;0.07; ;PRADO
+Parede rebocada e caiada; ;0.0225;0.02;0.019;0.023;0.022;0.026;0.028;PRADO
+Superfície metálica; ;0.11;0.02; ;0.02; ;0.42; ;RIBA
+
+$ Materiais específicos para tratamento acústico
+
+Chapa acústica macia de fibra (12mm) perfurada ou ranhurada a 50 mm da parede;62;0.3675;0.2;0.36;0.31;0.34;0.46;0.62;I Simpósio 
+Chapa acústica macia de fibra (12mm) perfurada ou ranhurada diretamente na parede;12;0.3325;0.03;0.14;0.27;0.4;0.52;0.63;I Simpósio 
+Chapa acústica macia de fibra (12mm) com perfuraçao integral a 50mm da parede;62;0.565;0.03;0.23;0.69;0.61;0.73;0.71;I Simpósio 
+Chapa acústica macia de fibra (12mm) com perfuraçao integral diretamente na parede;12;0.5125;0.03;0.13;0.39;0.71;0.82;0.73;I Simpósio 
+Chapa leve de lã de madeira em parede rígida ;25;0.5025;0.04;0.13;0.52;0.75;0.61;0.72;I Simpósio 
+Chapa leve de lã de madeira diretamente em parede rígida;50;0.655;0.11;0.33;0.9;0.6;0.79;0.68;I Simpósio 
+Chapa leve de lã de madeira (25 mm) com espaço vazio de 50 mm entre parede rígida ;75;0.5325;0.25;0.33;0.5;0.65;0.65;0.7;I Simpósio 
+Chapa leve de lã de madeira (25 mm) com espaço de 50 mm entre parede rígida preenchido com absorvente acústico ;75;0.7075;0.18;0.33;0.8;0.9;0.8;0.83;I Simpósio 
+Chapa leve de lã de madeira (25 mm) com espaço vazio de 24mm entre parede rígida ;49;0.5175;0.06;0.2;0.66;0.49;0.72;0.76;I Simpósio 
+Chapa leve de lã de madeira (25 mm) com espaço vazio de 24mm entre parede rígida coberta de folha simétrica perfurada;49;0.575;0.13;0.66;0.48;0.44;0.72;0.73;I Simpósio 
+Lã de rocha sobre parede (100 mm);100;0.7225;0.42;0.66;0.73;0.74;0.76;0.84;SILVA
+Lã de vidro ou mineral solta (100 mm);100;0.685;0.29;0.55;0.64;0.75;0.8;0.85;SILVA
+Lã de vidro ou mineral sobre superfície sólida (50 mm);50;0.7375;0.3;0.6;0.8;0.8;0.75;0.9;PRADO
+Chapa absorvente microporosa em chapa de base espaçada da parede em 50mm; ;0.605;0.37;0.7;0.59;0.54;0.59;0.62;NBR12179
+Espuma de poliuretano (30kg/m3). superfície plana com textura irregular;20;0.51;0.04;0.12;0.32;0.66;0.94;1.03;illbruck
+Espuma de poliuretano (30kg/m3). superfície plana com textura irregular;30;0.7075;0.08;0.24;0.59;0.92;1.08;1.05;illbruck
+Espuma de poliuretano (30kg/m3). superfície plana com textura irregular;45;0.865;0.15;0.7;1;0.85;0.91;0.9;illbruck
+Espuma de poliuretano (36kg/m3). superfície em cunhas anecóicas;20;0.31;0.06;0.1;0.21;0.38;0.55;0.81;illbruck
+Espuma de poliuretano (36kg/m3). superfície em cunhas anecóicas;50;0.7175;0.13;0.34;0.72;0.91;0.9;0.97;illbruck
+Espuma de poliuretano (36kg/m3). superfície em cunhas anecóicas;75;0.9175;0.23;0.68;0.98;1.04;0.97;0.99;illbruck
+
+$ Aberturas
+
+Vidro simples; ;0.155;0.35;0.25;0.18;0.12;0.07;0.04;SILVA
+Vidro apoiado contra sólidos ; ;0.0125;0.04; ;0.03; ;0.02; ;I Simpósio 
+Vidro com grandes superfícies;7;0.0375;0.18;0.06;0.04;0.03;0.02;0.02;SILVA
+Vidro espaçado a 5 cm da parede; ;0.0925;0.25;0.2;0.1;0.05;0.02;0.02;I Simpósio 
+Vidro plano 3-4mm a 5 cm da parede. amortecimento nas bordas;53 - 54;0.055;0.23;0.11;0.09;0.01;0.01;0.03;NBR12179
+Vidro. deixando câmara de ar; ;0.0075;0.02; ;0.01; ;0.02; ;SILVA
+Janelas envidraçadas; ;0.155;0.35;0.25;0.18;0.12;0.07;0.04;PRADO
+Porta de madeira fechada; ;0.04;0.14; ;0.06; ;0.1; ;I Simpósio 
+Janela Aberta; ;1;1;1;1;1;1;1;NBR12179
