@@ -24,18 +24,18 @@ public class Icosaedro {
 
 		  /* V�rtices do Icosaedro */
 		  mod = Math.sqrt(ouro*ouro + 1);
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(1,ouro,0),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(-1,ouro,0),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(1,-ouro,0),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(-1,-ouro,0),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(0,1,ouro),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(0,-1,ouro),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(0,1,-ouro),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(0,-1,-ouro),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(ouro,0,1),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(ouro,0,-1),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(-ouro,0,1),mod));
-		  vertices.add(Triade.divideVetorEscalar(auxInicIco(-ouro,0,-1),mod));
+		  vertices.add(auxInicIco(1,ouro,0).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(-1,ouro,0).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(1,-ouro,0).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(-1,-ouro,0).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(0,1,ouro).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(0,-1,ouro).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(0,1,-ouro).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(0,-1,-ouro).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(ouro,0,1).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(ouro,0,-1).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(-ouro,0,1).divideVetorEscalar(mod));
+		  vertices.add(auxInicIco(-ouro,0,-1).divideVetorEscalar(mod));
 		  
 		  /* Arestas do Icosaedro */
 		  ((Edge)arestas.get(0)).setP1((Triade)vertices.get(4));

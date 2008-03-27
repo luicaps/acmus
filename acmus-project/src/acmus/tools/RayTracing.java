@@ -40,7 +40,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
@@ -360,12 +362,12 @@ public class RayTracing extends Composite {
 //		
 //		Control[] controls = this.getChildren();
 		
-		/* Inicialização da estrutura que garda as paredes (fila) */
+		/* Inicializaï¿½ï¿½o da estrutura que garda as paredes (fila) */
 		wallQueue = null;
 		resp1 = null;
 		resp2 = null;
 		
-		/* Inicialização do Icosaedro */
+		/* Inicializaï¿½ï¿½o do Icosaedro */
 		Icosaedro ico = new Icosaedro();
 		
 		taxa = Integer.valueOf(respostaImpulsivaText.getText());
@@ -420,7 +422,7 @@ public class RayTracing extends Composite {
 //				scanf("%lf", &(FilaDeParedes->parede->Coeficiente));
 //			}
 //		}
-//		/* Inicio do Metódo do Traçado de Raios */
+//		/* Inicio do Metï¿½do do Traï¿½ado de Raios */
 //		
 //		arq = fopen("fonte.txt","w");
 //		fprintf(arq,"%%Raios gerados\n");
@@ -434,7 +436,7 @@ public class RayTracing extends Composite {
 //		scanf("%d", &numraios);
 //		numraios = (int)(sqrt((numraios - 2)/10) + 1);
 //		printf("\nO programa gerara %d raios pela divisao de cada aresta em %d partes.\n\n",(2+10*numraios*numraios),numraios);
-//		/* Iteração para os vértices do icosaedro */
+//		/* Iteraï¿½ï¿½o para os vï¿½rtices do icosaedro */
 //		cont = 1;
 //		printf("Total de raios iterados: ");
 //		for(i=0; i < 12; i++){
@@ -509,9 +511,9 @@ public class RayTracing extends Composite {
 	}
 	
 	/***********************************************************************
-	   Função que verifica se os pontos dados pelo usuário pertencem ao
-	   mesmo plano, retornando V (1) ou F (0). Ao mesmo tempo, ela também
-	   calcula o vetor normal ao plano e o vetor normal unitário ao plano.
+	   Funï¿½ï¿½o que verifica se os pontos dados pelo usuï¿½rio pertencem ao
+	   mesmo plano, retornando V (1) ou F (0). Ao mesmo tempo, ela tambï¿½m
+	   calcula o vetor normal ao plano e o vetor normal unitï¿½rio ao plano.
 	************************************************************************/
 	public int verificapontos(){
 		ArrayList NORMAL = new ArrayList();
@@ -520,19 +522,19 @@ public class RayTracing extends Composite {
 		double aux;
 		
 		for(i = 0; i < (wallQueue.getParede().getNumPoints() - 2); i++){
-			aux1 = Triade.sub((Triade)wallQueue.getParede().getPoints().get(i), (Triade)wallQueue.getParede().getPoints().get(i+1));
-			aux2 = Triade.sub((Triade)wallQueue.getParede().getPoints().get(i+1), (Triade)wallQueue.getParede().getPoints().get(i+2));
-			NORMAL.set(i, Triade.produtoVetorial(aux1, aux2));
+			aux1 = ((Triade)wallQueue.getParede().getPoints().get(i)).sub(((Triade)wallQueue.getParede().getPoints().get(i+1)));
+			aux2 = ((Triade)wallQueue.getParede().getPoints().get(i+1)).sub(((Triade)wallQueue.getParede().getPoints().get(i+2)));
+			NORMAL.set(i, aux1.produtoVetorial(aux2));
 		}
 		for(i = 0; i < (wallQueue.getParede().getNumPoints() - 2); i++){
-			if(Triade.modulo((Triade)NORMAL.get(i)) == 0){
+			if(((Triade)NORMAL.get(i)).modulo() == 0){
 				System.out.println("Tres pontos consecutivos nao podem ser colineares!\n");
 				return 0;
 			}
 		}
-		wallQueue.getParede().setNormalVectorUnit(Triade.divideVetorEscalar((Triade)NORMAL.get(0), Triade.modulo((Triade)NORMAL.get(0))));
+		wallQueue.getParede().setNormalVectorUnit(((Triade)NORMAL.get(0)).divideVetorEscalar(((Triade)NORMAL.get(0)).modulo()));
 		for(i = 0; i < wallQueue.getParede().getNumPoints() - 3; i++){
-			aux = Triade.anguloVetores((Triade)NORMAL.get(i), (Triade)NORMAL.get(i + 1));
+			aux = ((Triade)NORMAL.get(i)).anguloVetores(((Triade)NORMAL.get(i + 1)));
 			if(aux != 0 && ((aux < Math.PI - precisao)||(aux > Math.PI + precisao))){
 				System.out.println("Os "+wallQueue.getParede().getNumPoints()+"pontos dados nao formam um plano!");
 				return 0;
@@ -543,23 +545,23 @@ public class RayTracing extends Composite {
 	
 	/***********************************************************************
 	   Procedimento que cria as paredes e a estrutura da fila de paredes,
-	   fazendo a inserção dessa parede na FilaDeParedes.
+	   fazendo a inserï¿½ï¿½o dessa parede na FilaDeParedes.
 	************************************************************************/
 	public void addWall() {
 	  Parede aux = new Parede();
 	  Plain aux2 = new Plain();
 
-	  aux2.setFlagReflection(0); /* inicializa todas as paredes sem reflexão */
+	  aux2.setFlagReflection(0); /* inicializa todas as paredes sem reflexï¿½o */
 	  aux.setProx(wallQueue);
 	  aux.setParede(aux2);
 	  wallQueue = aux;
 	}
 	
 	/***********************************************************************
-	   Função que calcula a distância do ponto de origem da fonte sonora
-	   ao plano e a distância que vetor caminha até chegar no plano,
+	   Funï¿½ï¿½o que calcula a distï¿½ncia do ponto de origem da fonte sonora
+	   ao plano e a distï¿½ncia que vetor caminha atï¿½ chegar no plano,
 	   verificando se o ponto atingido no plano pertence a parede. Se isso
-	   for verdade, retorna 1. Caso contrário, retorna 0.
+	   for verdade, retorna 1. Caso contrï¿½rio, retorna 0.
 	************************************************************************/
 	public static int calculaDistanciaPonto2Plano(Triade orig, Triade direcao, Plain parede) {
 		double d1,d2;
@@ -569,40 +571,40 @@ public class RayTracing extends Composite {
 			parede.setFlagReflection(0);     /* libera parede para as proximas reflexoes */
 			return 0;                 /* como a parede acabou de refletir o raio retorna 0 */
 		}
-		/* d2 = Produto Escalar da NormalUnit com o vetor Direcao (ambos unitários) */
-		d2 = Triade.produtoEscalar(parede.getNormalVectorUnit(), direcao);  /* angulo entre a normal e o vetor direcao */
-		if(d2 == 0) return 0;                         /* condição em que o raio está paralelo ao plano */
+		/* d2 = Produto Escalar da NormalUnit com o vetor Direcao (ambos unitï¿½rios) */
+		d2 = parede.getNormalVectorUnit().produtoEscalar(direcao);  /* angulo entre a normal e o vetor direcao */
+		if(d2 == 0) return 0;                         /* condiï¿½ï¿½o em que o raio estï¿½ paralelo ao plano */
 		if(d2 > 0){
-			parede.setNormalVectorUnit(Triade.multiplicaVetorEscalar(parede.getNormalVectorUnit(),-1));
+			parede.setNormalVectorUnit(parede.getNormalVectorUnit().multiplicaVetorEscalar(-1));
 		}
 		else d2 = -d2;
 		/* d1 = menor distancia do ponto de origem do raio ao plano */
-		d1 = Triade.produtoEscalar(parede.getNormalVectorUnit(), Triade.sub((Triade)parede.getPoints().get(0), orig));
-		if(d1 < 0) return 0;                           /* raio não encontra com o plano */
+		d1 = parede.getNormalVectorUnit().produtoEscalar(((Triade)parede.getPoints().get(0)).sub(orig));
+		if(d1 < 0) return 0;                           /* raio nï¿½o encontra com o plano */
 		
 		parede.setDistSourcePlain(d1);
-		if(d1 == 0){                                   /* condição de reflexões múltiplas, como junções de paredes */
+		if(d1 == 0){                                   /* condiï¿½ï¿½o de reflexï¿½es mï¿½ltiplas, como junï¿½ï¿½es de paredes */
 			System.out.println("Reflexao multipla... \n\n");
-			parede.setDistanceOfRay(precisao); /* Tira o raio da condição de reflexão multipla */
+			parede.setDistanceOfRay(precisao); /* Tira o raio da condiï¿½ï¿½o de reflexï¿½o multipla */
 			return Plain.verificaPontoParede(orig, parede, precisao);
 		}
 		
 		parede.setDistanceOfRay(d1/d2);                     /* por pitagoras, distancia = d1/cos(angulo) */
 		
-		pontoQ = Triade.sum(orig, Triade.multiplicaVetorEscalar(direcao, parede.getDistanceOfRay()));
+		pontoQ = orig.sum(direcao.multiplicaVetorEscalar(parede.getDistanceOfRay()));
 		return Plain.verificaPontoParede(pontoQ, parede, precisao);
 	}
 	
 	/***********************************************************************
-	   Função que varre a fila com todas as paredes declaradas verificando
-	   quais são interceptadas pelo raio e retorna a primeira a ser
+	   Funï¿½ï¿½o que varre a fila com todas as paredes declaradas verificando
+	   quais sï¿½o interceptadas pelo raio e retorna a primeira a ser
 	   interceptada.
 	   ************************************************************************/
 	public static Parede firstIntercepedWall(Triade dir,Triade orig){
 		Parede aux1,aux2;
 		
-		aux1 = wallQueue; /* vetor aux1 varre a lista de paredes cadastrados no início do programa */
-		aux2 = null;  /* Apontador para parede interceptada mais próxima do raio */
+		aux1 = wallQueue; /* vetor aux1 varre a lista de paredes cadastrados no inï¿½cio do programa */
+		aux2 = null;  /* Apontador para parede interceptada mais prï¿½xima do raio */
 		
 		while(aux1 != null){
 			if(calculaDistanciaPonto2Plano(orig, dir, aux1.getParede()) == 1){
@@ -671,13 +673,13 @@ public class RayTracing extends Composite {
 		ApParede = firstIntercepedWall(direcao, pinic);
 //		fprintf(arq, "%.10f     %.10f     %.10f;\n", direcao.getX(), direcao.getY(), direcao.getZ());
 		
-		aux1 = Triade.modulo(Triade.sub(Receptor, pinic));                       /* distancia do ponto de inicio do raio ao receptor */
+		aux1 = Receptor.sub(pinic).modulo();                       /* distancia do ponto de inicio do raio ao receptor */
 		
-		/* cos do angulo formado pela direcao e o vetor que vai do ponto do receptor até o ponto de início do raio */
-		aux2 = Triade.produtoEscalar(Triade.divideVetorEscalar(Triade.sub(Receptor, pinic), aux1), direcao);
+		/* cos do angulo formado pela direcao e o vetor que vai do ponto do receptor atï¿½ o ponto de inï¿½cio do raio */
+		aux2 = Receptor.sub(pinic).divideVetorEscalar(aux1).produtoEscalar(direcao);
 		if(aux2 < 0){
 			double aux3;
-			/* cálculo da distância da reta da direção ao ponto do receptor */
+			/* cï¿½lculo da distï¿½ncia da reta da direï¿½ï¿½o ao ponto do receptor */
 			aux3 = aux1*Math.sin(Math.acos(aux2));
 			if(aux3 < raio){
 				double temp,d;
@@ -696,25 +698,25 @@ public class RayTracing extends Composite {
 			energia = energia*(1 - ApParede.getParede().getAbCoeficient())*Math.exp(-m_ar*ApParede.getParede().getDistanceOfRay());
 			
 			normal = ApParede.getParede().getNormalVectorUnit(); /* normal unitaria da parede */
-			inverso = Triade.multiplicaVetorEscalar(direcao, -1); /* inverso da direcao do raio incidente */
+			inverso = direcao.multiplicaVetorEscalar(-1); /* inverso da direcao do raio incidente */
 			
 			/* Calculo do novo ponto de partida do raio */
-			pinic = Triade.sum(pinic, Triade.multiplicaVetorEscalar(direcao, ApParede.getParede().getDistanceOfRay()));
+			pinic = pinic.sum(direcao.multiplicaVetorEscalar(ApParede.getParede().getDistanceOfRay()));
 			
 			/* Calculo do novo vetor direcao */
-			direcao = Triade.sum(Triade.multiplicaVetorEscalar(normal, 2*Triade.produtoEscalar(inverso, normal)), direcao);
+			direcao = normal.multiplicaVetorEscalar(2*inverso.produtoEscalar(normal)).sum(direcao);
 			
 			ApParede.getParede().setFlagReflection(1);;
 			
 			ApParede = firstIntercepedWall(direcao, pinic);
 			
-			aux1 = Triade.modulo(Triade.sub(Receptor, pinic));                       /* distancia do ponto de inicio do raio ao receptor */
+			aux1 = Receptor.sub(pinic).modulo();                       /* distancia do ponto de inicio do raio ao receptor */
 			
-			/* cos do angulo formado pela direcao e o vetor que vai do ponto do receptor até o ponto de início do raio */
-			aux2 = Triade.produtoEscalar(Triade.divideVetorEscalar(Triade.sub(Receptor, pinic), aux1), direcao);
+			/* cos do angulo formado pela direcao e o vetor que vai do ponto do receptor atï¿½ o ponto de inï¿½cio do raio */
+			aux2 = Receptor.sub(pinic).divideVetorEscalar(aux1).produtoEscalar(direcao);
 			if(aux2 < 0){
 				double aux3;
-				/* cálculo da distância da reta da direção ao ponto do receptor */
+				/* cï¿½lculo da distï¿½ncia da reta da direï¿½ï¿½o ao ponto do receptor */
 				aux3 = aux1*Math.sin(Math.acos(aux2));
 				if(aux3 < raio){
 					double temp,d;
@@ -736,9 +738,9 @@ public class RayTracing extends Composite {
 		int i;
 		
 		ar = null;
-		ang = Math.acos(Triade.produtoEscalar(p1,p2))/num;
-		n = Triade.produtoVetorial(p1,p2);
-		n = Triade.divideVetorEscalar(n, Triade.modulo(n));
+		ang = Math.acos(p1.produtoEscalar(p2))/num;
+		n = p1.produtoVetorial(p2);
+		n = n.divideVetorEscalar(n.modulo());
 		
 		aux = (p1.getZ()*p2.getY() - p1.getY()*p2.getZ())*n.getX() + (p1.getX()*p2.getZ() - p1.getZ()*p2.getX())*n.getY() + (p1.getY()*p2.getX() - p1.getX()*p2.getY())*n.getZ();
 		
@@ -755,7 +757,7 @@ public class RayTracing extends Composite {
 			pi.setZ((p2.getY()*n.getX() - p2.getX()*n.getY())*Math.cos(ang*i) + (p1.getX()*n.getY() - p1.getY()*n.getX())*Math.cos(ang*(num - i)));
 			pi.setZ(pi.getZ()/aux);
 			
-			pi = Triade.divideVetorEscalar(pi, Triade.modulo(pi));
+			pi = pi.divideVetorEscalar(pi.modulo());
 			if(aloca != 0) ar.set(i -1, pi);
 			tracaRaio(Fonte, pi, 1, (double)1/K);
 //			EscreveDec();
@@ -763,6 +765,17 @@ public class RayTracing extends Composite {
 		return ar;
 	}
 	
-	
-	
+
+	public static void main(String[] args) {
+		Display display = new Display ();
+		Shell shell = new Shell (display);
+
+		RayTracing rt = new RayTracing(shell, SWT.NONE );
+		
+		shell.open ();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch ()) display.sleep ();
+		}
+		display.dispose ();
+	}
 }

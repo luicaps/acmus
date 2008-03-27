@@ -33,11 +33,8 @@ public class TriadeTest extends TestCase {
 	 * Test method for 'acmus.tools.structures.Triade.Triade(double, double, double)'
 	 */
 	public void testTriadeDoubleDoubleDouble() {
-
-		String str = "(10.56, 12.8, 1.2)";
-		
 		assertNotNull(t1);
-		assertTrue(t1.equals(new Triade(this.x1, this.y1, this.z1)));
+		assertEquals(t1, new Triade(this.x1, this.y1, this.z1));
 	}
 
 	/*
@@ -113,7 +110,7 @@ public class TriadeTest extends TestCase {
 		Triade v = new Triade(3.0, 1.0, -2.0);
 		Triade r = new Triade(2.0, 0.0, -3.0);
 		
-		assertTrue(Triade.sub(w,v).equals(r));
+		assertEquals(r, w.sub(v));
 
 	}
 
@@ -126,7 +123,7 @@ public class TriadeTest extends TestCase {
 
 		Triade r = new Triade(2.1+1.2, 2.3+1.23, 4.56+3.22);
 		
-		assertTrue(Triade.sum(w,v).equals(r)); 
+		assertEquals(r, w.sum(v)); 
 	}
 
 	/*
@@ -137,7 +134,7 @@ public class TriadeTest extends TestCase {
 		Triade v = new Triade(2.1, 1.23, 3.22);
 		Triade r = new Triade(1.7972, 5.712, -3.354);
 
-		assertTrue(Triade.produtoVetorial(w,v).equals(r));
+		assertEquals(r, w.produtoVetorial(v));
 
 	}
 
@@ -149,7 +146,7 @@ public class TriadeTest extends TestCase {
 		Triade v = new Triade(2.1, 1.23, 3.22);
 		double r = 20.0322;
 
-		assertEquals(Triade.produtoEscalar(v, w), r);
+		assertEquals(r, v.produtoEscalar(w));
 	}
 
 	/*
@@ -161,7 +158,7 @@ public class TriadeTest extends TestCase {
 		Triade w = new Triade(x, y, z);
 		r = Math.sqrt(x*x + y*y + z*z);
 		
-		assertEquals(Triade.modulo(w), r);
+		assertEquals(r, w.modulo());
 		
 	}
 
@@ -175,8 +172,8 @@ public class TriadeTest extends TestCase {
 		                                     
 		double r1 = 1.57079632, r2 = 0.78539816;
 		
-		assertTrue(Math.abs(Triade.anguloVetores(v1,w1) - r1) < TriadeTest.eps);
-		assertTrue(Math.abs(Triade.anguloVetores(v1, w2) - r2) < TriadeTest.eps);
+		assertTrue(Math.abs(v1.anguloVetores(w1) - r1) < TriadeTest.eps);
+		assertTrue(Math.abs(v1.anguloVetores(w2) - r2) < TriadeTest.eps);
 	}
 
 	/*
@@ -187,11 +184,7 @@ public class TriadeTest extends TestCase {
 		double escalar = 2.0;
 		Triade r = new Triade(5.0, 6.2, 12.8);
 
-		// poruq esta acontecendo isso?
-//		boolean a = Triade.divideVetorEscalar(t,escalar).equals(r);
-//		assertTrue(Triade.divideVetorEscalar(t,escalar).equals(r));
-		boolean a = Triade.divideVetorEscalar(t,escalar).equals(r);
-		assertTrue(a);
+		assertEquals(r, t.divideVetorEscalar(escalar));
 		
 	}
 
@@ -202,20 +195,15 @@ public class TriadeTest extends TestCase {
 		Triade v = new Triade(2.5, 3.4, 4.5);
 		double escalar = 2.0;
 		Triade w = new Triade(5, 6.8, 9.0);
-		assertTrue(Triade.multiplicaVetorEscalar(v, escalar).equals(w));
-		
+		assertEquals(w, v.multiplicaVetorEscalar(escalar));
 	}
 
-	/*
-	 * Test method for 'acmus.tools.structures.Triade.pontoIntersecaoReta(Triade, Triade, Triade, Triade)'
-	 */
 	public void testPontoIntersecaoReta() {
 		Triade p1 = new Triade(0, 0, 0);
 		Triade p2 = new Triade(3, 0, 0);
 		Triade p3 = new Triade(0, 3, 0);
-		Triade p4 = new Triade(0, 0, 5);
 		
-		System.out.println(Triade.pontoIntersecaoReta(p1, p2, p2, p3));
+		assertEquals(p2, Triade.pontoIntersecaoReta(p1, p2, p2, p3));
 	}
 
 	/*

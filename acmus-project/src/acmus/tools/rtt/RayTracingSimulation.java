@@ -105,14 +105,14 @@ public class RayTracingSimulation {
 				for(NormalSector s: sectors){
 //					System.out.println("k#");
 					
-					if( Triade.produtoEscalar(v, s.normalVector ) >= 0)
+					if( v.produtoEscalar(s.normalVector) >= 0)
 					{
 						continue;
 					}
 					else
 					{
-						double d = Triade.produtoEscalar(s.normalVector, Triade.sub(s.iPoint, g));
-						double l = -1* d/(Triade.produtoEscalar(v, s.normalVector));
+						double d = s.normalVector.produtoEscalar(s.iPoint.sub(g));
+						double l = -1* d/(v.produtoEscalar(s.normalVector));
 						
 						//testa distancia minima da fonte a parede e ve se eh minima, dentre outras
 						//paredes
@@ -125,7 +125,7 @@ public class RayTracingSimulation {
 						}
 					}
 				}//fim setores
-				q = Triade.sum(g, Triade.multiplicaVetorEscalar(v, lMin));
+				q = g.sum(v.multiplicaVetorEscalar(lMin));
 				double eTemp = e*(1-alpha)*Math.pow(Math.E, -1*mCoeficient*lMin);
 				
 				//
@@ -137,9 +137,9 @@ public class RayTracingSimulation {
 				// TODO corrigir estes calculos que estao errados, pois ocorre um caso em que 
 				//delta = 2 e na verdade o raio nao intercepta a esfera
 				{
-					Triade oc = Triade.sub(g, sphericalReceptorCenter);
-					double l2oc = Triade.produtoEscalar(oc, oc);
-					double tca = Triade.produtoEscalar(oc, v);
+					Triade oc = g.sub(sphericalReceptorCenter);
+					double l2oc = oc.produtoEscalar(oc);
+					double tca = oc.produtoEscalar(v);
 					
 					//o raio intercepta o receptor esferico
 					if(tca >= 0){
@@ -166,8 +166,8 @@ public class RayTracingSimulation {
 				}
 				lReflection += lMin;
 				e = eTemp;
-				v = Triade.sum(Triade.multiplicaVetorEscalar(nR, 2*dMin), Triade.sub(g, q));
-				v = Triade.multiplicaVetorEscalar(v, 1/Triade.modulo(v));//AGORA TENHO QUE NORMALIZAR o vetor V
+				v = nR.multiplicaVetorEscalar(2*dMin).sum(g.sub(q));
+				v = v.multiplicaVetorEscalar(1/v.modulo());//AGORA TENHO QUE NORMALIZAR o vetor V
 			
 			}while( e>(1/k*initialEnergy) ); //vai para a proxima reflexao, caso 
 											// a energia seja maior do que o criterio de parada

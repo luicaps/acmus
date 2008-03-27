@@ -5,13 +5,13 @@ import java.util.Vector;
 
 public class Plain {
 	Vector points;       /* Apontador para um vetor de pontos do tipo TRIADE */
-	Vector line;        /* Apontador para um vetor de vetores direção de cada reta formada pelos pontos da parede */
+	Vector line;        /* Apontador para um vetor de vetores direï¿½ï¿½o de cada reta formada pelos pontos da parede */
 	Triade normalVectorUnit;   /* Vetor normal unitario ao Plano */
-	int numPoints;         /* Quantidade de pontos pertencente à parede */
-	double abCoeficient;  /* Coeficiente de absorção da parede */
-	double distSourcePlain;           /* Distância do Ponto fonte ao plano */
-	double distanceOfRay;    /* Distância que o raio leva pra chegar ate a parede */
-	int number;        /* Número dado pelo usuario à parede */
+	int numPoints;         /* Quantidade de pontos pertencente ï¿½ parede */
+	double abCoeficient;  /* Coeficiente de absorï¿½ï¿½o da parede */
+	double distSourcePlain;           /* Distï¿½ncia do Ponto fonte ao plano */
+	double distanceOfRay;    /* Distï¿½ncia que o raio leva pra chegar ate a parede */
+	int number;        /* Nï¿½mero dado pelo usuario ï¿½ parede */
 	int flagReflection;
 	
 	public Plain() {
@@ -78,18 +78,18 @@ public class Plain {
 	}
 	
 	/***********************************************************************
-	   Procedimento que calcula os vetores direções de cada reta formada
+	   Procedimento que calcula os vetores direï¿½ï¿½es de cada reta formada
 	   por cada par de ponto da parede.
 	************************************************************************/
 	public static void calculaRetas(Plain par){
 	  int i;
 	  Vector line = par.getLine();
 	  for(i = 0; i < (par.getNumPoints() - 1); i++){
-	    line.add(i, Triade.sub((Triade)par.getPoints().get(i), (Triade)par.getPoints().get(i+1)));
-	    line.add(i, Triade.divideVetorEscalar((Triade)line.get(i), Triade.modulo((Triade)line.get(i))));
+	    line.add(i, ((Triade)par.getPoints().get(i)).sub(((Triade)par.getPoints().get(i+1))));
+	    line.add(i, ((Triade)line.get(i)).divideVetorEscalar(((Triade)line.get(i)).modulo()));
 	  }
-	  line.add(i, Triade.sub((Triade)par.getPoints().get(i), (Triade)par.getPoints().get(0)));
-	  line.add(Triade.divideVetorEscalar((Triade)line.get(i), Triade.modulo((Triade)line.get(i))));
+	  line.add(i, ((Triade)par.getPoints().get(i)).sub(((Triade)par.getPoints().get(0))));
+	  line.add(((Triade)line.get(i)).divideVetorEscalar(((Triade)line.get(i)).modulo()));
 	}
 
 	/**
@@ -107,11 +107,11 @@ public class Plain {
 	}
 	
 	/***********************************************************************
-	 Função que verifica se o ponto px pertence a parede par, verificando
-	 se px está no interior da região interna da parede definida pela
+	 Funï¿½ï¿½o que verifica se o ponto px pertence a parede par, verificando
+	 se px estï¿½ no interior da regiï¿½o interna da parede definida pela
 	 sequencia de pontos da mesma. 1(V) e 0(F)
 	 
-	 FIXME: refatorar pois a função está muito grande
+	 FIXME: refatorar pois a funï¿½ï¿½o estï¿½ muito grande
 	 ************************************************************************/
 	public static int verificaPontoParede(Triade px3d, Plain par3d, double precisao){
 		Triade dir = new Triade();
@@ -136,18 +136,18 @@ public class Plain {
 		for(i=0; i < (par3d.getNumPoints() - 1); i++){
 		    Triade p1 = (Triade)par3d.getPoints().get(i);
 		    Triade p2 = (Triade)par3d.getPoints().get(i+1);
-			NORMAL.set(i, Triade.produtoVetorial(Triade.sub(p1, px3d), Triade.sub(p2, px3d)));
+			NORMAL.set(i, p1.sub(px3d).produtoVetorial(p2.sub(px3d)));
 		}
 		Triade p1 = (Triade)par3d.getPoints().get(i);
 		Triade p0 = (Triade)par3d.getPoints().get(0);
-		NORMAL.set(i, Triade.produtoVetorial(Triade.sub(p1, px3d), Triade.sub(p0, px3d)));
-		/* se o ponto px3d for colinear a qualquer dois pontos da parede, então ele está no extremo da parede */
+		NORMAL.set(i, p1.sub(px3d).produtoVetorial(p0.sub(px3d)));
+		/* se o ponto px3d for colinear a qualquer dois pontos da parede, entï¿½o ele estï¿½ no extremo da parede */
 		for(i = 0; i < par3d.getNumPoints(); i++){
-			if(Triade.modulo((Triade)NORMAL.get(i)) < precisao){
+			if(((Triade)NORMAL.get(i)).modulo() < precisao){
 				return 1;
 			}
 		}
-		/*** Procedimento simples de verificação de um ponto na parede ***/
+		/*** Procedimento simples de verificaï¿½ï¿½o de um ponto na parede ***/
 		/*                                                               */
 		/*   Esse procedimento falha para parede nao convexas, porem para*/
 		/*   paredes convexas, ganha-se em tempo de processamento.       */
@@ -155,19 +155,19 @@ public class Plain {
 		/*****************************************************************/
 		contador = 1;
 		i = 0;
-		/* se os vetores normais calculados estiverem em direção oposta,  */
-		/* então o método não garante que o ponto esteja dentro da parede.*/
+		/* se os vetores normais calculados estiverem em direï¿½ï¿½o oposta,  */
+		/* entï¿½o o mï¿½todo nï¿½o garante que o ponto esteja dentro da parede.*/
 		while((i < (par3d.getNumPoints() - 1)) && (contador == 1)){
-			if(Triade.produtoEscalar((Triade)NORMAL.get(i), (Triade)NORMAL.get(i + 1)) < 0){
+			if(((Triade)NORMAL.get(i)).produtoEscalar(((Triade)NORMAL.get(i + 1))) < 0){
 				contador = 0;
 			}
 			i++;
 		}
-		if((contador == 1) && (Triade.produtoEscalar((Triade)NORMAL.get(i),(Triade)NORMAL.get(0)) < 0)){
+		if((contador == 1) && (((Triade)NORMAL.get(i)).produtoEscalar(((Triade)NORMAL.get(0))) < 0)){
 			contador = 0;
 		}
 		
-		/*** Procedimento de verificação de um ponto na parede generico ***/
+		/*** Procedimento de verificaï¿½ï¿½o de um ponto na parede generico ***/
 		/*                                                                */
 		/*   Esse procedimento vale para qualquer tipo de parede, so que  */
 		/*   gasta mais tempo de processamento.                           */
@@ -178,14 +178,14 @@ public class Plain {
 			transformaPontos(px3d, par3d, px, par);
 			calculaRetas(par);
 			
-			dir = (Triade)par.getLine().get(0); /* Direção arbitrária pertencente ao plano em questão */
+			dir = (Triade)par.getLine().get(0); /* Direï¿½ï¿½o arbitrï¿½ria pertencente ao plano em questï¿½o */
 			
 			for(i=0; i < par.getNumPoints(); i++){
-				aux = Triade.produtoEscalar(dir, (Triade)par.getLine().get(i)); /* produto escalar diferente de 1 e -1 indica que
+				aux = dir.produtoEscalar(((Triade)par.getLine().get(i))); /* produto escalar diferente de 1 e -1 indica que
 				as retas se cruzam em algum momento */
 				if((aux != 1)&&(aux != -1)){
 					pc = Triade.pontoIntersecaoReta(dir, px, (Triade)par.getLine().get(i), (Triade)par.getPoints().get(i));
-					aux = Triade.produtoEscalar(dir, Triade.divideVetorEscalar(Triade.sub(px, pc), Triade.modulo(Triade.sub(px, pc))));
+					aux = dir.produtoEscalar(px.sub(pc).divideVetorEscalar(px.sub(pc).modulo()));
 					if(aux == 1){ /* Cruza a reta apenas no segmento de reta a partir de px */
 						Triade par0 = (Triade)par.getPoints().get(0);
 						Triade par1 = (Triade)par.getPoints().get(i);
@@ -196,19 +196,19 @@ public class Plain {
 								if(((Math.abs(pc.x - par2.x) < precisao) && Math.abs(pc.y - par2.y) < precisao)){
 									double alpha,a1,a2;
 									/* tratamento de maximo e minimo locais */
-									alpha = Triade.anguloVetores((Triade)par.getLine().get(i), (Triade)par.getLine().get(i+1));
+									alpha = ((Triade)par.getLine().get(i)).anguloVetores(((Triade)par.getLine().get(i+1)));
 									
-									a1 = Triade.anguloVetores(dir, (Triade)par.getLine().get(i));
-									a2 = Triade.anguloVetores(dir, (Triade)par.getLine().get(i+1));
+									a1 = dir.anguloVetores(((Triade)par.getLine().get(i)));
+									a2 = dir.anguloVetores(((Triade)par.getLine().get(i+1)));
 									if(((a1 < Math.PI - alpha) && (a2 > alpha)) || ((a1 > alpha) && (a2 < Math.PI - alpha))){
 										contador++;
 									}
 								} else {
 									double aux1,aux2;
 									
-									aux = Triade.modulo(Triade.sub(par1, par2));
-									aux1 = Triade.modulo(Triade.sub(pc, par1));
-									aux2 = Triade.modulo(Triade.sub(pc, par2));
+									aux = par1.sub(par2).modulo();
+									aux1 = pc.sub(par1).modulo();
+									aux2 = pc.sub(par2).modulo();
 									if(aux1 <= aux && aux2 <= aux){
 										contador++;
 									}
@@ -222,19 +222,19 @@ public class Plain {
 								if(((Math.abs(pc.x - par0.x) < precisao) && Math.abs(pc.y - par0.y) < precisao)){
 									double alpha, a1, a2;
 									/* tratamento de maximo e minimo locais */
-									alpha = Triade.anguloVetores((Triade)par.getLine().get(i), (Triade)par.getLine().get(0));
+									alpha = ((Triade)par.getLine().get(i)).anguloVetores(((Triade)par.getLine().get(0)));
 									
-									a1 = Triade.anguloVetores(dir, (Triade)par.getLine().get(i));
-									a2 = Triade.anguloVetores(dir, (Triade)par.getLine().get(0));
+									a1 = dir.anguloVetores(((Triade)par.getLine().get(i)));
+									a2 = dir.anguloVetores(((Triade)par.getLine().get(0)));
 									if(((a1 < Math.PI - alpha) && (a2 > alpha)) || ((a1 > alpha) && (a2 < Math.PI - alpha))){
 										contador++;
 									}
 								}
 								else{
 									double aux1,aux2;
-									aux = Triade.modulo(Triade.sub(p1, par0));
-									aux1 = Triade.modulo(Triade.sub(pc, par1));
-									aux2 = Triade.modulo(Triade.sub(pc, par0));
+									aux = p1.sub(par0).modulo();
+									aux1 = pc.sub(par1).modulo();
+									aux2 = pc.sub(par0).modulo();
 									if(aux1 <= aux && aux2 <= aux){
 										contador++;
 									}
@@ -245,25 +245,25 @@ public class Plain {
 				}
 			}
 		}
-		return contador%2; /* Se contador for impar, função retorna 1, indicando VERDADEIRO */
+		return contador%2; /* Se contador for impar, funï¿½ï¿½o retorna 1, indicando VERDADEIRO */
 	}
 	
 	/***********************************************************************
-	   Função que transforma os pontos do plano par3d e o ponto px3d em
-	   pontos de 2 dimensões apenas, em x e y. Isso facilitará os cálculos
+	   Funï¿½ï¿½o que transforma os pontos do plano par3d e o ponto px3d em
+	   pontos de 2 dimensï¿½es apenas, em x e y. Isso facilitarï¿½ os cï¿½lculos
 	   posteriores.
 	************************************************************************/
 	public static void transformaPontos(Triade px3d, Plain par3d, Triade px, Plain par){
-	  ArrayList matriz = new ArrayList(3); /* matriz de rotação usada para a transformação */
+	  ArrayList matriz = new ArrayList(3); /* matriz de rotaï¿½ï¿½o usada para a transformaï¿½ï¿½o */
 	  int i;
 
-	  matriz.set(0, Triade.sub((Triade)par3d.getPoints().get(0), (Triade)par3d.getPoints().get(1)));
-	  matriz.set(0,  Triade.divideVetorEscalar((Triade)matriz.get(0), Triade.modulo((Triade)matriz.get(0))));
+	  matriz.set(0, ((Triade)par3d.getPoints().get(0)).sub(((Triade)par3d.getPoints().get(1))));
+	  matriz.set(0,  ((Triade)matriz.get(0)).divideVetorEscalar(((Triade)matriz.get(0)).modulo()));
 	  matriz.set(2, par3d.getNormalVectorUnit());
-	  matriz.set(1, Triade.produtoVetorial((Triade)matriz.get(2), (Triade)matriz.get(0)));/* k x i = j */
+	  matriz.set(1, ((Triade)matriz.get(2)).produtoVetorial(((Triade)matriz.get(0))));/* k x i = j */
 
-	  /* Aplica-se a matriz de transformação em todos os pontos pela multiplicação
-	     da matriz de rotação pelos vetores */
+	  /* Aplica-se a matriz de transformaï¿½ï¿½o em todos os pontos pela multiplicaï¿½ï¿½o
+	     da matriz de rotaï¿½ï¿½o pelos vetores */
 	  for(i=0; i < par3d.getNumPoints(); i++){
 		Triade p1 = (Triade)par.getPoints().get(i);
 		Triade par1 = (Triade)par3d.getPoints().get(i);
