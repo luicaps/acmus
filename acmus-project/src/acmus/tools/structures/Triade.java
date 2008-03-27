@@ -1,7 +1,7 @@
 package acmus.tools.structures;
 
 public class Triade {
-	static final double EPS = 0.00001;
+	public static final double EPS = 0.00001;
 
 	double x;
 	double y;
