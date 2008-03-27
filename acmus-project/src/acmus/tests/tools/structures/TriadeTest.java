@@ -197,15 +197,7 @@ public class TriadeTest extends TestCase {
 		Triade w = new Triade(5, 6.8, 9.0);
 		assertEquals(w, v.multiplicaVetorEscalar(escalar));
 	}
-
-	public void testPontoIntersecaoReta() {
-		Triade p1 = new Triade(0, 0, 0);
-		Triade p2 = new Triade(3, 0, 0);
-		Triade p3 = new Triade(0, 3, 0);
-		
-		assertEquals(p2, Triade.pontoIntersecaoReta(p1, p2, p2, p3));
-	}
-
+	
 	/*
 	 * Test method for 'acmus.tools.structures.Triade.imprime()'
 	 */

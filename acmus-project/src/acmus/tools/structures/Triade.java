@@ -129,36 +129,6 @@ public class Triade {
 
 		return ret;
 	}
-	
-	// TODO Criar Classe Reta
-	public static Triade pontoIntersecaoReta(Triade r1, Triade p1, Triade r2,
-			Triade p2) {
-		Triade ret = new Triade();
-		double aux;
-
-		/* processo de ortogonaliza��o do vetor dire��o das retas */
-		aux = r1.x;
-		r1.x = -r1.y;
-		r1.y = aux;
-		aux = r2.x;
-		r2.x = -1.0 * r2.y;
-		r2.y = aux;
-
-		if (r1.x != 0) {
-			ret.y = (r2.x * p2.x + r2.y * p2.y - (r2.x / r1.x)
-					* (r1.x * p1.x + r1.y * p1.y))
-					/ (r2.y - r2.x * r1.y / r1.x);
-			ret.x = (r1.x * p1.x + r1.y * p1.y) / r1.x - r1.y * ret.y / r1.x;
-		} else {
-			ret.x = (r2.x * p2.x + r2.y * p2.y - (r2.y / r1.y)
-					* (r1.x * p1.x + r1.y * p1.y))
-					/ (r2.x - r2.y * r1.x / r1.y);
-			ret.y = (r1.x * p1.x + r1.y * p1.y) / r1.y - r1.x * ret.x / r1.y;
-		}
-		ret.z = p1.z;
-
-		return ret;
-	}
 
 	public String imprime() {
 		return ("Triade: " + this.nome + " " + this.toString());
