@@ -24,27 +24,36 @@ public class RandomAcousticSource implements AcousticSource {
 	public List<Triade> generate(int n) {
 		sphericalPoints = new ArrayList<Triade>();
 	
-		double theta = 0.0;
-		double phi = 0.0;
+		double x0 = 0.0, x1 = 0.0, x2 = 0.0, x3 = 0.0;
 		
 		for(int i=0; i<n; i++)
 		{
-			phi = Math.PI * 2 * Math.random();
-			theta = Math.PI*Math.random() - Math.PI/2;
-//			sphericalPoints.add(new Triade(1.0, theta, phi));
-			sphericalPoints.add(this.spherical2cartesian(1.0, theta, phi));
+			x0 = uniformeUmMenosUm();
+			x1 = uniformeUmMenosUm();
+			x2 = uniformeUmMenosUm();
+			x3 = uniformeUmMenosUm();
+			
+			if(Math.sqrt(Math.pow(x0, 2) + Math.pow(x1, 2) + Math.pow(x2, 2) + Math.pow(x3, 2)) < 1)
+				sphericalPoints.add(this.quaternionToCartesian(x0, x1, x2, x3));
 		}
 		
 		return sphericalPoints;
 	}
 	
-	private Triade spherical2cartesian(double r, double theta, double phi) {
-		x = r * Math.sin(phi) * Math.cos(theta);
-		y = r * Math.sin(phi) * Math.sin(theta);
-		z = r * Math.cos(phi);
-		
-		return new Triade(x, y, z);
+	private double uniformeUmMenosUm(){
+		return 2 * Math.random() - 1;
 	}
-
+	private Triade quaternionToCartesian(double x0, double x1, double x2, double x3){
+		double divisor = Math.pow(x0, 2) + Math.pow(x1, 2) + Math.pow(x2, 2) + Math.pow(x3, 2);
+		
+		double x = 2 * (x1*x3 + x0*x2) / divisor;
+		
+		double y = 2 * (x2*x3 - x0*x1) / divisor;
+		
+		double z = 2 * (Math.pow(x0, 2) + Math.pow(x3, 2) -  Math.pow(x1, 2) - Math.pow(x2, 2)) / divisor;
+		
+		Triade temp = new Triade(x, y, z);
+		return new Triade(x/temp.modulo(), y/temp.modulo(), z/temp.modulo()); 
+	}
 	
 }
