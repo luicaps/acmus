@@ -284,13 +284,6 @@
 			   icon="icons/full/ctool16/tools.gif"
 			   class="acmus.tools.SpeedOfSound">
 		   </action>
-	   	   <action id="acmus_tools_rev"
-			   menubarPath="acmus_tools/slot1"
-			   label="Reverberation Time Graph"
-			   tooltip="AcMus Tools - Reverberation Time Graph"
-			   icon="icons/full/ctool16/tools.gif"
-			   class="acmus.tools.GraphRT60">
-		   </action>
 	   	   <action id="acmus_tools_reverb"
 			   menubarPath="acmus_tools/slot1"
 			   label="Reverberation Time"

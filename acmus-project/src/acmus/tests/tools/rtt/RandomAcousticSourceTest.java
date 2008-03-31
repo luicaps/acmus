@@ -23,7 +23,7 @@ public class RandomAcousticSourceTest {
 
 		Date d1, d2;
 		d1 = new Date();
-		pontosAleatorios = ras.generate(1000);
+		pontosAleatorios = ras.generate(10000);
 		d2 = new Date();
 
 		long temp = d2.getTime() - d1.getTime();
