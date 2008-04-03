@@ -97,23 +97,23 @@ public class ReverberationTime extends Composite {
   String[] _methods = { "Sabine", "Millington", "Eyring" };
 
   String[] _methodsHelpText = {
-      "Deve-se usar o modelo de Sabine quando:\n"
-          + "* o coeficiente m�dio de absor��o seja alto (acima de 0,25);\n"
-          + "* os materiais absorventes estejam distribu�dos uniformemente;\n"
-          + "* os coeficientes de absor��o n�o s�o precisos;\n"
-          + "* n�o se exige grande precis�o nos c�lculos.",
+      "The Sabine model should be used when:\n"
+          + "* the average absorption coefficient is high (more than 0,25);\n"
+          + "* the absorbing materials are uniformly distributed;\n"
+          + "* the absorption coefficients are not precise;\n"
+          + "* there is no need for high acccuracy for the results.",
 
-      "Deve-se usar o modelo de Millington quando:\n"
-          + "* n�o h� uniformidade na distribui��o dos materiais absorventes;\n"
-          + "* as superf�cies n�o s�o grandes;\n"
-          + "* nenhuma superf�cie tenha grande absor��o;\n"
-          + "* se conhece com exatid�o os coeficientes de absor��o;\n"
-          + "* se exige c�lculo preciso do tempo de reverbera��o.\n",
+      "The Millington model should be used when:\n"
+          + "* the absorbing materials are not uniformly distributed;\n"
+          + "* the surfaces are not large;\n"
+          + "* no surface has high absorption;\n"
+          + "* the absorption oefficients are known with good accuracy;\n"
+          + "* it is important to calculate the reverberation time with precision.\n",
 
-      "Deve-se usar o modelo de Eyring quando:\n"
-          + "* os materiais absorventes estejam distribu�dos uniformemente;\n"
-          + "* se conhece com exatid�o os coeficientes de absor��o;\n"
-          + "* se exige c�lculo preciso do tempo de reverbera��o." };
+      "The Eyring model should be used when:\n"
+          + "* the absorbing materials are uniformly distributed;\n"
+          + "* the absorption coefficients are known with good accuracy;\n"
+          + "* it is important to calculate the reverberation time with precision." };
 
   Button _compute;
   Button _removeResult;
