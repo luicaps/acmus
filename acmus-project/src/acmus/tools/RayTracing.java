@@ -28,6 +28,7 @@ package acmus.tools;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -46,9 +47,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import acmus.tools.structures.Icosaedro;
-import acmus.tools.structures.Parede;
-import acmus.tools.structures.Plain;
 import acmus.tools.structures.Triade;
 
 /**
@@ -69,16 +67,15 @@ public class RayTracing extends Composite {
 	Spinner point;
 	Spinner quantWalls;
 	Text resp;
-	ArrayList wallsLabels;
-	ArrayList wallsPoints;
-	ArrayList coeficientsLabels;
-	ArrayList wallsCoeficients;
+	List<Label> wallsLabels;
+	List<Spinner> wallsPoints;
+	List<Label> coeficientsLabels;
+	List<Text> wallsCoeficients;
 	
 	// Algorithm variables
 	static Triade Origem, Fonte, Receptor;
 	static double v_som, m_ar, raio;
 	static int taxa,cont,caracs;
-    static Parede wallQueue;
 	static Response resp1,resp2;
 
 	static File arq;  
@@ -95,10 +92,10 @@ public class RayTracing extends Composite {
 
 	    setLayout(new GridLayout(10, false));
 	    
-	    wallsLabels = new ArrayList();
-	    wallsPoints = new ArrayList();
-	    coeficientsLabels = new ArrayList();
-	    wallsCoeficients = new ArrayList();
+	    wallsLabels = new ArrayList<Label>();
+	    wallsPoints = new ArrayList<Spinner>();
+	    coeficientsLabels = new ArrayList<Label>();
+	    wallsCoeficients = new ArrayList<Text>();
 		    
 	    // Impulsive response
 	    
@@ -285,46 +282,35 @@ public class RayTracing extends Composite {
 	
 	protected void addWallsFields() {
 		for(int i = 0; i < quantWalls.getSelection(); i++) {
-			label = (Label)wallsLabels.get(i);
+			label = wallsLabels.get(i);
 			label.setVisible(true);
 			
-			label = (Label)coeficientsLabels.get(i);
+			label = coeficientsLabels.get(i);
 			label.setVisible(true);
 			
-			Text coeficiente = (Text)wallsCoeficients.get(i);
+			Text coeficiente = wallsCoeficients.get(i);
 			coeficiente.setVisible(true);
 			
 			for(int j = 0; j < 9; j++) {
-				point = (Spinner)wallsPoints.get(9*i + j);
+				point = wallsPoints.get(9*i + j);
 				point.setVisible(true);
 			}
 		}
 		for(int i = quantWalls.getSelection(); i < quantWalls.getMaximum(); i++) {
-			label = (Label)wallsLabels.get(i);
+			label = wallsLabels.get(i);
 			label.setVisible(false);
 			
-			label = (Label)coeficientsLabels.get(i);
+			label = coeficientsLabels.get(i);
 			label.setVisible(false);
 			
-			Text coeficient = (Text)wallsCoeficients.get(i);
+			Text coeficient = wallsCoeficients.get(i);
 			coeficient.setVisible(false);
 			
 			for(int j = 0; j < 9; j++) {
-				point = (Spinner)wallsPoints.get(9*i + j);
+				point = wallsPoints.get(9*i + j);
 				point.setVisible(false);
 			}
 		}
-	}
-
-	private void showVariables() {
-	    Control[] controls = this.getChildren();
-	    int tam = controls.length;
-	    for(int i = 0; i < tam; i++) {
-	    	Text resp2 = new Text(this, SWT.NONE);
-	    	resp2.setText("Var " + i + ": " + controls[i].getData());
-	    	setGridData(resp2, SWT.LEAD, SWT.CENTER, 1);
-//	    	System.out.println("Var " + i + ": " + controls[i]);
-	    }
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum, int minimum) {
@@ -357,210 +343,20 @@ public class RayTracing extends Composite {
 	}
 	
 	public void compute() {
-		int quantidade;
-		int i,j,numraios;
-//		
-//		Control[] controls = this.getChildren();
 		
 		/* Inicializa��o da estrutura que garda as paredes (fila) */
-		wallQueue = null;
 		resp1 = null;
 		resp2 = null;
 		
 		/* Inicializa��o do Icosaedro */
-		Icosaedro ico = new Icosaedro();
 		
 		taxa = Integer.valueOf(respostaImpulsivaText.getText());
 
-		// Essa linha abaixo mostra como devemos fazer quando tivermos calculado a resposta 	
-//		resposta.setText("colocar a resposta");
-		
-		// TODO: Daqui em diante todas as variaveis que o programa C pega devem passadas para variaveis da classe
-//		printf("Entre com o ponto Origem (x y z): ");
-//		scanf("%lf %lf %lf", &Origem.x, &Origem.y, &Origem.z);
-//		printf("Entre com a velocidade do som (m/s): ");
-//		scanf("%lf", &v_som);
-//		printf("Entre com a constante de atenuacao do som no ar: ");
-//		scanf("%lf", &m_ar);
-//		printf("Estipule a posicao do receptor esferico: ");
-//		scanf("%lf %lf %lf", &Receptor.x, &Receptor.y, &Receptor.z);
-//		printf("Estipule o raio do receptor esferico: ");
-//		scanf("%lf", &raio);
-//		printf("Entre com a quantidade de paredes(planos): ");
-		/* Loop para leitura dos pontos das paredes*/
-//		for (i = 0; i < quantWalls.getSelection(); i++){
-//			addWall();
-//			printf("Entre com a quantidade de pontos desejados para a parede %d: ",i+1);
-//			scanf("%d", &(FilaDeParedes->parede->qpontos));
-//			while(FilaDeParedes->parede->qpontos < 3){
-//				printf("Entre com uma quantidade de pontos (maior que 2) para a parede %d: ",i+1);
-//				scanf("%d", &(FilaDeParedes->parede->qpontos));
-//			}
-//			FilaDeParedes->parede->nrparede = i+1;
-//			printf("malloc 9: %ld\n",(long int)FilaDeParedes->parede->qpontos * sizeof(TRIADE));
-//			FilaDeParedes->parede->Ponto = (TRIADE *)malloc(FilaDeParedes->parede->qpontos * sizeof(TRIADE));
-//			for(j=0; j<FilaDeParedes->parede->qpontos; j++){
-//				printf("Entre com o ponto %d  para a parede %d:\n", j+1, i+1);
-//				printf("Ponto %d (x y z): ", j+1);
-//				scanf("%lf %lf %lf", &(FilaDeParedes->parede->Ponto[j].x),
-//						&(FilaDeParedes->parede->Ponto[j].y), &(FilaDeParedes->parede->Ponto[j].z));
-//			}
-//			if(!verificapontos()){
-//				ApPAREDES temp;
-//				printf("Entre novamente com os pontos:\n");
-//				/* libera mem utilizada */
-//				free(FilaDeParedes->parede->Ponto);
-//				free(FilaDeParedes->parede);
-//				temp = FilaDeParedes->prox;
-//				free(FilaDeParedes);
-//				FilaDeParedes = temp;
-//				i--;
-//			}
-//			else{
-//				CalculaRetas(FilaDeParedes->parede);
-//				printf("Entre Com o Coeficiente de Absorcao dessa Parede: ");
-//				scanf("%lf", &(FilaDeParedes->parede->Coeficiente));
-//			}
-//		}
-//		/* Inicio do Met�do do Tra�ado de Raios */
-//		
-//		arq = fopen("fonte.txt","w");
-//		fprintf(arq,"%%Raios gerados\n");
-//		
-//		caracs = 0;
-//		cont = 0;
-//		printf("Entre com o ponto origem da Fonte  (x y z): ");
-//		scanf("%lf %lf %lf", &Fonte.x, &Fonte.y, &Fonte.z);
-//		
-//		printf("Entre com um numero natural de raios: ");
-//		scanf("%d", &numraios);
-//		numraios = (int)(sqrt((numraios - 2)/10) + 1);
-//		printf("\nO programa gerara %d raios pela divisao de cada aresta em %d partes.\n\n",(2+10*numraios*numraios),numraios);
-//		/* Itera��o para os v�rtices do icosaedro */
-//		cont = 1;
-//		printf("Total de raios iterados: ");
-//		for(i=0; i < 12; i++){
-//			EscreveDec();
-//			TracaRaio(Fonte,vertice[i],1,(double)1/K);
-//		}
-//		if(numraios > 1){
-//			for(i=0; i < 30; i++){
-//				aresta[i].ApPonto = DivideAresta(*(aresta[i].ponto1),*(aresta[i].ponto2),numraios,1);
-//			}
-//			for(i=0; i < 12; i++){
-//				for(j=0; j < numraios - 1; j++){
-//					DivideAresta(face[i].aresta1->ApPonto[j],face[i].aresta2->ApPonto[j],j+1,0);
-//				}
-//			}
-//			for(i=12; i < 16; i++){
-//				int k = numraios - 2;
-//				for(j=0; j < numraios - 1; j++){
-//					DivideAresta(face[i].aresta1->ApPonto[j],face[i].aresta2->ApPonto[k],k+1,0);
-//					k--;
-//				}
-//			}
-//			for(i=16; i < 18; i++){
-//				int k = numraios - 2;
-//				for(j=0; j < numraios - 1; j++){
-//					DivideAresta(face[i].aresta1->ApPonto[j],face[i].aresta2->ApPonto[k],j+1,0);
-//					k--;
-//				}
-//			}
-//			for(i=18; i < 20; i++){
-//				int k = numraios - 2;
-//				for(j=0; j < numraios - 1; j++){
-//					DivideAresta(face[i].aresta1->ApPonto[j],face[i].aresta2->ApPonto[k],k+1,0);
-//					k--;
-//				}
-//			}
-//		}
-//		printf("\nImprimindo resposta impulsiva nos arquivos saidax.txt \n");
-//		ImprimeArquivo(resp1,"saida1.txt");
-//		ImprimeArquivo(resp2,"saida2.txt");
-//		ImprimeArquivo2(resp2,"saida3.txt");
-//		printf("Fim de programa.\n");
-//		exit(0);
-		
-		
-		
-		
-		
-		
-		//TODO EXECUTA O ALGORITMO AQUI!!!
-//		double x = 0.0;
-//		double y = 0.0;
-//		try {
-//		String s1 = temperature.getText();
-//		Double d1 = Double.valueOf(s1);
-//		x = Math.abs(d1.doubleValue());
-//		String s2 = humidity.getText();
-//		Double d2 = Double.valueOf(s2);
-//		y = Math.abs(d2.doubleValue());
-//		if (inputValid(x, y) == true) {
-//		CalculateSpeedOfSound cal = new CalculateSpeedOfSound(x, y);
-//		double velocity = cal.calculateSpeedOfSound();
-//		velocity = velocity * 10;
-//		int aux = (int) velocity;
-//		velocity = (double) aux / 10;
-//		speed.setText("" + velocity);
-//		} else
-//		errorDialog.open();
-//		} catch (Exception exception) {
-//		errorDialog.open();
-//		}
-	}
-	
-	/***********************************************************************
-	   Fun��o que verifica se os pontos dados pelo usu�rio pertencem ao
-	   mesmo plano, retornando V (1) ou F (0). Ao mesmo tempo, ela tamb�m
-	   calcula o vetor normal ao plano e o vetor normal unit�rio ao plano.
-	************************************************************************/
-	public int verificapontos(){
-		ArrayList NORMAL = new ArrayList();
-		Triade aux1, aux2;
-		int i;
-		double aux;
-		
-		for(i = 0; i < (wallQueue.getParede().getNumPoints() - 2); i++){
-			aux1 = ((Triade)wallQueue.getParede().getPoints().get(i)).sub(((Triade)wallQueue.getParede().getPoints().get(i+1)));
-			aux2 = ((Triade)wallQueue.getParede().getPoints().get(i+1)).sub(((Triade)wallQueue.getParede().getPoints().get(i+2)));
-			NORMAL.set(i, aux1.produtoVetorial(aux2));
-		}
-		for(i = 0; i < (wallQueue.getParede().getNumPoints() - 2); i++){
-			if(((Triade)NORMAL.get(i)).modulo() == 0){
-				System.out.println("Tres pontos consecutivos nao podem ser colineares!\n");
-				return 0;
-			}
-		}
-		wallQueue.getParede().setNormalVectorUnit(((Triade)NORMAL.get(0)).divideVetorEscalar(((Triade)NORMAL.get(0)).modulo()));
-		for(i = 0; i < wallQueue.getParede().getNumPoints() - 3; i++){
-			aux = ((Triade)NORMAL.get(i)).anguloVetores(((Triade)NORMAL.get(i + 1)));
-			if(aux != 0 && ((aux < Math.PI - precisao)||(aux > Math.PI + precisao))){
-				System.out.println("Os "+wallQueue.getParede().getNumPoints()+"pontos dados nao formam um plano!");
-				return 0;
-			}
-		}
-		return 1;
-	}
-	
-	/***********************************************************************
-	   Procedimento que cria as paredes e a estrutura da fila de paredes,
-	   fazendo a inser��o dessa parede na FilaDeParedes.
-	************************************************************************/
-	public void addWall() {
-	  Parede aux = new Parede();
-	  Plain aux2 = new Plain();
-
-	  aux2.setFlagReflection(0); /* inicializa todas as paredes sem reflex�o */
-	  aux.setProx(wallQueue);
-	  aux.setParede(aux2);
-	  wallQueue = aux;
 	}
 	
 	
 	public static void registraRaio(Response resp, double energia, double dist){
 		int indice;
-		double a;
 		Response aux,aux2;
 		
 		indice = (int)(dist*taxa/v_som);
@@ -606,8 +402,6 @@ public class RayTracing extends Composite {
 		Display display = new Display ();
 		Shell shell = new Shell (display);
 
-		RayTracing rt = new RayTracing(shell, SWT.NONE );
-		
 		shell.open ();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch ()) display.sleep ();

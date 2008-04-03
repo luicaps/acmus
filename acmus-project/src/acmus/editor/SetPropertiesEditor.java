@@ -26,8 +26,6 @@ package acmus.editor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -113,7 +111,7 @@ public class SetPropertiesEditor extends EditorPart {
     composite.setFont(parent.getFont());
 
     IFile posFile = _input.getFile().getProject().getFile("project.positions");
-    Set<String> posSet = new TreeSet<String>();
+//    Set<String> posSet = new TreeSet<String>();
 //    _propertiesControl = new SetPropertiesControl(composite, SWT.NONE,
 //        AcmusMeasurementSetWizard.getPositions(posFile, posSet));
   _propertiesControl = new SetPropertiesControl(composite, SWT.NONE,

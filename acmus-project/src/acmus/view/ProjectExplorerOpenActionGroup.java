@@ -53,6 +53,7 @@ public class ProjectExplorerOpenActionGroup extends OpenActionGroup {
     super(navigator);
   }
 
+  @Override
   public void runDefaultAction(IStructuredSelection selection) {
     // System.out.println("runDefault");
     Object element = selection.getFirstElement();
@@ -127,8 +128,8 @@ public class ProjectExplorerOpenActionGroup extends OpenActionGroup {
      * 
      * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
      */
-    public Iterator iterator() {
-      return new Iterator() {
+    public Iterator<?> iterator() {
+     return new Iterator<Object>() {
         boolean _hasNext = true;
 
         public boolean hasNext() {
@@ -171,8 +172,8 @@ public class ProjectExplorerOpenActionGroup extends OpenActionGroup {
      * 
      * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
      */
-    public List toList() {
-      List res = new ArrayList();
+    public List<?> toList() {
+      List<Object> res = new ArrayList<Object>();
       res.add(_el);
       return res;
     }

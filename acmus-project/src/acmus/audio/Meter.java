@@ -101,6 +101,9 @@ public class Meter extends Canvas implements IMeter , MouseListener{
       _meters.get(i).resetPeak();
     }
   }
+  
+  // XXX is it right?
+  @SuppressWarnings("all")
   public void redrawChildren() {
     for (int i = 0; i < _channels; i++) {
       _meters.get(i).redraw();

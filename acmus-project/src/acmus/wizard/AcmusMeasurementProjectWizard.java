@@ -51,94 +51,98 @@ import acmus.AcmusGraphics;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
+@SuppressWarnings("unused")
 public class AcmusMeasurementProjectWizard extends Wizard implements INewWizard {
-  private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-  private IWorkbench workbench;
+	private IWorkbench workbench;
 
-  private AcmusMeasurementProjectWizardFirstPage mainPage;
+	private AcmusMeasurementProjectWizardFirstPage mainPage;
 
-  private AcmusMeasurementProjectWizardSecondPage infoPage;
+	private AcmusMeasurementProjectWizardSecondPage infoPage;
 
-  public void addPages() {
-    mainPage = new AcmusMeasurementProjectWizardFirstPage(
-        "AcmusMeasurementProjectWizardFirstPage");
-    infoPage = new AcmusMeasurementProjectWizardSecondPage(
-        "AcmusMeasurementProjectWizardSecondPage");
-    addPage(mainPage);
-    addPage(infoPage);
-  }
+	public void addPages() {
+		mainPage = new AcmusMeasurementProjectWizardFirstPage(
+				"AcmusMeasurementProjectWizardFirstPage");
+		infoPage = new AcmusMeasurementProjectWizardSecondPage(
+				"AcmusMeasurementProjectWizardSecondPage");
+		addPage(mainPage);
+		addPage(infoPage);
+	}
 
-  /**
-   * (non-Javadoc) Method declared on INewWizard
-   */
-  public void init(IWorkbench workbench, IStructuredSelection selection) {
-    this.workbench = workbench;
-    this.selection = selection;
-    setWindowTitle("New AcMus Project"); //$NON-NLS-1$
-    setDefaultPageImageDescriptor(AcmusGraphics.NEW_PROJECT_WIZARD_BANNER);
-  }
+	/**
+	 * (non-Javadoc) Method declared on INewWizard
+	 */
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle("New AcMus Project"); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(AcmusGraphics.NEW_PROJECT_WIZARD_BANNER);
+	}
 
-  /**
-   * (non-Javadoc) Method declared on IWizard
-   */
-  public boolean performFinish() {
-    IProject project = mainPage.getProjectHandle();
-    try {
-      project.create(null);
-      project.open(null);
+	/**
+	 * (non-Javadoc) Method declared on IWizard
+	 */
+	public boolean performFinish() {
+		IProject project = mainPage.getProjectHandle();
+		try {
+			project.create(null);
+			project.open(null);
 
-      Properties props = infoPage.getProjectProperties();
-//      Enumeration en = props.keys();
-//      while (en.hasMoreElements()) {
-//        String key = (String) en.nextElement();
-//        project.setPersistentProperty(new QualifiedName("acmus", key), props
-//            .getProperty(key));
-//      }
-      
-      IFile propsFile = project.getFile("project.properties");
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      props.store(baos, project.getName() + " properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      propsFile.create(bais, true, null);
+			Properties props = infoPage.getProjectProperties();
+			// Enumeration en = props.keys();
+			// while (en.hasMoreElements()) {
+			// String key = (String) en.nextElement();
+			// project.setPersistentProperty(new QualifiedName("acmus", key),
+			// props
+			// .getProperty(key));
+			// }
 
-      IFile posFile = project.getFile("project.positions");
-      baos = new ByteArrayOutputStream();
-      PrintStream ps = new PrintStream(baos);
-      ps.println("[floor plan 0]");
-      ps.println("name = New");
-      ps.println("file = ");
-      ps.println("width = 0");
-      ps.println("height = 0");
-      bais = new ByteArrayInputStream(baos.toByteArray());
-      posFile.create(bais, true, null);
+			IFile propsFile = project.getFile("project.properties");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			props.store(baos, project.getName() + " properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			propsFile.create(bais, true, null);
 
-      IFolder signalFolder = project.getFolder("_signals.signal");
-      signalFolder.create(true, true, null);
-      IFolder signalAudioFolder = signalFolder.getFolder("audio");
-      signalAudioFolder.create(true, true, null);
+			IFile posFile = project.getFile("project.positions");
+			baos = new ByteArrayOutputStream();
+			PrintStream ps = new PrintStream(baos);
+			ps.println("[floor plan 0]");
+			ps.println("name = New");
+			ps.println("file = ");
+			ps.println("width = 0");
+			ps.println("height = 0");
+			bais = new ByteArrayInputStream(baos.toByteArray());
+			posFile.create(bais, true, null);
 
-      //      IFile propsFile = project.getFile("project.properties");
-      //
-      //      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      //
-      //      Properties props = infoPage.getProjectProperties();
-      //      props.store(baos, "AcMus Measurement Project "
-      //          + mainPage.getProjectName());
-      //
-      //      propsFile
-      //          .create(new ByteArrayInputStream(baos.toByteArray()), true, null);
+			IFolder signalFolder = project.getFolder("_signals.signal");
+			signalFolder.create(true, true, null);
+			IFolder signalAudioFolder = signalFolder.getFolder("audio");
+			signalAudioFolder.create(true, true, null);
 
-      IFile prjFile = project.getFile(".project");
-      prjFile.setTeamPrivateMember(true);
+			// IFile propsFile = project.getFile("project.properties");
+			//
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			//
+			// Properties props = infoPage.getProjectProperties();
+			// props.store(baos, "AcMus Measurement Project "
+			// + mainPage.getProjectName());
+			//
+			// propsFile
+			// .create(new ByteArrayInputStream(baos.toByteArray()), true,
+			// null);
 
-    } catch (CoreException e) {
-      e.printStackTrace();
+			IFile prjFile = project.getFile(".project");
+			prjFile.setTeamPrivateMember(true);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+		} catch (CoreException e) {
+			e.printStackTrace();
 
-    return true;
-  }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
 }

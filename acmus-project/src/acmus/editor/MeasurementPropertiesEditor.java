@@ -26,10 +26,7 @@ package acmus.editor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -49,104 +46,111 @@ import acmus.MeasurementProject;
 
 public class MeasurementPropertiesEditor extends EditorPart {
 
-  MeasurementPropertiesControl _propertiesControl;
+	MeasurementPropertiesControl _propertiesControl;
 
-  FileEditorInput _input;
-  boolean _isDirty = false;
-  
-  @Override
-  public void doSave(IProgressMonitor monitor) {
-    Properties props = _propertiesControl.getMeasurementProperties();
+	FileEditorInput _input;
+	boolean _isDirty = false;
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      props.store(baos, _input.getFile().getProject().getName() + "."
-          + props.getProperty("Name") + " Measurement folder properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      _input.getFile().setContents(bais, true, true, null);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		Properties props = _propertiesControl.getMeasurementProperties();
 
-    setDirty(false);
-  }
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			props.store(baos, _input.getFile().getProject().getName() + "."
+					+ props.getProperty("Name")
+					+ " Measurement folder properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			_input.getFile().setContents(bais, true, true, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-  @Override
-  public void doSaveAs() {
-    // TODO Auto-generated method stub
+		setDirty(false);
+	}
 
-  }
+	@Override
+	public void doSaveAs() {
+		// TODO Auto-generated method stub
 
-  @Override
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    setSite(site);
-    setInput(input);
-    _input = (FileEditorInput) input;
-    this.setPartName(_input.getFile().getParent().getName() + " properties");
-  }
+	}
 
-  @Override
-  public boolean isDirty() {
-    return _isDirty;
-  }
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		_input = (FileEditorInput) input;
+		this
+				.setPartName(_input.getFile().getParent().getName()
+						+ " properties");
+	}
 
-  public void setDirty(boolean dirty) {
-    if (_isDirty != dirty) {
-      _isDirty = dirty;
-      firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    }
-  }
+	@Override
+	public boolean isDirty() {
+		return _isDirty;
+	}
 
-  @Override
-  public boolean isSaveAsAllowed() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public void setDirty(boolean dirty) {
+		if (_isDirty != dirty) {
+			_isDirty = dirty;
+			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+		}
+	}
 
-  @Override
-  public void createPartControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setFont(parent.getFont());
+	@Override
+	public boolean isSaveAsAllowed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    IFile posFile = _input.getFile().getProject().getFile("project.positions");
-    Set<String> posSet = new TreeSet<String>();
-    _propertiesControl = new MeasurementPropertiesControl(composite, SWT.NONE,
-        "");
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    _propertiesControl.setLayoutData(gridData);
-    
-    _propertiesControl.setProjectName(_input.getFile().getProject().getName());
-    _propertiesControl.setSessionName(MeasurementProject
-        .removeSuffix(_input.getFile().getParent().getParent().getParent().getName()));
-    _propertiesControl.setSetName(MeasurementProject
-        .removeSuffix(_input.getFile().getParent().getParent().getName()));
+	@Override
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setFont(parent.getFont());
 
-    try {
-      _propertiesControl.loadProperties(_input.getFile().getContents());
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+		// IFile posFile =
+		// _input.getFile().getProject().getFile("project.positions");
+		// Set<String> posSet = new TreeSet<String>();
+		_propertiesControl = new MeasurementPropertiesControl(composite,
+				SWT.NONE, "");
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		_propertiesControl.setLayoutData(gridData);
 
-    ModifyListener ml = new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        setDirty(true);
-      }
-    };
-    //_propertiesControl.addNameModifyListener(ml);
-    _propertiesControl.setMeasurementNameEditable(false);
-    _propertiesControl.addCommentsModifyListener(ml);
-  }
+		_propertiesControl.setProjectName(_input.getFile().getProject()
+				.getName());
+		_propertiesControl.setSessionName(MeasurementProject
+				.removeSuffix(_input.getFile().getParent().getParent()
+						.getParent().getName()));
+		_propertiesControl.setSetName(MeasurementProject.removeSuffix(_input
+				.getFile().getParent().getParent().getName()));
 
-  @Override
-  public void setFocus() {
-    // TODO Auto-generated method stub
+		try {
+			_propertiesControl.loadProperties(_input.getFile().getContents());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
-  }
+		ModifyListener ml = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		};
+		// _propertiesControl.addNameModifyListener(ml);
+		_propertiesControl.setMeasurementNameEditable(false);
+		_propertiesControl.addCommentsModifyListener(ml);
+	}
 
-  public Properties getMeasurementProperties() {
-    return _propertiesControl.getMeasurementProperties();
-  }
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Properties getMeasurementProperties() {
+		return _propertiesControl.getMeasurementProperties();
+	}
 
 }

@@ -71,7 +71,7 @@ public class Signal {
         List<Integer> l = new ArrayList<Integer>();
         while (line != null && !line.trim().equals("")) {
           st = new StringTokenizer(line);
-          String cl = st.nextToken();
+          st.nextToken();
           while (st.hasMoreTokens()) {
             l.add(new Integer(st.nextToken()));
           }

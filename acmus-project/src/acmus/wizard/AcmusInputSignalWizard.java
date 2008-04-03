@@ -45,80 +45,83 @@ import acmus.dsp.Util;
  */
 public class AcmusInputSignalWizard extends Wizard implements INewWizard {
 
-  private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-  private IWorkbench workbench;
+	@SuppressWarnings("unused")
+	private IWorkbench workbench;
 
-  private AcmusInputSignalWizardFirstPage mainPage;
+	private AcmusInputSignalWizardFirstPage mainPage;
 
-  public void addPages() {
-    IResource s = (IResource) selection.getFirstElement();
-    if (!(s instanceof IFolder)) {
-      addPage(new ErrorPage("AcmusInputSignalWizardFirstPage",
-          "You can only create a signal inside a signals folder."));
-    } else {
-      IFolder f = (IFolder) s;
-      System.out.println(f.getName());
-      if (!f.getName().equals("_signals.signal")) {
-        addPage(new ErrorPage("AcmusInputSignalWizardFirstPage",
-            "You can only create a signal inside a signals folder."));
-      } else {
-        mainPage = new AcmusInputSignalWizardFirstPage(
-            "AcmusInputSignalWizardFirstPage");
-        addPage(mainPage);
-      }
-    }
-  }
+	public void addPages() {
+		IResource s = (IResource) selection.getFirstElement();
+		if (!(s instanceof IFolder)) {
+			addPage(new ErrorPage("AcmusInputSignalWizardFirstPage",
+					"You can only create a signal inside a signals folder."));
+		} else {
+			IFolder f = (IFolder) s;
+			System.out.println(f.getName());
+			if (!f.getName().equals("_signals.signal")) {
+				addPage(new ErrorPage("AcmusInputSignalWizardFirstPage",
+						"You can only create a signal inside a signals folder."));
+			} else {
+				mainPage = new AcmusInputSignalWizardFirstPage(
+						"AcmusInputSignalWizardFirstPage");
+				addPage(mainPage);
+			}
+		}
+	}
 
-  public void init(IWorkbench workbench, IStructuredSelection selection) {
-    this.workbench = workbench;
-    this.selection = selection;
-    setWindowTitle("New Input Signal"); //$NON-NLS-1$
-  }
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle("New Input Signal"); //$NON-NLS-1$
+	}
 
-  public boolean performFinish() {
-    IFolder folder = (IFolder) selection.getFirstElement();
-    Properties props = mainPage.getSessionProperties();
+	public boolean performFinish() {
+		IFolder folder = (IFolder) selection.getFirstElement();
+		Properties props = mainPage.getSessionProperties();
 
-    try {
-      // IFile file = folder.getFile(props.getProperty("Name") + ".signal");
-      //
-      // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      // props.store(baos, "");
-      //      
-      // ByteArrayInputStream bais = new
-      // ByteArrayInputStream(baos.toByteArray());
-      // file.create(bais,true,null);
+		try {
+			// IFile file = folder.getFile(props.getProperty("Name") +
+			// ".signal");
+			//
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// props.store(baos, "");
+			//      
+			// ByteArrayInputStream bais = new
+			// ByteArrayInputStream(baos.toByteArray());
+			// file.create(bais,true,null);
 
-      String type = props.getProperty("Type", "");
+			String type = props.getProperty("Type", "");
 
-      if (type.equals("Sweep")) {
-        IFile file = folder.getFile(props.getProperty("Name") + ".wav");
-        double startFreq = Double.parseDouble(props
-            .getProperty("StartFrequency"));
-        double endFreq = Double.parseDouble(props.getProperty("EndFrequency"));
-        double duration = Double.parseDouble(props.getProperty("Duration"));
+			if (type.equals("Sweep")) {
+				IFile file = folder.getFile(props.getProperty("Name") + ".wav");
+				double startFreq = Double.parseDouble(props
+						.getProperty("StartFrequency"));
+				double endFreq = Double.parseDouble(props
+						.getProperty("EndFrequency"));
+				double duration = Double.parseDouble(props
+						.getProperty("Duration"));
 
-        double y[] = Signal.sweepLog(44100, duration, startFreq, endFreq);
-        for (int i = 0; i < y.length; i++) {
-          y[i] = y[i] * 0.8;
-        }
-        Util.wavWrite(y, file.getLocation().toOSString());
-      }
-      else if (type.equals("MLS")) {
-        
-      }
-      else if (type.equals("File")) {
-        
-      }
-      
-      folder.refreshLocal(1, null);
+				double y[] = Signal.sweepLog(44100, duration, startFreq,
+						endFreq);
+				for (int i = 0; i < y.length; i++) {
+					y[i] = y[i] * 0.8;
+				}
+				Util.wavWrite(y, file.getLocation().toOSString());
+			} else if (type.equals("MLS")) {
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+			} else if (type.equals("File")) {
 
-    return true;
-  }
+			}
+
+			folder.refreshLocal(1, null);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
 
 }

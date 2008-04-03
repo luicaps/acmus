@@ -225,8 +225,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
       if (_recFile.exists()) {
         try {
-          AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
-              .getContents());
+//          AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
+//              .getContents());
           _aeRec.open(_recFile.getLocation().toOSString());
           // _wfRec.setData(AudioPlayer.readData(ais), ais.getFormat()
           // .getChannels(), ais.getFormat().getSampleRate(), ais.getFormat()
@@ -238,8 +238,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
       }
       if (_recFileLf.exists()) {
         try {
-          AudioInputStream ais = AudioSystem.getAudioInputStream(_recFileLf
-              .getContents());
+//          AudioInputStream ais = AudioSystem.getAudioInputStream(_recFileLf
+//              .getContents());
           _aeRecLf.open(_recFileLf.getLocation().toOSString());
           // _wfRecLf.setData(AudioPlayer.readData(ais), ais.getFormat()
           // .getChannels(), ais.getFormat().getSampleRate(), ais.getFormat()
@@ -1494,26 +1494,26 @@ public class MeasurementEditor extends MultiPageEditorPart {
     }
   }
 
-  private final void findRecordingStart() {
-    try {
-      AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
-          .getContents());
-      int[] data = AudioPlayer.readData(ais);
-      double[] rec = new double[data.length / 2]; // FIXME
-      for (int i = 0; i < rec.length; i++) {
-        rec[i] = data[2 * i];
-      }
-      int start = Parameters.inicio(rec);
-      int[] data2 = new int[data.length - start * 2];
-      for (int i = 0; i < data2.length; i++) {
-        data2[i] = data[i + start * 2];
-      }
-      Util.wavWrite(data2, 2, 16, _recFile.getLocation().toOSString());
-    } catch (Exception e) {
-      e.printStackTrace();
-
-    }
-  }
+//  private final void findRecordingStart() {
+//    try {
+//      AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
+//          .getContents());
+//      int[] data = AudioPlayer.readData(ais);
+//      double[] rec = new double[data.length / 2]; // FIXME
+//      for (int i = 0; i < rec.length; i++) {
+//        rec[i] = data[2 * i];
+//      }
+//      int start = Parameters.inicio(rec);
+//      int[] data2 = new int[data.length - start * 2];
+//      for (int i = 0; i < data2.length; i++) {
+//        data2[i] = data[i + start * 2];
+//      }
+//      Util.wavWrite(data2, 2, 16, _recFile.getLocation().toOSString());
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//
+//    }
+//  }
 
   /*
    * (non-Javadoc)

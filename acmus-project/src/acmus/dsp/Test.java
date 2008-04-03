@@ -38,9 +38,9 @@ import javax.sound.sampled.AudioSystem;
 
 import acmus.audio.AudioPlayer;
 
+@Deprecated
+@SuppressWarnings("all")
 public class Test {
-
-  static DecimalFormat _f = new DecimalFormat("#.######");
 
   public static void main(String args[]) {
     //testHirata();
@@ -313,7 +313,7 @@ public class Test {
   
     double ir[] = Filter.filter(b, a, x);
     for (int i = 0; i < ir.length; i++) {
-      System.out.println(_f.format(ir[i]));
+      System.out.println(Util._f.format(ir[i]));
     }
   }
 
@@ -332,7 +332,7 @@ public class Test {
   
     double ir[] = Filter.filterZ(b, a, x, zi);
     for (int i = 0; i < ir.length; i++) {
-      System.out.println(_f.format(ir[i]));
+      System.out.println(Util._f.format(ir[i]));
     }
   }
 
@@ -424,12 +424,12 @@ public class Test {
     FFT1d f = new FFT1d(xre.length);
     f.fft(xre, xim);
     for (int i = 0; i < xre.length; i++) {
-      System.out.println(_f.format(xre[i]) + " " + _f.format(xim[i]) + "i");
+      System.out.println(Util._f.format(xre[i]) + " " + Util._f.format(xim[i]) + "i");
     }
     IFFT1d ifft = new IFFT1d(xre.length);
     ifft.ifft(xre, xim);
     for (int i = 0; i < xre.length; i++) {
-      System.out.println(_f.format(xre[i]) + " " + _f.format(xim[i]) + "i");
+      System.out.println(Util._f.format(xre[i]) + " " + Util._f.format(xim[i]) + "i");
     }
     // doFFT(x);
   }
@@ -489,9 +489,9 @@ public class Test {
     double k = Filter.buttap(n, pRe, pIm);
   
     for (int i = 0; i < n; i++) {
-      System.out.println(_f.format(pRe[i]) + " " + _f.format(pIm[i]) + "i");
+      System.out.println(Util._f.format(pRe[i]) + " " + Util._f.format(pIm[i]) + "i");
     }
-    System.out.println(_f.format(k));
+    System.out.println(Util._f.format(k));
   }
 
   public static void testSweep() {

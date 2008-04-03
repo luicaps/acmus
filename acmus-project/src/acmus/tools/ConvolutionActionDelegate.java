@@ -42,43 +42,45 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 
-public class ConvolutionActionDelegate  implements IWorkbenchWindowActionDelegate {
+public class ConvolutionActionDelegate implements
+		IWorkbenchWindowActionDelegate {
 
-  private IStructuredSelection _sel;
+	private IStructuredSelection _sel;
 
-  public void dispose() {
-    // TODO Auto-generated method stub
-    
-  }
+	public void dispose() {
+		// TODO Auto-generated method stub
 
-  public void init(IWorkbenchWindow window) {
-    // TODO Auto-generated method stub
-    
-  }
+	}
 
-  public void run(IAction action) {
-    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-    Shell shell = new Shell(d);
-    shell.setLayout(new FillLayout());
-    
-    Convolution conv = new Convolution(shell, shell, SWT.NONE);
-    
-    if (_sel.size() == 2) {
-      List l = _sel.toList();
-      IFile f1 = (IFile)l.get(0);
-      IFile f2 = (IFile)l.get(1);
-      conv.setInput1(f1.getLocation().toOSString());
-      conv.setInput2(f2.getLocation().toOSString());
-    }
-    
-    shell.setText("Convolution");
-    shell.setImage(AcmusGraphics.IMG_APP_ICON);
-    shell.pack();
-    shell.open();
-  }
+	public void init(IWorkbenchWindow window) {
+		// TODO Auto-generated method stub
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    _sel = (IStructuredSelection)selection;
-  }
+	}
+
+	@SuppressWarnings("unchecked")
+	public void run(IAction action) {
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+		Shell shell = new Shell(d);
+		shell.setLayout(new FillLayout());
+
+		Convolution conv = new Convolution(shell, shell, SWT.NONE);
+
+		if (_sel.size() == 2) {
+			List<IFile> l = _sel.toList();
+			IFile f1 = l.get(0);
+			IFile f2 = l.get(1);
+			conv.setInput1(f1.getLocation().toOSString());
+			conv.setInput2(f2.getLocation().toOSString());
+		}
+
+		shell.setText("Convolution");
+		shell.setImage(AcmusGraphics.IMG_APP_ICON);
+		shell.pack();
+		shell.open();
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		_sel = (IStructuredSelection) selection;
+	}
 
 }

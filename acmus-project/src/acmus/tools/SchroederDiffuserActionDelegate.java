@@ -14,35 +14,37 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 
-public class SchroederDiffuserActionDelegate implements IWorkbenchWindowActionDelegate{
+public class SchroederDiffuserActionDelegate implements
+		IWorkbenchWindowActionDelegate {
 
-  private IStructuredSelection _sel;
+	@SuppressWarnings("unused")
+	private IStructuredSelection _sel;
 
-  public void run(IAction action) {
-    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-    Shell shell = new Shell(d);
-    shell.setLayout(new GridLayout(1, false));
-    SchroederDiffuser sd = new SchroederDiffuser(shell, SWT.NONE);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    gridData.heightHint = 420;
-    gridData.widthHint = 650;
-    sd.setLayoutData(gridData);
-    
-    shell.setText("Schroeder Diffuser");
-    shell.setImage(AcmusGraphics.IMG_APP_ICON);
-    shell.pack();
-    
-    shell.open();    
-  }
+	public void run(IAction action) {
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+		Shell shell = new Shell(d);
+		shell.setLayout(new GridLayout(1, false));
+		SchroederDiffuser sd = new SchroederDiffuser(shell, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 420;
+		gridData.widthHint = 650;
+		sd.setLayoutData(gridData);
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    _sel = (IStructuredSelection)selection;
-  }
+		shell.setText("Schroeder Diffuser");
+		shell.setImage(AcmusGraphics.IMG_APP_ICON);
+		shell.pack();
 
-  public void dispose() {
-  }
+		shell.open();
+	}
 
-  public void init(IWorkbenchWindow window) {
-  }
+	public void selectionChanged(IAction action, ISelection selection) {
+		_sel = (IStructuredSelection) selection;
+	}
+
+	public void dispose() {
+	}
+
+	public void init(IWorkbenchWindow window) {
+	}
 
 }

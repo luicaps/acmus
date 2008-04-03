@@ -284,16 +284,16 @@ public class SetPropertiesControl extends Composite {
     fComments.setText(fProperties.getProperty("Comments", ""));
   }
 
-  private int findItem(Combo c, String item) {
-    int res = 0;
-    for (int i = 0; i < c.getItemCount(); i++) {
-      if (c.getItem(i).equals(item)) {
-        res = i;
-        break;
-      }
-    }
-    return res;
-  }
+//  private int findItem(Combo c, String item) {
+//    int res = 0;
+//    for (int i = 0; i < c.getItemCount(); i++) {
+//      if (c.getItem(i).equals(item)) {
+//        res = i;
+//        break;
+//      }
+//    }
+//    return res;
+//  }
 
   // optional information
   public void createTakeListControl(IContainer sessionFolder) {
@@ -336,9 +336,9 @@ public class SetPropertiesControl extends Composite {
 
     fMic.removeAll();
     fSource.removeAll();
-    Iterator it = _posChooser.iterator(_floorPlanId);
+    Iterator<Position> it = _posChooser.iterator(_floorPlanId);
     while (it.hasNext()) {
-      Position p = (Position) it.next();
+      Position p = it.next();
       fMic.add(p.id() + " " + p.name());
       fSource.add(p.id() + " " + p.name());
     }

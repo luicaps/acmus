@@ -37,7 +37,7 @@ public class RayTracingSimulation {
 			e.printStackTrace();
 		}
 		
-		//TODOS vetores gerados devem ter norma 1
+		//TODO vetores gerados devem ter norma 1
 		
 //		vectors = new ArrayList<Triade>();
 //		vectors.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0) normalizado //vetor de teste (1,2,0) normalizado
@@ -193,10 +193,10 @@ public class RayTracingSimulation {
 	public void histogram(){
 		double tMax = 0.0;
 		double h1 = 0.0, h2 = 0.0, h3 = 0.0, h4 = 0.0, h5 = 0.0, h6 = 0.0;
-		Iterator itr = sphericalReceptorHistogram.keySet().iterator();
+		Iterator<Double> itr = sphericalReceptorHistogram.keySet().iterator();
 		//controi histograma
 		while(itr.hasNext()){
-			Double key = (Double)itr.next();
+			Double key = itr.next();
 			if(key <= 0.01)
 				h1 += sphericalReceptorHistogram.get(key);
 			if(key >= 0.01 && key <= 0.02)

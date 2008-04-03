@@ -14,38 +14,38 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import acmus.AcmusPlugin;
 import acmus.audio.Calibrate;
 
-public class CalibrateActionDelegate implements IWorkbenchWindowActionDelegate{
+public class CalibrateActionDelegate implements IWorkbenchWindowActionDelegate {
 
-  private IStructuredSelection _sel;
+	@SuppressWarnings("unused")
+	private IStructuredSelection _sel;
 
-  public void run(IAction action) {
-    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-    Shell shell = new Shell(d);
-    shell.setLayout(new GridLayout(1, false));
-    Calibrate cw = new Calibrate(shell, SWT.NONE);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    gridData.heightHint = 100;
-    gridData.widthHint = 30;
-    cw.setLayoutData(gridData);
-    
-    shell.setText("Calibrate");
-    shell.pack();
-    
-    
-    shell.open();    
-    
-  }
+	public void run(IAction action) {
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+		Shell shell = new Shell(d);
+		shell.setLayout(new GridLayout(1, false));
+		Calibrate cw = new Calibrate(shell, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 100;
+		gridData.widthHint = 30;
+		cw.setLayoutData(gridData);
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    _sel = (IStructuredSelection)selection;
-  }
+		shell.setText("Calibrate");
+		shell.pack();
 
-  public void dispose() {
-    // TODO Auto-generated method stub
-  }
+		shell.open();
 
-  public void init(IWorkbenchWindow window) {
-    
-  }
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		_sel = (IStructuredSelection) selection;
+	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+	}
+
+	public void init(IWorkbenchWindow window) {
+
+	}
 
 }

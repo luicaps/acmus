@@ -162,6 +162,7 @@ public class AudioPlayer {
 		_this = this;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void open(String filename) {
 		try {
 			File f = new File(filename);

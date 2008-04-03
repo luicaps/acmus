@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -41,73 +40,74 @@ import acmus.dsp.Util;
 
 public class MlsWizard extends Wizard implements INewWizard {
 
-  private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-  private IWorkbench workbench;
+	@SuppressWarnings("unused")
+	private IWorkbench workbench;
 
-  private MlsWizardFirstPage mainPage;
+	private MlsWizardFirstPage mainPage;
 
-  public void addPages() {
-    IResource s = (IResource) selection.getFirstElement();
-    mainPage = new MlsWizardFirstPage(
-           "MlsWizardFirstPage");
-        addPage(mainPage);
-  }
+	public void addPages() {
+//		IResource s = (IResource) selection.getFirstElement();
+		mainPage = new MlsWizardFirstPage("MlsWizardFirstPage");
+		addPage(mainPage);
+	}
 
-  public void init(IWorkbench workbench, IStructuredSelection selection) {
-    this.workbench = workbench;
-    this.selection = selection;
-    setWindowTitle("New MLS Signal"); //$NON-NLS-1$
-  }
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle("New MLS Signal"); //$NON-NLS-1$
+	}
 
-  public boolean performFinish() {
-    IFolder folder = (IFolder) selection.getFirstElement();
-    IFolder audioFolder = folder.getFolder("audio");
-    Properties props = mainPage.getSessionProperties();
+	public boolean performFinish() {
+		IFolder folder = (IFolder) selection.getFirstElement();
+		IFolder audioFolder = folder.getFolder("audio");
+		Properties props = mainPage.getSessionProperties();
 
-    try {
+		try {
 
-        IFile audioFile = audioFolder.getFile(props.getProperty("Name") + ".wav");
-        
-        int order = Integer.parseInt(props.getProperty("Order"));
-        String staps = props.getProperty("Taps");
-        StringTokenizer st = new StringTokenizer(staps);
-        int taps[] = new int[st.countTokens()];
-        for (int i = 0; i < taps.length; i++) {
-          taps[i] = Integer.parseInt(st.nextToken());
-        }
-        int reps = Integer.parseInt(props.getProperty("Repetitions"));
-        
-        double y[] = new double[reps * ((1 <<order)-1)];
-        int row[] = new int[(1 <<order)-1];
-        int col[] = new int[(1 <<order)-1];
-        
-        Signal.mls(order,taps[0],taps[1],y, row, col, reps);
-        for (int i = 0; i < y.length; i++) {
-          y[i] = y[i] * 0.5;
-        }
-        Util.wavWrite(y, audioFile.getLocation().toOSString());
-        
-        props.put("Type", "mls");
-        props.put("Row", Util.toString(row));
-        props.put("Col", Util.toString(col));
-        props.put("SampleRate", "44100");
-        
-        IFile file = folder.getFile(props.getProperty("Name") + ".signal");
-        
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        props.store(baos, "");
-        ByteArrayInputStream bais = new
-        ByteArrayInputStream(baos.toByteArray());
-        file.create(bais,true,null);
+			IFile audioFile = audioFolder.getFile(props.getProperty("Name")
+					+ ".wav");
 
-      folder.refreshLocal(2, null);
+			int order = Integer.parseInt(props.getProperty("Order"));
+			String staps = props.getProperty("Taps");
+			StringTokenizer st = new StringTokenizer(staps);
+			int taps[] = new int[st.countTokens()];
+			for (int i = 0; i < taps.length; i++) {
+				taps[i] = Integer.parseInt(st.nextToken());
+			}
+			int reps = Integer.parseInt(props.getProperty("Repetitions"));
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+			double y[] = new double[reps * ((1 << order) - 1)];
+			int row[] = new int[(1 << order) - 1];
+			int col[] = new int[(1 << order) - 1];
 
-    return true;
-  }
+			Signal.mls(order, taps[0], taps[1], y, row, col, reps);
+			for (int i = 0; i < y.length; i++) {
+				y[i] = y[i] * 0.5;
+			}
+			Util.wavWrite(y, audioFile.getLocation().toOSString());
+
+			props.put("Type", "mls");
+			props.put("Row", Util.toString(row));
+			props.put("Col", Util.toString(col));
+			props.put("SampleRate", "44100");
+
+			IFile file = folder.getFile(props.getProperty("Name") + ".signal");
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			props.store(baos, "");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			file.create(bais, true, null);
+
+			folder.refreshLocal(2, null);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
 
 }

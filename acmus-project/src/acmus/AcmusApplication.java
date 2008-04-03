@@ -72,6 +72,8 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 //
 //}
 
+// FIXME remover a interface deprecada
+@SuppressWarnings("deprecation")
 public class AcmusApplication implements IPlatformRunnable, IExecutableExtension {
 
   private static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
@@ -179,8 +181,8 @@ public class AcmusApplication implements IPlatformRunnable, IExecutableExtension
               return true;
 
           // build the requirement into a version string
-          String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
-                  + MIN_JVM_VERSION_MINOR + '.' + MIN_JVM_VERSION_SERVICE;
+//          String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
+//                  + MIN_JVM_VERSION_MINOR + '.' + MIN_JVM_VERSION_SERVICE;
 
 //          MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_incompatibleJVMTitle,
 //                  NLS.bind(IDEWorkbenchMessages.IDEApplication_incompatibleJVMMessage, reqVersion));

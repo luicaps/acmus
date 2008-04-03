@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -61,7 +61,7 @@ public class PositionEditorControl extends Composite implements
 
   Image _floorPlan;
   Properties _floorPlanProps;
-  Map _posFileSections;
+//  Map _posFileSections;
   int _fpWidth;
   int _fpHeight;
   int _fpDestWidth;
@@ -417,7 +417,7 @@ public class PositionEditorControl extends Composite implements
   }
 
   public void write(PrintStream out) {
-    Iterator it = (new TreeSet<Object>(_floorPlanProps.keySet()).iterator());
+    Iterator<?> it = (new TreeSet<Object>(_floorPlanProps.keySet()).iterator());
     out.println("[floor plan]");
     while (it.hasNext()) {
       String prop = (String) it.next();
@@ -425,9 +425,9 @@ public class PositionEditorControl extends Composite implements
     }
     out.println();
     out.println("[positions]");
-    it = posIterator();
-    while (it.hasNext()) {
-      Position p = (Position) it.next();
+    Iterator<Position> it2 = posIterator();
+    while (it2.hasNext()) {
+      Position p = it2.next();
       out.println(p.id() + " " + p.x() + " " + p.y() + " " + p.name());
     }
   }
@@ -520,7 +520,7 @@ public class PositionEditorControl extends Composite implements
    * 
    * @return List containing column names
    */
-  public java.util.List getColumnNames() {
+  public List<String> getColumnNames() {
     return Arrays.asList(columnNames);
   }
 
@@ -668,13 +668,11 @@ public class PositionEditorControl extends Composite implements
             (int) (_fpWidth * _fpXScale), (int) (_fpHeight * _fpYScale));
       }
 
-      Iterator it;
-
       gc.setBackground(AcmusGraphics.BLUE);
       gc.setForeground(AcmusGraphics.BLACK);
-      it = posIterator();
+      Iterator<Position> it = posIterator();
       while (it.hasNext()) {
-        Position p = (Position) it.next();
+        Position p = it.next();
         if (_drawLabels) {
           if (!p.name().trim().equals(""))
             drawString(gc, p.name(), (int) (p.x() * _fpXScale),
@@ -733,10 +731,10 @@ public class PositionEditorControl extends Composite implements
     }
 
     public void mouseDown(MouseEvent e) {
-      Iterator it = posIterator();
+      Iterator<Position> it = posIterator();
       _add = true;
       while (it.hasNext()) {
-        Position p = (Position) it.next();
+        Position p = it.next();
         if (p.isIn((int) (e.x / _fpXScale), (int) (e.y / _fpYScale))) {
           _add = false;
           select(p);
@@ -767,10 +765,10 @@ public class PositionEditorControl extends Composite implements
         fTPos.update(_selP, null);
         setDirty(true);
       } else {
-        Iterator it = posIterator();
+        Iterator<Position> it = posIterator();
         Position pos = null;
         while (it.hasNext()) {
-          Position p = (Position) it.next();
+          Position p = it.next();
           if (p.isIn((int) (e.x / _fpXScale), (int) (e.y / _fpYScale))) {
             pos = p;
             break;

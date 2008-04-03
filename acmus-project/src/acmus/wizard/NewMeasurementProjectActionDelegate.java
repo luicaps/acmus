@@ -34,39 +34,41 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import acmus.AcmusPlugin;
 
-public class NewMeasurementProjectActionDelegate  implements IObjectActionDelegate{
+public class NewMeasurementProjectActionDelegate implements
+		IObjectActionDelegate {
 
-  private IWorkbenchPart part;
-  private IStructuredSelection sel;
+	@SuppressWarnings("unused")
+	private IWorkbenchPart part;
+	private IStructuredSelection sel;
 
-  public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    this.part = targetPart;
-  }
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		this.part = targetPart;
+	}
 
-  protected INewWizard createWizard() {
-    return new AcmusMeasurementProjectWizard();
-  }
-  
-  public void run(IAction action) {
-    
-    // Create the wizard
-    INewWizard wizard = createWizard();
-    wizard.init(getWorkbench(), sel);
+	protected INewWizard createWizard() {
+		return new AcmusMeasurementProjectWizard();
+	}
 
-    // Create the wizard dialog
-    WizardDialog dialog = new WizardDialog
-       (getWorkbench().getActiveWorkbenchWindow().getShell(),wizard);
-    // Open the wizard dialog
-    dialog.open();
-    
-  }
+	public void run(IAction action) {
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    sel = (IStructuredSelection)selection;
-  }
-  
-  private final IWorkbench getWorkbench() {
-    return AcmusPlugin.getDefault().getWorkbench();
-  }
+		// Create the wizard
+		INewWizard wizard = createWizard();
+		wizard.init(getWorkbench(), sel);
+
+		// Create the wizard dialog
+		WizardDialog dialog = new WizardDialog(getWorkbench()
+				.getActiveWorkbenchWindow().getShell(), wizard);
+		// Open the wizard dialog
+		dialog.open();
+
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		sel = (IStructuredSelection) selection;
+	}
+
+	private final IWorkbench getWorkbench() {
+		return AcmusPlugin.getDefault().getWorkbench();
+	}
 
 }

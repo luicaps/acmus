@@ -43,84 +43,88 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 
-public class ReverberationTimeActionDelegate implements IWorkbenchWindowActionDelegate{
+public class ReverberationTimeActionDelegate implements
+		IWorkbenchWindowActionDelegate {
 
-  private IStructuredSelection _sel;
+	@SuppressWarnings("unused")
+	private IStructuredSelection _sel;
 
-  public void run(IAction action) {
-    URL uSur = AcmusPlugin.getDefault().getBundle().getEntry("data/coefsurfaces.txt");
-    URL uObj = AcmusPlugin.getDefault().getBundle().getEntry("data/coefobjects.txt");
+	public void run(IAction action) {
+		URL uSur = AcmusPlugin.getDefault().getBundle().getEntry(
+				"data/coefsurfaces.txt");
+		URL uObj = AcmusPlugin.getDefault().getBundle().getEntry(
+				"data/coefobjects.txt");
 
-    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-    Shell shell = new Shell(d);
-    shell.setLayout(new GridLayout(1, false));
-    ReverberationTime rt = new ReverberationTime(shell, shell, SWT.NONE, readCoefficients(uSur), readCoefficients(uObj));    
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    gridData.heightHint = 700;
-    gridData.widthHint = 840;
-    rt.setLayoutData(gridData);
-    
-    shell.setText("Reverberation Time");
-    shell.setImage(AcmusGraphics.IMG_APP_ICON);
-    shell.pack();
-    
-    shell.open();    
-  }
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+		Shell shell = new Shell(d);
+		shell.setLayout(new GridLayout(1, false));
+		ReverberationTime rt = new ReverberationTime(shell, shell, SWT.NONE,
+				readCoefficients(uSur), readCoefficients(uObj));
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 700;
+		gridData.widthHint = 840;
+		rt.setLayoutData(gridData);
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    _sel = (IStructuredSelection)selection;
-  }
+		shell.setText("Reverberation Time");
+		shell.setImage(AcmusGraphics.IMG_APP_ICON);
+		shell.pack();
 
-  public void dispose() {
-  }
+		shell.open();
+	}
 
-  public void init(IWorkbenchWindow window) {
-  }
+	public void selectionChanged(IAction action, ISelection selection) {
+		_sel = (IStructuredSelection) selection;
+	}
 
-  public Map<String, Map<String,double[]>> readCoefficients(URL url) {
-    Map<String, Map<String,double[]>> res = new HashMap<String, Map<String,double[]>>();
-    
-    try {
-      TextReader tr = new TextReader(new InputStreamReader(url.openStream(), "ISO-8859-1"));
+	public void dispose() {
+	}
 
-      String line = tr.readLine();
-      Map<String,double[]> map = null;
-      while (line != null) {
-        if (line.trim().startsWith("$")) {
-          String type = line.trim().substring(1).trim();
-          if (res.containsKey(type)) {
-            map = res.get(type);
-          }
-          else {
-            map = new HashMap<String,double[]>();
-            res.put(type, map);
-          }
-        }
-        else {
-          StringTokenizer st = new StringTokenizer(line, ";");
-//          if (st.countTokens() != 10) {
-//            throw new Exception("error: parse error in coefficients file: " + line + " " + st.countTokens());
-//          }
-          String material = st.nextToken();
-          st.nextToken(); // ESP
-          st.nextToken(); // NRC
-          double[] coefs = new double[6];
-          for (int i = 0; i < coefs.length; i++) {
-            String tok = st.nextToken();
-            if ("".equals(tok.trim()))
-              coefs[i] = 0;
-            else
-              coefs[i] = Double.parseDouble(tok);
-          }
-          map.put(material, coefs);
-        }
-        line = tr.readLine();
-      }
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
-    
-    return res;
-  }
+	public void init(IWorkbenchWindow window) {
+	}
+
+	public Map<String, Map<String, double[]>> readCoefficients(URL url) {
+		Map<String, Map<String, double[]>> res = new HashMap<String, Map<String, double[]>>();
+
+		try {
+			TextReader tr = new TextReader(new InputStreamReader(url
+					.openStream(), "ISO-8859-1"));
+
+			String line = tr.readLine();
+			Map<String, double[]> map = null;
+			while (line != null) {
+				if (line.trim().startsWith("$")) {
+					String type = line.trim().substring(1).trim();
+					if (res.containsKey(type)) {
+						map = res.get(type);
+					} else {
+						map = new HashMap<String, double[]>();
+						res.put(type, map);
+					}
+				} else {
+					StringTokenizer st = new StringTokenizer(line, ";");
+					// if (st.countTokens() != 10) {
+					// throw new Exception("error: parse error in coefficients
+					// file: " + line + " " + st.countTokens());
+					// }
+					String material = st.nextToken();
+					st.nextToken(); // ESP
+					st.nextToken(); // NRC
+					double[] coefs = new double[6];
+					for (int i = 0; i < coefs.length; i++) {
+						String tok = st.nextToken();
+						if ("".equals(tok.trim()))
+							coefs[i] = 0;
+						else
+							coefs[i] = Double.parseDouble(tok);
+					}
+					map.put(material, coefs);
+				}
+				line = tr.readLine();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
 }

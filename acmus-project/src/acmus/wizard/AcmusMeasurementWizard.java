@@ -40,72 +40,75 @@ import org.eclipse.ui.IWorkbench;
 
 import acmus.MeasurementProject;
 
-
 /**
  * @author lku
  */
-public class AcmusMeasurementWizard  extends Wizard implements INewWizard {
-  
-  private IStructuredSelection selection;
+public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 
-  private IWorkbench workbench;
+	private IStructuredSelection selection;
 
-  private AcmusMeasurementWizardFirstPage mainPage;
+	@SuppressWarnings("unused")
+	private IWorkbench workbench;
 
+	private AcmusMeasurementWizardFirstPage mainPage;
 
-  public void addPages() {
-    IFolder set = (IFolder) selection.getFirstElement();
-    IFolder session = (IFolder)set.getParent(); 
-    IProject project = session.getProject();
+	public void addPages() {
+		IFolder set = (IFolder) selection.getFirstElement();
+		IFolder session = (IFolder) set.getParent();
+		IProject project = session.getProject();
 
-    mainPage = new AcmusMeasurementWizardFirstPage(
-        "AcmusMeasurementWizardFirstPage", project.getName(),
-        MeasurementProject.removeSuffix(session.getName()),MeasurementProject.removeSuffix(set.getName()),(IFolder)selection.getFirstElement());
-    addPage(mainPage);
-  }
+		mainPage = new AcmusMeasurementWizardFirstPage(
+				"AcmusMeasurementWizardFirstPage", project.getName(),
+				MeasurementProject.removeSuffix(session.getName()),
+				MeasurementProject.removeSuffix(set.getName()),
+				(IFolder) selection.getFirstElement());
+		addPage(mainPage);
+	}
 
-  public void init(IWorkbench workbench, IStructuredSelection selection) {
-    this.workbench = workbench;
-    this.selection = selection;
-    setWindowTitle("New Measurement"); //$NON-NLS-1$
-  }
-  
-  public boolean performFinish() {
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle("New Measurement"); //$NON-NLS-1$
+	}
 
-    IFolder set = (IFolder) selection.getFirstElement();
-    Properties props = mainPage.getMeasurementProperties();
-    createMeasurement(set, props);
+	public boolean performFinish() {
 
-    return true;
-  }
+		IFolder set = (IFolder) selection.getFirstElement();
+		Properties props = mainPage.getMeasurementProperties();
+		createMeasurement(set, props);
 
-  public static IFolder createMeasurement(IFolder set, Properties props) {
-    IFolder folder = null;
-    try {
-      folder = set.getFolder(props.getProperty("Name") + ".msr");
-      if (!folder.exists())folder.create(true, true, null);
+		return true;
+	}
 
-      IFile propsFile = folder.getFile("measurement.properties");
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      props.store(baos, props.getProperty("Name") + " Measurement folder properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      propsFile.create(bais, true, null);
-      //propFile.setTeamPrivateMember(true);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return folder;
-  }
+	public static IFolder createMeasurement(IFolder set, Properties props) {
+		IFolder folder = null;
+		try {
+			folder = set.getFolder(props.getProperty("Name") + ".msr");
+			if (!folder.exists())
+				folder.create(true, true, null);
 
-  
-  //  public boolean performFinish() {
-//
-//    String inputFn = mainPage.getInput();
-//    String outputFn = mainPage.getOutput();
-//    
-//    RecordPlay rp = new RecordPlay(inputFn, outputFn);
-//    rp.play_record();
-//    
-//    return true;
-//  }
+			IFile propsFile = folder.getFile("measurement.properties");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			props.store(baos, props.getProperty("Name")
+					+ " Measurement folder properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			propsFile.create(bais, true, null);
+			// propFile.setTeamPrivateMember(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return folder;
+	}
+
+	// public boolean performFinish() {
+	//
+	// String inputFn = mainPage.getInput();
+	// String outputFn = mainPage.getOutput();
+	//    
+	// RecordPlay rp = new RecordPlay(inputFn, outputFn);
+	// rp.play_record();
+	//    
+	// return true;
+	// }
 }

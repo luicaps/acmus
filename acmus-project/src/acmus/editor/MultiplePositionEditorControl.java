@@ -25,7 +25,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -74,7 +73,7 @@ public class MultiplePositionEditorControl extends Composite {
 
     Composite body = form.getBody();
     
-    Label l = toolkit.createLabel(body, "Floor Plan:");
+    toolkit.createLabel(body, "Floor Plan:");
 
     if (_readOnly) {
       _floorPlans = new Combo(body, SWT.READ_ONLY);
@@ -357,7 +356,7 @@ public class MultiplePositionEditorControl extends Composite {
     }
   }
 
-  public Iterator iterator(String floorPlan) {
+  public Iterator<Position> iterator(String floorPlan) {
     return _floorPlanData.get(floorPlan).iterator();
     
   }

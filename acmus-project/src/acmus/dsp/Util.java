@@ -26,6 +26,7 @@ package acmus.dsp;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
@@ -354,13 +355,13 @@ public final class Util {
 
   public final static void print(double[] y) {
     for (int i = 0; i < y.length; i++)
-      System.out.print(Test._f.format(y[i]) + " ");
+      System.out.print(_f.format(y[i]) + " ");
     System.out.println();
   }
 
   public final static void print(int[] y) {
     for (int i = 0; i < y.length; i++)
-      System.out.print(Test._f.format(y[i]) + " ");
+      System.out.print(_f.format(y[i]) + " ");
     System.out.println();
   }
 
@@ -789,7 +790,7 @@ public final class Util {
 
   public final static byte[] downsample32to16(byte[] data) {
     byte[] res = new byte[data.length / 2];
-    int i = 0;
+//    int i = 0;
     int j = 0;
     for (int k = 0; k < data.length / 4; k++) {
       int oldSample = littleEndian(data[k * 4], data[k * 4 + 1],
@@ -995,5 +996,7 @@ public final class Util {
     }
     wavWrite(average(arrays), 1, bitsPerSample, outFile);
   }
+
+static DecimalFormat _f = new DecimalFormat("#.######");
 
 }

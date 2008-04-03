@@ -197,8 +197,8 @@ public class FloorPlanData implements Iterable<Position> {
 //  }
 
   // FIXME: remendo... implementar tratamento de erros!
-  private void readErrorMsg(int line, String msg) {
-    System.err.println("l. " + line + " " + msg);
-  }
+//  private void readErrorMsg(int line, String msg) {
+//    System.err.println("l. " + line + " " + msg);
+//  }
 
 }

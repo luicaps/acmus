@@ -42,77 +42,84 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-
 /**
  * @author lku
  * 
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
+@SuppressWarnings("unused")
 public class AcmusMeasurementSessionWizard extends Wizard implements INewWizard {
 
-  private IStructuredSelection selection;
+	private IStructuredSelection selection;
 
-  private IWorkbench workbench;
+	private IWorkbench workbench;
 
-  private AcmusMeasurementSessionWizardFirstPage mainPage;
+	private AcmusMeasurementSessionWizardFirstPage mainPage;
 
-  public void addPages() {
-    mainPage = new AcmusMeasurementSessionWizardFirstPage(
-        "AcmusMeasurementSessionWizardFirstPage", ((IProject) selection.getFirstElement()).getName());
-    addPage(mainPage);
-  }
+	public void addPages() {
+		mainPage = new AcmusMeasurementSessionWizardFirstPage(
+				"AcmusMeasurementSessionWizardFirstPage", ((IProject) selection
+						.getFirstElement()).getName());
+		addPage(mainPage);
+	}
 
-  public void init(IWorkbench workbench, IStructuredSelection selection) {
-    this.workbench = workbench;
-    this.selection = selection;
-    setWindowTitle("New Measurement Session"); //$NON-NLS-1$
-  }
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle("New Measurement Session"); //$NON-NLS-1$
+	}
 
-  public boolean performFinish() {
-    IProject project = (IProject) selection.getFirstElement();
-    Properties props = mainPage.getSessionProperties();
-    
-    try {
+	public boolean performFinish() {
+		IProject project = (IProject) selection.getFirstElement();
+		Properties props = mainPage.getSessionProperties();
 
-      IFolder folder = project.getFolder(props.getProperty("Name") + ".session");
-      folder.create(true, true, null);
+		try {
 
-//      Enumeration en = props.keys();
-//      while (en.hasMoreElements()) {
-//        String key = (String) en.nextElement();
-//        folder.setPersistentProperty(new QualifiedName("acmus", key), props
-//            .getProperty(key));
-//      }
+			IFolder folder = project.getFolder(props.getProperty("Name")
+					+ ".session");
+			folder.create(true, true, null);
 
-      IFile propsFile = folder.getFile("session.properties");
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      props.store(baos, project.getName() + "." + props.getProperty("Name") + " properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      propsFile.create(bais, true, null);
-      
-//      IFile posFile = folder.getFile("session.positions");
-//
-//      ByteArrayInputStream bais = new ByteArrayInputStream(new byte[0]);
-//
-//      posFile.create(bais, true, null);
+			// Enumeration en = props.keys();
+			// while (en.hasMoreElements()) {
+			// String key = (String) en.nextElement();
+			// folder.setPersistentProperty(new QualifiedName("acmus", key),
+			// props
+			// .getProperty(key));
+			// }
 
-      //      IFile propsFile = folder.getFile("session.properties");
-      //
-      //      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      //
-      //      props.store(baos, "AcMus Measurement Session");
-      //
-      //      propsFile
-      //          .create(new ByteArrayInputStream(baos.toByteArray()), true, null);
+			IFile propsFile = folder.getFile("session.properties");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			props.store(baos, project.getName() + "."
+					+ props.getProperty("Name") + " properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			propsFile.create(bais, true, null);
 
-    } catch (CoreException e) {
-      e.printStackTrace();
+			// IFile posFile = folder.getFile("session.positions");
+			//
+			// ByteArrayInputStream bais = new ByteArrayInputStream(new
+			// byte[0]);
+			//
+			// posFile.create(bais, true, null);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+			// IFile propsFile = folder.getFile("session.properties");
+			//
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			//
+			// props.store(baos, "AcMus Measurement Session");
+			//
+			// propsFile
+			// .create(new ByteArrayInputStream(baos.toByteArray()), true,
+			// null);
 
-    return true;
-  }
+		} catch (CoreException e) {
+			e.printStackTrace();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true;
+	}
 }
