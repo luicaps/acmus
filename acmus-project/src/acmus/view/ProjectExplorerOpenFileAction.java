@@ -40,8 +40,8 @@ import org.eclipse.ui.actions.OpenFileAction;
  */
 public class ProjectExplorerOpenFileAction extends OpenFileAction {
 
-  public ProjectExplorerOpenFileAction(IWorkbenchPage page) {
-    super(page);
-  }
+	public ProjectExplorerOpenFileAction(IWorkbenchPage page) {
+		super(page);
+	}
 
 }

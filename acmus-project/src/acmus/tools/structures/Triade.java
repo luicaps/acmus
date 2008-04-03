@@ -105,7 +105,7 @@ public class Triade {
 
 		return ang;
 	}
-	
+
 	public Triade divideVetorEscalar(double esc) {
 		Triade ret;
 		ret = this;
@@ -119,7 +119,7 @@ public class Triade {
 		}
 		return ret;
 	}
-	
+
 	public Triade multiplicaVetorEscalar(double esc) {
 		Triade ret = new Triade();
 
@@ -165,8 +165,7 @@ public class Triade {
 		if (getClass() != obj.getClass())
 			return false;
 		final Triade v = (Triade) obj;
-		if ((Math.abs(this.x - v.x) < EPS)
-				&& (Math.abs(this.y - v.y) < EPS)
+		if ((Math.abs(this.x - v.x) < EPS) && (Math.abs(this.y - v.y) < EPS)
 				&& (Math.abs(this.z - v.z) < EPS))
 			return true;
 		else

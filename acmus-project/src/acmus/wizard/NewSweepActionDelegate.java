@@ -31,10 +31,10 @@ import org.eclipse.ui.INewWizard;
 
 /**
  * @author lku
- *
+ * 
  */
 public class NewSweepActionDelegate extends NewMeasurementProjectActionDelegate {
-  protected INewWizard createWizard() {
-    return new SweepWizard();
-  }
+	protected INewWizard createWizard() {
+		return new SweepWizard();
+	}
 }

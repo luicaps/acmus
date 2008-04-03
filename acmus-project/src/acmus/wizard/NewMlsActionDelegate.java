@@ -31,10 +31,10 @@ import org.eclipse.ui.INewWizard;
 
 /**
  * @author lku
- *
+ * 
  */
 public class NewMlsActionDelegate extends NewMeasurementProjectActionDelegate {
-  protected INewWizard createWizard() {
-    return new MlsWizard();
-  }
+	protected INewWizard createWizard() {
+		return new MlsWizard();
+	}
 }

@@ -45,105 +45,110 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class ProjectPropertiesEditor extends EditorPart {
 
-  ProjectPropertiesControl _propertiesControl;
+	ProjectPropertiesControl _propertiesControl;
 
-  FileEditorInput _input;
-  boolean _isDirty = false;
+	FileEditorInput _input;
+	boolean _isDirty = false;
 
-  public static void save(ProjectPropertiesControl propertiesControl, IFile file, IProgressMonitor monitor) {
-    Properties props = propertiesControl.getProjectProperties();
+	public static void save(ProjectPropertiesControl propertiesControl,
+			IFile file, IProgressMonitor monitor) {
+		Properties props = propertiesControl.getProjectProperties();
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      props.store(baos, file.getProject().getName() +" properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      file.setContents(bais, true, true, null);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			props.store(baos, file.getProject().getName() + " properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			file.setContents(bais, true, true, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-  @Override
-  public void doSave(IProgressMonitor monitor) {
-//    Properties props = _propertiesControl.getProjectProperties();
-//
-//    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//    try {
-//      props.store(baos, _input.getFile().getProject().getName() +" properties");
-//      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-//      _input.getFile().setContents(bais, true, true, null);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-    save(_propertiesControl, _input.getFile(), monitor);
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		// Properties props = _propertiesControl.getProjectProperties();
+		//
+		// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// try {
+		// props.store(baos, _input.getFile().getProject().getName() +"
+		// properties");
+		// ByteArrayInputStream bais = new
+		// ByteArrayInputStream(baos.toByteArray());
+		// _input.getFile().setContents(bais, true, true, null);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		save(_propertiesControl, _input.getFile(), monitor);
 
-    setDirty(false);
-  }
+		setDirty(false);
+	}
 
-  @Override
-  public void doSaveAs() {
-  }
+	@Override
+	public void doSaveAs() {
+	}
 
-  @Override
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    setSite(site);
-    setInput(input);
-    _input = (FileEditorInput) input;
-    this.setPartName(_input.getFile().getProject().getName() + " properties");
-  }
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		_input = (FileEditorInput) input;
+		this.setPartName(_input.getFile().getProject().getName()
+				+ " properties");
+	}
 
-  @Override
-  public boolean isDirty() {
-    return _isDirty;
-  }
+	@Override
+	public boolean isDirty() {
+		return _isDirty;
+	}
 
-  public void setDirty(boolean dirty) {
-    if (_isDirty != dirty) {
-      _isDirty = dirty;
-      firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    }
-  }
+	public void setDirty(boolean dirty) {
+		if (_isDirty != dirty) {
+			_isDirty = dirty;
+			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+		}
+	}
 
-  @Override
-  public boolean isSaveAsAllowed() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	@Override
+	public boolean isSaveAsAllowed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  @Override
-  public void createPartControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setFont(parent.getFont());
+	@Override
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setFont(parent.getFont());
 
-    _propertiesControl = new ProjectPropertiesControl(composite, SWT.NONE);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    _propertiesControl.setLayoutData(gridData);
+		_propertiesControl = new ProjectPropertiesControl(composite, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		_propertiesControl.setLayoutData(gridData);
 
-    try {
-      _propertiesControl.loadProperties(_input.getFile().getContents());
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+		try {
+			_propertiesControl.loadProperties(_input.getFile().getContents());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
-    ModifyListener ml = new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        setDirty(true);
-      }
-    };
+		ModifyListener ml = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		};
 
-    _propertiesControl.addLocationModifyListener(ml);
-    _propertiesControl.addDateModifyListener(ml);
-    _propertiesControl.addCommentsModifyListener(ml);
-    _propertiesControl.addIrLengthModifyListener(ml);
-    _propertiesControl.addRecExtraModifyListener(ml);
-  }
+		_propertiesControl.addLocationModifyListener(ml);
+		_propertiesControl.addDateModifyListener(ml);
+		_propertiesControl.addCommentsModifyListener(ml);
+		_propertiesControl.addIrLengthModifyListener(ml);
+		_propertiesControl.addRecExtraModifyListener(ml);
+	}
 
-  @Override
-  public void setFocus() {
-    // TODO Auto-generated method stub
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
 }

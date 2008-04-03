@@ -45,125 +45,128 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class PositionEditor extends EditorPart {
 
-  PositionEditor _this;
+	PositionEditor _this;
 
-  FileEditorInput _input;
+	FileEditorInput _input;
 
-  boolean _isDirty;
-  
-  MultiplePositionEditorControl _positionControl;
+	boolean _isDirty;
 
-  private IDocumentListener _editorDocListener = new IDocumentListener() {
-    public void documentAboutToBeChanged(DocumentEvent event) {
+	MultiplePositionEditorControl _positionControl;
 
-    }
-    public void documentChanged(DocumentEvent event) {
-      setDirty(true);
-    }
-  };
+	private IDocumentListener _editorDocListener = new IDocumentListener() {
+		public void documentAboutToBeChanged(DocumentEvent event) {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
-   *      org.eclipse.ui.IEditorInput)
-   */
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    setSite(site);
-    setInput(input);
-    _this = this;
+		}
 
+		public void documentChanged(DocumentEvent event) {
+			setDirty(true);
+		}
+	};
 
-    _input = (FileEditorInput) input;
-    _isDirty = false;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
+	 *      org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		_this = this;
 
-    setPartName(_input.getFile().getProject().getName());
-  }
+		_input = (FileEditorInput) input;
+		_isDirty = false;
 
-  public boolean isDirty() {
-    return _isDirty;
-  }
+		setPartName(_input.getFile().getProject().getName());
+	}
 
-  public void setDirty(boolean dirty) {
-    if (_isDirty != dirty) {
-      _isDirty = dirty;
-      firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    }
-  }
+	public boolean isDirty() {
+		return _isDirty;
+	}
 
-  public void createPartControl(Composite parent) {
-    _positionControl = new MultiplePositionEditorControl(parent, SWT.NONE, _editorDocListener, false);
-    openFile(_input);
-  }
+	public void setDirty(boolean dirty) {
+		if (_isDirty != dirty) {
+			_isDirty = dirty;
+			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+		}
+	}
 
-  private void openFile(IEditorInput input) {
+	public void createPartControl(Composite parent) {
+		_positionControl = new MultiplePositionEditorControl(parent, SWT.NONE,
+				_editorDocListener, false);
+		openFile(_input);
+	}
 
-    if (!(input instanceof IFileEditorInput))
-      return;
-    try {
-      InputStreamReader isr = new InputStreamReader(((IFileEditorInput) input)
-          .getFile().getContents());
-      _positionControl.read(isr);      
-      isr.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+	private void openFile(IEditorInput input) {
 
-  public static void save(MultiplePositionEditorControl positionControl, IFile file, IProgressMonitor monitor) {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    PrintStream ps = new PrintStream(baos);
-    positionControl.write(ps);
+		if (!(input instanceof IFileEditorInput))
+			return;
+		try {
+			InputStreamReader isr = new InputStreamReader(
+					((IFileEditorInput) input).getFile().getContents());
+			_positionControl.read(isr);
+			isr.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
-    try {
-      file.setContents(bis, true, false, null);
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-  }
-  
-  public void doSave(IProgressMonitor monitor) {
-//    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//    PrintStream ps = new PrintStream(baos);
-//    _positionControl.write(ps);
-//
-//    ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
-//    try {
-//      _input.getFile().setContents(bis, true, false, null);
-//    } catch (CoreException e) {
-//      e.printStackTrace();
-//    }
-    save(_positionControl, _input.getFile(), monitor);
-    setDirty(false);
-  }
+	public static void save(MultiplePositionEditorControl positionControl,
+			IFile file, IProgressMonitor monitor) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		positionControl.write(ps);
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-   */
-  public boolean isSaveAsAllowed() {
-    return false;
-  }
+		ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
+		try {
+			file.setContents(bis, true, false, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
 
-  /**
-   * Saves the multi-page editor's document as another file. Also updates the
-   * text for page 0's tab, and updates this multi-page editor's input to
-   * correspond to the nested editor's.
-   */
-  public void doSaveAs() {
-  }
+	public void doSave(IProgressMonitor monitor) {
+		// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// PrintStream ps = new PrintStream(baos);
+		// _positionControl.write(ps);
+		//
+		// ByteArrayInputStream bis = new
+		// ByteArrayInputStream(baos.toByteArray());
+		// try {
+		// _input.getFile().setContents(bis, true, false, null);
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
+		save(_positionControl, _input.getFile(), monitor);
+		setDirty(false);
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-   */
-  public void setFocus() {
-    // TODO Auto-generated method stub
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
 
-  }
+	/**
+	 * Saves the multi-page editor's document as another file. Also updates the
+	 * text for page 0's tab, and updates this multi-page editor's input to
+	 * correspond to the nested editor's.
+	 */
+	public void doSaveAs() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

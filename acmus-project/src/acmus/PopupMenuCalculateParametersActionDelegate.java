@@ -40,74 +40,80 @@ import org.eclipse.ui.IWorkbenchPart;
 import acmus.audio.AudioPlayer;
 import acmus.editor.MeasurementEditor;
 
-public class PopupMenuCalculateParametersActionDelegate implements IObjectActionDelegate {
+public class PopupMenuCalculateParametersActionDelegate implements
+		IObjectActionDelegate {
 
-  //private IWorkbenchPart part;
-  private IStructuredSelection sel;
+	// private IWorkbenchPart part;
+	private IStructuredSelection sel;
 
-  public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    //this.part = targetPart;
-  }
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		// this.part = targetPart;
+	}
 
-  public void run(IAction action) {
-    
-    try {
-      if (!sel.isEmpty()) {
-        IFolder sessionF = (IFolder) sel.getFirstElement();
-        IResource m[] = sessionF.members();
-        for (int i =0 ; i < m.length; i++) {
-          if (m[i] instanceof IFolder) {
-            if (m[i].getName().endsWith(".set")) {
-              IResource m2[] = ((IFolder)m[i]).members();
-              for (int j =0 ; j < m2.length; j++) {
-                if (m2[j] instanceof IFolder) {
-                  if (m2[j].getName().endsWith(".msr")) {
-                    calculate((IFolder)m2[j]);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+	public void run(IAction action) {
 
-  }
+		try {
+			if (!sel.isEmpty()) {
+				IFolder sessionF = (IFolder) sel.getFirstElement();
+				IResource m[] = sessionF.members();
+				for (int i = 0; i < m.length; i++) {
+					if (m[i] instanceof IFolder) {
+						if (m[i].getName().endsWith(".set")) {
+							IResource m2[] = ((IFolder) m[i]).members();
+							for (int j = 0; j < m2.length; j++) {
+								if (m2[j] instanceof IFolder) {
+									if (m2[j].getName().endsWith(".msr")) {
+										calculate((IFolder) m2[j]);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-  public void selectionChanged(IAction action, ISelection selection) {
-    sel = (IStructuredSelection)selection;
-  }
+	}
 
-  public void calculate(IFolder measureF) throws Exception {
+	public void selectionChanged(IAction action, ISelection selection) {
+		sel = (IStructuredSelection) selection;
+	}
 
-    IFile irFile = measureF.getFile("ir.wav");
-    double ir[] = null;
-    if (!irFile.exists()) {
-      IFile recFile = measureF.getFile("recording.wav");
-      
-      if (!recFile.exists()) {
-        System.err.println(measureF.getName() + ": recording.wav not found!!!");
-        return;
-      }
+	public void calculate(IFolder measureF) throws Exception {
 
-      Properties props = new Properties();
-      props.load(measureF.getFile("measurement.properties").getContents());
-      IFile sigFile = irFile.getProject().getFolder("_signals.signal").getFile(props.getProperty("Signal"));
-      ir = MeasurementEditor.calculateIr(recFile, irFile, sigFile, null);
-    }
-    else {
-      AudioInputStream ais = AudioSystem.getAudioInputStream(irFile.getContents());
-      int wav[] = AudioPlayer.readData(ais);
-      ir = new double[wav.length];
-      ir = AudioPlayer.normalizeInPlace(ir,wav,ais.getFormat().getSampleSizeInBits());
-    }
+		IFile irFile = measureF.getFile("ir.wav");
+		double ir[] = null;
+		if (!irFile.exists()) {
+			IFile recFile = measureF.getFile("recording.wav");
 
-    
-    IFile _paramsFile = measureF.getFile("parameters.txt");
-    IFolder _schroederFolder = measureF.getFolder("schroeder");
-    MeasurementEditor.calculateParameters(ir, null, "Chu", _paramsFile, _schroederFolder);
-    
-  }
+			if (!recFile.exists()) {
+				System.err.println(measureF.getName()
+						+ ": recording.wav not found!!!");
+				return;
+			}
+
+			Properties props = new Properties();
+			props
+					.load(measureF.getFile("measurement.properties")
+							.getContents());
+			IFile sigFile = irFile.getProject().getFolder("_signals.signal")
+					.getFile(props.getProperty("Signal"));
+			ir = MeasurementEditor.calculateIr(recFile, irFile, sigFile, null);
+		} else {
+			AudioInputStream ais = AudioSystem.getAudioInputStream(irFile
+					.getContents());
+			int wav[] = AudioPlayer.readData(ais);
+			ir = new double[wav.length];
+			ir = AudioPlayer.normalizeInPlace(ir, wav, ais.getFormat()
+					.getSampleSizeInBits());
+		}
+
+		IFile _paramsFile = measureF.getFile("parameters.txt");
+		IFolder _schroederFolder = measureF.getFolder("schroeder");
+		MeasurementEditor.calculateParameters(ir, null, "Chu", _paramsFile,
+				_schroederFolder);
+
+	}
 }

@@ -32,28 +32,28 @@ import org.eclipse.swt.widgets.Label;
 
 public class ErrorPage extends WizardPage {
 
-  String _msg;
-  
-  public ErrorPage(String name, String msg) {
-    super(name);
-    setTitle("Error");
-    //setDescription(msg);
-    _msg = msg;
-    setPageComplete(false);
-  }
+	String _msg;
 
-  public void createControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    
-    Label l = new Label(composite, SWT.CENTER);
-    l.setText(_msg);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    l.setLayoutData(gridData);
-  }
-  
-  public boolean validatePage() {
-    return false;
-  }
+	public ErrorPage(String name, String msg) {
+		super(name);
+		setTitle("Error");
+		// setDescription(msg);
+		_msg = msg;
+		setPageComplete(false);
+	}
+
+	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+
+		Label l = new Label(composite, SWT.CENTER);
+		l.setText(_msg);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		l.setLayoutData(gridData);
+	}
+
+	public boolean validatePage() {
+		return false;
+	}
 
 }

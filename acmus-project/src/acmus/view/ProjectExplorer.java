@@ -45,74 +45,74 @@ import acmus.AcmusGraphics;
  */
 public class ProjectExplorer extends ResourceNavigator {
 
-  protected void handleOpen(OpenEvent event) {
-    super.handleOpen(event);
-    System.out.println("handleOpen " + getActionGroup());
-  }
+	protected void handleOpen(OpenEvent event) {
+		super.handleOpen(event);
+		System.out.println("handleOpen " + getActionGroup());
+	}
 
-  protected void makeActions() {
-    setActionGroup(new ProjectExplorerActionGroup(this));
-  }
+	protected void makeActions() {
+		setActionGroup(new ProjectExplorerActionGroup(this));
+	}
 
-  protected void initLabelProvider(TreeViewer viewer) {
-    viewer.setLabelProvider(new MyLabelProvider());
-  }
+	protected void initLabelProvider(TreeViewer viewer) {
+		viewer.setLabelProvider(new MyLabelProvider());
+	}
 
-  class MyLabelProvider extends LabelProvider {
+	class MyLabelProvider extends LabelProvider {
 
-    public Image getImage(Object element) {
-      Image res = null;
+		public Image getImage(Object element) {
+			Image res = null;
 
-      if (element instanceof IProject)
-        res = AcmusGraphics.IMG_PROJECT;
-      else if (element instanceof IFolder) {
-        String name = ((IFolder) element).getName();
-        if (name.endsWith(".session"))
-          res = AcmusGraphics.IMG_SESSION;
-        else if (name.endsWith(".set"))
-          res = AcmusGraphics.IMG_SET;
-        else if (name.endsWith(".msr"))
-          res = AcmusGraphics.IMG_MEASUREMENT;
-        else if (name.endsWith(".signal"))
-          res = AcmusGraphics.IMG_SIGNALFOLDER;
-        else
-          res = AcmusGraphics.IMG_FOLDER;
-      } else if (element instanceof IFile) {
-        String name = ((IFile) element).getName();
-        if (name.endsWith(".wav"))
-          res = AcmusGraphics.IMG_AUDIO;
-        else if (name.endsWith(".positions"))
-          res = AcmusGraphics.IMG_POSITIONS;
-        else
-          res = AcmusGraphics.IMG_FILE;
-      }
+			if (element instanceof IProject)
+				res = AcmusGraphics.IMG_PROJECT;
+			else if (element instanceof IFolder) {
+				String name = ((IFolder) element).getName();
+				if (name.endsWith(".session"))
+					res = AcmusGraphics.IMG_SESSION;
+				else if (name.endsWith(".set"))
+					res = AcmusGraphics.IMG_SET;
+				else if (name.endsWith(".msr"))
+					res = AcmusGraphics.IMG_MEASUREMENT;
+				else if (name.endsWith(".signal"))
+					res = AcmusGraphics.IMG_SIGNALFOLDER;
+				else
+					res = AcmusGraphics.IMG_FOLDER;
+			} else if (element instanceof IFile) {
+				String name = ((IFile) element).getName();
+				if (name.endsWith(".wav"))
+					res = AcmusGraphics.IMG_AUDIO;
+				else if (name.endsWith(".positions"))
+					res = AcmusGraphics.IMG_POSITIONS;
+				else
+					res = AcmusGraphics.IMG_FILE;
+			}
 
-      if (res == null)
-        return super.getImage(element);
-      return res;
-    }
+			if (res == null)
+				return super.getImage(element);
+			return res;
+		}
 
-    public String getText(Object element) {
-      if (element instanceof IProject) {
-        return ((IProject) element).getName();
-      }
-      if (element instanceof IFolder) {
-        String name = ((IFolder) element).getName();
-        int i = name.lastIndexOf('.');
-        if (name.equals("_signals.signal")) 
-          return name.substring(1, i);
-        if (i > 0)
-          return name.substring(0, i);
-        else
-          return name;
-      }
-      if (element instanceof IFile) {
-        String name = ((IFile) element).getName();
-        if (name.endsWith(".wav"))
-          return name.substring(0, name.lastIndexOf('.'));
-        return ((IFile) element).getName();
-      }
-      return super.getText(element);
-    }
-  }
+		public String getText(Object element) {
+			if (element instanceof IProject) {
+				return ((IProject) element).getName();
+			}
+			if (element instanceof IFolder) {
+				String name = ((IFolder) element).getName();
+				int i = name.lastIndexOf('.');
+				if (name.equals("_signals.signal"))
+					return name.substring(1, i);
+				if (i > 0)
+					return name.substring(0, i);
+				else
+					return name;
+			}
+			if (element instanceof IFile) {
+				String name = ((IFile) element).getName();
+				if (name.endsWith(".wav"))
+					return name.substring(0, name.lastIndexOf('.'));
+				return ((IFile) element).getName();
+			}
+			return super.getText(element);
+		}
+	}
 }

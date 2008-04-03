@@ -44,101 +44,102 @@ import acmus.MeasurementProject;
  */
 public class AudioEditor extends EditorPart {
 
-  Composite _parent;
-  FileEditorInput _input;
+	Composite _parent;
+	FileEditorInput _input;
 
-  AudioEditorControl _audioControl;
+	AudioEditorControl _audioControl;
 
-  // AudioPlayer _audioPlayer;
-  // WaveformDisplay _waveform;
-  // Composite _dbMeter;
-  // SpectrumDisplay _spectrum;
-  // Composite _spectrumComposite;
-  // Combo _spectrumWindowFunc;
-  // ToolBar _controlBar;
-  // //Slider _gainSlider;
-  // ToolBar _zoomBar;
-  // ToolBar _selModeBar;
-  // Combo _graphMode;
-  // //Button _bExplain;
-  // Text _tPosition;
+	// AudioPlayer _audioPlayer;
+	// WaveformDisplay _waveform;
+	// Composite _dbMeter;
+	// SpectrumDisplay _spectrum;
+	// Composite _spectrumComposite;
+	// Combo _spectrumWindowFunc;
+	// ToolBar _controlBar;
+	// //Slider _gainSlider;
+	// ToolBar _zoomBar;
+	// ToolBar _selModeBar;
+	// Combo _graphMode;
+	// //Button _bExplain;
+	// Text _tPosition;
 
-  Composite _graphArea;
+	Composite _graphArea;
 
-  public IEditorInput getEditorInput() {
-    return _input;
-  }
+	public IEditorInput getEditorInput() {
+		return _input;
+	}
 
-  public void doSave(IProgressMonitor monitor) {
-  }
+	public void doSave(IProgressMonitor monitor) {
+	}
 
-  public void doSaveAs() {
-  }
+	public void doSaveAs() {
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
-   *      org.eclipse.ui.IEditorInput)
-   */
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    super.setSite(site);
-    _input = (FileEditorInput) input;
-    setPartName(MeasurementProject.removeSuffix(_input.getName()));
-    // try {
-    // _audioPlayer = new AudioPlayer();
-    // // File f = new File(_input.getFile().getLocation().toOSString());
-    //
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
+	 *      org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		super.setSite(site);
+		_input = (FileEditorInput) input;
+		setPartName(MeasurementProject.removeSuffix(_input.getName()));
+		// try {
+		// _audioPlayer = new AudioPlayer();
+		// // File f = new File(_input.getFile().getLocation().toOSString());
+		//
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+	}
 
-  public boolean isDirty() {
-    return false;
-  }
+	public boolean isDirty() {
+		return false;
+	}
 
-  public boolean isSaveAsAllowed() {
-    return false;
-  }
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
 
-  public void createPartControl(Composite parent) {
-    _parent = parent;
-    try {
-      GridLayout gridLayout;
-      GridData gridData;
+	public void createPartControl(Composite parent) {
+		_parent = parent;
+		try {
+			GridLayout gridLayout;
+			GridData gridData;
 
-      gridLayout = new GridLayout(1, false);
-      gridLayout.marginHeight = 0;
-      gridLayout.marginWidth = 0;
-      _parent.setLayout(gridLayout);
+			gridLayout = new GridLayout(1, false);
+			gridLayout.marginHeight = 0;
+			gridLayout.marginWidth = 0;
+			_parent.setLayout(gridLayout);
 
-      _audioControl = new AudioEditorControl(_parent, SWT.NONE, _input
-          .getFile().getParent().getLocation().toOSString(), _input.getName(), true, true, true);
-      gridData = new GridData(GridData.FILL_BOTH);
-      _audioControl.setLayoutData(gridData);
-      _audioControl.open(_input.getFile().getLocation().toOSString());
+			_audioControl = new AudioEditorControl(_parent, SWT.NONE, _input
+					.getFile().getParent().getLocation().toOSString(), _input
+					.getName(), true, true, true);
+			gridData = new GridData(GridData.FILL_BOTH);
+			_audioControl.setLayoutData(gridData);
+			_audioControl.open(_input.getFile().getLocation().toOSString());
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-   */
-  public void setFocus() {
-    // TODO Auto-generated method stub
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  @Override
-  public void dispose() {
-    super.dispose();
-    // _audioPlayer.dispose();
-  }
+	@Override
+	public void dispose() {
+		super.dispose();
+		// _audioPlayer.dispose();
+	}
 
 }

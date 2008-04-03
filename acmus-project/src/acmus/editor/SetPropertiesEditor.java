@@ -49,113 +49,119 @@ import acmus.MeasurementProject;
 
 public class SetPropertiesEditor extends EditorPart {
 
-  SetPropertiesControl _propertiesControl;
+	SetPropertiesControl _propertiesControl;
 
-  FileEditorInput _input;
-  boolean _isDirty = false;
+	FileEditorInput _input;
+	boolean _isDirty = false;
 
-  @Override
-  public void doSave(IProgressMonitor monitor) {
-    Properties props = _propertiesControl.getSetProperties();
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		Properties props = _propertiesControl.getSetProperties();
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      props.store(baos, _input.getFile().getProject().getName() + "."
-          + props.getProperty("Name") + " properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      _input.getFile().setContents(bais, true, true,  null);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			props.store(baos, _input.getFile().getProject().getName() + "."
+					+ props.getProperty("Name") + " properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			_input.getFile().setContents(bais, true, true, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    setDirty(false);
-  }
+		setDirty(false);
+	}
 
-  @Override
-  public void doSaveAs() {
-    // TODO Auto-generated method stub
+	@Override
+	public void doSaveAs() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  @Override
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    setSite(site);
-    setInput(input);
-    _input = (FileEditorInput) input;
-    this.setPartName(_input.getFile().getParent().getName() + " properties");
-  }
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		_input = (FileEditorInput) input;
+		this
+				.setPartName(_input.getFile().getParent().getName()
+						+ " properties");
+	}
 
-  @Override
-  public boolean isDirty() {
-    return _isDirty;
-  }
+	@Override
+	public boolean isDirty() {
+		return _isDirty;
+	}
 
-  public void setDirty(boolean dirty) {
-    if (_isDirty != dirty) {
-      _isDirty = dirty;
-      firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    }
-  }
+	public void setDirty(boolean dirty) {
+		if (_isDirty != dirty) {
+			_isDirty = dirty;
+			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+		}
+	}
 
-  @Override
-  public boolean isSaveAsAllowed() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	@Override
+	public boolean isSaveAsAllowed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  @Override
-  public void createPartControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setFont(parent.getFont());
+	@Override
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setFont(parent.getFont());
 
-    IFile posFile = _input.getFile().getProject().getFile("project.positions");
-//    Set<String> posSet = new TreeSet<String>();
-//    _propertiesControl = new SetPropertiesControl(composite, SWT.NONE,
-//        AcmusMeasurementSetWizard.getPositions(posFile, posSet));
-  _propertiesControl = new SetPropertiesControl(composite, SWT.NONE,
-  posFile.getLocation().toOSString());
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    _propertiesControl.setLayoutData(gridData);
+		IFile posFile = _input.getFile().getProject().getFile(
+				"project.positions");
+		// Set<String> posSet = new TreeSet<String>();
+		// _propertiesControl = new SetPropertiesControl(composite, SWT.NONE,
+		// AcmusMeasurementSetWizard.getPositions(posFile, posSet));
+		_propertiesControl = new SetPropertiesControl(composite, SWT.NONE,
+				posFile.getLocation().toOSString());
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		_propertiesControl.setLayoutData(gridData);
 
-    _propertiesControl.createTakeListControl(_input.getFile().getParent());
-    _propertiesControl.setProjectName(_input.getFile().getProject().getName());
-    _propertiesControl.setSessionName(MeasurementProject
-        .removeSuffix(_input.getFile().getParent().getParent().getName()));
+		_propertiesControl.createTakeListControl(_input.getFile().getParent());
+		_propertiesControl.setProjectName(_input.getFile().getProject()
+				.getName());
+		_propertiesControl.setSessionName(MeasurementProject
+				.removeSuffix(_input.getFile().getParent().getParent()
+						.getName()));
 
-    try {
-      _propertiesControl.loadProperties(_input.getFile().getContents());
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+		try {
+			_propertiesControl.loadProperties(_input.getFile().getContents());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
-    ModifyListener ml = new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        setDirty(true);
-      }
-    };
+		ModifyListener ml = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		};
 
-    Listener l = new Listener() {
-      public void handleEvent(Event event) {
-        setDirty(true);
+		Listener l = new Listener() {
+			public void handleEvent(Event event) {
+				setDirty(true);
 
-      }
-    };
+			}
+		};
 
-    // _propertiesControl.addNameModifyListener(ml);
-    _propertiesControl.setSetNameEditable(false);
-    _propertiesControl.addSourceModifyListener(ml);
-    _propertiesControl.addSourceListener(SWT.Modify, l);
-    _propertiesControl.addMicModifyListener(ml);
-    _propertiesControl.addMicListener(SWT.Modify, l);
-    _propertiesControl.addCommentsModifyListener(ml);
-  }
+		// _propertiesControl.addNameModifyListener(ml);
+		_propertiesControl.setSetNameEditable(false);
+		_propertiesControl.addSourceModifyListener(ml);
+		_propertiesControl.addSourceListener(SWT.Modify, l);
+		_propertiesControl.addMicModifyListener(ml);
+		_propertiesControl.addMicListener(SWT.Modify, l);
+		_propertiesControl.addCommentsModifyListener(ml);
+	}
 
-  @Override
-  public void setFocus() {
-    // TODO Auto-generated method stub
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
 }

@@ -41,23 +41,25 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class AcmusPerspective implements IPerspectiveFactory {
 
-  public void createInitialLayout(IPageLayout layout) {
-    // Get the editor area.
-    String editorArea = layout.getEditorArea();
+	public void createInitialLayout(IPageLayout layout) {
+		// Get the editor area.
+		String editorArea = layout.getEditorArea();
 
-    // Top left: Resource Navigator view and Bookmarks view placeholder
-    IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT,
-        0.25f, editorArea);
-    //topLeft.addView(IPageLayout.ID_RES_NAV);
-    topLeft.addView("acmus.view.ProjectExplorer");
-    topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-    
-    layout.addNewWizardShortcut("acmus.new.measurementProject"); //$NON-NLS-1$
-//    layout.addNewWizardShortcut("acmus.new.measurementSession"); //$NON-NLS-1$
-//    layout.addNewWizardShortcut("acmus.new.measurementSet"); //$NON-NLS-1$
-//    layout.addNewWizardShortcut("acmus.new.measurement"); //$NON-NLS-1$
-//    layout.addNewWizardShortcut("acmus.new.signal"); //$NON-NLS-1$
-    
-  }
-  
+		// Top left: Resource Navigator view and Bookmarks view placeholder
+		IFolderLayout topLeft = layout.createFolder("topLeft",
+				IPageLayout.LEFT, 0.25f, editorArea);
+		// topLeft.addView(IPageLayout.ID_RES_NAV);
+		topLeft.addView("acmus.view.ProjectExplorer");
+		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
+
+		layout.addNewWizardShortcut("acmus.new.measurementProject"); //$NON-NLS-1$
+		// layout.addNewWizardShortcut("acmus.new.measurementSession");
+		// //$NON-NLS-1$
+		// layout.addNewWizardShortcut("acmus.new.measurementSet");
+		// //$NON-NLS-1$
+		// layout.addNewWizardShortcut("acmus.new.measurement"); //$NON-NLS-1$
+		// layout.addNewWizardShortcut("acmus.new.signal"); //$NON-NLS-1$
+
+	}
+
 }

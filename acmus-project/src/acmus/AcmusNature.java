@@ -41,23 +41,23 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class AcmusNature implements IProjectNature {
 
-  private IProject project;
+	private IProject project;
 
-  public void configure() throws CoreException {
-    // Add nature-specific information
-    // for the project, such as adding a builder
-    // to a project's build spec.
-  }
+	public void configure() throws CoreException {
+		// Add nature-specific information
+		// for the project, such as adding a builder
+		// to a project's build spec.
+	}
 
-  public void deconfigure() throws CoreException {
-    // Remove the nature-specific information here.
-  }
+	public void deconfigure() throws CoreException {
+		// Remove the nature-specific information here.
+	}
 
-  public IProject getProject() {
-    return project;
-  }
+	public IProject getProject() {
+		return project;
+	}
 
-  public void setProject(IProject value) {
-    project = value;
-  }
+	public void setProject(IProject value) {
+		project = value;
+	}
 }

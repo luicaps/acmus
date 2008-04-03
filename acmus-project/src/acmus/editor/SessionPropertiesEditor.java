@@ -42,99 +42,103 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class SessionPropertiesEditor extends EditorPart{
+public class SessionPropertiesEditor extends EditorPart {
 
-  SessionPropertiesControl _propertiesControl;
+	SessionPropertiesControl _propertiesControl;
 
-  FileEditorInput _input;
-  boolean _isDirty = false;
+	FileEditorInput _input;
+	boolean _isDirty = false;
 
-  @Override
-  public void doSave(IProgressMonitor monitor) {
-    Properties props = _propertiesControl.getSessionProperties();
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		Properties props = _propertiesControl.getSessionProperties();
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      props.store(baos, _input.getFile().getProject().getName() +"." + props.getProperty("Name") +" properties");
-      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-      _input.getFile().setContents(bais, true, true, null);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			props.store(baos, _input.getFile().getProject().getName() + "."
+					+ props.getProperty("Name") + " properties");
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos
+					.toByteArray());
+			_input.getFile().setContents(bais, true, true, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    setDirty(false);
-  }
+		setDirty(false);
+	}
 
-  @Override
-  public void doSaveAs() {
-  }
+	@Override
+	public void doSaveAs() {
+	}
 
-  @Override
-  public void init(IEditorSite site, IEditorInput input)
-      throws PartInitException {
-    setSite(site);
-    setInput(input);
-    _input = (FileEditorInput) input;
-    this.setPartName(_input.getFile().getParent().getName() + " properties");
-  }
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		_input = (FileEditorInput) input;
+		this
+				.setPartName(_input.getFile().getParent().getName()
+						+ " properties");
+	}
 
-  @Override
-  public boolean isDirty() {
-    return _isDirty;
-  }
+	@Override
+	public boolean isDirty() {
+		return _isDirty;
+	}
 
-  public void setDirty(boolean dirty) {
-    if (_isDirty != dirty) {
-      _isDirty = dirty;
-      firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    }
-  }
+	public void setDirty(boolean dirty) {
+		if (_isDirty != dirty) {
+			_isDirty = dirty;
+			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+		}
+	}
 
-  @Override
-  public boolean isSaveAsAllowed() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	@Override
+	public boolean isSaveAsAllowed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  @Override
-  public void createPartControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setFont(parent.getFont());
+	@Override
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setFont(parent.getFont());
 
-    _propertiesControl = new SessionPropertiesControl(composite, SWT.NONE);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    _propertiesControl.setLayoutData(gridData);
-    
-    _propertiesControl.createSetListControl(_input.getFile().getParent());
-    _propertiesControl.setProjectName(_input.getFile().getProject().getName());
+		_propertiesControl = new SessionPropertiesControl(composite, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		_propertiesControl.setLayoutData(gridData);
 
-    try {
-      _propertiesControl.loadProperties(_input.getFile().getContents());
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+		_propertiesControl.createSetListControl(_input.getFile().getParent());
+		_propertiesControl.setProjectName(_input.getFile().getProject()
+				.getName());
 
-    ModifyListener ml = new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        setDirty(true);
-      }
-    };
+		try {
+			_propertiesControl.loadProperties(_input.getFile().getContents());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
-    //_propertiesControl.addNameModifyListener(ml);
-    _propertiesControl.setSessionNameEditable(false);
-    _propertiesControl.addTimeModifyListener(ml);
-    _propertiesControl.addTemperatureModifyListener(ml);
-    _propertiesControl.addEquipmentModifyListener(ml);
-    _propertiesControl.addCommentsModifyListener(ml);
-    
-  }
+		ModifyListener ml = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setDirty(true);
+			}
+		};
 
-  @Override
-  public void setFocus() {
-    // TODO Auto-generated method stub
+		// _propertiesControl.addNameModifyListener(ml);
+		_propertiesControl.setSessionNameEditable(false);
+		_propertiesControl.addTimeModifyListener(ml);
+		_propertiesControl.addTemperatureModifyListener(ml);
+		_propertiesControl.addEquipmentModifyListener(ml);
+		_propertiesControl.addCommentsModifyListener(ml);
 
-  }
+	}
 
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

@@ -38,12 +38,12 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
  * Preferences - Java - Code Style - Code Templates
  */
 public class AcmusMeasurementProjectWizardFirstPage extends
-    WizardNewProjectCreationPage {
+		WizardNewProjectCreationPage {
 
-  public AcmusMeasurementProjectWizardFirstPage(String name) {
-    super(name);
-    setTitle("New Project");
-    setDescription("Specify the name and the contents location of the project.");
-  }
+	public AcmusMeasurementProjectWizardFirstPage(String name) {
+		super(name);
+		setTitle("New Project");
+		setDescription("Specify the name and the contents location of the project.");
+	}
 
 }

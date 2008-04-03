@@ -24,44 +24,44 @@
 package acmus.dsp;
 
 public final class Complex {
-  double _r;
-  double _i;
+	double _r;
+	double _i;
 
-  public Complex(double r, double i) {
-    _r = r;
-    _i = i;
-  }
+	public Complex(double r, double i) {
+		_r = r;
+		_i = i;
+	}
 
-  public final double real() {
-    return _r;
-  }
+	public final double real() {
+		return _r;
+	}
 
-  public final double imag() {
-    return _i;
-  }
+	public final double imag() {
+		return _i;
+	}
 
-  public final void real(double r) {
-    _r = r;
-  }
+	public final void real(double r) {
+		_r = r;
+	}
 
-  public final void imag(double i) {
-    _i = i;
-  }
+	public final void imag(double i) {
+		_i = i;
+	}
 
-  public final void mult(double re, double im) {
-    double x = (_r * re) - (_i * im);
-    double y = (_r * im) + (_i * re);
-    _r = x;
-    _i = y;
-  }
+	public final void mult(double re, double im) {
+		double x = (_r * re) - (_i * im);
+		double y = (_r * im) + (_i * re);
+		_r = x;
+		_i = y;
+	}
 
-  public final void div(double re, double im) {
-    // mult(re/(re*re + im*im), -im/(re*re + im*im));
-    double x = (_r * re) + (_i * im);
-    double y = (-_r * im) + (_i * re);
-    double s = re * re + im * im;
-    _r = x / s;
-    _i = y / s;
-  }
+	public final void div(double re, double im) {
+		// mult(re/(re*re + im*im), -im/(re*re + im*im));
+		double x = (_r * re) + (_i * im);
+		double y = (-_r * im) + (_i * re);
+		double s = re * re + im * im;
+		_r = x / s;
+		_i = y / s;
+	}
 
 }

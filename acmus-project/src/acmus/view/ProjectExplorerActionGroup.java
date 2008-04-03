@@ -47,48 +47,50 @@ import org.eclipse.ui.views.navigator.MainActionGroup;
  */
 public class ProjectExplorerActionGroup extends MainActionGroup {
 
-  private NewWizardMenu _myNewWizardMenu;
+	private NewWizardMenu _myNewWizardMenu;
 
-  public ProjectExplorerActionGroup(IResourceNavigator navigator) {
-    super(navigator);
-  }
+	public ProjectExplorerActionGroup(IResourceNavigator navigator) {
+		super(navigator);
+	}
 
-  protected void makeSubGroups() {
-    super.makeSubGroups();
-    openGroup = new ProjectExplorerOpenActionGroup(navigator);
-  }
+	protected void makeSubGroups() {
+		super.makeSubGroups();
+		openGroup = new ProjectExplorerOpenActionGroup(navigator);
+	}
 
-  @Override
-  public void fillContextMenu(IMenuManager menu) {
-    IStructuredSelection selection = (IStructuredSelection) getContext()
-        .getSelection();
+	@Override
+	public void fillContextMenu(IMenuManager menu) {
+		IStructuredSelection selection = (IStructuredSelection) getContext()
+				.getSelection();
 
-    MenuManager newMenu = new MenuManager(
-        ResourceNavigatorMessages.ResourceNavigator_new);
-    menu.add(newMenu);
-    _myNewWizardMenu = new NewWizardMenu(navigator.getSite().getWorkbenchWindow());
-    newMenu.add(_myNewWizardMenu);
+		MenuManager newMenu = new MenuManager(
+				ResourceNavigatorMessages.ResourceNavigator_new);
+		menu.add(newMenu);
+		_myNewWizardMenu = new NewWizardMenu(navigator.getSite()
+				.getWorkbenchWindow());
+		newMenu.add(_myNewWizardMenu);
 
-    gotoGroup.fillContextMenu(menu);
-    openGroup.fillContextMenu(menu);
-    menu.add(new Separator());
+		gotoGroup.fillContextMenu(menu);
+		openGroup.fillContextMenu(menu);
+		menu.add(new Separator());
 
-    workspaceGroup.fillContextMenu(menu);
+		workspaceGroup.fillContextMenu(menu);
 
-    menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-    menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
-    menu.add(new Separator());
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu
+				.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
+						+ "-end")); //$NON-NLS-1$
+		menu.add(new Separator());
 
-    if (selection.size() == 1) {
-      propertyDialogAction.selectionChanged(selection);
-      menu.add(propertyDialogAction);
-    }
-  }
-  
-  public void dispose() {
-    super.dispose();
-    _myNewWizardMenu.dispose();
-  }
+		if (selection.size() == 1) {
+			propertyDialogAction.selectionChanged(selection);
+			menu.add(propertyDialogAction);
+		}
+	}
 
+	public void dispose() {
+		super.dispose();
+		_myNewWizardMenu.dispose();
+	}
 
 }

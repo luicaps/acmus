@@ -50,140 +50,139 @@ import acmus.AcmusPlugin;
  */
 public class SpeedOfSound implements IWorkbenchWindowActionDelegate {
 
-  Shell shell;
+	Shell shell;
 
-  Text humidity;
-  Text temperature;
-  Button compute;
-  Text speed;
-  MessageBox errorDialog;
+	Text humidity;
+	Text temperature;
+	Button compute;
+	Text speed;
+	MessageBox errorDialog;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-   */
-  public void dispose() {
-    // TODO Auto-generated method stub
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-   */
-  public void init(IWorkbenchWindow window) {
-    // FIXME: find a way to create shell only once...
-    // createShell();
-  }
-  
-  private void createShell() {
-    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-    shell = new Shell(d);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+		// FIXME: find a way to create shell only once...
+		// createShell();
+	}
 
-    shell.setText("Speed of Sound");
+	private void createShell() {
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+		shell = new Shell(d);
 
-    shell.setLayout(new GridLayout(2, false));
-    GridData gridData;
+		shell.setText("Speed of Sound");
 
-    Label label = new Label(shell, SWT.LEFT);
-    label.setText("Relative humidity (0-100%)");
+		shell.setLayout(new GridLayout(2, false));
+		GridData gridData;
 
-    humidity = new Text(shell, SWT.BORDER);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    humidity.setLayoutData(gridData);
+		Label label = new Label(shell, SWT.LEFT);
+		label.setText("Relative humidity (0-100%)");
 
-    label = new Label(shell, SWT.LEFT);
-    label.setText("Temperature (0-30\u00b0C)");
+		humidity = new Text(shell, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		humidity.setLayoutData(gridData);
 
-    temperature = new Text(shell, SWT.BORDER);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    temperature.setLayoutData(gridData);
+		label = new Label(shell, SWT.LEFT);
+		label.setText("Temperature (0-30\u00b0C)");
 
-    label = new Label(shell, SWT.LEFT);
-    label.setText("Speed of Sound (m/s)");
+		temperature = new Text(shell, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		temperature.setLayoutData(gridData);
 
-    speed = new Text(shell, SWT.BORDER);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    speed.setText("           ");
-    speed.setEditable(false);
-    speed.setLayoutData(gridData);
+		label = new Label(shell, SWT.LEFT);
+		label.setText("Speed of Sound (m/s)");
 
-    compute = new Button(shell, SWT.NONE);
-    compute.setText("Compute");
+		speed = new Text(shell, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		speed.setText("           ");
+		speed.setEditable(false);
+		speed.setLayoutData(gridData);
 
-    compute.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent event) {
-        compute();
-      }
-    });
-    shell.pack();
-    
-    errorDialog = new MessageBox(shell, SWT.ICON_ERROR);
-    errorDialog.setMessage("Please check the input data.");    
-  }
+		compute = new Button(shell, SWT.NONE);
+		compute.setText("Compute");
 
-  public void compute() {
-    double x = 0.0;
-    double y = 0.0;
-    try {
-      String s1 = temperature.getText();
-      Double d1 = Double.valueOf(s1);
-      x = Math.abs(d1.doubleValue());
-      String s2 = humidity.getText();
-      Double d2 = Double.valueOf(s2);
-      y = Math.abs(d2.doubleValue());
-      if (inputValid(x, y) == true) {
-        CalculateSpeedOfSound cal = new CalculateSpeedOfSound(x, y);
-        double velocity = cal.calculateSpeedOfSound();
-        velocity = velocity * 10;
-        int aux = (int) velocity;
-        velocity = (double) aux / 10;
-        speed.setText("" + velocity);
-      } else
-        errorDialog.open();
-    } catch (Exception exception) {
-      errorDialog.open();
-    }
-  }
+		compute.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				compute();
+			}
+		});
+		shell.pack();
 
-  /**
-   * Verifies the input validity
-   * 
-   * @param x
-   *          temperature
-   * @param y
-   *          humidity
-   * @return true if temperature and humidity are within acceptable ranges and
-   *         false otherwise
-   */
-  boolean inputValid(double x, double y) {
-    if ((x >= 0.0 && x <= 30.0) && (y >= 0.0 && y <= 100.0))
-      return true;
-    else
-      return false;
-  }
+		errorDialog = new MessageBox(shell, SWT.ICON_ERROR);
+		errorDialog.setMessage("Please check the input data.");
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-   */
-  public void run(IAction action) {
-    createShell();
-    shell.open();
-  }
+	public void compute() {
+		double x = 0.0;
+		double y = 0.0;
+		try {
+			String s1 = temperature.getText();
+			Double d1 = Double.valueOf(s1);
+			x = Math.abs(d1.doubleValue());
+			String s2 = humidity.getText();
+			Double d2 = Double.valueOf(s2);
+			y = Math.abs(d2.doubleValue());
+			if (inputValid(x, y) == true) {
+				CalculateSpeedOfSound cal = new CalculateSpeedOfSound(x, y);
+				double velocity = cal.calculateSpeedOfSound();
+				velocity = velocity * 10;
+				int aux = (int) velocity;
+				velocity = (double) aux / 10;
+				speed.setText("" + velocity);
+			} else
+				errorDialog.open();
+		} catch (Exception exception) {
+			errorDialog.open();
+		}
+	}
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-   *      org.eclipse.jface.viewers.ISelection)
-   */
-  public void selectionChanged(IAction action, ISelection selection) {
-    // TODO Auto-generated method stub
+	/**
+	 * Verifies the input validity
+	 * 
+	 * @param x
+	 *            temperature
+	 * @param y
+	 *            humidity
+	 * @return true if temperature and humidity are within acceptable ranges and
+	 *         false otherwise
+	 */
+	boolean inputValid(double x, double y) {
+		if ((x >= 0.0 && x <= 30.0) && (y >= 0.0 && y <= 100.0))
+			return true;
+		else
+			return false;
+	}
 
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	public void run(IAction action) {
+		createShell();
+		shell.open();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		// TODO Auto-generated method stub
+
+	}
 }
-

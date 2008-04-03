@@ -48,7 +48,7 @@ public class MlsWizard extends Wizard implements INewWizard {
 	private MlsWizardFirstPage mainPage;
 
 	public void addPages() {
-//		IResource s = (IResource) selection.getFirstElement();
+		// IResource s = (IResource) selection.getFirstElement();
 		mainPage = new MlsWizardFirstPage("MlsWizardFirstPage");
 		addPage(mainPage);
 	}

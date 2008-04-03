@@ -25,8 +25,9 @@ package acmus.wizard;
 
 import org.eclipse.ui.INewWizard;
 
-public class NewInputSignalActionDelegate extends NewMeasurementProjectActionDelegate {
-  protected INewWizard createWizard() {
-    return new AcmusInputSignalWizard();
-  }
+public class NewInputSignalActionDelegate extends
+		NewMeasurementProjectActionDelegate {
+	protected INewWizard createWizard() {
+		return new AcmusInputSignalWizard();
+	}
 }

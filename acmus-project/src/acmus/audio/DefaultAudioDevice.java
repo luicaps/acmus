@@ -20,56 +20,56 @@ import javax.sound.sampled.TargetDataLine;
  */
 public class DefaultAudioDevice implements AudioDevice {
 
-  private TargetDataLine m_line;
-  private AudioFileFormat.Type m_targetType;
-  private AudioInputStream m_audioInputStream;
-  private DataLine.Info m_outputinfo;
-  private File m_outputFile;
-  private AudioFormat _format;
-  private long duration;
+	private TargetDataLine m_line;
+	private AudioFileFormat.Type m_targetType;
+	private AudioInputStream m_audioInputStream;
+	private DataLine.Info m_outputinfo;
+	private File m_outputFile;
+	private AudioFormat _format;
+	private long duration;
 
-  public DefaultAudioDevice() {
-    m_targetType = AudioFileFormat.Type.WAVE;
+	public DefaultAudioDevice() {
+		m_targetType = AudioFileFormat.Type.WAVE;
 
-    _format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F, 16, 2,
-        4, 44100.0F, false);
+		_format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F,
+				16, 2, 4, 44100.0F, false);
 
-    m_outputinfo = new DataLine.Info(TargetDataLine.class, _format);
-  }
+		m_outputinfo = new DataLine.Info(TargetDataLine.class, _format);
+	}
 
-  public void record(File outputFile, int milliseconds) {
-    duration = (long) milliseconds;
-    m_outputFile = outputFile;
-    (new Thread() {
-      public void run() {
-        try {
-          m_line = (TargetDataLine) AudioSystem.getLine(m_outputinfo);
-          m_line.open(_format);
-          m_audioInputStream = new AudioInputStream(m_line);
-          System.out.println("rec start " + duration);
-          m_line.start();
-          (new Thread() {
-            public void run() {
-              try {
-                AudioSystem.write(m_audioInputStream, m_targetType,
-                    m_outputFile);
-              } catch (IOException e) {
-                e.printStackTrace();
-              }
-            }
-          }).start();
-          try {
-            Thread.sleep(duration);
-          } catch (InterruptedException e) {
-          }
-          m_line.stop();
-          m_line.close();
-          System.out.println("rec end");
-        } catch (LineUnavailableException e) {
-          e.printStackTrace();
-        }
-      }
-    }).start();
-  }
+	public void record(File outputFile, int milliseconds) {
+		duration = (long) milliseconds;
+		m_outputFile = outputFile;
+		(new Thread() {
+			public void run() {
+				try {
+					m_line = (TargetDataLine) AudioSystem.getLine(m_outputinfo);
+					m_line.open(_format);
+					m_audioInputStream = new AudioInputStream(m_line);
+					System.out.println("rec start " + duration);
+					m_line.start();
+					(new Thread() {
+						public void run() {
+							try {
+								AudioSystem.write(m_audioInputStream,
+										m_targetType, m_outputFile);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}).start();
+					try {
+						Thread.sleep(duration);
+					} catch (InterruptedException e) {
+					}
+					m_line.stop();
+					m_line.close();
+					System.out.println("rec end");
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
 
 }

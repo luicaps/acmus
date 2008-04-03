@@ -42,90 +42,94 @@ import acmus.audio.DefaultAudioDevice;
  * The main plugin class to be used in the desktop.
  */
 public class AcmusPlugin extends AbstractUIPlugin {
-  // The shared instance.
-  private static AcmusPlugin plugin;
-  // Resource bundle.
-  private ResourceBundle resourceBundle;
+	// The shared instance.
+	private static AcmusPlugin plugin;
+	// Resource bundle.
+	private ResourceBundle resourceBundle;
 
-  public AudioDevice audioDevice;
-  public String WORKSPACE_DIR;
-    
-  /**
-   * The constructor.
-   */
-  public AcmusPlugin() {
-    super();
-    plugin = this;
-    try {
-      resourceBundle = ResourceBundle.getBundle("acmus.AcmusPluginResources");
-    } catch (MissingResourceException x) {
-      resourceBundle = null;
-    }
+	public AudioDevice audioDevice;
+	public String WORKSPACE_DIR;
 
-    //WORKSPACE_DIR = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-    
-    try {
-      IExtensionRegistry registry = Platform.getExtensionRegistry();
-      IExtensionPoint point = registry.getExtensionPoint("acmus.audioDevice");
-      IExtension[] extensions = point.getExtensions();
-      for (int i = 0; i < extensions.length; i++) {
-        IConfigurationElement[] elements = extensions[i]
-            .getConfigurationElements();
-        for (int j = 0; j < elements.length; j++) {
-          if ("device".equals(elements[j].getName())) {
-            audioDevice = (AudioDevice) elements[j]
-                .createExecutableExtension("run");
-            System.out.println("Found an executable extension: " + audioDevice);
-          }
-        }
-      }
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+	/**
+	 * The constructor.
+	 */
+	public AcmusPlugin() {
+		super();
+		plugin = this;
+		try {
+			resourceBundle = ResourceBundle
+					.getBundle("acmus.AcmusPluginResources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 
-    if (audioDevice == null) {
-      audioDevice = new DefaultAudioDevice();
-    }
-  }
+		// WORKSPACE_DIR =
+		// ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 
-  /**
-   * This method is called upon plug-in activation
-   */
-  public void start(BundleContext context) throws Exception {
-    super.start(context);
-  }
+		try {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint point = registry
+					.getExtensionPoint("acmus.audioDevice");
+			IExtension[] extensions = point.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					if ("device".equals(elements[j].getName())) {
+						audioDevice = (AudioDevice) elements[j]
+								.createExecutableExtension("run");
+						System.out.println("Found an executable extension: "
+								+ audioDevice);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
-  /**
-   * This method is called when the plug-in is stopped
-   */
-  public void stop(BundleContext context) throws Exception {
-    super.stop(context);
-  }
+		if (audioDevice == null) {
+			audioDevice = new DefaultAudioDevice();
+		}
+	}
 
-  /**
-   * Returns the shared instance.
-   */
-  public static AcmusPlugin getDefault() {
-    return plugin;
-  }
+	/**
+	 * This method is called upon plug-in activation
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+	}
 
-  /**
-   * Returns the string from the plugin's resource bundle, or 'key' if not
-   * found.
-   */
-  public static String getResourceString(String key) {
-    ResourceBundle bundle = AcmusPlugin.getDefault().getResourceBundle();
-    try {
-      return (bundle != null) ? bundle.getString(key) : key;
-    } catch (MissingResourceException e) {
-      return key;
-    }
-  }
+	/**
+	 * This method is called when the plug-in is stopped
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+	}
 
-  /**
-   * Returns the plugin's resource bundle,
-   */
-  public ResourceBundle getResourceBundle() {
-    return resourceBundle;
-  }
+	/**
+	 * Returns the shared instance.
+	 */
+	public static AcmusPlugin getDefault() {
+		return plugin;
+	}
+
+	/**
+	 * Returns the string from the plugin's resource bundle, or 'key' if not
+	 * found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = AcmusPlugin.getDefault().getResourceBundle();
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
+
+	/**
+	 * Returns the plugin's resource bundle,
+	 */
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
 }

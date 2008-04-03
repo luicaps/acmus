@@ -48,193 +48,200 @@ import acmus.MeasurementProject;
 
 public class SessionPropertiesControl extends Composite {
 
-  Text fName;
-  Text fTime;
-  Text fTemperature;
-  Text fEquipment;
-  Text fComments;
-  
-  String _projectName;
+	Text fName;
+	Text fTime;
+	Text fTemperature;
+	Text fEquipment;
+	Text fComments;
 
-  FormText _names;
+	String _projectName;
 
-  private FormToolkit toolkit;
-  private Form form;
+	FormText _names;
 
-  Properties fProperties;
+	private FormToolkit toolkit;
+	private Form form;
 
-  public SessionPropertiesControl(Composite parent, int style) {
-    super(parent,style);
-    fProperties = new Properties();
-    FillLayout fl = new FillLayout();
-    fl.marginHeight=1;
-    fl.marginWidth = 1;
-    setLayout(fl);
-    setBackground(AcmusGraphics.BLACK);
+	Properties fProperties;
 
-    fProperties = new Properties();
+	public SessionPropertiesControl(Composite parent, int style) {
+		super(parent, style);
+		fProperties = new Properties();
+		FillLayout fl = new FillLayout();
+		fl.marginHeight = 1;
+		fl.marginWidth = 1;
+		setLayout(fl);
+		setBackground(AcmusGraphics.BLACK);
 
-    GridLayout gridLayout;
-    GridData gridData;
-    Label l;
+		fProperties = new Properties();
 
-    toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
-    form = toolkit.createForm(this);
+		GridLayout gridLayout;
+		GridData gridData;
+		Label l;
 
-    form.setText("Session Properties");
-    form.setBackgroundImage(AcmusGraphics.IMG_FORMBANNER);
+		toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
+		form = toolkit.createForm(this);
 
-    gridLayout = new GridLayout(1, true);
-    Composite body = form.getBody();
-    body.setLayout(gridLayout);
+		form.setText("Session Properties");
+		form.setBackgroundImage(AcmusGraphics.IMG_FORMBANNER);
 
-    _names = toolkit.createFormText(body, true);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.horizontalIndent = 5;
-    gridData.horizontalSpan = 2;
-    _names.setLayoutData(gridData);
+		gridLayout = new GridLayout(1, true);
+		Composite body = form.getBody();
+		body.setLayout(gridLayout);
 
-    Composite bodyLeft = toolkit.createComposite(body);
-    gridLayout = new GridLayout(4, false);
-    gridLayout.verticalSpacing = 10;
-    bodyLeft.setLayout(gridLayout);
-    gridData = new GridData(GridData.FILL_BOTH);
-    bodyLeft.setLayoutData(gridData);
-    toolkit.paintBordersFor(bodyLeft);
+		_names = toolkit.createFormText(body, true);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalIndent = 5;
+		gridData.horizontalSpan = 2;
+		_names.setLayoutData(gridData);
 
-    l = toolkit.createLabel(bodyLeft, "Session:");
-    fName = toolkit.createText(bodyLeft, "");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.horizontalSpan = 3;
-    fName.setLayoutData(gridData);
+		Composite bodyLeft = toolkit.createComposite(body);
+		gridLayout = new GridLayout(4, false);
+		gridLayout.verticalSpacing = 10;
+		bodyLeft.setLayout(gridLayout);
+		gridData = new GridData(GridData.FILL_BOTH);
+		bodyLeft.setLayoutData(gridData);
+		toolkit.paintBordersFor(bodyLeft);
 
-    l = toolkit.createLabel(bodyLeft, "Time:");
-    fTime = toolkit.createText(bodyLeft, "");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    fTime.setLayoutData(gridData);
-    GregorianCalendar c = (new GregorianCalendar());
-    fTime.setText((c.get(Calendar.HOUR) < 10 ? "0" : "") + c.get(Calendar.HOUR)
-        + ":" + (c.get(Calendar.MINUTE) < 10 ? "0" : "")
-        + c.get(Calendar.MINUTE));
+		l = toolkit.createLabel(bodyLeft, "Session:");
+		fName = toolkit.createText(bodyLeft, "");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		fName.setLayoutData(gridData);
 
-    l = toolkit.createLabel(bodyLeft, "Temperature:");
-    fTemperature = toolkit.createText(bodyLeft, "\u00b0");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    fTemperature.setLayoutData(gridData);
+		l = toolkit.createLabel(bodyLeft, "Time:");
+		fTime = toolkit.createText(bodyLeft, "");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fTime.setLayoutData(gridData);
+		GregorianCalendar c = (new GregorianCalendar());
+		fTime.setText((c.get(Calendar.HOUR) < 10 ? "0" : "")
+				+ c.get(Calendar.HOUR) + ":"
+				+ (c.get(Calendar.MINUTE) < 10 ? "0" : "")
+				+ c.get(Calendar.MINUTE));
 
-    l = toolkit.createLabel(bodyLeft,"Equipment:");
-    gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-    l.setLayoutData(gridData);
-    fEquipment = toolkit.createText(bodyLeft, "", SWT.MULTI);
-    gridData = new GridData(GridData.FILL_BOTH);
-    gridData.horizontalSpan = 3;
-    gridData.heightHint = 60;
-    fEquipment.setLayoutData(gridData);
+		l = toolkit.createLabel(bodyLeft, "Temperature:");
+		fTemperature = toolkit.createText(bodyLeft, "\u00b0");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fTemperature.setLayoutData(gridData);
 
-    l = toolkit.createLabel(bodyLeft, "Comments:");
-    gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-    l.setLayoutData(gridData);
-    fComments = toolkit.createText(bodyLeft, "", SWT.MULTI);
-    gridData = new GridData(GridData.FILL_BOTH);
-    gridData.horizontalSpan = 3;
-    gridData.heightHint = 60;
-    fComments.setLayoutData(gridData);
-    
-  }
-  
-  public void updateNames(String project) {
-    _names.setText("<form><p>project: <b>" + project + "</b></p><p></p></form>", true, false);
-  }
+		l = toolkit.createLabel(bodyLeft, "Equipment:");
+		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		l.setLayoutData(gridData);
+		fEquipment = toolkit.createText(bodyLeft, "", SWT.MULTI);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 3;
+		gridData.heightHint = 60;
+		fEquipment.setLayoutData(gridData);
 
-  public void setProjectName(String name) {
-    _projectName = name;
-    updateNames(_projectName);
-  }
-  
-  public void addNameModifyListener(ModifyListener l) {
-    fName.addModifyListener(l);
-  }
-  public void addTimeModifyListener(ModifyListener l) {
-    fTime.addModifyListener(l);
-  }
-  public void addTemperatureModifyListener(ModifyListener l) {
-    fTemperature.addModifyListener(l);
-  }
-  public void addEquipmentModifyListener(ModifyListener l) {
-    fEquipment.addModifyListener(l);
-  }
-  public void addCommentsModifyListener(ModifyListener l) {
-    fComments.addModifyListener(l);
-  }
-  
-  public final String getSessionName() {
-    return fName.getText();
-  }
-  public final void setSessionNameEditable(boolean editable) {
-    fName.setEditable(editable);
-  }
+		l = toolkit.createLabel(bodyLeft, "Comments:");
+		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		l.setLayoutData(gridData);
+		fComments = toolkit.createText(bodyLeft, "", SWT.MULTI);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 3;
+		gridData.heightHint = 60;
+		fComments.setLayoutData(gridData);
 
-  /**
-   * Updates and returns the <code>Properties</code> object that contains the
-   * session properties.
-   * 
-   * @return the session properties
-   */
-  public Properties getSessionProperties() {
-    //fProperties.clear();
-    fProperties.setProperty("Name", fName.getText());
-    fProperties.setProperty("Time", fTime.getText());
-    fProperties.setProperty("Temperature", fTemperature.getText());
-    fProperties.setProperty("Equipment", fEquipment.getText());
-    fProperties.setProperty("Comments", fComments.getText());
-    return fProperties;
-  }
+	}
 
-  public void loadProperties(InputStream is) {
-    try {
-      fProperties.load(is);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    fName.setText(fProperties.getProperty("Name","noname"));
-    fTime.setText(fProperties.getProperty("Time",""));
-    fTemperature.setText(fProperties.getProperty("Temperature",""));
-    fEquipment.setText(fProperties.getProperty("Equipment",""));
-    fComments.setText(fProperties.getProperty("Comments",""));
-  }
-  
-  // optional information
-  public void createSetListControl(IContainer sessionFolder) {
-    Composite body = form.getBody();
-    GridLayout gridLayout = (GridLayout)body.getLayout();
-    gridLayout.numColumns = 2;
+	public void updateNames(String project) {
+		_names.setText("<form><p>project: <b>" + project
+				+ "</b></p><p></p></form>", true, false);
+	}
 
-    Composite bodyRight = toolkit.createComposite(form.getBody());
-    gridLayout = new GridLayout(1, false);
-    gridLayout.verticalSpacing = 10;
-    bodyRight.setLayout(gridLayout);
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    bodyRight.setLayoutData(gridData);
-    toolkit.paintBordersFor(bodyRight);
-    
-    Section section = toolkit.createSection(bodyRight, Section.TITLE_BAR);
-    section.setText("Sets");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    section.setLayoutData(gridData);
+	public void setProjectName(String name) {
+		_projectName = name;
+		updateNames(_projectName);
+	}
 
-    FormText tform = toolkit.createFormText(bodyRight, true);
-    String[] s = MeasurementProject.listSets(sessionFolder);
-    gridData = new GridData(GridData.FILL_BOTH);
-    tform.setLayoutData(gridData);
-    StringBuffer sb = new StringBuffer();
-    sb.append("<form>");
-    for (String str: s) {
-      sb.append("<li>" + str + "</li>");
-    }
-    sb.append("</form>");
-    tform.setText(sb.toString(), true, false);
-    
-    body.layout();
-  }
-  
+	public void addNameModifyListener(ModifyListener l) {
+		fName.addModifyListener(l);
+	}
+
+	public void addTimeModifyListener(ModifyListener l) {
+		fTime.addModifyListener(l);
+	}
+
+	public void addTemperatureModifyListener(ModifyListener l) {
+		fTemperature.addModifyListener(l);
+	}
+
+	public void addEquipmentModifyListener(ModifyListener l) {
+		fEquipment.addModifyListener(l);
+	}
+
+	public void addCommentsModifyListener(ModifyListener l) {
+		fComments.addModifyListener(l);
+	}
+
+	public final String getSessionName() {
+		return fName.getText();
+	}
+
+	public final void setSessionNameEditable(boolean editable) {
+		fName.setEditable(editable);
+	}
+
+	/**
+	 * Updates and returns the <code>Properties</code> object that contains
+	 * the session properties.
+	 * 
+	 * @return the session properties
+	 */
+	public Properties getSessionProperties() {
+		// fProperties.clear();
+		fProperties.setProperty("Name", fName.getText());
+		fProperties.setProperty("Time", fTime.getText());
+		fProperties.setProperty("Temperature", fTemperature.getText());
+		fProperties.setProperty("Equipment", fEquipment.getText());
+		fProperties.setProperty("Comments", fComments.getText());
+		return fProperties;
+	}
+
+	public void loadProperties(InputStream is) {
+		try {
+			fProperties.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fName.setText(fProperties.getProperty("Name", "noname"));
+		fTime.setText(fProperties.getProperty("Time", ""));
+		fTemperature.setText(fProperties.getProperty("Temperature", ""));
+		fEquipment.setText(fProperties.getProperty("Equipment", ""));
+		fComments.setText(fProperties.getProperty("Comments", ""));
+	}
+
+	// optional information
+	public void createSetListControl(IContainer sessionFolder) {
+		Composite body = form.getBody();
+		GridLayout gridLayout = (GridLayout) body.getLayout();
+		gridLayout.numColumns = 2;
+
+		Composite bodyRight = toolkit.createComposite(form.getBody());
+		gridLayout = new GridLayout(1, false);
+		gridLayout.verticalSpacing = 10;
+		bodyRight.setLayout(gridLayout);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		bodyRight.setLayoutData(gridData);
+		toolkit.paintBordersFor(bodyRight);
+
+		Section section = toolkit.createSection(bodyRight, Section.TITLE_BAR);
+		section.setText("Sets");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(gridData);
+
+		FormText tform = toolkit.createFormText(bodyRight, true);
+		String[] s = MeasurementProject.listSets(sessionFolder);
+		gridData = new GridData(GridData.FILL_BOTH);
+		tform.setLayoutData(gridData);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<form>");
+		for (String str : s) {
+			sb.append("<li>" + str + "</li>");
+		}
+		sb.append("</form>");
+		tform.setText(sb.toString(), true, false);
+
+		body.layout();
+	}
+
 }

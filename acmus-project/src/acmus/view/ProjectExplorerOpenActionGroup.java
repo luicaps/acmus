@@ -49,143 +49,148 @@ import org.eclipse.ui.views.navigator.OpenActionGroup;
  */
 public class ProjectExplorerOpenActionGroup extends OpenActionGroup {
 
-  public ProjectExplorerOpenActionGroup(IResourceNavigator navigator) {
-    super(navigator);
-  }
+	public ProjectExplorerOpenActionGroup(IResourceNavigator navigator) {
+		super(navigator);
+	}
 
-  @Override
-  public void runDefaultAction(IStructuredSelection selection) {
-    // System.out.println("runDefault");
-    Object element = selection.getFirstElement();
+	@Override
+	public void runDefaultAction(IStructuredSelection selection) {
+		// System.out.println("runDefault");
+		Object element = selection.getFirstElement();
 
-    if (element instanceof IFile) {
-      super.runDefaultAction(selection);
-    } else if (element instanceof IFolder) {
-      IFolder folder = (IFolder) element;
-      if (folder.getName().endsWith(".msr")) {
-        // super.runDefaultAction(new MySelection(folder
-        // .getFile("measurement.properties")));
+		if (element instanceof IFile) {
+			super.runDefaultAction(selection);
+		} else if (element instanceof IFolder) {
+			IFolder folder = (IFolder) element;
+			if (folder.getName().endsWith(".msr")) {
+				// super.runDefaultAction(new MySelection(folder
+				// .getFile("measurement.properties")));
 
-        // FIXME: I guess the following is not the correct way to open the right
-        // editor.
-        try {
-          navigator.getSite().getPage().openEditor(
-              new FileEditorInput(folder.getFile("measurement.properties")),
-              "acmus.editor.MeasurementEditor");
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      } else if (folder.getName().endsWith(".session")) {
-        try {
-          navigator.getSite().getPage().openEditor(
-              new FileEditorInput(folder.getFile("session.properties")),
-              "acmus.editor.SessionPropertiesEditor");
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      } else if (folder.getName().endsWith(".set")) {
-        try {
-          navigator.getSite().getPage().openEditor(
-              new FileEditorInput(folder.getFile("set.properties")),
-              "acmus.editor.SetPropertiesEditor");
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
+				// FIXME: I guess the following is not the correct way to open
+				// the right
+				// editor.
+				try {
+					navigator.getSite().getPage().openEditor(
+							new FileEditorInput(folder
+									.getFile("measurement.properties")),
+							"acmus.editor.MeasurementEditor");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (folder.getName().endsWith(".session")) {
+				try {
+					navigator.getSite().getPage().openEditor(
+							new FileEditorInput(folder
+									.getFile("session.properties")),
+							"acmus.editor.SessionPropertiesEditor");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (folder.getName().endsWith(".set")) {
+				try {
+					navigator.getSite().getPage().openEditor(
+							new FileEditorInput(folder
+									.getFile("set.properties")),
+							"acmus.editor.SetPropertiesEditor");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 
-    } else if (element instanceof IProject) {
-      IProject project = (IProject)element;
-      try {
-        navigator.getSite().getPage().openEditor(
-            new FileEditorInput(project.getFile("project.properties")),
-            "acmus.editor.ProjectPropertiesEditor");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
+		} else if (element instanceof IProject) {
+			IProject project = (IProject) element;
+			try {
+				navigator.getSite().getPage().openEditor(
+						new FileEditorInput(project
+								.getFile("project.properties")),
+						"acmus.editor.ProjectPropertiesEditor");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
-  }
+	}
 
-  class MySelection implements IStructuredSelection {
+	class MySelection implements IStructuredSelection {
 
-    Object _el;
+		Object _el;
 
-    public MySelection(Object el) {
-      _el = el;
-    }
+		public MySelection(Object el) {
+			_el = el;
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredSelection#getFirstElement()
-     */
-    public Object getFirstElement() {
-      return _el;
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredSelection#getFirstElement()
+		 */
+		public Object getFirstElement() {
+			return _el;
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
-     */
-    public Iterator<?> iterator() {
-     return new Iterator<Object>() {
-        boolean _hasNext = true;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredSelection#iterator()
+		 */
+		public Iterator<?> iterator() {
+			return new Iterator<Object>() {
+				boolean _hasNext = true;
 
-        public boolean hasNext() {
-          return _hasNext;
-        }
+				public boolean hasNext() {
+					return _hasNext;
+				}
 
-        public Object next() {
-          _hasNext = false;
-          return _el;
-        }
+				public Object next() {
+					_hasNext = false;
+					return _el;
+				}
 
-        public void remove() {
-        }
-      };
-    }
+				public void remove() {
+				}
+			};
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredSelection#size()
-     */
-    public int size() {
-      // TODO Auto-generated method stub
-      return 1;
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredSelection#size()
+		 */
+		public int size() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredSelection#toArray()
-     */
-    public Object[] toArray() {
-      Object[] res = new Object[1];
-      res[0] = _el;
-      return res;
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredSelection#toArray()
+		 */
+		public Object[] toArray() {
+			Object[] res = new Object[1];
+			res[0] = _el;
+			return res;
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
-     */
-    public List<?> toList() {
-      List<Object> res = new ArrayList<Object>();
-      res.add(_el);
-      return res;
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredSelection#toList()
+		 */
+		public List<?> toList() {
+			List<Object> res = new ArrayList<Object>();
+			res.add(_el);
+			return res;
+		}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ISelection#isEmpty()
-     */
-    public boolean isEmpty() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-  }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
+		 */
+		public boolean isEmpty() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+	}
 }

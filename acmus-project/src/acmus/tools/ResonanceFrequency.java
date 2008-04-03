@@ -200,7 +200,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] oblique_frequency = new double[v.size()];
-//			double sum = 0.0;
+			// double sum = 0.0;
 			double sum_difference = 0.0;
 			for (int i = 0; i < v.size(); i++) {
 				double d = ((Double) v.elementAt(i)).doubleValue();
@@ -417,9 +417,9 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		return t;
 	}
 
-//	private Text newText(Composite parent, String lb) {
-//		return newText(parent, lb, "0");
-//	}
+	// private Text newText(Composite parent, String lb) {
+	// return newText(parent, lb, "0");
+	// }
 
 	/*
 	 * (non-Javadoc)

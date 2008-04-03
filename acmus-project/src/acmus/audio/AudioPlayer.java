@@ -109,8 +109,8 @@ public class AudioPlayer {
 	ToolItem _tiYReset;
 	ToolItem _tiYFit;
 	ToolItem _tiYZoomOut;
-  ToolItem _tiBackward;
-  ToolItem _tiForward;
+	ToolItem _tiBackward;
+	ToolItem _tiForward;
 
 	ToolBar _selModeBar;
 	ToolItem _tiZoomMode;
@@ -125,12 +125,11 @@ public class AudioPlayer {
 	Text _tPosition;
 	Text _tSelStart;
 	Text _tSelEnd;
-  
-  Combo _spectrumWindowFunc;
-  Combo _spectrumWindowSize;
-  Text _spectrumFreq;
-  Text _spectrumDb;
-  
+
+	Combo _spectrumWindowFunc;
+	Combo _spectrumWindowSize;
+	Text _spectrumFreq;
+	Text _spectrumDb;
 
 	JavaSoundOutput _jso;
 	SourceDataLine _sdl;
@@ -185,60 +184,65 @@ public class AudioPlayer {
 				}
 			}
 			_gainControl = _player.getGainControl();
-      if (_audioStream != null) {
-        _audioStream.close();
-      }
+			if (_audioStream != null) {
+				_audioStream.close();
+			}
 			_audioStream = AudioSystem.getAudioInputStream(new FileInputStream(
 					filename));
 			_audioData = readData2(_audioStream);
 
 			_jso = new JavaSoundOutput();
-			_jso.initialize(JavaSoundOutput.convertFormat(_audioStream.getFormat()),
-					BUFFERLENGTH);
+			_jso.initialize(JavaSoundOutput.convertFormat(_audioStream
+					.getFormat()), BUFFERLENGTH);
 
-      DataLine.Info info = null;
+			DataLine.Info info = null;
 			AudioFormat format = _audioStream.getFormat();
 			if (format.getSampleSizeInBits() == 32) {
 				_audioBytes = Util.downsample32to16(_audioBytes);
-				format = new AudioFormat(format.getEncoding(), format.getSampleRate(), 16, format.getChannels(), 2, format.getFrameRate(), format.isBigEndian());
+				format = new AudioFormat(format.getEncoding(), format
+						.getSampleRate(), 16, format.getChannels(), 2, format
+						.getFrameRate(), format.isBigEndian());
 				info = new DataLine.Info(SourceDataLine.class, format);
-				System.out.println("32 bit audio playback unsupported, downsampling (for playback only).");
+				System.out
+						.println("32 bit audio playback unsupported, downsampling (for playback only).");
+			} else {
+				info = new DataLine.Info(SourceDataLine.class, _audioStream
+						.getFormat());
 			}
-			else {
-			 info = new DataLine.Info(SourceDataLine.class, _audioStream
-					.getFormat());
-			}
-			
+
 			try {
-			_sdl = (SourceDataLine) AudioSystem.getLine(info);
-			// _sdl.open(_audioStream.getFormat());
-			}
-			catch (Exception e){
+				_sdl = (SourceDataLine) AudioSystem.getLine(info);
+				// _sdl.open(_audioStream.getFormat());
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			if (_waveform != null) {
-				_waveform.setData(_audioData, _audioStream.getFormat().getChannels(),
-						_audioStream.getFormat().getSampleRate(), _audioStream.getFormat().getSampleSizeInBits());
+				_waveform.setData(_audioData, _audioStream.getFormat()
+						.getChannels(), _audioStream.getFormat()
+						.getSampleRate(), _audioStream.getFormat()
+						.getSampleSizeInBits());
 			}
 
-			_dbMeter
-					.setData(_audioData, _audioStream.getFormat().getChannels(), 1000, _audioStream.getFormat().getSampleSizeInBits());
+			_dbMeter.setData(_audioData,
+					_audioStream.getFormat().getChannels(), 1000, _audioStream
+							.getFormat().getSampleSizeInBits());
 
 			if (_spectrum != null) {
-				_spectrum.setData(_audioData, _audioStream.getFormat().getChannels(),
-						_audioStream.getFormat().getSampleRate(), _audioStream.getFormat()
-								.getSampleSizeInBits(), 1024);
+				_spectrum.setData(_audioData, _audioStream.getFormat()
+						.getChannels(), _audioStream.getFormat()
+						.getSampleRate(), _audioStream.getFormat()
+						.getSampleSizeInBits(), 1024);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-  public int getBitsPerSample() {
-    return _audioStream.getFormat().getSampleSizeInBits();
-  }
-  
+	public int getBitsPerSample() {
+		return _audioStream.getFormat().getSampleSizeInBits();
+	}
+
 	int _off;
 	int nBytesRead;
 	byte[] _audioBytes;
@@ -278,14 +282,15 @@ public class AudioPlayer {
 				while (_status == PLAYING && nBytesWritten > 0
 						&& _off < _audioBytes.length) {
 					len = ((_off + bufsize) >= _audioBytes.length) ? _audioBytes.length
-							- _off : bufsize;
+							- _off
+							: bufsize;
 					// len = ((_off + bufsize) % _audioBytes.length) - _off
 					nBytesWritten = _sdl.write(_audioBytes, _off, len);
 					_off += bufsize;
 				}
 				if (_off >= _audioBytes.length) {
-					AcmusPlugin.getDefault().getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
+					AcmusPlugin.getDefault().getWorkbench().getDisplay()
+							.asyncExec(new Runnable() {
 								public void run() {
 									_dbMeter.showLast();
 								}
@@ -299,19 +304,23 @@ public class AudioPlayer {
 		(new Thread() {
 			public void run() {
 				System.out.println(_sdl.getMicrosecondPosition());
-				// long length = (long) (_audioStream.getFrameLength() * _audioStream
+				// long length = (long) (_audioStream.getFrameLength() *
+				// _audioStream
 				// .getFormat().getFrameRate());
 				while (_status == PLAYING) {
-					AcmusPlugin.getDefault().getWorkbench().getDisplay().syncExec(
-							new Runnable() {
+					AcmusPlugin.getDefault().getWorkbench().getDisplay()
+							.syncExec(new Runnable() {
 								public void run() {
-									// System.out.println(_player.getMediaNanoseconds() + " - " +
+									// System.out.println(_player.getMediaNanoseconds()
+									// + " - " +
 									// _status);
-									_waveform
-											.setXMarkInNanoseconds(_sdl.getMicrosecondPosition() * 1000);
-									_dbMeter
-											.show((int) (_sdl.getMicrosecondPosition() / 1000000.0
-													* _audioStream.getFormat().getFrameRate() / 1000));
+									_waveform.setXMarkInNanoseconds(_sdl
+											.getMicrosecondPosition() * 1000);
+									_dbMeter.show((int) (_sdl
+											.getMicrosecondPosition()
+											/ 1000000.0
+											* _audioStream.getFormat()
+													.getFrameRate() / 1000));
 								}
 
 							});
@@ -383,75 +392,79 @@ public class AudioPlayer {
 	public boolean isPlaying() {
 		return (_status == PLAYING);
 	}
-  
-  public int getTotalDurationInMillis() {
-    return (int)Math.ceil(1000 * (double)_audioStream.getFrameLength()/_audioStream.getFormat().getFrameRate());
-  }
+
+	public int getTotalDurationInMillis() {
+		return (int) Math.ceil(1000 * (double) _audioStream.getFrameLength()
+				/ _audioStream.getFormat().getFrameRate());
+	}
 
 	public SpectrumDisplay createSpectrumDisplay(Composite parent, int style) {
 		_spectrum = new SpectrumDisplay(parent, style);
-    if (_audioData != null)
-    _spectrum.setData(_audioData, _audioStream.getFormat().getChannels(),
-        _audioStream.getFormat().getSampleRate(), _audioStream.getFormat()
-            .getSampleSizeInBits(), 1024);
-    _spectrum.setPositionDisplay(_tPosition);
-    _spectrum.setFrequencyDisplay(_spectrumFreq);
-    _spectrum.setDbDisplay(_spectrumDb);
+		if (_audioData != null)
+			_spectrum.setData(_audioData, _audioStream.getFormat()
+					.getChannels(), _audioStream.getFormat().getSampleRate(),
+					_audioStream.getFormat().getSampleSizeInBits(), 1024);
+		_spectrum.setPositionDisplay(_tPosition);
+		_spectrum.setFrequencyDisplay(_spectrumFreq);
+		_spectrum.setDbDisplay(_spectrumDb);
 		return _spectrum;
 	}
-  public Combo createSpectrumWindowFunc(Composite parent, int style) {
-    Label l = new Label(parent, SWT.NONE);
-    l.setText("Function:");
-    _spectrumWindowFunc = new Combo(parent, SWT.READ_ONLY);
-    _spectrumWindowFunc.add("Bartlett");
-    _spectrumWindowFunc.add("Hamming");
-    _spectrumWindowFunc.add("Hanning");
-    _spectrumWindowFunc.select(2);
-    _spectrumWindowFunc.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent event) {
-        _spectrum.setWindowFunc(_spectrumWindowFunc
-            .getItem(_spectrumWindowFunc.getSelectionIndex()));
-      }
-    });
-    return _spectrumWindowFunc;
-  }
-  public Combo createSpectrumWindowSize(Composite parent, int style) {
-    Label l = new Label(parent, SWT.NONE);
-    l.setText("Window:");
-    _spectrumWindowSize= new Combo(parent, SWT.READ_ONLY);
-    _spectrumWindowSize.add("256");
-    _spectrumWindowSize.add("512");
-    _spectrumWindowSize.add("1024");
-    _spectrumWindowSize.add("2048");
-    _spectrumWindowSize.add("4096");
-    _spectrumWindowSize.select(2);
-    _spectrumWindowSize.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent event) {        
-        _spectrum.setWindowSize(Integer.parseInt(_spectrumWindowSize
-            .getItem(_spectrumWindowSize.getSelectionIndex())));
-      }
-    });
-    return _spectrumWindowSize;
-  }
 
-  public Text createSpectrumFrequency(Composite parent, int style) {
-    _spectrumFreq = new Text(parent, style);
-    Label l = new Label(parent, SWT.NONE);
-    l.setText("Hz");
-    if (_spectrum != null) {
-      _spectrum.setFrequencyDisplay(_spectrumFreq);
-    }
-    return _spectrumFreq;
-  }
-  public Text createSpectrumDb(Composite parent, int style) {
-    _spectrumDb= new Text(parent, style);
-    Label l = new Label(parent, SWT.NONE);
-    l.setText("dB");
-    if (_spectrum != null) {
-      _spectrum.setDbDisplay(_spectrumDb);
-    }
-    return _spectrumDb;
-  }
+	public Combo createSpectrumWindowFunc(Composite parent, int style) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("Function:");
+		_spectrumWindowFunc = new Combo(parent, SWT.READ_ONLY);
+		_spectrumWindowFunc.add("Bartlett");
+		_spectrumWindowFunc.add("Hamming");
+		_spectrumWindowFunc.add("Hanning");
+		_spectrumWindowFunc.select(2);
+		_spectrumWindowFunc.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				_spectrum.setWindowFunc(_spectrumWindowFunc
+						.getItem(_spectrumWindowFunc.getSelectionIndex()));
+			}
+		});
+		return _spectrumWindowFunc;
+	}
+
+	public Combo createSpectrumWindowSize(Composite parent, int style) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("Window:");
+		_spectrumWindowSize = new Combo(parent, SWT.READ_ONLY);
+		_spectrumWindowSize.add("256");
+		_spectrumWindowSize.add("512");
+		_spectrumWindowSize.add("1024");
+		_spectrumWindowSize.add("2048");
+		_spectrumWindowSize.add("4096");
+		_spectrumWindowSize.select(2);
+		_spectrumWindowSize.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				_spectrum.setWindowSize(Integer.parseInt(_spectrumWindowSize
+						.getItem(_spectrumWindowSize.getSelectionIndex())));
+			}
+		});
+		return _spectrumWindowSize;
+	}
+
+	public Text createSpectrumFrequency(Composite parent, int style) {
+		_spectrumFreq = new Text(parent, style);
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("Hz");
+		if (_spectrum != null) {
+			_spectrum.setFrequencyDisplay(_spectrumFreq);
+		}
+		return _spectrumFreq;
+	}
+
+	public Text createSpectrumDb(Composite parent, int style) {
+		_spectrumDb = new Text(parent, style);
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("dB");
+		if (_spectrum != null) {
+			_spectrum.setDbDisplay(_spectrumDb);
+		}
+		return _spectrumDb;
+	}
 
 	public WaveformDisplay createWaveformDisplay(Composite parent, int style) {
 		_waveform = new WaveformDisplay(parent, style);
@@ -535,7 +548,7 @@ public class AudioPlayer {
 		_tiXZoomOut = new ToolItem(_zoomBar, SWT.PUSH);
 		_tiXZoomOut.setEnabled(true);
 		_tiXZoomOut.setImage(AcmusGraphics.IMG_XZOOMOUT);
-    _tiXZoomOut.setText("");
+		_tiXZoomOut.setText("");
 		_tiXZoomOut.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.zoomOut();
@@ -578,8 +591,8 @@ public class AudioPlayer {
 
 		_tiYFit = new ToolItem(_zoomBar, SWT.PUSH);
 		_tiYFit.setEnabled(true);
-		//_tiYFit.setText("Vertical Fit");
-    _tiYFit.setImage(AcmusGraphics.IMG_YZOOMVFIT);
+		// _tiYFit.setText("Vertical Fit");
+		_tiYFit.setImage(AcmusGraphics.IMG_YZOOMVFIT);
 		_tiYFit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.yFit2();
@@ -587,28 +600,28 @@ public class AudioPlayer {
 		});
 		_tiYFit.setToolTipText("Vertical Fit");
 
-    new ToolItem(_zoomBar, SWT.SEPARATOR);
+		new ToolItem(_zoomBar, SWT.SEPARATOR);
 
-    _tiBackward = new ToolItem(_zoomBar, SWT.PUSH);
-    _tiBackward.setEnabled(true);
-    _tiBackward.setImage(AcmusGraphics.IMG_BACKWARD);
-    _tiBackward.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent event) {
-        _waveform.yZoomOut();
-      }
-    });
-    _tiBackward.setToolTipText("Go back");
+		_tiBackward = new ToolItem(_zoomBar, SWT.PUSH);
+		_tiBackward.setEnabled(true);
+		_tiBackward.setImage(AcmusGraphics.IMG_BACKWARD);
+		_tiBackward.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				_waveform.yZoomOut();
+			}
+		});
+		_tiBackward.setToolTipText("Go back");
 
-    _tiForward= new ToolItem(_zoomBar, SWT.PUSH);
-    _tiForward.setEnabled(true);
-    _tiForward.setImage(AcmusGraphics.IMG_FORWARD);
-    _tiForward.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent event) {
-        _waveform.yZoomOut();
-      }
-    });
-    _tiForward.setToolTipText("Go forward");
-    
+		_tiForward = new ToolItem(_zoomBar, SWT.PUSH);
+		_tiForward.setEnabled(true);
+		_tiForward.setImage(AcmusGraphics.IMG_FORWARD);
+		_tiForward.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				_waveform.yZoomOut();
+			}
+		});
+		_tiForward.setToolTipText("Go forward");
+
 		return _zoomBar;
 	}
 
@@ -616,8 +629,8 @@ public class AudioPlayer {
 		_selModeBar = new ToolBar(parent, style);
 
 		_tiZoomMode = new ToolItem(_selModeBar, SWT.RADIO);
-		//_tiZoomMode.setText("Zoom");
-    _tiZoomMode.setImage(AcmusGraphics.IMG_ZOOM);
+		// _tiZoomMode.setText("Zoom");
+		_tiZoomMode.setImage(AcmusGraphics.IMG_ZOOM);
 		_tiZoomMode.setEnabled(true);
 		_tiZoomMode.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -628,8 +641,8 @@ public class AudioPlayer {
 		_tiZoomMode.setToolTipText("Zoom tool");
 
 		_tiSelectXMode = new ToolItem(_selModeBar, SWT.RADIO);
-		//_tiSelectXMode.setText("Selection");
-    _tiSelectXMode.setImage(AcmusGraphics.IMG_SELECTION);
+		// _tiSelectXMode.setText("Selection");
+		_tiSelectXMode.setImage(AcmusGraphics.IMG_SELECTION);
 		_tiSelectXMode.setEnabled(true);
 		_tiSelectXMode.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -683,9 +696,9 @@ public class AudioPlayer {
 		_tPosition = new Text(parent, SWT.BORDER | style);
 		_tPosition.setToolTipText("Cursor position in milliseconds");
 		_tPosition.setText("");
-    if (_spectrum != null) {
-      _spectrum.setPositionDisplay(_tPosition);
-    }
+		if (_spectrum != null) {
+			_spectrum.setPositionDisplay(_tPosition);
+		}
 		return _tPosition;
 	}
 
@@ -711,10 +724,10 @@ public class AudioPlayer {
 		};
 	}
 
-  protected Text getPositionDisplay() {
-    return _tPosition;
-  }
-  
+	protected Text getPositionDisplay() {
+		return _tPosition;
+	}
+
 	public SelectionListener createSelectionStartDisplayListener() {
 		return new SelectionListener() {
 
@@ -783,9 +796,12 @@ public class AudioPlayer {
 					int B2 = (int) audioBytes[4 * i + 2];
 					/* Last byte is MSB (high order) */
 					int MSB = (int) audioBytes[4 * i + 3];
-					audioData[i] = (255&MSB) << 24 | (255&B2) << 16 | (255&B3) << 8 | (255 & LSB);
-//					System.out.println(MSB + " " + B2 + " " + B3 + " " + LSB);
-//					System.out.println("laudioData " + i + " " + audioData[i]);
+					audioData[i] = (255 & MSB) << 24 | (255 & B2) << 16
+							| (255 & B3) << 8 | (255 & LSB);
+					// System.out.println(MSB + " " + B2 + " " + B3 + " " +
+					// LSB);
+					// System.out.println("laudioData " + i + " " +
+					// audioData[i]);
 				}
 			}
 		} else if (format.getSampleSizeInBits() == 16) {
@@ -839,9 +855,10 @@ public class AudioPlayer {
 		return parseData(audioBytes, format);
 	}
 
-	public static final double[] normalizeInPlace(double res[], int[] data, int bits) {
+	public static final double[] normalizeInPlace(double res[], int[] data,
+			int bits) {
 		// double[]res = new double[data.length];
-		int max = (1 << bits-1) -1;
+		int max = (1 << bits - 1) - 1;
 		for (int i = 0; i < res.length; i++) {
 			res[i] = (double) data[i] / max;
 		}
@@ -851,7 +868,8 @@ public class AudioPlayer {
 	public int[] readData2(AudioInputStream ais) {
 
 		AudioFormat format = ais.getFormat();
-		_audioBytes = new byte[(int) (ais.getFrameLength() * format.getFrameSize())];
+		_audioBytes = new byte[(int) (ais.getFrameLength() * format
+				.getFrameSize())];
 
 		try {
 			ais.read(_audioBytes);
@@ -861,23 +879,23 @@ public class AudioPlayer {
 
 		return parseData(_audioBytes, format);
 	}
-  
-  public int[] getData() {
-    return _audioData;
-  }
-  
-  public void dispose() {
-    System.out.println("Closing...");
-    _jso.dispose();
-    _sdl.close();
-    _player.deallocate();
-    try {
-      
-    _audioStream.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+
+	public int[] getData() {
+		return _audioData;
+	}
+
+	public void dispose() {
+		System.out.println("Closing...");
+		_jso.dispose();
+		_sdl.close();
+		_player.deallocate();
+		try {
+
+			_audioStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }
 

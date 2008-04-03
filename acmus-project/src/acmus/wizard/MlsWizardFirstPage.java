@@ -45,148 +45,150 @@ import acmus.dsp.Signal;
 
 /**
  * @author lku
- *
+ * 
  */
 public class MlsWizardFirstPage extends WizardPage {
-  Text fName;
+	Text fName;
 
-  Combo _order;
-  Combo _taps;
-  Text _reps;
-  
-  Properties fProperties;
+	Combo _order;
+	Combo _taps;
+	Text _reps;
 
-  private Listener nameModifyListener = new Listener() {
-    public void handleEvent(Event e) {
-      setPageComplete(validatePage());
-    }
-  };
+	Properties fProperties;
 
-  private Listener orderSelectionListener = new Listener() {
-    public void handleEvent(Event e) {
-      setTaps();
-    }
-  };
+	private Listener nameModifyListener = new Listener() {
+		public void handleEvent(Event e) {
+			setPageComplete(validatePage());
+		}
+	};
 
-  private Listener tapsSelectionListener = new Listener() {
-    public void handleEvent(Event e) {
-      updateName();
-    }
-  };
+	private Listener orderSelectionListener = new Listener() {
+		public void handleEvent(Event e) {
+			setTaps();
+		}
+	};
 
-  
-  public MlsWizardFirstPage(String name) {
-    super(name);
-    setTitle("New MLS");
-    setDescription("Choose generated MLS parameters.");
-    setPageComplete(false);
-    fProperties = new Properties();
-  }
+	private Listener tapsSelectionListener = new Listener() {
+		public void handleEvent(Event e) {
+			updateName();
+		}
+	};
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-   */
-  public void createControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    composite.setLayout(new GridLayout(2, false));
-    composite.setFont(parent.getFont());
+	public MlsWizardFirstPage(String name) {
+		super(name);
+		setTitle("New MLS");
+		setDescription("Choose generated MLS parameters.");
+		setPageComplete(false);
+		fProperties = new Properties();
+	}
 
-    GridData gridData = new GridData(GridData.FILL_BOTH);
-    composite.setLayoutData(gridData);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setFont(parent.getFont());
 
-    Label l = new Label(composite, SWT.LEFT);
-    l.setText("Name:");
-    fName = new Text(composite, SWT.BORDER);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    fName.setLayoutData(gridData);
-    fName.setEditable(false);
-    fName.setText("LogSineSweep_6s_20-20000Hz");
-    fName.addListener(SWT.Modify, nameModifyListener);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(gridData);
 
-    l = new Label(composite, SWT.LEFT);
-    l.setText("Order:");
-    _order = new Combo(composite, SWT.NONE);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    _order.setLayoutData(gridData);
-    _order.addListener(SWT.Selection, orderSelectionListener);
+		Label l = new Label(composite, SWT.LEFT);
+		l.setText("Name:");
+		fName = new Text(composite, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fName.setLayoutData(gridData);
+		fName.setEditable(false);
+		fName.setText("LogSineSweep_6s_20-20000Hz");
+		fName.addListener(SWT.Modify, nameModifyListener);
 
-    l = new Label(composite, SWT.LEFT);
-    l.setText("Taps:");
-    _taps = new Combo(composite, SWT.NONE);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    _taps.setLayoutData(gridData);
-    _taps.addListener(SWT.Selection, tapsSelectionListener);
+		l = new Label(composite, SWT.LEFT);
+		l.setText("Order:");
+		_order = new Combo(composite, SWT.NONE);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		_order.setLayoutData(gridData);
+		_order.addListener(SWT.Selection, orderSelectionListener);
 
-    l = new Label(composite, SWT.LEFT);
-    l.setText("Repetitions:");
-    _reps = new Text(composite, SWT.BORDER);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    _reps.setLayoutData(gridData);
-    _reps.setText("2");
-    
-    setControl(composite);
+		l = new Label(composite, SWT.LEFT);
+		l.setText("Taps:");
+		_taps = new Combo(composite, SWT.NONE);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		_taps.setLayoutData(gridData);
+		_taps.addListener(SWT.Selection, tapsSelectionListener);
 
-    for (int i = 2; i <= Signal.maxMlsOrder(); i++) {
-      if (Signal.hasMlsOrder(i)) {
-        _order.add("" + i);
-      }
-    }
-    
-    _order.select(0);
-    setTaps();
-    _taps.select(0);
-    updateName();
-    
-  }
+		l = new Label(composite, SWT.LEFT);
+		l.setText("Repetitions:");
+		_reps = new Text(composite, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		_reps.setLayoutData(gridData);
+		_reps.setText("2");
 
-  public boolean validatePage() {
-    return _order.getSelectionIndex() >= 0 && _taps.getSelectionIndex() >= 0 && isInt(_reps.getText());
-  }
-  private boolean isInt(String str) {
-    // there must be a better way...
-    try {
-      Integer.parseInt(str);
-    }
-    catch (NumberFormatException e) {
-      return false;
-    }
-    return true;
-  }
+		setControl(composite);
 
-  public void updateName() {
-    fName.setText("MLS_" + _order.getText() +"_" + _taps.getText().replace(' ', '-'));
-  }
-  
-  public void setTaps() {
-    _taps.removeAll();
-    List<int[]> l = Signal.mlsTaps(Integer.parseInt(_order.getItem(_order.getSelectionIndex())));
-    for (int[] t : l) {
-      StringBuffer sb = new StringBuffer();
-      for (int i = 0; i < t.length-1; i++) {
-        sb.append(t[i] + " ");
-      }
-      sb.append(t[t.length-1]);      
-      _taps.add(sb.toString());
-    }
-    _taps.select(0);
-    updateName();
-  }
-  
-  /**
-   * Updates and returns the <code>Properties</code> object that contains the
-   * given session properties.
-   * 
-   * @return the given session properties
-   */
-  public Properties getSessionProperties() {
-    fProperties.clear();
-    fProperties.setProperty("Name", fName.getText());
-    fProperties.setProperty("Order", _order.getText());
-    fProperties.setProperty("Taps", _taps.getText());
-    fProperties.setProperty("Repetitions", _reps.getText());
-    return fProperties;
-  }
+		for (int i = 2; i <= Signal.maxMlsOrder(); i++) {
+			if (Signal.hasMlsOrder(i)) {
+				_order.add("" + i);
+			}
+		}
+
+		_order.select(0);
+		setTaps();
+		_taps.select(0);
+		updateName();
+
+	}
+
+	public boolean validatePage() {
+		return _order.getSelectionIndex() >= 0
+				&& _taps.getSelectionIndex() >= 0 && isInt(_reps.getText());
+	}
+
+	private boolean isInt(String str) {
+		// there must be a better way...
+		try {
+			Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
+	public void updateName() {
+		fName.setText("MLS_" + _order.getText() + "_"
+				+ _taps.getText().replace(' ', '-'));
+	}
+
+	public void setTaps() {
+		_taps.removeAll();
+		List<int[]> l = Signal.mlsTaps(Integer.parseInt(_order.getItem(_order
+				.getSelectionIndex())));
+		for (int[] t : l) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < t.length - 1; i++) {
+				sb.append(t[i] + " ");
+			}
+			sb.append(t[t.length - 1]);
+			_taps.add(sb.toString());
+		}
+		_taps.select(0);
+		updateName();
+	}
+
+	/**
+	 * Updates and returns the <code>Properties</code> object that contains
+	 * the given session properties.
+	 * 
+	 * @return the given session properties
+	 */
+	public Properties getSessionProperties() {
+		fProperties.clear();
+		fProperties.setProperty("Name", fName.getText());
+		fProperties.setProperty("Order", _order.getText());
+		fProperties.setProperty("Taps", _taps.getText());
+		fProperties.setProperty("Repetitions", _reps.getText());
+		return fProperties;
+	}
 
 }

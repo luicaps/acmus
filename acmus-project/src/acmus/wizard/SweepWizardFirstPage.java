@@ -46,132 +46,131 @@ import acmus.AcmusGraphics;
 
 /**
  * @author lku
- *
+ * 
  */
 public class SweepWizardFirstPage extends WizardPage {
-  Text fName;
+	Text fName;
 
-  Text _dur;
-  Text _sFreq;
-  Text _eFreq;
-  Properties fProperties;
+	Text _dur;
+	Text _sFreq;
+	Text _eFreq;
+	Properties fProperties;
 
-  private FormToolkit toolkit;
-  private Form form;
+	private FormToolkit toolkit;
+	private Form form;
 
-  private Listener nameModifyListener = new Listener() {
-    public void handleEvent(Event e) {
-      setPageComplete(validatePage());
-    }
-  };
+	private Listener nameModifyListener = new Listener() {
+		public void handleEvent(Event e) {
+			setPageComplete(validatePage());
+		}
+	};
 
-  private Listener paramModifyListener = new Listener() {
-    public void handleEvent(Event e) {
-      updateName();
-    }
-  };
-  
-  
-  public SweepWizardFirstPage(String name) {
-    super(name);
-    setTitle("New Sine Sweep");
-    setDescription("Choose generated logarithmic sine sweep parameters.");
-    setPageComplete(false);
-    fProperties = new Properties();
-  }
+	private Listener paramModifyListener = new Listener() {
+		public void handleEvent(Event e) {
+			updateName();
+		}
+	};
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-   */
-  public void createControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
+	public SweepWizardFirstPage(String name) {
+		super(name);
+		setTitle("New Sine Sweep");
+		setDescription("Choose generated logarithmic sine sweep parameters.");
+		setPageComplete(false);
+		fProperties = new Properties();
+	}
 
-    FillLayout fl = new FillLayout();
-    fl.marginHeight = 1;
-    fl.marginWidth = 1;
-    composite.setLayout(fl);
-    composite.setBackground(AcmusGraphics.BLACK);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
 
-    GridLayout gridLayout;
-    GridData gridData;
-    Label l;
+		FillLayout fl = new FillLayout();
+		fl.marginHeight = 1;
+		fl.marginWidth = 1;
+		composite.setLayout(fl);
+		composite.setBackground(AcmusGraphics.BLACK);
 
-    toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
-    form = toolkit.createForm(composite);
-    
-    Composite body = form.getBody();
-    
-    gridData = new GridData(GridData.FILL_BOTH);
-    body.setLayoutData(gridData);
-    gridLayout = new GridLayout(3, false);
-    gridLayout.verticalSpacing = 10;
-    body.setLayout(gridLayout);
-    toolkit.paintBordersFor(body);
+		GridLayout gridLayout;
+		GridData gridData;
+		Label l;
 
-    l = toolkit.createLabel(body, "Name:");
-    fName = toolkit.createText(body, "");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.horizontalSpan = 2;
-    fName.setLayoutData(gridData);
-    fName.addListener(SWT.Modify, nameModifyListener);
-    fName.setEditable(false);
-    fName.setText("LogSineSweep_6s_20-20000Hz");
+		toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
+		form = toolkit.createForm(composite);
 
-    l = toolkit.createLabel(body, "Duration:");
-    _dur = toolkit.createText(body, "6");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.widthHint = 50;
-    _dur.setLayoutData(gridData);
-    l = toolkit.createLabel(body, "s");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    l.setLayoutData(gridData);
-    _dur.addListener(SWT.Modify, paramModifyListener);
+		Composite body = form.getBody();
 
-    l = toolkit.createLabel(body, "Start frequency:");
-    _sFreq = toolkit.createText(body, "20");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.widthHint = 100;
-    _sFreq.setLayoutData(gridData);
-    l = toolkit.createLabel(body,"Hz");
-    _sFreq.addListener(SWT.Modify, paramModifyListener);
-    _sFreq.setEnabled(false);
+		gridData = new GridData(GridData.FILL_BOTH);
+		body.setLayoutData(gridData);
+		gridLayout = new GridLayout(3, false);
+		gridLayout.verticalSpacing = 10;
+		body.setLayout(gridLayout);
+		toolkit.paintBordersFor(body);
 
-    l = toolkit.createLabel(body, "End frequency:");
-    _eFreq = toolkit.createText(body, "20000");
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.widthHint = 100;
-    _eFreq.setLayoutData(gridData);
-    l = toolkit.createLabel(body, "Hz");
-    _eFreq.addListener(SWT.Modify, paramModifyListener);
-    _eFreq.setEnabled(false);
+		l = toolkit.createLabel(body, "Name:");
+		fName = toolkit.createText(body, "");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		fName.setLayoutData(gridData);
+		fName.addListener(SWT.Modify, nameModifyListener);
+		fName.setEditable(false);
+		fName.setText("LogSineSweep_6s_20-20000Hz");
 
-    setControl(composite);
-  }
+		l = toolkit.createLabel(body, "Duration:");
+		_dur = toolkit.createText(body, "6");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = 50;
+		_dur.setLayoutData(gridData);
+		l = toolkit.createLabel(body, "s");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		l.setLayoutData(gridData);
+		_dur.addListener(SWT.Modify, paramModifyListener);
 
-  public boolean validatePage() {
-    return true;
-  }
+		l = toolkit.createLabel(body, "Start frequency:");
+		_sFreq = toolkit.createText(body, "20");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = 100;
+		_sFreq.setLayoutData(gridData);
+		l = toolkit.createLabel(body, "Hz");
+		_sFreq.addListener(SWT.Modify, paramModifyListener);
+		_sFreq.setEnabled(false);
 
-  public void updateName() {
-    fName.setText("LogSineSweep_" + _dur.getText() +"s_" +
-        _sFreq.getText() + "-" + _eFreq.getText() + "Hz");
-  }
-  
-  /**
-   * Updates and returns the <code>Properties</code> object that contains the
-   * given session properties.
-   * 
-   * @return the given session properties
-   */
-  public Properties getSessionProperties() {
-    fProperties.clear();
-    fProperties.setProperty("Name", fName.getText());
-    fProperties.setProperty("Duration", _dur.getText());
-    fProperties.setProperty("StartFrequency", _sFreq.getText());
-    fProperties.setProperty("EndFrequency", _eFreq.getText());
-    return fProperties;
-  }
+		l = toolkit.createLabel(body, "End frequency:");
+		_eFreq = toolkit.createText(body, "20000");
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = 100;
+		_eFreq.setLayoutData(gridData);
+		l = toolkit.createLabel(body, "Hz");
+		_eFreq.addListener(SWT.Modify, paramModifyListener);
+		_eFreq.setEnabled(false);
+
+		setControl(composite);
+	}
+
+	public boolean validatePage() {
+		return true;
+	}
+
+	public void updateName() {
+		fName.setText("LogSineSweep_" + _dur.getText() + "s_"
+				+ _sFreq.getText() + "-" + _eFreq.getText() + "Hz");
+	}
+
+	/**
+	 * Updates and returns the <code>Properties</code> object that contains
+	 * the given session properties.
+	 * 
+	 * @return the given session properties
+	 */
+	public Properties getSessionProperties() {
+		fProperties.clear();
+		fProperties.setProperty("Name", fName.getText());
+		fProperties.setProperty("Duration", _dur.getText());
+		fProperties.setProperty("StartFrequency", _sFreq.getText());
+		fProperties.setProperty("EndFrequency", _eFreq.getText());
+		return fProperties;
+	}
 
 }

@@ -43,124 +43,125 @@ import acmus.AcmusGraphics;
 
 public class MeasurementPropertiesControl extends Composite {
 
-  Text fName;
-  Text fComments;
+	Text fName;
+	Text fComments;
 
-  Properties fProperties;
+	Properties fProperties;
 
-  String _projectName;
-  String _sessionName;
-  String _setName;
+	String _projectName;
+	String _sessionName;
+	String _setName;
 
-  FormText _names;
+	FormText _names;
 
-  private FormToolkit toolkit;
-  private ScrolledForm form;
+	private FormToolkit toolkit;
+	private ScrolledForm form;
 
-  public MeasurementPropertiesControl(Composite parent, int style,
-      String suggestedName) {
-    super(parent, style);
-    fProperties = new Properties();
-    FillLayout fl = new FillLayout();
-    fl.marginHeight=1;
-    fl.marginWidth = 1;
-    setLayout(fl);
-    setBackground(AcmusGraphics.BLACK);
+	public MeasurementPropertiesControl(Composite parent, int style,
+			String suggestedName) {
+		super(parent, style);
+		fProperties = new Properties();
+		FillLayout fl = new FillLayout();
+		fl.marginHeight = 1;
+		fl.marginWidth = 1;
+		setLayout(fl);
+		setBackground(AcmusGraphics.BLACK);
 
-    toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
-    form = toolkit.createScrolledForm(this);
+		toolkit = new FormToolkit(AcmusGraphics.FORMCOLORS);
+		form = toolkit.createScrolledForm(this);
 
-    form.setText("Take Properties");
-    form.setBackgroundImage(AcmusGraphics.IMG_FORMBANNER);
+		form.setText("Take Properties");
+		form.setBackgroundImage(AcmusGraphics.IMG_FORMBANNER);
 
-    GridData gridData;
-    Label l;
+		GridData gridData;
+		Label l;
 
-    GridLayout layout = new GridLayout(2, false);
-    layout.verticalSpacing = 10;
-    layout.marginWidth = 10;
-    Composite body = form.getBody();
-    body.setLayout(layout);
+		GridLayout layout = new GridLayout(2, false);
+		layout.verticalSpacing = 10;
+		layout.marginWidth = 10;
+		Composite body = form.getBody();
+		body.setLayout(layout);
 
-    _names = toolkit.createFormText(form.getBody(), true);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.horizontalSpan = 2;
-    _names.setLayoutData(gridData);
+		_names = toolkit.createFormText(form.getBody(), true);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		_names.setLayoutData(gridData);
 
-    l = toolkit.createLabel(body, "Name:");
-    fName = toolkit.createText(body, "");
-    fName.setText(suggestedName);
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    fName.setLayoutData(gridData);
-    toolkit.paintBordersFor(body);
+		l = toolkit.createLabel(body, "Name:");
+		fName = toolkit.createText(body, "");
+		fName.setText(suggestedName);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fName.setLayoutData(gridData);
+		toolkit.paintBordersFor(body);
 
-    l = toolkit.createLabel(body, "Comments:");
-    gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-    l.setLayoutData(gridData);
-    fComments = toolkit.createText(body, "", SWT.MULTI);
-    gridData = new GridData(GridData.FILL_BOTH);
-    gridData.heightHint=  60;
-    fComments.setLayoutData(gridData);
-  }
+		l = toolkit.createLabel(body, "Comments:");
+		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		l.setLayoutData(gridData);
+		fComments = toolkit.createText(body, "", SWT.MULTI);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 60;
+		fComments.setLayoutData(gridData);
+	}
 
-  public void updateNames(String project, String session, String set) {
-    _names.setText("<form><p>project: <b>" + project + "</b>  session: <b>" + session
-        + "</b>  set: <b>" + set + "</b></p><p></p></form>", true, false);
-  }
+	public void updateNames(String project, String session, String set) {
+		_names.setText("<form><p>project: <b>" + project + "</b>  session: <b>"
+				+ session + "</b>  set: <b>" + set + "</b></p><p></p></form>",
+				true, false);
+	}
 
-  public void setProjectName(String name) {
-    _projectName = name;
-    updateNames(_projectName, _sessionName, _setName);
-  }
+	public void setProjectName(String name) {
+		_projectName = name;
+		updateNames(_projectName, _sessionName, _setName);
+	}
 
-  public void setSessionName(String name) {
-    _sessionName = name;
-    updateNames(_projectName, _sessionName, _setName);
-  }
+	public void setSessionName(String name) {
+		_sessionName = name;
+		updateNames(_projectName, _sessionName, _setName);
+	}
 
-  public void setSetName(String name) {
-    _setName = name;
-    updateNames(_projectName, _sessionName, _setName);
-  }
+	public void setSetName(String name) {
+		_setName = name;
+		updateNames(_projectName, _sessionName, _setName);
+	}
 
-  public void addNameModifyListener(ModifyListener l) {
-    fName.addModifyListener(l);
-  }
+	public void addNameModifyListener(ModifyListener l) {
+		fName.addModifyListener(l);
+	}
 
-  public void addCommentsModifyListener(ModifyListener l) {
-    fComments.addModifyListener(l);
-  }
+	public void addCommentsModifyListener(ModifyListener l) {
+		fComments.addModifyListener(l);
+	}
 
-  public final String getMeasurementName() {
-    return fName.getText();
-  }
+	public final String getMeasurementName() {
+		return fName.getText();
+	}
 
-  public final void setMeasurementNameEditable(boolean editable) {
-    fName.setEditable(editable);
-  }
+	public final void setMeasurementNameEditable(boolean editable) {
+		fName.setEditable(editable);
+	}
 
-  public Properties getMeasurementProperties() {
-    fProperties.setProperty("Name", fName.getText());
-    fProperties.setProperty("Comments", fComments.getText());
-    return fProperties;
-  }
+	public Properties getMeasurementProperties() {
+		fProperties.setProperty("Name", fName.getText());
+		fProperties.setProperty("Comments", fComments.getText());
+		return fProperties;
+	}
 
-  public void loadProperties(InputStream is) {
-    try {
-      fProperties.load(is);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    fName.setText(fProperties.getProperty("Name", "noname"));
-    fComments.setText(fProperties.getProperty("Comments", ""));
-  }
+	public void loadProperties(InputStream is) {
+		try {
+			fProperties.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fName.setText(fProperties.getProperty("Name", "noname"));
+		fComments.setText(fProperties.getProperty("Comments", ""));
+	}
 
-  /**
-   * Disposes the toolkit
-   */
-  public void dispose() {
-    toolkit.dispose();
-    super.dispose();
-  }
+	/**
+	 * Disposes the toolkit
+	 */
+	public void dispose() {
+		toolkit.dispose();
+		super.dispose();
+	}
 
 }

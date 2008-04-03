@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import acmus.editor.ProjectPropertiesControl;
 
-
 /**
  * @author lku
  * 
@@ -47,34 +46,34 @@ import acmus.editor.ProjectPropertiesControl;
  */
 public class AcmusMeasurementProjectWizardSecondPage extends WizardPage {
 
-  AcmusMeasurementProjectWizardFirstPage _firstPage;
-  ProjectPropertiesControl _propertiesControl;
-  
-  public AcmusMeasurementProjectWizardSecondPage(String name) {
-    super(name);
-    setTitle("Project info");
-    setDescription("Specify information about the project.");
-  }
+	AcmusMeasurementProjectWizardFirstPage _firstPage;
+	ProjectPropertiesControl _propertiesControl;
 
-  public void createControl(Composite parent) {
-    Composite composite = new Composite(parent, SWT.NONE);
-    FillLayout fillLayout = new FillLayout();
-    fillLayout.marginHeight = 0;
-    fillLayout.marginWidth = 0;
-    composite.setLayout(fillLayout);
-    composite.setFont(parent.getFont());
-    _propertiesControl = new ProjectPropertiesControl(composite, SWT.NONE);
-    setControl(composite);
-  }
+	public AcmusMeasurementProjectWizardSecondPage(String name) {
+		super(name);
+		setTitle("Project info");
+		setDescription("Specify information about the project.");
+	}
 
-  /**
-   * Updates and returns the <code>Properties</code> object that contains the
-   * project properties.
-   * 
-   * @return the project properties
-   */
-  public Properties getProjectProperties() {
-    return _propertiesControl.getProjectProperties();
-  }
+	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.marginHeight = 0;
+		fillLayout.marginWidth = 0;
+		composite.setLayout(fillLayout);
+		composite.setFont(parent.getFont());
+		_propertiesControl = new ProjectPropertiesControl(composite, SWT.NONE);
+		setControl(composite);
+	}
+
+	/**
+	 * Updates and returns the <code>Properties</code> object that contains
+	 * the project properties.
+	 * 
+	 * @return the project properties
+	 */
+	public Properties getProjectProperties() {
+		return _propertiesControl.getProjectProperties();
+	}
 
 }

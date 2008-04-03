@@ -25,8 +25,9 @@ package acmus.wizard;
 
 import org.eclipse.ui.INewWizard;
 
-public class NewMeasurementSessionActionDelegate extends NewMeasurementProjectActionDelegate {
-  protected INewWizard createWizard() {
-    return new AcmusMeasurementSessionWizard();
-  }
+public class NewMeasurementSessionActionDelegate extends
+		NewMeasurementProjectActionDelegate {
+	protected INewWizard createWizard() {
+		return new AcmusMeasurementSessionWizard();
+	}
 }

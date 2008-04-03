@@ -43,91 +43,91 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class MeasurementProject {
 
-  public static final String getProperty(IProject project, String prop,
-      String def) {
-    IFile file = project.getFile("project.properties");
-    if (!file.exists())
-      return def;
-    Properties props = new Properties();
-    try {
-      props.load(file.getContents());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return props.getProperty(prop, def);
-  }
+	public static final String getProperty(IProject project, String prop,
+			String def) {
+		IFile file = project.getFile("project.properties");
+		if (!file.exists())
+			return def;
+		Properties props = new Properties();
+		try {
+			props.load(file.getContents());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return props.getProperty(prop, def);
+	}
 
-  public static final String getProperty(IFile propsFile, String prop,
-      String def) {
-    if (!propsFile.exists())
-      return def;
-    Properties props = new Properties();
-    try {
-      props.load(propsFile.getContents());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return props.getProperty(prop, def);
-  }
+	public static final String getProperty(IFile propsFile, String prop,
+			String def) {
+		if (!propsFile.exists())
+			return def;
+		Properties props = new Properties();
+		try {
+			props.load(propsFile.getContents());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return props.getProperty(prop, def);
+	}
 
-  public static final String[] listSets(IContainer sessionFolder) {
-    return listSpecialFolder(sessionFolder, "set");
-  }
+	public static final String[] listSets(IContainer sessionFolder) {
+		return listSpecialFolder(sessionFolder, "set");
+	}
 
-  public static final String[] listTakes(IContainer setFolder) {
-    return listSpecialFolder(setFolder, "msr");
-  }
+	public static final String[] listTakes(IContainer setFolder) {
+		return listSpecialFolder(setFolder, "msr");
+	}
 
-  public static final String[] listSpecialFolder(IContainer container,
-      String suffix) {
-    ArrayList<String> l = new ArrayList<String>();
+	public static final String[] listSpecialFolder(IContainer container,
+			String suffix) {
+		ArrayList<String> l = new ArrayList<String>();
 
-    try {
-      IResource members[] = container.members();
-      for (int i = 0; i < members.length; i++) {
-        if (members[i] instanceof IFolder) {
-          String name = ((IFolder) members[i]).getName();
-          if (name.endsWith("." + suffix)) {
-            l.add(removeSuffix(name));
-          }
-        }
-      }
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-    String[] res = new String[l.size()];
-    res = l.toArray(res);
-    return res;
-  }
-  
-  public static final String removeSuffix(String name) {
-    return name.substring(0, name.lastIndexOf('.'));
-  }
+		try {
+			IResource members[] = container.members();
+			for (int i = 0; i < members.length; i++) {
+				if (members[i] instanceof IFolder) {
+					String name = ((IFolder) members[i]).getName();
+					if (name.endsWith("." + suffix)) {
+						l.add(removeSuffix(name));
+					}
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		String[] res = new String[l.size()];
+		res = l.toArray(res);
+		return res;
+	}
 
-  public static final IFolder[] getTakes(IContainer setFolder) {
-    return getSpecialFolder(setFolder, "msr");
-  }
+	public static final String removeSuffix(String name) {
+		return name.substring(0, name.lastIndexOf('.'));
+	}
 
-  public static final IFolder[] getSpecialFolder(IContainer container,
-      String suffix) {
-    ArrayList<IFolder> l = new ArrayList<IFolder>();
+	public static final IFolder[] getTakes(IContainer setFolder) {
+		return getSpecialFolder(setFolder, "msr");
+	}
 
-    try {
-      IResource members[] = container.members();
-      for (int i = 0; i < members.length; i++) {
-        if (members[i] instanceof IFolder) {
-          IFolder folder = (IFolder) members[i];
-          if (folder.getName().endsWith("." + suffix)) {
-            l.add(folder);
-          }
-        }
-      }
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-    IFolder[] res = new IFolder[l.size()];
-    res = l.toArray(res);
-    return res;
-  }
+	public static final IFolder[] getSpecialFolder(IContainer container,
+			String suffix) {
+		ArrayList<IFolder> l = new ArrayList<IFolder>();
+
+		try {
+			IResource members[] = container.members();
+			for (int i = 0; i < members.length; i++) {
+				if (members[i] instanceof IFolder) {
+					IFolder folder = (IFolder) members[i];
+					if (folder.getName().endsWith("." + suffix)) {
+						l.add(folder);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		IFolder[] res = new IFolder[l.size()];
+		res = l.toArray(res);
+		return res;
+	}
 
 }

@@ -26,8 +26,6 @@
  */
 package acmus.tools;
 
-
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
@@ -41,32 +39,36 @@ import acmus.AcmusPlugin;
 
 public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate {
 
-	public void dispose(){
-		
+	public void dispose() {
+
 	}
-	
-	public void init(IWorkbenchWindow window){
-		
+
+	public void init(IWorkbenchWindow window) {
+
 	}
-	
-	public void run(IAction action){
-		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay(); //pega um ponteiro para a tela
+
+	public void run(IAction action) {
+		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay(); // pega
+																			// um
+																			// ponteiro
+																			// para
+																			// a
+																			// tela
 		Shell shell = new Shell(d);
-		
+
 		GridLayout gd = new GridLayout();
 		gd.numColumns = 2;
 		shell.setLayout(gd);
-		
+
 		new RayTracing(shell, SWT.NONE);
 		shell.setText("Ray Tracing");
-		
+
 		shell.pack();
 		shell.open();
-				
+
 	}
-	
-	public void selectionChanged(IAction action, ISelection selection){
-		
+
+	public void selectionChanged(IAction action, ISelection selection) {
+
 	}
 }
-

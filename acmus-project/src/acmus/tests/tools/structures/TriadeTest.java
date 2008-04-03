@@ -8,7 +8,7 @@ public class TriadeTest extends TestCase {
 	double x1, y1, z1;
 	Triade t1;
 	static double eps = 0.00001;
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		x1 = 10.56;
@@ -26,11 +26,11 @@ public class TriadeTest extends TestCase {
 	 */
 	public void testTriade() {
 
-		
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.Triade(double, double, double)'
+	 * Test method for 'acmus.tools.structures.Triade.Triade(double, double,
+	 * double)'
 	 */
 	public void testTriadeDoubleDoubleDouble() {
 		assertNotNull(t1);
@@ -65,7 +65,7 @@ public class TriadeTest extends TestCase {
 		Triade t = new Triade(0.0, 0.0, 0.0);
 		t.setNome("ponto1");
 		assertEquals("ponto1", t.getNome());
-		
+
 	}
 
 	/*
@@ -98,7 +98,7 @@ public class TriadeTest extends TestCase {
 	public void testSetNome() {
 		Triade t = new Triade(0.0, 0.0, 0.0);
 		t.setNome("ponto1");
-		
+
 		assertEquals("ponto1", t.getNome());
 	}
 
@@ -109,7 +109,7 @@ public class TriadeTest extends TestCase {
 		Triade w = new Triade(1.0, 1.0, 1.0);
 		Triade v = new Triade(3.0, 1.0, -2.0);
 		Triade r = new Triade(2.0, 0.0, -3.0);
-		
+
 		assertEquals(r, w.sub(v));
 
 	}
@@ -121,13 +121,14 @@ public class TriadeTest extends TestCase {
 		Triade w = new Triade(1.2, 2.3, 4.560);
 		Triade v = new Triade(2.1, 1.23, 3.220);
 
-		Triade r = new Triade(2.1+1.2, 2.3+1.23, 4.56+3.22);
-		
-		assertEquals(r, w.sum(v)); 
+		Triade r = new Triade(2.1 + 1.2, 2.3 + 1.23, 4.56 + 3.22);
+
+		assertEquals(r, w.sum(v));
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.produtoVetorial(Triade, Triade)'
+	 * Test method for 'acmus.tools.structures.Triade.produtoVetorial(Triade,
+	 * Triade)'
 	 */
 	public void testProdutoVetorial() {
 		Triade w = new Triade(1.2, 2.3, 4.56);
@@ -139,7 +140,8 @@ public class TriadeTest extends TestCase {
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.produtoEscalar(Triade, Triade)'
+	 * Test method for 'acmus.tools.structures.Triade.produtoEscalar(Triade,
+	 * Triade)'
 	 */
 	public void testProdutoEscalar() {
 		Triade w = new Triade(1.2, 2.3, 4.56);
@@ -154,30 +156,32 @@ public class TriadeTest extends TestCase {
 	 */
 	public void testModulo() {
 		double x = 1.2, y = 2.3, z = 4.56, r;
-		
+
 		Triade w = new Triade(x, y, z);
-		r = Math.sqrt(x*x + y*y + z*z);
-		
+		r = Math.sqrt(x * x + y * y + z * z);
+
 		assertEquals(r, w.modulo());
-		
+
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.anguloVetores(Triade, Triade)'
+	 * Test method for 'acmus.tools.structures.Triade.anguloVetores(Triade,
+	 * Triade)'
 	 */
 	public void testAnguloVetores() {
 		Triade v1 = new Triade(0, 1, 0);
 		Triade w1 = new Triade(0, 0, 1);
 		Triade w2 = new Triade(0, 1, 1);
-		                                     
+
 		double r1 = 1.57079632, r2 = 0.78539816;
-		
+
 		assertTrue(Math.abs(v1.anguloVetores(w1) - r1) < TriadeTest.eps);
 		assertTrue(Math.abs(v1.anguloVetores(w2) - r2) < TriadeTest.eps);
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.divideVetorEscalar(Triade, double)'
+	 * Test method for 'acmus.tools.structures.Triade.divideVetorEscalar(Triade,
+	 * double)'
 	 */
 	public void testDivideVetorEscalar() {
 		Triade t = new Triade(10, 12.4, 25.6);
@@ -185,11 +189,12 @@ public class TriadeTest extends TestCase {
 		Triade r = new Triade(5.0, 6.2, 12.8);
 
 		assertEquals(r, t.divideVetorEscalar(escalar));
-		
+
 	}
 
 	/*
-	 * Test method for 'acmus.tools.structures.Triade.multiplicaVetorEscalar(Triade, double)'
+	 * Test method for
+	 * 'acmus.tools.structures.Triade.multiplicaVetorEscalar(Triade, double)'
 	 */
 	public void testMultiplicaVetorEscalar() {
 		Triade v = new Triade(2.5, 3.4, 4.5);
@@ -197,14 +202,14 @@ public class TriadeTest extends TestCase {
 		Triade w = new Triade(5, 6.8, 9.0);
 		assertEquals(w, v.multiplicaVetorEscalar(escalar));
 	}
-	
+
 	/*
 	 * Test method for 'acmus.tools.structures.Triade.imprime()'
 	 */
 	public void testImprime() {
 		Triade t = new Triade(0.123, 123.45, 456.886);
 		t.setNome("p1");
-		
+
 		assertEquals("Triade: p1 (0.123, 123.45, 456.886)", t.imprime());
 	}
 

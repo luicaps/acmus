@@ -71,7 +71,7 @@ public class AcmusMeasurementSetWizard extends Wizard implements INewWizard {
 		IProject project = session.getProject();
 		IFile posFile = (IFile) project.getFile("project.positions");
 		fPosSet.clear();
-//		String posArray[] = getPositions(posFile, fPosSet);
+		// String posArray[] = getPositions(posFile, fPosSet);
 
 		mainPage = new AcmusMeasurementSetWizardFirstPage(
 				"AcmusMeasurementSetWizardFirstPage", project.getName(),

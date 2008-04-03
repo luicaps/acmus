@@ -29,28 +29,29 @@ import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
 public class AcmusWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
-  @Override
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.application.WorkbenchAdvisor
-   */
-  public String getInitialWindowPerspectiveId() {
-      int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor
+	 */
+	public String getInitialWindowPerspectiveId() {
+		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 
-      String perspectiveId = null;
-      AboutInfo[] welcomeInfos = getWelcomePerspectiveInfos();
-      if (index >= 0 && welcomeInfos != null
-              && index < welcomeInfos.length) {
-          perspectiveId = welcomeInfos[index].getWelcomePerspectiveId();
-      }
-      if (perspectiveId == null) {
-         //perspectiveId = IDE.RESOURCE_PERSPECTIVE_ID;
-        perspectiveId = "acmus.perspective";
-      }
-      return perspectiveId;
-  }
+		String perspectiveId = null;
+		AboutInfo[] welcomeInfos = getWelcomePerspectiveInfos();
+		if (index >= 0 && welcomeInfos != null && index < welcomeInfos.length) {
+			perspectiveId = welcomeInfos[index].getWelcomePerspectiveId();
+		}
+		if (perspectiveId == null) {
+			// perspectiveId = IDE.RESOURCE_PERSPECTIVE_ID;
+			perspectiveId = "acmus.perspective";
+		}
+		return perspectiveId;
+	}
 
-//  public String getInitialWindowPerspectiveId() {
-//    return "acmus.perspective";
-//  }
-  
+	// public String getInitialWindowPerspectiveId() {
+	// return "acmus.perspective";
+	// }
+
 }

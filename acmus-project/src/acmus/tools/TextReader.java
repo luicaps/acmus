@@ -38,39 +38,41 @@ import java.io.Reader;
  * 
  */
 public class TextReader {
-  BufferedReader br;
-  int line;
+	BufferedReader br;
+	int line;
 
-  public TextReader(String file) throws FileNotFoundException {
-    this(new FileReader(file));
-  }
-  public TextReader(Reader reader) {
-    this(new BufferedReader(reader));
-  }
-  public TextReader(BufferedReader reader) {
-    br= reader;
-    line = 0;
-  }
-  
-  public String readLine() throws IOException {
-    String l = null;
-    do {
-      l = br.readLine();
-      line++;
-      if (l == null)
-        break;
-      int i = l.indexOf('#');
-      if (i >= 0)
-        l = l.substring(0, i);
-    } while (l.trim().equals(""));
-    return l;
-  }
+	public TextReader(String file) throws FileNotFoundException {
+		this(new FileReader(file));
+	}
 
-  public int lineNumber() {
-    return line;
-  }
+	public TextReader(Reader reader) {
+		this(new BufferedReader(reader));
+	}
 
-  public void close() throws Exception {
-    br.close();
-  }
+	public TextReader(BufferedReader reader) {
+		br = reader;
+		line = 0;
+	}
+
+	public String readLine() throws IOException {
+		String l = null;
+		do {
+			l = br.readLine();
+			line++;
+			if (l == null)
+				break;
+			int i = l.indexOf('#');
+			if (i >= 0)
+				l = l.substring(0, i);
+		} while (l.trim().equals(""));
+		return l;
+	}
+
+	public int lineNumber() {
+		return line;
+	}
+
+	public void close() throws Exception {
+		br.close();
+	}
 }
