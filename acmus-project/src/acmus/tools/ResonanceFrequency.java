@@ -197,7 +197,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 		private void displayObliqueFrequencies(Vector<Double> v) {
 			text.append("Oblique frequencies:" + newLine);
-			text.append("value          Difference" + newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] oblique_frequency = new double[v.size()];
@@ -225,13 +224,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
 					d2 = (double) aux2 / 10.0;
-					if (d < 10.0) {
-						text.append("" + d + "            " + d2 + newLine);
-					} else if (d > 10.0 && d < 100.0) {
-						text.append("" + d + "           " + d2 + newLine);
-					} else {
-						text.append("" + d + "          " + d2 + newLine);
-					}
+					text.append("" + d + newLine);
 				} else {
 					text.append("" + d + newLine);
 				}
@@ -265,7 +258,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 		private void displayTangentialFrequencies(Vector<Double> v) {
 			text.append("Tangential frequencies:" + newLine);
-			text.append("value          Difference" + newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] tangential_frequency = new double[v.size()];
@@ -292,13 +284,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
 					d2 = (double) aux2 / 10.0;
-					if (d < 10.0) {
-						text.append("" + d + "           " + d2 + newLine);
-					} else if (d > 10.0 && d < 100.0) {
-						text.append("" + d + "           " + d2 + newLine);
-					} else {
-						text.append("" + d + "          " + d2 + newLine);
-					}
+					text.append("" + d + newLine);
 				} else {
 					text.append("" + d + newLine);
 				}
@@ -332,7 +318,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 		private void displayAxialFrequencies(Vector<Double> v) {
 			text.append("Axial frequencies:" + newLine);
-			text.append("value          Difference" + newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] axial_frequency = new double[v.size()];
@@ -359,13 +344,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
 					d2 = (double) aux2 / 10.0;
-					if (d < 10.0) {
-						text.append("" + d + "            " + d2 + newLine);
-					} else if (d > 10.0 && d < 100.0) {
-						text.append("" + d + "           " + d2 + newLine);
-					} else {
-						text.append("" + d + "          " + d2 + newLine);
-					}
+					text.append("" + d + newLine);
 				} else {
 					text.append("" + d + newLine);
 				}
