@@ -26,25 +26,29 @@ public class RandomAcousticSource implements AcousticSource {
 	
 		double x0 = 0.0, x1 = 0.0, x2 = 0.0, x3 = 0.0;
 		
-		for(int i=0; i<n; i++)
+		while (sphericalPoints.size() < n)
 		{
 			x0 = uniformeUmMenosUm();
 			x1 = uniformeUmMenosUm();
 			x2 = uniformeUmMenosUm();
 			x3 = uniformeUmMenosUm();
 			
-			if(Math.sqrt(Math.pow(x0, 2) + Math.pow(x1, 2) + Math.pow(x2, 2) + Math.pow(x3, 2)) < 1)
+			if(Math.sqrt(squareNorma(x0, x1, x2, x3)) < 1) 
 				sphericalPoints.add(this.quaternionToCartesian(x0, x1, x2, x3));
 		}
 		
 		return sphericalPoints;
+	}
+
+	private double squareNorma(double x0, double x1, double x2, double x3) {
+		return Math.pow(x0, 2) + Math.pow(x1, 2) + Math.pow(x2, 2) + Math.pow(x3, 2);
 	}
 	
 	private double uniformeUmMenosUm(){
 		return 2 * Math.random() - 1;
 	}
 	private Triade quaternionToCartesian(double x0, double x1, double x2, double x3){
-		double divisor = Math.pow(x0, 2) + Math.pow(x1, 2) + Math.pow(x2, 2) + Math.pow(x3, 2);
+		double divisor = squareNorma(x0, x1, x2, x3);
 		
 		double x = 2 * (x1*x3 + x0*x2) / divisor;
 		
