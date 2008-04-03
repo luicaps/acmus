@@ -157,208 +157,25 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
           drawGraph2(hTangential,cal.tangential_frequency,lTangential,"Tangential","Tangential");
           drawGraph2(hOblique,cal.oblique_frequency,lOblique,"oblique","Oblique");
           Vector v = cal.axial_frequency;
+          text.setText("");
           if (v.size() == 0) {
-            text.setText("All axial frequencies are greater than 300Hz"+ newLine);
+            text.append("All axial frequencies are greater than 300Hz"+ newLine);
           } else {
-            text.setText("Axial frequencies:"+ newLine);
-            text.append("value          Difference"+newLine);
-            double[] difference = new double[v.size() - 1];
-            int index = 0;
-            double[] axial_frequency = new double[v.size()];
-            double sum_difference = 0.0;
-            for (int i = 0; i < v.size(); i++) {
-              double d = ((Double) v.elementAt(i)).doubleValue();
-              axial_frequency[i] = d;
-            }
-            sort(axial_frequency);
-            for (int i = 0; i < v.size(); i++) {
-              double d = axial_frequency[i];
-              d = d * 10;
-              int aux = (int) d;
-              d = (double) aux / 10.0;
-              if (i > 0) {
-                double d1 = axial_frequency[i - 1];
-                d1 = d1 * 10;
-                int aux1 = (int) d1;
-                d1 = (double) aux1 / 10.0;
-                double d2 = d - d1;
-                difference[index] = d2;
-                index++;
-                sum_difference += d2;
-                d2 = d2 * 10;
-                int aux2 = (int) d2;
-                d2 = (double) aux2 / 10.0;
-                if (d < 10.0) {
-                  text.append("" + d + "            " + d2 + newLine);
-                } else if (d > 10.0 && d < 100.0) {
-                  text.append("" + d + "           " + d2 + newLine);
-                } else {
-                  text.append("" + d + "          " + d2 + newLine);
-                }
-              } else {
-                text.append("" + d + newLine);
-              }
-            }
-            double average;
-            if (v.size() > 1)
-              average = (double) sum_difference / (v.size() - 1);
-            else
-              average = sum_difference;
-            double standard_deviation = 0.0;
-            for (int i = 0; i < index; i++) {
-              standard_deviation += (difference[i] - average)
-                  * (difference[i] - average);
-            }
-            if (index > 1)
-              standard_deviation = (double) standard_deviation / (v.size() - 1);
-            standard_deviation = Math.sqrt(standard_deviation);
-            standard_deviation *= 10.0;
-            int sd = (int) standard_deviation;
-            standard_deviation = (double) sd / 10.0;
-            text.append("Standard deviation: " + standard_deviation + newLine);
-            if (v.size() > 1)
-              sum_difference = (double) sum_difference / (v.size() - 1);
-            sum_difference *= 10.0;
-            int s_d = (int) sum_difference;
-            sum_difference = (double) s_d / 10.0;
-            text.append("Average of the differences: " + sum_difference + newLine);
+            displayAxialFrequencies(v);
           }
           text.append(newLine);
           v = cal.tangential_frequency;
           if (v.size() == 0) {
             text.append("All tangential frequencies are greater than 300Hz"+ newLine);
           } else {
-            text.append("Tangential frequencies:" + newLine);
-            text.append("value          Difference"+newLine);
-            double[] difference = new double[v.size() - 1];
-            int index = 0;
-            double[] tangential_frequency = new double[v.size()];
-            double sum_difference = 0.0;
-            for (int i = 0; i < v.size(); i++) {
-              double d = ((Double) v.elementAt(i)).doubleValue();
-              tangential_frequency[i] = d;
-            }
-            sort(tangential_frequency);
-            for (int i = 0; i < v.size(); i++) {
-              double d = tangential_frequency[i];
-              d = d * 10;
-              int aux = (int) d;
-              d = (double) aux / 10.0;
-              if (i > 0) {
-                double d1 = tangential_frequency[i - 1];
-                d1 = d1 * 10;
-                int aux1 = (int) d1;
-                d1 = (double) aux1 / 10.0;
-                double d2 = d - d1;
-                difference[index] = d2;
-                index++;
-                sum_difference += d2;
-                d2 = d2 * 10;
-                int aux2 = (int) d2;
-                d2 = (double) aux2 / 10.0;
-                if (d < 10.0) {
-                  text.append("" + d + "           " + d2 + newLine);
-                } else if (d > 10.0 && d < 100.0) {
-                  text.append("" + d + "           " + d2 + newLine);
-                } else {
-                  text.append("" + d + "          " + d2 + newLine);
-                }
-              } else {
-                text.append("" + d + newLine);
-              }
-            }
-            double average;
-            if (v.size() > 1)
-              average = (double) sum_difference / (v.size() - 1);
-            else
-              average = sum_difference;
-            double standard_deviation = 0.0;
-            for (int i = 0; i < index; i++) {
-              standard_deviation += (difference[i] - average)
-                  * (difference[i] - average);
-            }
-            if (v.size() > 1)
-              standard_deviation = (double) standard_deviation / (v.size() - 1);
-            standard_deviation = Math.sqrt(standard_deviation);
-            standard_deviation *= 10.0;
-            int sd = (int) standard_deviation;
-            standard_deviation = (double) sd / 10.0;
-            text.append("Standard deviation: " + standard_deviation + newLine);
-            if (v.size() > 1)
-              sum_difference = (double) sum_difference / (v.size() - 1);
-            sum_difference *= 10.0;
-            int s_d = (int) sum_difference;
-            sum_difference = (double) s_d / 10.0;
-            text.append("Average of the differences: " + sum_difference + newLine);
+        	  displayTangentialFrequencies(v);
           }
           text.append(newLine);
           v = cal.oblique_frequency;
           if (v.size() == 0) {
             text.append("All oblique frequencies are greater than 300Hz"+ newLine);
           } else {
-            text.append("Oblique frequencies:"+newLine);
-            text.append("value          Difference"+newLine);
-            double[] difference = new double[v.size() - 1];
-            int index = 0;
-            double[] oblique_frequency = new double[v.size()];
-            double sum = 0.0;
-            double sum_difference = 0.0;
-            for (int i = 0; i < v.size(); i++) {
-              double d = ((Double) v.elementAt(i)).doubleValue();
-              oblique_frequency[i] = d;
-            }
-            sort(oblique_frequency);
-            for (int i = 0; i < v.size(); i++) {
-              double d = oblique_frequency[i];
-              d = d * 10;
-              int aux = (int) d;
-              d = (double) aux / 10.0;
-              if (i > 0) {
-                double d1 = oblique_frequency[i - 1];
-                d1 = d1 * 10;
-                int aux1 = (int) d1;
-                d1 = (double) aux1 / 10.0;
-                double d2 = d - d1;
-                difference[index] = d2;
-                index++;
-                sum_difference += d2;
-                d2 = d2 * 10;
-                int aux2 = (int) d2;
-                d2 = (double) aux2 / 10.0;
-                if (d < 10.0) {
-                  text.append("" + d + "            " + d2 + newLine);
-                } else if (d > 10.0 && d < 100.0) {
-                  text.append("" + d + "           " + d2 + newLine);
-                } else {
-                  text.append("" + d + "          " + d2 + newLine);
-                }
-              } else {
-                text.append("" + d + newLine);
-              }
-            }
-            double average;
-            if (v.size() > 1)
-              average = (double) sum_difference / (v.size() - 1);
-            else
-              average = sum_difference;
-            double standard_deviation = 0.0;
-            for (int i = 0; i < index; i++) {
-              standard_deviation += (difference[i] - average)
-                  * (difference[i] - average);
-            }
-            if (v.size() > 1)
-              standard_deviation = (double) standard_deviation / (v.size() - 1);
-            standard_deviation = Math.sqrt(standard_deviation);
-            standard_deviation *= 10.0;
-            int sd = (int) standard_deviation;
-            standard_deviation = (double) sd / 10.0;
-            text.append("Standard deviation: " + standard_deviation + newLine);
-            if (v.size() > 1)
-              sum_difference = (double) sum_difference / (v.size() - 1);
-            sum_difference *= 10.0;
-            int s_d = (int) sum_difference;
-            sum_difference = (double) s_d / 10.0;
-            text.append("Average of the differences: " + sum_difference + newLine);
+        	  displayObliqueFrequencies(v);
           }
         }
       } catch (Exception e) {
@@ -366,6 +183,202 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
         inputErrorDialog.open();
       }
     }
+
+	private void displayObliqueFrequencies(Vector v) {
+		text.append("Oblique frequencies:"+newLine);
+		text.append("value          Difference"+newLine);
+		double[] difference = new double[v.size() - 1];
+		int index = 0;
+		double[] oblique_frequency = new double[v.size()];
+		double sum = 0.0;
+		double sum_difference = 0.0;
+		for (int i = 0; i < v.size(); i++) {
+		  double d = ((Double) v.elementAt(i)).doubleValue();
+		  oblique_frequency[i] = d;
+		}
+		sort(oblique_frequency);
+		for (int i = 0; i < v.size(); i++) {
+		  double d = oblique_frequency[i];
+		  d = d * 10;
+		  int aux = (int) d;
+		  d = (double) aux / 10.0;
+		  if (i > 0) {
+		    double d1 = oblique_frequency[i - 1];
+		    d1 = d1 * 10;
+		    int aux1 = (int) d1;
+		    d1 = (double) aux1 / 10.0;
+		    double d2 = d - d1;
+		    difference[index] = d2;
+		    index++;
+		    sum_difference += d2;
+		    d2 = d2 * 10;
+		    int aux2 = (int) d2;
+		    d2 = (double) aux2 / 10.0;
+		    if (d < 10.0) {
+		      text.append("" + d + "            " + d2 + newLine);
+		    } else if (d > 10.0 && d < 100.0) {
+		      text.append("" + d + "           " + d2 + newLine);
+		    } else {
+		      text.append("" + d + "          " + d2 + newLine);
+		    }
+		  } else {
+		    text.append("" + d + newLine);
+		  }
+		}
+		double average;
+		if (v.size() > 1)
+		  average = (double) sum_difference / (v.size() - 1);
+		else
+		  average = sum_difference;
+		double standard_deviation = 0.0;
+		for (int i = 0; i < index; i++) {
+		  standard_deviation += (difference[i] - average)
+		      * (difference[i] - average);
+		}
+		if (v.size() > 1)
+		  standard_deviation = (double) standard_deviation / (v.size() - 1);
+		standard_deviation = Math.sqrt(standard_deviation);
+		standard_deviation *= 10.0;
+		int sd = (int) standard_deviation;
+		standard_deviation = (double) sd / 10.0;
+		text.append("Standard deviation: " + standard_deviation + newLine);
+		if (v.size() > 1)
+		  sum_difference = (double) sum_difference / (v.size() - 1);
+		sum_difference *= 10.0;
+		int s_d = (int) sum_difference;
+		sum_difference = (double) s_d / 10.0;
+		text.append("Average of the differences: " + sum_difference + newLine);
+	}
+
+	private void displayTangentialFrequencies(Vector v) {
+		text.append("Tangential frequencies:" + newLine);
+		text.append("value          Difference"+newLine);
+		double[] difference = new double[v.size() - 1];
+		int index = 0;
+		double[] tangential_frequency = new double[v.size()];
+		double sum_difference = 0.0;
+		for (int i = 0; i < v.size(); i++) {
+		  double d = ((Double) v.elementAt(i)).doubleValue();
+		  tangential_frequency[i] = d;
+		}
+		sort(tangential_frequency);
+		for (int i = 0; i < v.size(); i++) {
+		  double d = tangential_frequency[i];
+		  d = d * 10;
+		  int aux = (int) d;
+		  d = (double) aux / 10.0;
+		  if (i > 0) {
+		    double d1 = tangential_frequency[i - 1];
+		    d1 = d1 * 10;
+		    int aux1 = (int) d1;
+		    d1 = (double) aux1 / 10.0;
+		    double d2 = d - d1;
+		    difference[index] = d2;
+		    index++;
+		    sum_difference += d2;
+		    d2 = d2 * 10;
+		    int aux2 = (int) d2;
+		    d2 = (double) aux2 / 10.0;
+		    if (d < 10.0) {
+		      text.append("" + d + "           " + d2 + newLine);
+		    } else if (d > 10.0 && d < 100.0) {
+		      text.append("" + d + "           " + d2 + newLine);
+		    } else {
+		      text.append("" + d + "          " + d2 + newLine);
+		    }
+		  } else {
+		    text.append("" + d + newLine);
+		  }
+		}
+		double average;
+		if (v.size() > 1)
+		  average = (double) sum_difference / (v.size() - 1);
+		else
+		  average = sum_difference;
+		double standard_deviation = 0.0;
+		for (int i = 0; i < index; i++) {
+		  standard_deviation += (difference[i] - average)
+		      * (difference[i] - average);
+		}
+		if (v.size() > 1)
+		  standard_deviation = (double) standard_deviation / (v.size() - 1);
+		standard_deviation = Math.sqrt(standard_deviation);
+		standard_deviation *= 10.0;
+		int sd = (int) standard_deviation;
+		standard_deviation = (double) sd / 10.0;
+		text.append("Standard deviation: " + standard_deviation + newLine);
+		if (v.size() > 1)
+		  sum_difference = (double) sum_difference / (v.size() - 1);
+		sum_difference *= 10.0;
+		int s_d = (int) sum_difference;
+		sum_difference = (double) s_d / 10.0;
+		text.append("Average of the differences: " + sum_difference + newLine);
+	}
+
+	private void displayAxialFrequencies(Vector v) {
+		text.append("Axial frequencies:"+ newLine);
+		text.append("value          Difference"+newLine);
+		double[] difference = new double[v.size() - 1];
+		int index = 0;
+		double[] axial_frequency = new double[v.size()];
+		double sum_difference = 0.0;
+		for (int i = 0; i < v.size(); i++) {
+		  double d = ((Double) v.elementAt(i)).doubleValue();
+		  axial_frequency[i] = d;
+		}
+		sort(axial_frequency);
+		for (int i = 0; i < v.size(); i++) {
+		  double d = axial_frequency[i];
+		  d = d * 10;
+		  int aux = (int) d;
+		  d = (double) aux / 10.0;
+		  if (i > 0) {
+		    double d1 = axial_frequency[i - 1];
+		    d1 = d1 * 10;
+		    int aux1 = (int) d1;
+		    d1 = (double) aux1 / 10.0;
+		    double d2 = d - d1;
+		    difference[index] = d2;
+		    index++;
+		    sum_difference += d2;
+		    d2 = d2 * 10;
+		    int aux2 = (int) d2;
+		    d2 = (double) aux2 / 10.0;
+		    if (d < 10.0) {
+		      text.append("" + d + "            " + d2 + newLine);
+		    } else if (d > 10.0 && d < 100.0) {
+		      text.append("" + d + "           " + d2 + newLine);
+		    } else {
+		      text.append("" + d + "          " + d2 + newLine);
+		    }
+		  } else {
+		    text.append("" + d + newLine);
+		  }
+		}
+		double average;
+		if (v.size() > 1)
+		  average = (double) sum_difference / (v.size() - 1);
+		else
+		  average = sum_difference;
+		double standard_deviation = 0.0;
+		for (int i = 0; i < index; i++) {
+		  standard_deviation += (difference[i] - average)
+		      * (difference[i] - average);
+		}
+		if (index > 1)
+		  standard_deviation = (double) standard_deviation / (v.size() - 1);
+		standard_deviation = Math.sqrt(standard_deviation);
+		standard_deviation *= 10.0;
+		int sd = (int) standard_deviation;
+		standard_deviation = (double) sd / 10.0;
+		text.append("Standard deviation: " + standard_deviation + newLine);
+		if (v.size() > 1)
+		  sum_difference = (double) sum_difference / (v.size() - 1);
+		sum_difference *= 10.0;
+		int s_d = (int) sum_difference;
+		sum_difference = (double) s_d / 10.0;
+		text.append("Average of the differences: " + sum_difference + newLine);
+	}
 
     private void sort(double[] d) {
       for (int i = 0; i < d.length; i++) {
