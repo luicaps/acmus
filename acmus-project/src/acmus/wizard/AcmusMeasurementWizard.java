@@ -52,6 +52,9 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 
 	private AcmusMeasurementWizardFirstPage mainPage;
 
+	private ImpulsiveResponseImportPage importPage;
+
+	@Override
 	public void addPages() {
 		IFolder set = (IFolder) selection.getFirstElement();
 		IFolder session = (IFolder) set.getParent();
@@ -62,7 +65,10 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 				MeasurementProject.removeSuffix(session.getName()),
 				MeasurementProject.removeSuffix(set.getName()),
 				(IFolder) selection.getFirstElement());
+		
+		importPage = new ImpulsiveResponseImportPage("ImpulsiveResponseImportPage");
 		addPage(mainPage);
+		addPage(importPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -77,6 +83,10 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 		Properties props = mainPage.getMeasurementProperties();
 		createMeasurement(set, props);
 
+		String fileName = importPage.getFileName();
+		if (fileName != null) {
+			
+		}
 		return true;
 	}
 
@@ -100,15 +110,4 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 		}
 		return folder;
 	}
-
-	// public boolean performFinish() {
-	//
-	// String inputFn = mainPage.getInput();
-	// String outputFn = mainPage.getOutput();
-	//    
-	// RecordPlay rp = new RecordPlay(inputFn, outputFn);
-	// rp.play_record();
-	//    
-	// return true;
-	// }
 }
