@@ -13,11 +13,11 @@ import acmus.tools.structures.Triade;
 
 public class RayTracingSimulation {
 
-	List<Triade> vectors;
-	List<NormalSector> sectors;
-	Triade soundSource;
-	Triade sphericalReceptorCenter;
-	HashMap<Double, Double> sphericalReceptorHistogram;
+	private List<Triade> vectors;
+	private List<NormalSector> sectors;
+	private Triade soundSource;
+	private Triade sphericalReceptorCenter;
+	private HashMap<Double, Double> sphericalReceptorHistogram;
 
 	double sphericalReceptorRadius;
 	double soundSpeed;
@@ -25,48 +25,26 @@ public class RayTracingSimulation {
 	double mCoeficient;
 	double k;
 
-	public RayTracingSimulation() {
-		// le dados do arquivo de entrada
-		RandomAcousticSource ras = new RandomAcousticSource();
-		vectors = ras.generate(2);
-		try {
-			saveVectors();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// TODO vetores gerados devem ter norma 1
-
-		// vectors = new ArrayList<Triade>();
-		// vectors.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
-		// normalizado //vetor de teste (1,2,0) normalizado
-		sectors = new ArrayList<NormalSector>();
-		sectors.add(new NormalSector(new Triade(0, 0, 1), new Triade(1, 1, 0),
-				0.5)); // base
-		sectors.add(new NormalSector(new Triade(0, 0, -1),
-				new Triade(1, 1, 10), 0.5)); // topo
-		sectors.add(new NormalSector(new Triade(0, 1, 0), new Triade(1, 0, 1),
-				0.5));
-		sectors.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, 1, 1),
-				0.5));
-		sectors.add(new NormalSector(new Triade(0, -1, 0),
-				new Triade(1, 10, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(-1, 0, 0),
-				new Triade(10, 1, 1), 0.5));
-
-		// soundSource = new Triade(0, 5, 5);
-		// sphericalReceptorCenter = new Triade(2.5, 2.5, 5);
-		soundSource = new Triade(2, 2, 5);
-		sphericalReceptorCenter = new Triade(8, 8, 6);
+	public RayTracingSimulation(List<NormalSector> sectors, 
+			List<Triade> vectors, 
+			Triade soundSourceCenter, 
+			Triade sphericalReceptorCenter, 
+			double sphericalReceptorRadius, 
+			double soundSpeed, 
+			double initialEnergy, 
+			double mCoeficient, 
+			int k) {
+		this.sectors = sectors;
+		this.vectors = vectors;
+		this.soundSource = soundSourceCenter;
+		this.sphericalReceptorCenter = sphericalReceptorCenter;
+		this.sphericalReceptorRadius = sphericalReceptorRadius;
+		this.soundSpeed = soundSpeed;
+		this.initialEnergy = initialEnergy;
+		this.mCoeficient = mCoeficient;
+		this.k = k;
+		
 		sphericalReceptorHistogram = new HashMap<Double, Double>();
-
-		sphericalReceptorRadius = 3.0;
-		soundSpeed = 344.0; // em metros por segundo (m/s)
-		initialEnergy = 10000000;
-		mCoeficient = 0.0001;
-		k = 500;
-
 	}
 
 	private void saveVectors() throws IOException {
@@ -181,18 +159,22 @@ public class RayTracingSimulation {
 				e = eTemp;
 				v = nR.multiplicaVetorEscalar(2 * dMin).sum(g.sub(q));
 				v = v.multiplicaVetorEscalar(1 / v.modulo());// AGORA TENHO
-																// QUE
-																// NORMALIZAR o
-																// vetor V
+				// QUE
+				// NORMALIZAR o
+				// vetor V
 
 			} while (e > (1 / k * initialEnergy)); // vai para a proxima
-													// reflexao, caso
+			// reflexao, caso
 			// a energia seja maior do que o criterio de parada
 
 		}// fim for, vetores
 
 	}
 
+	public Map<Double, Double> getSphericalReceptorHistogram(){
+		return sphericalReceptorHistogram;
+	}
+	
 	public void lista() throws IOException {
 		FileWriter fw = new FileWriter("/tmp/hist.txt");
 		StringBuilder sx = new StringBuilder(2000);
@@ -241,10 +223,4 @@ public class RayTracingSimulation {
 
 	}
 
-	public static void main(String[] args) throws IOException {
-		RayTracingSimulation rts = new RayTracingSimulation();
-		rts.simulate();
-		// rts.histogram();
-		rts.lista();
-	}
 }
