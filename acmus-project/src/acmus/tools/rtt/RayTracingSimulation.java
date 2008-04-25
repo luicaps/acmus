@@ -71,15 +71,17 @@ public class RayTracingSimulation {
 		double dMin = 0.0;
 		double alpha = 0.0;
 		double lReflection;
-
+		int uhu = 0;
 		// reflection
 		for (Triade vTemp : vectors) {
+			q = soundSource;
 			v = vTemp;
 			e = initialEnergy;
 			lReflection = 0; // acumulador de distancia percorrida pelo raio
 			// reflexoes do raio
 			// teste de qual direcao o raio vai seguir
 			do {
+				uhu++;
 				// notar que V jah estah normalizado
 				g = q;
 				// correcao no raio...
@@ -131,7 +133,7 @@ public class RayTracingSimulation {
 						double t2hc = Math.pow(sphericalReceptorRadius, 2)
 								- l2oc + Math.pow(tca, 2);
 						if (t2hc > 0) {
-							System.out.println("INTERCEPTA");
+//							System.out.println("INTERCEPTA");
 							double lThisReflection = tca - Math.sqrt(t2hc);
 
 							double distance = lReflection + lThisReflection;
@@ -145,12 +147,12 @@ public class RayTracingSimulation {
 										.get(time);
 								sphericalReceptorHistogram.put(time, temp
 										+ eSphere);
-								System.out.println("t: " + time + "e: " + temp
-										+ eSphere);
+//								System.out.println("t: " + time + "e: " + temp
+//										+ eSphere);
 							} else {
 								sphericalReceptorHistogram.put(time, eSphere);
-								System.out.println("t: " + time + "e: "
-										+ eSphere);
+//								System.out.println("t: " + time + "e: "
+//										+ eSphere);
 							}
 						}
 					}
@@ -168,7 +170,7 @@ public class RayTracingSimulation {
 			// a energia seja maior do que o criterio de parada
 
 		}// fim for, vetores
-
+		System.out.println("UHU: "+ uhu);
 	}
 
 	public Map<Double, Double> getSphericalReceptorHistogram(){
@@ -179,15 +181,23 @@ public class RayTracingSimulation {
 		FileWriter fw = new FileWriter("/tmp/hist.txt");
 		StringBuilder sx = new StringBuilder(2000);
 		StringBuilder sy = new StringBuilder(2000);
-
+		StringBuilder ss = new StringBuilder(2000);
+		
 		for (Map.Entry<Double, Double> e : sphericalReceptorHistogram
 				.entrySet()) {
 			sx.append(e.getKey());
 			sx.append(" ");
 			sy.append(e.getValue());
 			sy.append(" ");
+			
+			ss.append(e.getKey());
+			ss.append("\t");
+			ss.append(e.getValue());
+			ss.append("\n");
+			
 		}
-		fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
+//		fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
+		fw.write(ss.toString());
 		fw.close();
 	}
 

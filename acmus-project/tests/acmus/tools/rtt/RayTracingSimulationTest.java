@@ -2,9 +2,11 @@ package acmus.tools.rtt;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -15,7 +17,7 @@ import acmus.tools.structures.Triade;
 
 public class RayTracingSimulationTest {
 
-	private ArrayList<Triade> vectors;
+	private List<Triade> vectors;
 	private Triade soundSourceCenter;
 	private Triade sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
@@ -23,7 +25,7 @@ public class RayTracingSimulationTest {
 	private int initialEnergy;
 	private double mCoeficient;
 	private int k;
-	private ArrayList<NormalSector> sectors;
+	private List<NormalSector> sectors;
 
 	@Before
 	public void setUp(){
@@ -77,6 +79,25 @@ public class RayTracingSimulationTest {
 	@Test
 	public void testHistogram() {
 		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void variosPontos(){
+		RandomAcousticSource ras = new RandomAcousticSource();
+		List<Triade> meusVetores = ras.generate(20000);
+		sphericalReceptorCenter = new Triade(8, 8, 1);
+		sphericalReceptorRadius = 0.1;
+		initialEnergy = 1000;
+//		meusVetores.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
+//		meusVetores.add(new Triade(1, 1, 0.01).normalize()); //vetor (1,1,0)
+		RayTracingSimulation rts = new RayTracingSimulation(sectors, meusVetores, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
+		rts.simulate();
+		try{
+			rts.lista();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 }

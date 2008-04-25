@@ -27,6 +27,14 @@ public class TriadeTest extends TestCase {
 	public void testTriade() {
 
 	}
+	
+	
+	public void testgetInstanceNormalizedTriade(){
+		Triade test = new Triade(1, 1, 0);
+		Triade expected = new Triade(0.7071, 0.7071, 0);
+		
+		assertEquals(expected, test.normalize());
+	}
 
 	/*
 	 * Test method for 'acmus.tools.structures.Triade.Triade(double, double,

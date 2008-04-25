@@ -18,6 +18,14 @@ public class Triade {
 		z = c;
 	}
 
+	/**
+	 * factory method, return a new normalized Triade object
+	 * @return
+	 */
+	public Triade normalize(){
+		return new Triade(x/this.modulo(), y/this.modulo(), z/this.modulo());
+	}
+
 	public double getX() {
 		return x;
 	}
@@ -95,7 +103,7 @@ public class Triade {
 	}
 
 	public double modulo() {
-		return Math.sqrt(x * x + y * y + z * z);
+		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 	}
 
 	public double anguloVetores(Triade w) {

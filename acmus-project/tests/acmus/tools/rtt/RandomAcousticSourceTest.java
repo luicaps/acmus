@@ -34,6 +34,7 @@ public class RandomAcousticSourceTest {
 		System.out.println("Tempo para construir os pontos: " + temp + " ms");
 	}
 
+	@Test
 	public void visualTest() throws Exception {
 		FileWriter fw = new FileWriter("/tmp/fonte3d.txt");
 
