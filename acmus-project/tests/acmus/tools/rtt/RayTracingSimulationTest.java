@@ -77,8 +77,19 @@ public class RayTracingSimulationTest {
 	}
 
 	@Test
-	public void testLista() {
-		fail("Not yet implemented");
+	public void testSimulateWallShocking() {
+		vectors = new ArrayList<Triade>();
+		vectors.add(new Triade(0.457495710997814, 0.457495710997814, 0.7624928516630234));
+
+		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
+		
+		rts.simulate();
+		
+		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
+
+		Double expected = 0.02739239;
+		assertTrue(Math.abs(expected - itr.next()) < Triade.EPS);
+
 	}
 
 	@Test
