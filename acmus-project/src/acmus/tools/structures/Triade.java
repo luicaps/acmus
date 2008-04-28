@@ -1,7 +1,7 @@
 package acmus.tools.structures;
 
 public class Triade {
-	public static final double EPS = 0.00001;
+	public static final double EPS = 2.267573e-05; // 1/44100 (Taxa de amostragem de 44100 Hz)
 
 	double x;
 	double y;
