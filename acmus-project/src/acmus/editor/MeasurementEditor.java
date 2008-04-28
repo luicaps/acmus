@@ -111,20 +111,10 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	AudioEditorControl _aeIr;
 	AudioEditorControl _aeIrLf;
 
-	// WaveformDisplay _wfSource;
-	// WaveformDisplay _wfRec;
-
-	// WaveformDisplay _wfRecLf;
 
 	TabFolder _tfRecordings;
 	TabItem _tiRec;
 	TabItem _tiRecLf;
-
-	// AudioPlayer _apSource;
-	// AudioPlayer _apRec;
-	// AudioPlayer _apRecLf;
-	// AudioPlayer _apIr;
-	// AudioPlayer _apIrLf;
 
 	Object _playLock = new Object();
 	boolean _playing = false;
@@ -139,8 +129,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	Button _bCutIr;
 	Button _bSetItdg;
 	Label _lItdg;
-
-	// WaveformDisplay _wfIr;
 
 	IFolder _sigFolder;
 	IFile _signalFile;
@@ -161,13 +149,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	AudioFormat _format;
 
-	// double ir[];
-	// double irLf[];
-
-	// Text _tPosition;
-	// Text _tSelStart;
-	// Text _tSelEnd;
-
 	int _directSound;
 	int _firstReflection;
 	int _itdgInMillis;
@@ -177,7 +158,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	MessageBox _warningDialog;
 
-	boolean _noRecPage;
+	boolean _RecPage;
 
 	// -------------------------------------------------------------------------
 
@@ -197,12 +178,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		_irFile = _outFolder.getFile("ir.wav");
 		_irFileLf = _outFolder.getFile("ir2.wav");
 
-		String setName = MeasurementProject.getProperty(_input.getFile(),
-				"Name", "");
-		if (setName.equals("Average"))
-			_noRecPage = true;
-		else
-			_noRecPage = false;
+		_RecPage = Boolean.parseBoolean(MeasurementProject.getProperty(_input.getFile(),
+				"recording", "true"));
 
 		setPartName(MeasurementProject.removeSuffix(_input.getFile()
 				.getParent().getName()));
@@ -220,19 +197,12 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		createPropertiesPage();
 
-		if (!_noRecPage) {
+		if (_RecPage) {
 			createAudioPage();
 
 			if (_recFile.exists()) {
 				try {
-					// AudioInputStream ais =
-					// AudioSystem.getAudioInputStream(_recFile
-					// .getContents());
 					_aeRec.open(_recFile.getLocation().toOSString());
-					// _wfRec.setData(AudioPlayer.readData(ais), ais.getFormat()
-					// .getChannels(), ais.getFormat().getSampleRate(),
-					// ais.getFormat()
-					// .getSampleSizeInBits());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -241,15 +211,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			}
 			if (_recFileLf.exists()) {
 				try {
-					// AudioInputStream ais =
-					// AudioSystem.getAudioInputStream(_recFileLf
-					// .getContents());
 					_aeRecLf.open(_recFileLf.getLocation().toOSString());
-					// _wfRecLf.setData(AudioPlayer.readData(ais),
-					// ais.getFormat()
-					// .getChannels(), ais.getFormat().getSampleRate(),
-					// ais.getFormat()
-					// .getSampleSizeInBits());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -261,8 +223,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		if (_irFile.exists()) {
 			createIrPage();
-			// loadIr();
-			// loadIrLf();
 			this.setActivePage(_irIndex);
 		}
 		if (_paramsFile.exists() && _schroederFolder.exists()) {
@@ -313,10 +273,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	}
 
 	public void createAudioPage() {
-
-		// _apSource = new AudioPlayer();
-		// _apRec = new AudioPlayer();
-		// _apRecLf = new AudioPlayer();
 
 		Composite page = new Composite(getContainer(), SWT.NONE);
 		page.setLayout(new GridLayout(2, false));
@@ -369,15 +325,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		gridData = new GridData(GridData.FILL_BOTH);
 		_aeRec.setLayoutData(gridData);
 
-		// _wfRec = _apRec.createWaveformDisplay(c, SWT.BORDER);
-		// gridData = new GridData(GridData.FILL_BOTH);
-		// _wfRec.setLayoutData(gridData);
-		//
-		// dbMeter = _apRec.createDbMeter(c, SWT.NONE);
-		// gridData = new GridData(GridData.FILL_VERTICAL);
-		// gridData.widthHint = 18;
-		// dbMeter.setLayoutData(gridData);
-
 		Composite c2 = new Composite(c, SWT.NONE);
 		GridLayout gl = new GridLayout(3, false);
 		gl.marginWidth = 0;
@@ -413,10 +360,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		_bIr = new Button(page, SWT.CENTER);
 		_bIr.setText("Calculate IR");
 		_bIr.setEnabled(false);
-		// gridData = new GridData();
-		// gridData.horizontalAlignment = SWT.RIGHT;
-		// gridData.horizontalSpan = 2;
-		// _bIr.setLayoutData(gridData);
 
 		_monitor = new ProgressMonitorPart(page, null);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -491,7 +434,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 					_monitor.worked(1);
 				}
 				_monitor.done();
-				// _apRec.open(_outFolder.getFile("recording.wav").getLocation().toOSString());
 			}
 		});
 
@@ -522,7 +464,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		_method = _props.getProperty("Method");
 
-		// Set previoulsy selected signal
 		if (_props.containsKey("Signal")) {
 			_signalFile = _sigFolder.getFile(_props.getProperty("Signal"));
 			for (int i = 0; i < _cSource.getItemCount(); i++) {
@@ -555,7 +496,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		tiLf.setText("IR 2");
 
 		// ------------------------------------------------------------------
-		// _apIr = new AudioPlayer();
 
 		int cols = 1;
 		Composite c = new Composite(tf, SWT.NONE);
@@ -618,8 +558,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		_bParam.setText("Calculate Parameters");
 		_bParam
 				.setToolTipText("Calculate acoustical parameteres using selected IR");
-		// gridData = new GridData(GridData.FILL_HORIZONTAL);
-		// _bParam.setLayoutData(gridData);
 
 		_cParamMethod = new Combo(comp, SWT.NONE);
 		_cParamMethod.add("Chu");
@@ -660,10 +598,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		_bCutIr.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				// System.out.println(ir + " " +
-				// _wfIr.getSelectionStartInSamples() + "
-				// "
-				// + _wfIr.getSelectionEndInSamples());
 				if (_aeIr.selectionValid()) {
 					double[] ir = Util.subArray(getIr(_aeIr), _aeIr
 							.getSelectionStartInSamples(), _aeIr
@@ -698,16 +632,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		setPageText(_irIndex, "Impulse Response");
 	}
 
-	// private void loadIr() {
-	// ir = Util.normalize(Util.wavRead(_irFile.getLocation().toOSString()),
-	// (1 << 31) - 1);
-	// }
-	// private void loadIrLf() {
-	// if (_irFileLf.exists()) {
-	// irLf = Util.normalize(Util.wavRead(_irFileLf.getLocation().toOSString()),
-	// (1 << 31) - 1);
-	// }
-	// }
 	private double[] getIr(AudioEditorControl ae) {
 		if (ae.getData() != null) {
 			return Util.normalize(ae.getData(),
@@ -773,7 +697,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			if (method.equals("sweep")) {
 				Filter f = new Filter(props.getProperty("ButterB"), props
 						.getProperty("ButterA"));
-				// Filter f = FilterBank.getSweepButter(20, 20000, 44100); //
 				// FIXME
 				System.out.println("Sweep filter: " + f);
 
@@ -814,9 +737,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 				schroederFolder.create(true, true, null);
 			}
 			String graphFolder = schroederFolder.getLocation().toOSString();
-			// Parameters.chuParamOld(ir, irLf, 44100, 0, 0, outTable,
-			// graphFolder,
-			// null);
 			Parameters p = new Parameters(ir, irLf, 44100);
 			p.chuParam(0, 0, outTable, graphFolder, null);
 			byte[] buf = baosTable.toByteArray();
@@ -855,10 +775,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 			if ("Chu".equals(_cParamMethod.getItem(_cParamMethod
 					.getSelectionIndex()))) {
-				// Parameters.chuParamOld(ir2, ir2Lf, 44100, _directSound,
-				// _firstReflection,
-				// outTable, _schroederFolder.getLocation().toOSString(),
-				// _paramMonitor);
 				Parameters p = new Parameters(ir2, ir2Lf, 44100);
 				p.chuParam(_directSound, _firstReflection, outTable,
 						_schroederFolder.getLocation().toOSString(),
@@ -898,7 +814,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 	}
 
-	// Plot _plots[] = new Plot[11];
 	Shell _plotShells[] = new Shell[11];
 	ParametersHolder _parameters[] = new ParametersHolder[11];
 
@@ -1120,297 +1035,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			lTr.setText(br.readLine());
 			lItgd.setText(br.readLine() + " ms");
 
-			// Text t = new Text(page, SWT.MULTI | SWT.BORDER);
-			// gridData = new GridData(GridData.FILL_BOTH);
-			// t.setFont(AcmusGraphics.FIXED_SMALL);
-			// t.setLayoutData(gridData);
-			// t.setText(new String(buf));
-
-			// br = new BufferedReader(new
-			// FileReader(_schroederFolder.getLocation()
-			// .toOSString()));
-			// line = br.readLine();
-			//
-			// ArrayList<Double> xSchr = new ArrayList<Double>();
-			// ArrayList<Double> ySchr = new ArrayList<Double>();
-			// double edt = 0, a10 = 0, b10 = 0, t10 = 0, a20 = 0, b20 = 0, t20
-			// = 0,
-			// a30 = 0, b30 = 0, t30 = 0, a40 = 0, b40 = 0, t40 = 0;
-			// int plotCount = 0;
-			// while (line != null) {
-			//
-			// xSchr.clear();
-			// ySchr.clear();
-			//
-			// Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-			// _plotsShells[plotCount] = new Shell(d);
-			// _plotsShells[plotCount].setLayout(new GridLayout(1, false));
-			// _plots[plotCount] = new Plot(_plotsShells[plotCount], SWT.NONE,
-			// "Approximated Decay Times - " + columnNames[plotCount + 1],
-			// "time (s)", "dB");
-			// gridData = new GridData(GridData.FILL_BOTH);
-			// _plots[plotCount].setLayoutData(gridData);
-			//
-			// StringTokenizer st = new StringTokenizer(line);
-			// while (st.hasMoreTokens()) {
-			// xSchr.add(new Double(Double.parseDouble(st.nextToken())));
-			// }
-			// line = br.readLine();
-			// st = new StringTokenizer(line);
-			// while (st.hasMoreTokens()) {
-			// ySchr.add(new Double(Double.parseDouble(st.nextToken())));
-			// }
-			//
-			// double xs[] = new double[xSchr.size()];
-			// double ys[] = new double[ySchr.size()];
-			// for (int i = 0; i < xs.length; i++) {
-			// xs[i] = ((Double) xSchr.get(i)).doubleValue();
-			// ys[i] = ((Double) ySchr.get(i)).doubleValue();
-			// }
-			// _plots[plotCount].line(xs, ys, AcmusGraphics.BLUE, "Schroeder
-			// curve");
-			//
-			// //
-			// line([0,(-60-A10)/(B10)],[A10,-60],'Color','m','LineWidth',.5);
-			// //
-			// line([0,(-60-A20)/(B20)],[A20,-60],'Color','r','LineWidth',.5);
-			// //
-			// line([0,(-60-A30)/(B30)],[A30,-60],'Color','g','LineWidth',.5);
-			// // if nargout == 4
-			// //
-			// line([0,(-60-A40)/(B40)],[A40,-60],'Color','y','LineWidth',.5);
-			// // end
-			// //
-			// line([xlimit(1),xlimit(2)],[-60,-60],'Color',[.4,.4,.4],'LineWidth',.5);
-			//
-			// DecimalFormat f = new DecimalFormat("#.###");
-			// edt = Double.parseDouble(br.readLine());
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a10 = Double.parseDouble(st.nextToken());
-			// b10 = Double.parseDouble(st.nextToken());
-			// t10 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a10) / b10;
-			// y[0] = a10;
-			// y[1] = -60;
-			// _plots[plotCount].line(x, y, AcmusGraphics.MAGENTA, "EDT (ms) = "
-			// + f.format(edt));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a20 = Double.parseDouble(st.nextToken());
-			// b20 = Double.parseDouble(st.nextToken());
-			// t20 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a20) / b20;
-			// y[0] = a20;
-			// y[1] = -60;
-			// _plots[plotCount].line(x, y, AcmusGraphics.RED, "T20 (ms) = "
-			// + f.format(t20));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a30 = Double.parseDouble(st.nextToken());
-			// b30 = Double.parseDouble(st.nextToken());
-			// t30 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a30) / b30;
-			// y[0] = a30;
-			// y[1] = -60;
-			// _plots[plotCount].line(x, y, AcmusGraphics.GREEN, "T30 (ms) = "
-			// + f.format(t30));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a40 = Double.parseDouble(st.nextToken());
-			// b40 = Double.parseDouble(st.nextToken());
-			// t40 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a40) / b40;
-			// y[0] = a40;
-			// y[1] = -60;
-			// _plots[plotCount].line(x, y, AcmusGraphics.YELLOW, "T40 (ms) = "
-			// + f.format(t40));
-			// }
-			//
-			// {
-			// _plots[plotCount].yLimit(-70, 0);
-			// double tmp[] = new double[3];
-			// tmp[0] = t20;
-			// tmp[1] = t30;
-			// tmp[2] = t40;
-			// double xMax = Util.max(tmp);
-			// _plots[plotCount].xLimit(0, xMax * 1.1);
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = xMax * 1.1;
-			// y[0] = -60;
-			// y[1] = -60;
-			// _plots[plotCount].line(x, y, AcmusGraphics.GRAY, "");
-			// }
-			//
-			// _plotsShells[plotCount].setText("Decay curve - "
-			// + columnNames[plotCount + 1]);
-			// _plotsShells[plotCount].setSize(400, 300);
-			// line = br.readLine();
-			// plotCount++;
-			// // break;
-			// }
-
-			// BufferedReader br = new BufferedReader(new InputStreamReader(
-			// new ByteArrayInputStream(baosGraph.toByteArray())));
-			// String line = null;
-			//
-			// line = br.readLine();
-			// ArrayList<Double> xSchr = new ArrayList<Double>();
-			// ArrayList<Double> ySchr = new ArrayList<Double>();
-			// double edt = 0, a10 = 0, b10 = 0, t10 = 0, a20 = 0, b20 = 0, t20
-			// = 0,
-			// a30 = 0, b30 = 0, t30 = 0, a40 = 0, b40 = 0, t40 = 0;
-			// while (line != null) {
-			//
-			// xSchr.clear();
-			// ySchr.clear();
-			//
-			// Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-			// Shell shell = new Shell(d);
-			// shell.setLayout(new GridLayout(1, false));
-			// Plot pl = new Plot(shell, SWT.NONE, "Approximated Decay Times",
-			// "time (s)", "dB");
-			// gridData = new GridData(GridData.FILL_BOTH);
-			// pl.setLayoutData(gridData);
-			//
-			// StringTokenizer st = new StringTokenizer(line);
-			// while (st.hasMoreTokens()) {
-			// xSchr.add(new Double(Double.parseDouble(st.nextToken())));
-			// }
-			// line = br.readLine();
-			// st = new StringTokenizer(line);
-			// while (st.hasMoreTokens()) {
-			// ySchr.add(new Double(Double.parseDouble(st.nextToken())));
-			// }
-			//
-			// double xs[] = new double[xSchr.size()];
-			// double ys[] = new double[ySchr.size()];
-			// for (int i = 0; i < xs.length; i++) {
-			// xs[i] = ((Double) xSchr.get(i)).doubleValue();
-			// ys[i] = ((Double) ySchr.get(i)).doubleValue();
-			// }
-			// pl.line(xs, ys, AcmusGraphics.BLUE, "Schroeder curve");
-			//
-			// //
-			// line([0,(-60-A10)/(B10)],[A10,-60],'Color','m','LineWidth',.5);
-			// //
-			// line([0,(-60-A20)/(B20)],[A20,-60],'Color','r','LineWidth',.5);
-			// //
-			// line([0,(-60-A30)/(B30)],[A30,-60],'Color','g','LineWidth',.5);
-			// // if nargout == 4
-			// //
-			// line([0,(-60-A40)/(B40)],[A40,-60],'Color','y','LineWidth',.5);
-			// // end
-			// //
-			// line([xlimit(1),xlimit(2)],[-60,-60],'Color',[.4,.4,.4],'LineWidth',.5);
-			//
-			// DecimalFormat f = new DecimalFormat("#.###");
-			// edt = Double.parseDouble(br.readLine());
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a10 = Double.parseDouble(st.nextToken());
-			// b10 = Double.parseDouble(st.nextToken());
-			// t10 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a10) / b10;
-			// y[0] = a10;
-			// y[1] = -60;
-			// pl.line(x, y, AcmusGraphics.MAGENTA, "EDT (ms) = " +
-			// f.format(edt));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a20 = Double.parseDouble(st.nextToken());
-			// b20 = Double.parseDouble(st.nextToken());
-			// t20 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a20) / b20;
-			// y[0] = a20;
-			// y[1] = -60;
-			// pl.line(x, y, AcmusGraphics.RED, "T20 (ms) = " + f.format(t20));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a30 = Double.parseDouble(st.nextToken());
-			// b30 = Double.parseDouble(st.nextToken());
-			// t30 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a30) / b30;
-			// y[0] = a30;
-			// y[1] = -60;
-			// pl.line(x, y, AcmusGraphics.GREEN, "T30 (ms) = " +
-			// f.format(t30));
-			// }
-			// line = br.readLine();
-			// if (!line.equals("?")) {
-			// st = new StringTokenizer(line);
-			// a40 = Double.parseDouble(st.nextToken());
-			// b40 = Double.parseDouble(st.nextToken());
-			// t40 = Double.parseDouble(st.nextToken());
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = (-60 - a40) / b40;
-			// y[0] = a40;
-			// y[1] = -60;
-			// pl.line(x, y, AcmusGraphics.YELLOW, "T40 (ms) = " +
-			// f.format(t40));
-			// }
-			//
-			// {
-			// pl.yLimit(-70, 0);
-			// double tmp[] = new double[3];
-			// tmp[0] = t20;
-			// tmp[1] = t30;
-			// tmp[2] = t40;
-			// double xMax = Util.max(tmp);
-			// pl.xLimit(0, xMax * 1.1);
-			// double[] x = new double[2];
-			// double[] y = new double[2];
-			// x[0] = 0;
-			// x[1] = xMax * 1.1;
-			// y[0] = -60;
-			// y[1] = -60;
-			// pl.line(x, y, AcmusGraphics.GRAY, "");
-			// }
-			//
-			// shell.setText("Decay curve");
-			// shell.setSize(300, 300);
-			// shell.open();
-			// line = br.readLine();
-			// // break;
-			// }
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1444,8 +1068,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 					.getFrameSize(), _format.getFrameRate(), _format
 					.isBigEndian());
 			_aeSource.open(_signalAudioFile.getLocation().toOSString());
-			// _wfSource.setData(AudioPlayer.readData(ais), ais.getFormat()
-			// .getChannels(), ais.getFormat().getSampleRate());
 			doSave(null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1454,18 +1076,9 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	private final void record(String outFile) {
 		System.out.println("rec " + outFile);
-		// RecordPlay rp = new
-		// RecordPlay(_signalFile.getLocation().toOSString(),
-		// _outFile.getLocation().toOSString());
-		// rp.play_record();
 
 		try {
 
-			// AcmusPlugin.getDefault().getWorkbench().getDisplay().asyncExec(
-			//                
-			// new Runnable() {
-			// // (new Thread() {
-			// public void run() {
 			try {
 
 				AudioDevice recorder = AcmusPlugin.getDefault().audioDevice;
@@ -1478,34 +1091,15 @@ public class MeasurementEditor extends MultiPageEditorPart {
 						.getTotalDurationInMillis()
 						+ t);
 
-				// Thread.sleep(10);
 
 				_aeSource.play();
 
 				_aeSource.waitStop();
 
 				Thread.sleep(t);
-				// recorder.stop();
-				// Thread.sleep(100);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// }
-			// }
-			// );
-			// // }).start();
-
-			// _monitor.beginTask("Recording...",100);
-			// for (int i = 0; i < 100; i++) {
-			// try {
-			// _monitor.worked(1);
-			// Thread.sleep(50);
-			// Thread.yield();
-			// }catch (Exception e) {}
-			// }
-			// _monitor.done();
-
-			// findRecordingStart();
 			doSave(null);
 			Thread.sleep(300);
 		} catch (Exception e) {
@@ -1517,13 +1111,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	private final void loadRecording() {
 		try {
 			_aeRec.open(_recFile.getLocation().toOSString());
-			// AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
-			// .getContents());
-			// int[] data = AudioPlayer.readData(ais);
-			// _wfRec.setData(data, ais.getFormat().getChannels(),
-			// ais.getFormat()
-			// .getSampleRate(), ais.getFormat().getSampleSizeInBits());
-			// _wfRec.setYMax(_wfSource.getYMax());
 			_bIr.setEnabled((_method.equals("sweep") || _method.equals("mls")));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1540,26 +1127,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 	}
 
-	// private final void findRecordingStart() {
-	// try {
-	// AudioInputStream ais = AudioSystem.getAudioInputStream(_recFile
-	// .getContents());
-	// int[] data = AudioPlayer.readData(ais);
-	// double[] rec = new double[data.length / 2]; // FIXME
-	// for (int i = 0; i < rec.length; i++) {
-	// rec[i] = data[2 * i];
-	// }
-	// int start = Parameters.inicio(rec);
-	// int[] data2 = new int[data.length - start * 2];
-	// for (int i = 0; i < data2.length; i++) {
-	// data2[i] = data[i + start * 2];
-	// }
-	// Util.wavWrite(data2, 2, 16, _recFile.getLocation().toOSString());
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	//
-	// }
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -1606,7 +1173,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			// _plotsShells[_index].open();
 			openPlot(_index);
 
 		}
@@ -1642,24 +1208,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			tc.addSelectionListener(new TColListener(i - 1));
 		}
 
-		// CellEditor[] editors = new CellEditor[3];
-		// editors[0] = null;
-		// TextCellEditor textEditor = new TextCellEditor(table);
-		// ((Text) textEditor.getControl()).setTextLimit(60);
-		// editors[1] = textEditor;
-		// textEditor = new TextCellEditor(table);
-		// ((Text) textEditor.getControl()).setTextLimit(60);
-		// ((Text) textEditor.getControl()).addVerifyListener(new
-		// VerifyListener() {
-		// public void verifyText(VerifyEvent e) {
-		// e.doit = e.text.matches("\\(\\d+,\\d+\\)");
-		// }
-		// });
-		//
-		// editors[2] = textEditor;
-		// fTPos.setCellEditors(editors);
-
-		// fTPos.setCellModifier(new CellModifier());
 
 	}
 

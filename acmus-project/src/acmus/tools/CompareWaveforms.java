@@ -225,11 +225,9 @@ public class CompareWaveforms extends Composite {
 					getColor(_waveform.numberOfArrays() - 1));
 			_tViewer.add(o);
 			_tViewer.setChecked(o, true);
-
-			/*
-			 * Graph update - drawing the wave added The arg true is because the
-			 * wave is checked for sure. So, it need to be drawed
-			 */
+					
+			/* Graph update - drawing the wave added 
+			 * The arg true is because the wave is checked for sure. So, it need to be drawed */
 			_waveform.drawArray(_waveform.numberOfArrays() - 1, true);
 
 		} catch (Exception e) {
@@ -262,6 +260,7 @@ public class CompareWaveforms extends Composite {
 		_tViewer.setLabelProvider(new PositionLabelProvider());
 		_tViewer.setColumnProperties(columnNames);
 
+		
 		_tViewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {

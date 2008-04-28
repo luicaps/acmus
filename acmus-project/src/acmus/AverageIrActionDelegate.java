@@ -57,6 +57,7 @@ public class AverageIrActionDelegate implements IWorkbenchWindowActionDelegate {
 
 			Properties props = new Properties();
 			props.setProperty("Name", "Average");
+			props.setProperty("recording", "false");
 			AcmusMeasurementWizard.createMeasurement(set, props);
 
 			Util.wavAverage(avgFolder.getLocation().toOSString() + "/ir.wav",

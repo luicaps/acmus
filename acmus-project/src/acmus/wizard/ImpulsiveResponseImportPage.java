@@ -3,10 +3,15 @@
  */
 package acmus.wizard;
 
+import java.io.File;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
 import acmus.wizard.widgets.FileBrowseInput;
 
@@ -39,8 +44,21 @@ public class ImpulsiveResponseImportPage extends WizardPage {
 		
 		dialog = new FileBrowseInput(composite, SWT.NONE);
 		dialog.setFilterExtensions(new String[] {"*.wav", "*.wave"});
-		
-		setPageComplete(true);
+		dialog.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String fileName = ((Text) e.widget).getText();
+				if (new File(fileName).exists()) {
+					setPageComplete(true);
+					setErrorMessage(null);
+				} else {
+					setPageComplete(false);
+					setErrorMessage("File " + fileName + " doesn't exist");
+				}
+			}
+			
+		});
+		setPageComplete(false);
 		setControl(composite);
 	}
 

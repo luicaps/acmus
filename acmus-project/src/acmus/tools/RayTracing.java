@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import acmus.editor.AudioEditorControl;
 import acmus.tools.structures.Triade;
 
 /**

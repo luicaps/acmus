@@ -154,6 +154,20 @@
                class="org.eclipse.core.resources.IFolder">
          </selection>
       </wizard>
+		
+		<wizard
+            name="Import IR"
+            icon="icons/full/etool16/newmeasurement_wiz.gif"
+            category="acmus"
+            class="acmus.wizard.ImportIRWizard"
+            id="acmus.import.ir">
+         <description>
+            Import IR
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFolder">
+         </selection>
+      </wizard>
 
       <wizard
             name="New Sweep"
@@ -457,6 +471,23 @@
                menubarPath="fileStart"
                enablesFor="1"
                id="acmus.action.newMeasurement">
+         </action>
+      </objectContribution>
+   </extension>
+   
+	<extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            nameFilter="*.set"
+            id="acmus">
+         <action
+               label="Import IR"
+               icon="icons/full/etool16/newmeasurement_wiz.gif"
+               class="acmus.wizard.ImportIRActionDelegate"
+               menubarPath="fileStart"
+               enablesFor="1"
+               id="acmus.action.importIR">
          </action>
       </objectContribution>
    </extension>

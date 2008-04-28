@@ -1,6 +1,7 @@
 package acmus.wizard.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -46,6 +47,12 @@ public class FileBrowseInput extends Composite {
 
 		});
 	}
+
+	
+	public void addModifyListener(ModifyListener listener) {
+		fileName.addModifyListener(listener);
+	}
+
 
 	public void setFilterExtensions(String[] extensions) {
 		fileDialog.setFilterExtensions(extensions);

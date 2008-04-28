@@ -47,12 +47,7 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 
 	private IStructuredSelection selection;
 
-	@SuppressWarnings("unused")
-	private IWorkbench workbench;
-
-	private AcmusMeasurementWizardFirstPage mainPage;
-
-	private ImpulsiveResponseImportPage importPage;
+	protected AcmusMeasurementWizardFirstPage mainPage;
 
 	@Override
 	public void addPages() {
@@ -66,13 +61,10 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 				MeasurementProject.removeSuffix(set.getName()),
 				(IFolder) selection.getFirstElement());
 		
-		importPage = new ImpulsiveResponseImportPage("ImpulsiveResponseImportPage");
 		addPage(mainPage);
-		addPage(importPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
 		this.selection = selection;
 		setWindowTitle("New Measurement"); //$NON-NLS-1$
 	}
@@ -83,10 +75,6 @@ public class AcmusMeasurementWizard extends Wizard implements INewWizard {
 		Properties props = mainPage.getMeasurementProperties();
 		createMeasurement(set, props);
 
-		String fileName = importPage.getFileName();
-		if (fileName != null) {
-			
-		}
 		return true;
 	}
 
