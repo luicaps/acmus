@@ -361,6 +361,22 @@
       </objectContribution>
    </extension>
 
+	<extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.wav"
+            id="acmus">
+         <action
+               label="Export audio"
+               icon="icons/ctool16/openbrwsr.gif"
+               class="acmus.PopupMenuExportAudioActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="acmus.exportAudio">
+         </action>
+      </objectContribution>
+   </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
