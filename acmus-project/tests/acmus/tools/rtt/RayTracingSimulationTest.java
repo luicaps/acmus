@@ -31,7 +31,8 @@ public class RayTracingSimulationTest {
 	public void setUp(){
 		vectors = new ArrayList<Triade>();
 		vectors.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
-
+		vectors.add(new Triade(0.7022468831767834, 0.7022468831767834, 0.11704114719613057));
+		
 		sectors = new ArrayList<NormalSector>();
 		sectors.add(new NormalSector(new Triade(0, 0, 1), new Triade(1, 1, 0), 0.5)); // base
 		sectors.add(new NormalSector(new Triade(0, 0, -1), new Triade(1, 1, 10), 0.5)); // topo
@@ -67,7 +68,11 @@ public class RayTracingSimulationTest {
 		rts.simulate();
 		
 		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
-		Double expected = 0.016444344;
+
+		Double expected = 0.01611629;
+		assertTrue(Math.abs(expected - itr.next()) < Triade.EPS);
+		
+		expected = 0.016444344;
 		assertTrue(Math.abs(expected - itr.next()) < Triade.EPS);
 	}
 
@@ -84,9 +89,9 @@ public class RayTracingSimulationTest {
 	@Test
 	public void variosPontos(){
 		RandomAcousticSource ras = new RandomAcousticSource();
-		List<Triade> meusVetores = ras.generate(20000);
-		sphericalReceptorCenter = new Triade(8, 8, 1);
-		sphericalReceptorRadius = 0.1;
+		List<Triade> meusVetores = ras.generate(50000);
+		sphericalReceptorCenter = new Triade(6, 6, 6);
+		sphericalReceptorRadius = 0.5;
 		initialEnergy = 1000;
 //		meusVetores.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
 //		meusVetores.add(new Triade(1, 1, 0.01).normalize()); //vetor (1,1,0)
