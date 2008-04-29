@@ -1,17 +1,22 @@
 package acmus.tools.rtt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import acmus.graphics.ChartBuilder;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Triade;
 
@@ -62,7 +67,7 @@ public class RayTracingSimulationTest {
 	
 
 	@Test
-	public void testSimulate() {
+	public void testSimulate() throws FileNotFoundException, IOException {
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
 		
 		rts.simulate();
@@ -74,6 +79,10 @@ public class RayTracingSimulationTest {
 		
 		expected = 0.016444344;
 		assertTrue(Math.abs(expected - itr.next()) < Triade.EPS);
+		
+		ChartBuilder g = new ChartBuilder(rts.getSphericalReceptorHistogram());
+		g.criaGrafico("Teste");
+		g.salvar(new FileOutputStream("histograma.jpg"));
 	}
 
 	@Test
@@ -98,7 +107,7 @@ public class RayTracingSimulationTest {
 	}
 	
 	@Test
-	public void variosPontos(){
+	public void variosPontos() throws FileNotFoundException, IOException{
 		RandomAcousticSource ras = new RandomAcousticSource();
 		List<Triade> meusVetores = ras.generate(50000);
 		sphericalReceptorCenter = new Triade(6, 6, 6);
@@ -114,6 +123,9 @@ public class RayTracingSimulationTest {
 		catch(IOException e){
 			e.printStackTrace();
 		}
+		ChartBuilder g = new ChartBuilder(rts.getSphericalReceptorHistogram());
+		g.criaGrafico("Teste");
+		g.salvar(new FileOutputStream("histograma.jpg"));
 	}
 
 }
