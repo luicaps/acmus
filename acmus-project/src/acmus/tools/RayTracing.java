@@ -26,13 +26,11 @@
  */
 package acmus.tools;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -41,13 +39,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import acmus.editor.AudioEditorControl;
+import acmus.graphics.ChartBuilder;
+import acmus.tools.rtt.RandomAcousticSource;
+import acmus.tools.rtt.RayTracingSimulation;
+import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Triade;
 
 /**
@@ -56,47 +55,41 @@ import acmus.tools.structures.Triade;
  */
 public class RayTracing extends Composite {
 
-	static final double precisao = 0.0000001;
-	static final double K = 1000;
+	static final int K = 1000;
+	private static final double INITIAL_ENERGY = 100000;
 
 	// GUI variables
-	Label label;
-	Text _input;
-	Button _inputBrowse;
-	Button _bAdd;
-	Button compute;
-	Spinner point;
-	Spinner quantWalls;
-	Text resp;
-	List<Label> wallsLabels;
-	List<Spinner> wallsPoints;
-	List<Label> coeficientsLabels;
-	List<Text> wallsCoeficients;
+	private Label label;
+	private Text _input;
+	private Button compute;
+	private Spinner point;
 
 	// Algorithm variables
-	static Triade Origem, Fonte, Receptor;
-	static double v_som, m_ar, raio;
-	static int taxa, cont, caracs;
-	static Response resp1, resp2;
-
-	static File arq;
+	private static double v_som;
+	private static int taxa;
 
 	// Todos os campos devem ficar aqui para serem usados no calculo realizado
 	// por compute()
-	Text respostaImpulsivaText;
-	Text velocidadeSom;
+	private Text respostaImpulsivaText;
+	private Text soundSpeed;
 
-	Text resposta;
+	private Spinner sourceX;
+	private Spinner sourceY;
+	private Spinner sourceZ;
+	private Spinner receiverX;
+	private Spinner receiverY;
+	private Spinner receiverZ;
+	private Spinner radius;
+	final private Text width;
+	final private Text height;
+	final private Text length;
+	private Spinner rays;
+	private Text soundAtenuation;
 
 	public RayTracing(Composite parent, int style) {
 		super(parent, style);
 
 		setLayout(new GridLayout(10, false));
-
-		wallsLabels = new ArrayList<Label>();
-		wallsPoints = new ArrayList<Spinner>();
-		coeficientsLabels = new ArrayList<Label>();
-		wallsCoeficients = new ArrayList<Text>();
 
 		// Impulsive response
 
@@ -141,26 +134,26 @@ public class RayTracing extends Composite {
 		label.setText("Speed of sound (m/s): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		velocidadeSom = new Text(this, SWT.NONE);
-		setGridData(velocidadeSom, SWT.LEAD, SWT.CENTER, 1, 40);
+		soundSpeed = new Text(this, SWT.NONE);
+		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		// Estipulated position of esferic receiver
 
 		label = new Label(this, SWT.NONE);
-		label.setText("Esferic receiver's estipulated position: ");
+		label.setText("Spheric receiver's estipulated position: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		receiverX = new Spinner(this, SWT.NONE);
+		setSpinner(receiverX, 2, 10000, 0);
+		setGridData(receiverX, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		receiverY = new Spinner(this, SWT.NONE);
+		setSpinner(receiverY, 2, 10000, 0);
+		setGridData(receiverY, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 5);
+		receiverZ = new Spinner(this, SWT.NONE);
+		setSpinner(receiverZ, 2, 10000, 0);
+		setGridData(receiverZ, SWT.LEAD, SWT.CENTER, 5);
 
 		// Sound's atenuation on air
 
@@ -168,8 +161,8 @@ public class RayTracing extends Composite {
 		label.setText("Sound's atenuation on air: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		Text atenuacaoSom = new Text(this, SWT.NONE);
-		setGridData(atenuacaoSom, SWT.LEAD, SWT.CENTER, 1, 40);
+		soundAtenuation = new Text(this, SWT.NONE);
+		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		// Esferic receiver's radius
 
@@ -177,9 +170,9 @@ public class RayTracing extends Composite {
 		label.setText("Esferic receiver's radius: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 0, 5, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 7, 40);
+		radius = new Spinner(this, SWT.NONE);
+		setSpinner(radius, 0, 5, 0);
+		setGridData(radius, SWT.LEAD, SWT.CENTER, 7, 40);
 
 		// Number of rays
 
@@ -187,9 +180,9 @@ public class RayTracing extends Composite {
 		label.setText("Number of rays: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 0, 5, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1, 40);
+		rays = new Spinner(this, SWT.NONE);
+		setSpinner(rays, 0, Integer.MAX_VALUE, 0);
+		setGridData(rays, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		// Source position
 
@@ -197,28 +190,42 @@ public class RayTracing extends Composite {
 		label.setText("Source position: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		sourceX = new Spinner(this, SWT.NONE);
+		setSpinner(sourceX, 2, 10000, 0);
+		setGridData(sourceX, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		sourceY = new Spinner(this, SWT.NONE);
+		setSpinner(sourceY, 2, 10000, 0);
+		setGridData(sourceY, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 5);
+		sourceZ = new Spinner(this, SWT.NONE);
+		setSpinner(sourceZ, 2, 10000, 0);
+		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 5);
 
 		// Number of walls
 
 		label = new Label(this, SWT.NONE);
-		label.setText("Number of walls: ");
+		label.setText("Room Width: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		quantWalls = new Spinner(this, SWT.NONE);
-		setSpinner(quantWalls, 0, 10, 0);
-		setGridData(quantWalls, SWT.LEAD, SWT.CENTER, 1, 40);
+		width = new Text(this, SWT.NONE);
+		setGridData(width, SWT.LEAD, SWT.CENTER, 1, 40);
 
+		label = new Label(this, SWT.NONE);
+		label.setText("Room Height: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		height = new Text(this, SWT.NONE);
+		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
+		
+		label = new Label(this, SWT.NONE);
+		label.setText("Room Length: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		length = new Text(this, SWT.NONE);
+		setGridData(length, SWT.LEAD, SWT.CENTER, 1, 40);
+		
+		
 		// Button that trigger the algorithm
 		compute = new Button(this, SWT.NONE);
 		compute.setText("Compute");
@@ -230,86 +237,7 @@ public class RayTracing extends Composite {
 			}
 		});
 
-		// Resposta final do algoritmo
-		resposta = new Text(this, SWT.NONE);
-		resposta.setText("        ");
-		resposta.setEditable(false);
-		setGridData(resposta, SWT.LEAD, SWT.CENTER, 7, 40);
-
-		ModifyListener mlistener = new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				addWallsFields();
-			}
-		};
-
-		quantWalls.addModifyListener(mlistener);
-
-		for (int i = 0; i < quantWalls.getMaximum(); i++) {
-			label = new Label(this, SWT.NONE);
-			label.setText("Points of wall " + (i + 1) + ": ");
-			setGridData(label, SWT.LEAD, SWT.CENTER, 2);
-			label.setVisible(false);
-			wallsLabels.add(label);
-
-			label = new Label(this, SWT.NONE);
-			label.setText("Absorptium coeficient: ");
-			setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-			label.setVisible(false);
-			coeficientsLabels.add(label);
-
-			Text coeficiente = new Text(this, SWT.NONE);
-			setGridData(coeficiente, SWT.LEAD, SWT.CENTER, 7, 40);
-			coeficiente.setVisible(false);
-			wallsCoeficients.add(coeficiente);
-
-			for (int j = 0; j < 9; j++) {
-				point = new Spinner(this, SWT.NONE);
-				setSpinner(point, 2, 10000, 0);
-				if (j == 2) {
-					setGridData(point, SWT.LEAD, SWT.CENTER, 1);
-				} else if (j == 5) {
-					setGridData(point, SWT.LEAD, SWT.CENTER, 2);
-				} else {
-					setGridData(point, SWT.RIGHT, SWT.CENTER, 1);
-				}
-				point.setVisible(false);
-				wallsPoints.add(point);
-			}
-		}
 		this.pack();
-	}
-
-	protected void addWallsFields() {
-		for (int i = 0; i < quantWalls.getSelection(); i++) {
-			label = wallsLabels.get(i);
-			label.setVisible(true);
-
-			label = coeficientsLabels.get(i);
-			label.setVisible(true);
-
-			Text coeficiente = wallsCoeficients.get(i);
-			coeficiente.setVisible(true);
-
-			for (int j = 0; j < 9; j++) {
-				point = wallsPoints.get(9 * i + j);
-				point.setVisible(true);
-			}
-		}
-		for (int i = quantWalls.getSelection(); i < quantWalls.getMaximum(); i++) {
-			label = wallsLabels.get(i);
-			label.setVisible(false);
-
-			label = coeficientsLabels.get(i);
-			label.setVisible(false);
-
-			Text coeficient = wallsCoeficients.get(i);
-			coeficient.setVisible(false);
-
-			for (int j = 0; j < 9; j++) {
-				point = wallsPoints.get(9 * i + j);
-				point.setVisible(false);
-			}
-		}
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,
@@ -345,14 +273,44 @@ public class RayTracing extends Composite {
 
 	public void compute() {
 
-		/* Inicializa��o da estrutura que garda as paredes (fila) */
-		resp1 = null;
-		resp2 = null;
+		List<NormalSector> sectors = generateSectorsFor();
+		List<Triade> vectors = new RandomAcousticSource().generate(rays.getSelection());
+		Triade soundSourceCenter = newTriadeFor(sourceX, sourceY, sourceZ);
+		Triade sphericalReceptorCenter = newTriadeFor(receiverX, receiverY, receiverZ);
+		double sphericalReceptorRadius = getValue(radius);
+		double soundSpeed = Double.parseDouble(this.soundSpeed.getText());
+		double mCoeficient = Double.parseDouble(soundAtenuation.getText());
+		RayTracingSimulation simulation = new RayTracingSimulation(sectors, vectors, soundSourceCenter,
+				sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed,
+				INITIAL_ENERGY, mCoeficient, K);
+		
+		simulation.simulate();
+		Map<Double, Double> histogram = simulation.getSphericalReceptorHistogram();
+		new ChartBuilder(histogram).show(this);
+	}
 
-		/* Inicializa��o do Icosaedro */
+	private List<NormalSector> generateSectorsFor() {
+		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
+		double w = Double.parseDouble(this.width.getText());
+		double h = Double.parseDouble(this.height.getText());
+		double l = Double.parseDouble(this.length.getText());
+		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0), 0.5));
+		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h), 0.5));
+		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h), 0.5));
+		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h), 0.5));
+		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h), 0.5));
+		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h), 0.5));
+		return result;
+	}
 
-		taxa = Integer.valueOf(respostaImpulsivaText.getText());
+	private Triade newTriadeFor(Spinner sourceX, Spinner sourceY,
+			Spinner sourceZ) {
+		return new Triade(getValue(sourceX), getValue(sourceY), getValue(sourceZ));
+	}
 
+	private double getValue(Spinner sourceX) {
+		double base = Math.pow(10, -sourceX.getDigits());
+		return sourceX.getSelection() * base;
 	}
 
 	public static void registraRaio(Response resp, double energia, double dist) {
@@ -395,15 +353,4 @@ public class RayTracing extends Composite {
 		}
 	}
 
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
-	}
 }

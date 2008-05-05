@@ -118,9 +118,9 @@ public class RayTracingSimulationTest {
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		ChartBuilder g = new ChartBuilder(rts.getSphericalReceptorHistogram());
-		g.criaGrafico("");
-		g.salvar(new FileOutputStream("histograma.jpg"));
+//		ChartBuilder g = new ChartBuilder(rts.getSphericalReceptorHistogram());
+//		g.criaGrafico("");
+//		g.salvar(new FileOutputStream("histograma.jpg"));
 	}
 
 }

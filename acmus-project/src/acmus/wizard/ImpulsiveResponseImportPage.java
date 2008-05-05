@@ -45,7 +45,6 @@ public class ImpulsiveResponseImportPage extends WizardPage {
 		dialog = new FileBrowseInput(composite, SWT.NONE);
 		dialog.setFilterExtensions(new String[] {"*.wav", "*.wave"});
 		dialog.addModifyListener(new ModifyListener() {
-			@Override
 			public void modifyText(ModifyEvent e) {
 				String fileName = ((Text) e.widget).getText();
 				if (new File(fileName).exists()) {
