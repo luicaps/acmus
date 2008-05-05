@@ -10,6 +10,11 @@
    <runtime>
       <library name="acmus.jar"/>
       <library name="lib/jmf.jar"/>
+      <library name="lib/jcommon-1.0.12.jar"/>
+      <library name="lib/jfreechart-1.0.9.jar"/>
+      <library name="lib/jfreechart-1.0.9-experimental.jar"/>
+      <library name="lib/jfreechart-1.0.9-swt.jar"/>
+      <library name="lib/swtgraphics2d.jar"/>
       <library name="lib/Jama-1.0.2.jar">
          <export name="*"/>
       </library>

@@ -278,8 +278,8 @@ public class RayTracing extends Composite {
 		Triade soundSourceCenter = newTriadeFor(sourceX, sourceY, sourceZ);
 		Triade sphericalReceptorCenter = newTriadeFor(receiverX, receiverY, receiverZ);
 		double sphericalReceptorRadius = getValue(radius);
-		double soundSpeed = Double.parseDouble(this.soundSpeed.getText());
-		double mCoeficient = Double.parseDouble(soundAtenuation.getText());
+		double soundSpeed = Double.valueOf(this.soundSpeed.getText());
+		double mCoeficient = Double.valueOf(soundAtenuation.getText());
 		RayTracingSimulation simulation = new RayTracingSimulation(sectors, vectors, soundSourceCenter,
 				sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed,
 				INITIAL_ENERGY, mCoeficient, K);
@@ -291,9 +291,9 @@ public class RayTracing extends Composite {
 
 	private List<NormalSector> generateSectorsFor() {
 		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
-		double w = Double.parseDouble(this.width.getText());
-		double h = Double.parseDouble(this.height.getText());
-		double l = Double.parseDouble(this.length.getText());
+		double w = Double.valueOf(this.width.getText());
+		double h = Double.valueOf(this.height.getText());
+		double l = Double.valueOf(this.length.getText());
 		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0), 0.5));
 		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h), 0.5));
 		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h), 0.5));
