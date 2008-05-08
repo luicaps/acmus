@@ -34,12 +34,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
@@ -90,12 +92,13 @@ public class RayTracing extends Composite {
 		super(parent, style);
 
 		setLayout(new GridLayout(10, false));
-
+		
 		// Impulsive response
 
 		label = new Label(this, SWT.LEAD);
 		label.setText("Impulsive response (Hz): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+		
 
 		respostaImpulsivaText = new Text(this, SWT.NONE);
 		setGridData(respostaImpulsivaText, SWT.LEAD, SWT.CENTER, 1, 40);
@@ -160,7 +163,7 @@ public class RayTracing extends Composite {
 		label = new Label(this, SWT.NONE);
 		label.setText("Sound's atenuation on air: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-
+		
 		soundAtenuation = new Text(this, SWT.NONE);
 		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 40);
 
