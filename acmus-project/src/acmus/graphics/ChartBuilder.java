@@ -1,24 +1,12 @@
 package acmus.graphics;
 
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.swing.text.Style;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -52,9 +40,9 @@ public class ChartBuilder {
 		ChartUtilities.writeChartAsPNG(out, this.chart, x, y);
 	}
 
-	public void show(Composite parent) {
+	public ChartComposite show(Composite parent) {
 		
-		this.chart = ChartFactory.createXYLineChart(null, "x", "y",
+		this.chart = ChartFactory.createXYLineChart(null, "", "",
 				this.dataset, this.orientation, false, false, false);
 		this.chart.getPlot().setForegroundAlpha(0.5f);
 	
@@ -65,21 +53,10 @@ public class ChartBuilder {
 			e.printStackTrace();
 		}
 		*/
+		
 		ChartComposite composite = new ChartComposite(parent, SWT.NONE, chart, true);
 		
-		setGridData(composite, SWT.LEAD, SWT.BOTTOM, 800, 450);
+		return composite;
 		
-		parent.pack();
-	}
-	
-	public void setGridData(Control component, int horizontalAlign,
-			int verticalAlign, int width, int height) {
-		GridData gd = new GridData();
-		gd.horizontalAlignment = horizontalAlign;
-		gd.verticalAlignment = verticalAlign;
-		gd.horizontalSpan = 10;
-		gd.widthHint = width;
-		gd.heightHint = height;
-		component.setLayoutData(gd);
 	}
 }

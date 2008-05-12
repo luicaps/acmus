@@ -34,16 +34,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.RandomAcousticSource;
@@ -85,6 +84,9 @@ public class RayTracing extends Composite {
 	final private Text width;
 	final private Text height;
 	final private Text length;
+	final private Text floorCoeficient;
+	final private Text ceilCoeficient;
+	final private Text wallsCoeficients;
 	private Spinner rays;
 	private Text soundAtenuation;
 
@@ -226,7 +228,30 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		length = new Text(this, SWT.NONE);
-		setGridData(length, SWT.LEAD, SWT.CENTER, 1, 40);
+		setGridData(length, SWT.LEAD, SWT.CENTER, 5, 40);
+		
+		// Coeficients
+		
+		label = new Label(this, SWT.NONE);
+		label.setText("Floor coeficient: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		floorCoeficient = new Text(this, SWT.NONE);
+		setGridData(floorCoeficient, SWT.LEAD, SWT.CENTER, 1, 40);
+
+		label = new Label(this, SWT.NONE);
+		label.setText("Ceil Coeficient: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		ceilCoeficient = new Text(this, SWT.NONE);
+		setGridData(ceilCoeficient, SWT.LEAD, SWT.CENTER, 1, 40);
+		
+		label = new Label(this, SWT.NONE);
+		label.setText("Walls Coeficients: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		wallsCoeficients = new Text(this, SWT.NONE);
+		setGridData(wallsCoeficients, SWT.LEAD, SWT.CENTER, 1, 40);
 		
 		
 		// Button that trigger the algorithm
@@ -269,6 +294,17 @@ public class RayTracing extends Composite {
 		gd.horizontalSpan = horizontalSpan;
 		component.setLayoutData(gd);
 	}
+	
+	public void setGridData2(Control component, int horizontalAlign,
+			int verticalAlign, int width, int height) {
+		GridData gd = new GridData();
+		gd.horizontalAlignment = horizontalAlign;
+		gd.verticalAlignment = verticalAlign;
+		gd.horizontalSpan = 10;
+		gd.widthHint = width;
+		gd.heightHint = height;
+		component.setLayoutData(gd);
+	}
 
 	public void validate() {
 		_input.setBackground(new Color(null, 245, 245, 220));
@@ -289,7 +325,13 @@ public class RayTracing extends Composite {
 		
 		simulation.simulate();
 		Map<Double, Double> histogram = simulation.getSphericalReceptorHistogram();
-		new ChartBuilder(histogram).show(this);
+		ChartBuilder cb = new ChartBuilder(histogram);
+		ChartComposite cc = cb.show(this);
+		
+		GridData cg = new GridData();
+		setGridData2(cc, SWT.LEAD, SWT.BOTTOM, 800, 450);
+		//setGridData(cc, SWT.LEAD, SWT.BOTTOM, SWT.CENTER, 10);
+		this.pack();
 	}
 
 	private List<NormalSector> generateSectorsFor() {

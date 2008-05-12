@@ -61,9 +61,14 @@ public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate 
 		shell.setLayout(gd);
 
 		new RayTracing(shell, SWT.NONE);
+
 		shell.setText("Ray Tracing");
+		
 
 		shell.pack();
+		
+		shell.setSize(950, 700);
+		
 		shell.open();
 
 	}
