@@ -634,8 +634,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	private double[] getIr(AudioEditorControl ae) {
 		if (ae.getData() != null) {
-			return Util.normalize(ae.getData(),
-					(1 << (ae.getBitsPerSample() - 1)) - 1);
+			return Util.scaleToUnit(ae.getData(), ae.getMaxSample());
 		}
 		return null;
 	}
@@ -670,26 +669,31 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(recFile
 					.getContents());
 			int data[] = AudioPlayer.readData(ais);
+
+			int max = Util.maxAbs(data);
+		    double[] tempData = null;
 			double[] x = new double[data.length / 2];
 			double[] y = new double[data.length / 2];
 
-			int max = 32768;
+			tempData = Util.scaleToUnit(data, max);
+			
 			String swapChannels = MeasurementProject.getProperty(recFile
 					.getProject(), "SWAP_RECORDING_CHANNELS", "no");
 			if (swapChannels.equalsIgnoreCase("no")
 					|| swapChannels.equalsIgnoreCase("false")) {
-				for (int i = 0; i < x.length; i++) {
-					x[i] = (double) data[i * 2] / max;
-					y[i] = (double) data[i * 2 + 1] / max;
+				for (int i = 0; i < (tempData.length / 2); i++) {
+					x[i] = tempData[i * 2];
+					y[i] = tempData[i * 2 + 1];
 				}
 			} else {
 				System.out.println("Swap channels...");
-				for (int i = 0; i < x.length; i++) {
-					y[i] = (double) data[i * 2] / max;
-					x[i] = (double) data[i * 2 + 1] / max;
+				for (int i = 0; i < (tempData.length / 2); i++) {
+					y[i] = tempData[i * 2];
+					x[i] = tempData[i * 2 + 1];
 				}
+				
 			}
-
+			
 			Properties props = new Properties();
 			props.load(signalFile.getContents());
 			String method = props.getProperty("Type", "");

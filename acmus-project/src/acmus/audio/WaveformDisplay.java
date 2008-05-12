@@ -651,9 +651,9 @@ public class WaveformDisplay extends Composite {
 		for (SampleArray s : _sampleArrays) {
 			int[][] streams = Util.splitAudioStream(s.channels, s.data);
 			for (int i = 0; i < streams.length; i++) {
-				double x[] = Util.normalize(streams[i], max);
+				double x[] = Util.scaleToUnit(streams[i], max);
 				x = Filter.filtfilt(f.b, f.a, x);
-				Util.revertNormalize(x, streams[i], max);
+				Util.scaleToMax(x, streams[i], max);
 			}
 			s.data = Util.joinAudioStream(streams);
 		}

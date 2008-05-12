@@ -589,15 +589,17 @@ public final class Util {
 		return output;
 	}
 
-	public static final double[] normalize(int a[], int max) {
+	public static final double[] scaleToUnit(int a[], int max) {
 		double[] y = new double[a.length];
 		for (int i = 0; i < y.length; i++) {
+			if(Math.abs(a[i]) > max)
+				throw new IllegalArgumentException("Value in vector larger than max");
 			y[i] = (double) a[i] / max;
 		}
 		return y;
 	}
 
-	public static final int[] revertNormalize(double[] in, int out[], int max) {
+	public static final int[] scaleToMax(double[] in, int out[], int max) {
 		for (int i = 0; i < in.length; i++) {
 			out[i] = (int) Math.round(in[i] * max);
 		}
@@ -627,11 +629,6 @@ public final class Util {
 				/* Second byte is MSB (high order) */
 				res[i * 4 + 3] = (byte) (sample >> 24);
 
-				// if (Math.abs(t[i]) == 1) {
-				// System.out.println("sample: " + t[i] + " " + sample + " " +
-				// res[i] +
-				// " " + res[2*i]);
-				// }
 			}
 		} else if (bitsPerSample == 16) {
 			for (int i = 0; i < t.length; i++) {
@@ -640,13 +637,6 @@ public final class Util {
 				res[i * 2] = (byte) (sample & 0xff);
 				/* Second byte is MSB (high order) */
 				res[i * 2 + 1] = (byte) (sample >> 8);
-				// System.out.println( t[i] + " " + sample + " " + res[i] + " "
-				// res[2*i]);
-				// if (Math.abs(t[i]) == 1) {
-				// System.out.println("sample: " + t[i] + " " + sample + " " +
-				// res[i] +
-				// " " + res[2*i]);
-				// }
 			}
 
 		}
@@ -686,8 +676,6 @@ public final class Util {
 				res[i * 2] = (byte) (sample & 0xff);
 				/* Second byte is MSB (high order) */
 				res[i * 2 + 1] = (byte) (sample >> 8);
-				// System.out.println( t[i] + " " + sample + " " + res[i] + " "
-				// res[2*i]);
 			}
 		}
 		try {
@@ -770,11 +758,6 @@ public final class Util {
 
 	public final static int[][] splitAudioStream(int channels, int[] s) {
 		int[][] res = new int[channels][s.length / channels];
-		// for (int i = 0; i < s.length / channels; i += channels) {
-		// for (int ch = 0; ch < channels; ch++) {
-		// res[ch][i] = s[i * channels + ch];
-		// }
-		// }
 		for (int i = 0; i < s.length; i++) {
 			res[i % channels][i / channels] = s[i];
 		}
@@ -854,8 +837,8 @@ public final class Util {
 			int k = 0;
 			for (int i = 0; i < aa.length; i++) {
 				for (int j = 0; j < bb.length; j++) {
-					double x[] = Util.normalize(aa[i], max1);
-					double y[] = Util.normalize(bb[j], max2);
+					double x[] = Util.scaleToUnit(aa[i], max1);
+					double y[] = Util.scaleToUnit(bb[j], max2);
 					conv[k] = new double[x.length + y.length - 1];
 					monitor.subTask("ch " + (i + 1) + " x " + " ch " + (j + 1));
 					IProgressMonitor subMonitor = Util.subMonitorFor(monitor,
@@ -870,60 +853,7 @@ public final class Util {
 
 			monitor.done();
 
-			// if (format1.getChannels() == 2) {
-			// int a1[] = new int[a.length / 2];
-			// int a2[] = new int[a.length / 2];
-			// for (int i = 0; i < a1.length; i++) {
-			// a1[i] = a[i * 2];
-			// a2[i] = a[i * 2 + 1];
-			// }
-			// int max1 = (1 << (format1.getSampleSizeInBits()-1))-1;
-			// int max2 = (1 << (format2.getSampleSizeInBits()-1))-1;
-			// double x1[] = Util.normalize(a1, max1);
-			// double x2[] = Util.normalize(a2, max1);
-			// double y[] = Util.normalize(b, max2);
-			// double z1[] = new double[x1.length + y.length - 1];
-			// double z2[] = new double[x2.length + y.length - 1];
-			// IProgressMonitor subMonitor = Util.subMonitorFor(monitor, 50);
-			// Util.conv(x1, y, z1, subMonitor);
-			// subMonitor = Util.subMonitorFor(monitor, 50);
-			// Util.conv(x2, y, z2, subMonitor);
-			// z = new double[z1.length + z2.length];
-			// for (int i = 0; i < z1.length; i++) {
-			// z[i * 2] = z1[i];
-			// z[i * 2 + 1] = z2[i];
-			// }
-			// Util.wavWrite(z, 2, output);
-			// } else {
-			// ais = AudioSystem.getAudioInputStream(new File(input2));
-			// if (ais.getFormat().getChannels() == 2) {
-			// int a1[] = new int[b.length / 2];
-			// int a2[] = new int[b.length / 2];
-			// for (int i = 0; i < a1.length; i++) {
-			// a1[i] = b[i * 2];
-			// a2[i] = b[i * 2 + 1];
-			// }
-			// double x1[] = Util.normalize(a1, 32768);
-			// double x2[] = Util.normalize(a2, 32768);
-			// double y[] = Util.normalize(a, 32768);
-			// double z1[] = new double[x1.length + y.length - 1];
-			// double z2[] = new double[x2.length + y.length - 1];
-			// Util.conv(x1, y, z1, monitor);
-			// Util.conv(x2, y, z2, monitor);
-			// z = new double[z1.length + z2.length];
-			// for (int i = 0; i < z1.length; i++) {
-			// z[i * 2] = z1[i];
-			// z[i * 2 + 1] = z2[i];
-			// }
-			// Util.wavWrite(z, 2, output);
-			// } else {
-			// double x[] = Util.normalize(a, 32768);
-			// double y[] = Util.normalize(b, 32768);
-			// z = new double[x.length + y.length - 1];
-			// Util.conv(x, y, z, monitor);
-			// Util.wavWrite(z, output);
-			// }
-			// }
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1018,5 +948,15 @@ public final class Util {
 	}
 
 	static DecimalFormat _f = new DecimalFormat("#.######");
+
+	public static int maxAbs(int[] data) {
+		int max = 0;
+		for (int i = 0; i < data.length; ++i) {
+			if (Math.abs(data[i]) > max) {
+				max = Math.abs(data[i]);
+			}
+		}
+		return max;
+	}
 
 }

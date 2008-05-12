@@ -53,7 +53,6 @@ public class Ir {
 			refIm[i] = 0;
 		}
 		monitor.worked(5);
-
 		FFT1d fft = new FFT1d(n);
 		monitor.subTask("FFT recording");
 		fft.fft(recRe, recIm);

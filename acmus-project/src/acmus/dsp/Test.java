@@ -206,9 +206,9 @@ public class Test {
 			// double a[] = new double[4000];
 			double fs = 44100;
 
-			double[] a = Util.normalize(Util.wavRead("/tmp/ir.wav"),
+			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
 					(1 << 31) - 1);
-			double[] b = Util.normalize(Util.wavRead("/tmp/ir2.wav"),
+			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
 					(1 << 31) - 1);
 			System.out.println(" len " + a.length);
 
@@ -227,9 +227,9 @@ public class Test {
 			// double a[] = new double[4000];
 			double fs = 44100;
 
-			double[] a = Util.normalize(Util.wavRead("/tmp/ir.wav"),
+			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
 					(1 << 31) - 1);
-			double[] b = Util.normalize(Util.wavRead("/tmp/ir2.wav"),
+			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
 					(1 << 31) - 1);
 			System.out.println(" len " + a.length);
 
@@ -590,8 +590,8 @@ public class Test {
 					int b[] = AudioPlayer.readData(ais);
 
 					System.out.println(a.length + " " + b.length);
-					x = Util.normalize(a, 32768);
-					y = Util.normalize(b, 32768);
+					x = Util.scaleToUnit(a, 32768);
+					y = Util.scaleToUnit(b, 32768);
 					System.out.println(x.length + " " + y.length);
 				}
 

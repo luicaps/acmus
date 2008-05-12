@@ -373,6 +373,21 @@ public class AudioEditorControl extends Composite {
 		return _ap.getBitsPerSample();
 	}
 
+	/**
+	 * Returns the highest integer that may be represented by this kind of file
+	 * @return
+	 */
+	public int getLimit() {
+		return 1 << (_ap.getBitsPerSample() - 1) - 1;
+	}
+	
+	/**
+	 * Returns the highest sample currently held on this file
+	 * @return
+	 */
+	public int getMaxSample() {
+		return _ap.getMaxSample();
+	}
 	public int getSelectionStartInSamples() {
 		return _wf.getSelectionStartInSamples();
 	}

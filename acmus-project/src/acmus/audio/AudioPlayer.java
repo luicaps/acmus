@@ -134,6 +134,7 @@ public class AudioPlayer {
 	JavaSoundOutput _jso;
 	SourceDataLine _sdl;
 
+	// This is our model
 	int[] _audioData;
 	AudioInputStream _audioStream;
 
@@ -897,6 +898,15 @@ public class AudioPlayer {
 		}
 	}
 
+	/**
+	 * Returns the maximum absolute value that is actually stored
+	 * inside this file
+	 * @return
+	 */
+	public int getMaxSample() {
+		return Util.maxAbs(_audioData);
+	}
+		
 }
 
 class NullDbMeter implements IMeter {
