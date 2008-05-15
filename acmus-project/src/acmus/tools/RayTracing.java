@@ -37,9 +37,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -81,12 +85,12 @@ public class RayTracing extends Composite {
 	private Spinner receiverY;
 	private Spinner receiverZ;
 	private Spinner radius;
-	final private Text width;
-	final private Text height;
-	final private Text length;
-	final private Text floorCoeficient;
-	final private Text ceilCoeficient;
-	final private Text wallsCoeficients;
+	private Spinner width;
+	private Spinner height;
+	private Spinner length;
+	private Spinner floorCoeficient;
+	private Spinner ceilCoeficient;
+	private Spinner wallsCoeficients;
 	private Spinner rays;
 	private Text soundAtenuation;
 
@@ -103,25 +107,28 @@ public class RayTracing extends Composite {
 		
 
 		respostaImpulsivaText = new Text(this, SWT.NONE);
+		respostaImpulsivaText.setFocus();
 		setGridData(respostaImpulsivaText, SWT.LEAD, SWT.CENTER, 1, 40);
 
-		// Ponto de origem
+
+		// Source position
 
 		label = new Label(this, SWT.NONE);
-		label.setText("Initial point (x, y, z): ");
+		label.setText("Source position: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		sourceX = new Spinner(this, SWT.NONE);
+		setSpinner(sourceX, 2, (int)Math.ceil(getValue(width)), 0);
+		setGridData(sourceX, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		sourceY = new Spinner(this, SWT.NONE);
+		setSpinner(sourceY, 2, (int)getValue(length), 0);
+		setGridData(sourceY, SWT.LEAD, SWT.CENTER, 1);
 
-		point = new Spinner(this, SWT.NONE);
-		setSpinner(point, 2, 10000, 0);
-		setGridData(point, SWT.LEAD, SWT.CENTER, 1);
+		sourceZ = new Spinner(this, SWT.NONE);
+		setSpinner(sourceZ, 2, (int)getValue(height), 0);
+		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 1);
+
 
 		// Empty space to fit layout...
 
@@ -140,12 +147,13 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		soundSpeed = new Text(this, SWT.NONE);
+		soundSpeed.setText("344.00"); //velocidade padrao do som
 		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 40);
 
-		// Estipulated position of esferic receiver
+		// spherical receiver position
 
 		label = new Label(this, SWT.NONE);
-		label.setText("Spheric receiver's estipulated position: ");
+		label.setText("Spherical Receiver: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		receiverX = new Spinner(this, SWT.NONE);
@@ -167,45 +175,27 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 		
 		soundAtenuation = new Text(this, SWT.NONE);
+		soundAtenuation.setText("0.01"); //default value
 		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 40);
 
-		// Esferic receiver's radius
+		// Espherical receiver's radius
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Esferic receiver's radius: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		radius = new Spinner(this, SWT.NONE);
-		setSpinner(radius, 0, 5, 0);
+		setSpinner(radius, 2, 5, 0);
 		setGridData(radius, SWT.LEAD, SWT.CENTER, 7, 40);
 
 		// Number of rays
-
 		label = new Label(this, SWT.NONE);
 		label.setText("Number of rays: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		rays = new Spinner(this, SWT.NONE);
 		setSpinner(rays, 0, Integer.MAX_VALUE, 0);
-		setGridData(rays, SWT.LEAD, SWT.CENTER, 1, 40);
-
-		// Source position
-
-		label = new Label(this, SWT.NONE);
-		label.setText("Source position: ");
-		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-
-		sourceX = new Spinner(this, SWT.NONE);
-		setSpinner(sourceX, 2, 10000, 0);
-		setGridData(sourceX, SWT.LEAD, SWT.CENTER, 1);
-
-		sourceY = new Spinner(this, SWT.NONE);
-		setSpinner(sourceY, 2, 10000, 0);
-		setGridData(sourceY, SWT.LEAD, SWT.CENTER, 1);
-
-		sourceZ = new Spinner(this, SWT.NONE);
-		setSpinner(sourceZ, 2, 10000, 0);
-		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 5);
+		setGridData(rays, SWT.LEAD, SWT.CENTER, 9, 40);
 
 		// Number of walls
 
@@ -213,55 +203,72 @@ public class RayTracing extends Composite {
 		label.setText("Room Width: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		width = new Text(this, SWT.NONE);
+		width = new Spinner(this, SWT.None);
+		setSpinner(width, 2, 10000, 0);
 		setGridData(width, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Room Height: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		height = new Text(this, SWT.NONE);
+		height = new Spinner(this, SWT.None);
+		setSpinner(height, 2, 10000, 0);
 		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
 		
 		label = new Label(this, SWT.NONE);
 		label.setText("Room Length: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		length = new Text(this, SWT.NONE);
+		length = new Spinner(this, SWT.None);
+		setSpinner(length, 2, 10000, 0);
 		setGridData(length, SWT.LEAD, SWT.CENTER, 5, 40);
+
 		
 		// Coeficients
-		
-		label = new Label(this, SWT.NONE);
-		label.setText("Floor coeficient: ");
+		Group coefficients = new Group(this, SWT.None);
+		coefficients.setText("Acoustic Coefficients");
+		coefficients.setLayout(new GridLayout(2, false));
+		GridData coefficientsGrid = new GridData(GridData.FILL_HORIZONTAL);
+		coefficientsGrid.horizontalSpan = 6;
+		coefficients.setLayoutData(coefficientsGrid);
+		label = new Label(coefficients, SWT.NONE);
+		label.setText("Floor coefficient: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		floorCoeficient = new Text(this, SWT.NONE);
+		floorCoeficient = new Spinner(coefficients, SWT.NONE);
+		setSpinner(floorCoeficient, 2, 100, 0);
 		setGridData(floorCoeficient, SWT.LEAD, SWT.CENTER, 1, 40);
 
-		label = new Label(this, SWT.NONE);
-		label.setText("Ceil Coeficient: ");
+		label = new Label(coefficients, SWT.NONE);
+		label.setText("Ceil Coefficient: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		ceilCoeficient = new Text(this, SWT.NONE);
+		ceilCoeficient = new Spinner(coefficients, SWT.NONE);
+		setSpinner(ceilCoeficient, 2, 100, 0);
 		setGridData(ceilCoeficient, SWT.LEAD, SWT.CENTER, 1, 40);
 		
-		label = new Label(this, SWT.NONE);
-		label.setText("Walls Coeficients: ");
+		label = new Label(coefficients, SWT.NONE);
+		label.setText("Walls Coefficients: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		wallsCoeficients = new Text(this, SWT.NONE);
+		wallsCoeficients = new Spinner(coefficients, SWT.NONE);
+		setSpinner(wallsCoeficients, 2, 100, 0);
 		setGridData(wallsCoeficients, SWT.LEAD, SWT.CENTER, 1, 40);
 		
 		
 		// Button that trigger the algorithm
 		compute = new Button(this, SWT.NONE);
-		compute.setText("Compute");
+		compute.setText("&Compute");
 		setGridData(compute, SWT.LEAD, SWT.CENTER, 1);
 
 		compute.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				compute();
+				try{
+					compute();
+				}
+				catch(Exception e){
+					System.out.println("DEu Algu Error");
+				}
 			}
 		});
 
@@ -335,16 +342,17 @@ public class RayTracing extends Composite {
 	}
 
 	private List<NormalSector> generateSectorsFor() {
+		
 		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
-		double w = Double.valueOf(this.width.getText());
-		double h = Double.valueOf(this.height.getText());
-		double l = Double.valueOf(this.length.getText());
-		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0), 0.5));
-		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h), 0.5));
-		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h), 0.5));
-		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h), 0.5));
-		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h), 0.5));
-		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h), 0.5));
+		double w = getValue(width);
+		double h = getValue(height);
+		double l = getValue(length);
+		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0), getValue(floorCoeficient)));
+		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h), getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h), getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h), getValue(ceilCoeficient)));
+		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h), getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h), getValue(wallsCoeficients)));
 		return result;
 	}
 
@@ -354,8 +362,17 @@ public class RayTracing extends Composite {
 	}
 
 	private double getValue(Spinner sourceX) {
-		double base = Math.pow(10, -sourceX.getDigits());
-		return sourceX.getSelection() * base;
+		double ret;
+
+		if(sourceX != null){
+			double base = Math.pow(10, sourceX.getDigits());
+			ret = sourceX.getSelection() / base;
+		}
+		else{
+			ret = 0.0;
+		}
+		
+		return ret;
 	}
 
 	public static void registraRaio(Response resp, double energia, double dist) {
@@ -396,6 +413,19 @@ public class RayTracing extends Composite {
 				aux2.setProx(aux);
 			}
 		}
+	}
+	
+	public static void main(String[] args){
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		shell.setBounds(0, 0, 1000, 700);
+		
+		shell.open();
+		RayTracing rt = new RayTracing(shell, SWT.NONE);
+		while(!shell.isDisposed())
+			if(!display.readAndDispatch())
+				display.sleep();
+		display.dispose();
 	}
 
 }
