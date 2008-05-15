@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -46,6 +45,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.graphics.ChartBuilder;
@@ -93,23 +93,22 @@ public class RayTracing extends Composite {
 	private Spinner wallsCoeficients;
 	private Spinner rays;
 	private Text soundAtenuation;
+	private ChartComposite chart;
 
 	public RayTracing(Composite parent, int style) {
 		super(parent, style);
 
 		setLayout(new GridLayout(10, false));
-		
+
 		// Impulsive response
 
 		label = new Label(this, SWT.LEAD);
 		label.setText("Impulsive response (Hz): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-		
 
 		respostaImpulsivaText = new Text(this, SWT.NONE);
 		respostaImpulsivaText.setFocus();
 		setGridData(respostaImpulsivaText, SWT.LEAD, SWT.CENTER, 1, 40);
-
 
 		// Source position
 
@@ -118,17 +117,16 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceX = new Spinner(this, SWT.NONE);
-		setSpinner(sourceX, 2, (int)Math.ceil(getValue(width)), 0);
+		setSpinner(sourceX, 2, (int) Math.ceil(getValue(width)), 0);
 		setGridData(sourceX, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceY = new Spinner(this, SWT.NONE);
-		setSpinner(sourceY, 2, (int)getValue(length), 0);
+		setSpinner(sourceY, 2, (int) getValue(length), 0);
 		setGridData(sourceY, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceZ = new Spinner(this, SWT.NONE);
-		setSpinner(sourceZ, 2, (int)getValue(height), 0);
+		setSpinner(sourceZ, 2, (int) getValue(height), 0);
 		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 1);
-
 
 		// Empty space to fit layout...
 
@@ -147,7 +145,7 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		soundSpeed = new Text(this, SWT.NONE);
-		soundSpeed.setText("344.00"); //velocidade padrao do som
+		soundSpeed.setText("344.00"); // velocidade padrao do som
 		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		// spherical receiver position
@@ -173,9 +171,9 @@ public class RayTracing extends Composite {
 		label = new Label(this, SWT.NONE);
 		label.setText("Sound's atenuation on air: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-		
+
 		soundAtenuation = new Text(this, SWT.NONE);
-		soundAtenuation.setText("0.01"); //default value
+		soundAtenuation.setText("0.01"); // default value
 		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		// Espherical receiver's radius
@@ -214,7 +212,7 @@ public class RayTracing extends Composite {
 		height = new Spinner(this, SWT.None);
 		setSpinner(height, 2, 10000, 0);
 		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
-		
+
 		label = new Label(this, SWT.NONE);
 		label.setText("Room Length: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
@@ -223,7 +221,6 @@ public class RayTracing extends Composite {
 		setSpinner(length, 2, 10000, 0);
 		setGridData(length, SWT.LEAD, SWT.CENTER, 5, 40);
 
-		
 		// Coeficients
 		Group coefficients = new Group(this, SWT.None);
 		coefficients.setText("Acoustic Coefficients");
@@ -246,7 +243,7 @@ public class RayTracing extends Composite {
 		ceilCoeficient = new Spinner(coefficients, SWT.NONE);
 		setSpinner(ceilCoeficient, 2, 100, 0);
 		setGridData(ceilCoeficient, SWT.LEAD, SWT.CENTER, 1, 40);
-		
+
 		label = new Label(coefficients, SWT.NONE);
 		label.setText("Walls Coefficients: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
@@ -254,8 +251,7 @@ public class RayTracing extends Composite {
 		wallsCoeficients = new Spinner(coefficients, SWT.NONE);
 		setSpinner(wallsCoeficients, 2, 100, 0);
 		setGridData(wallsCoeficients, SWT.LEAD, SWT.CENTER, 1, 40);
-		
-		
+
 		// Button that trigger the algorithm
 		compute = new Button(this, SWT.NONE);
 		compute.setText("&Compute");
@@ -263,15 +259,17 @@ public class RayTracing extends Composite {
 
 		compute.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				try{
+				try {
 					compute();
-				}
-				catch(Exception e){
+				} catch (Exception e) {
+					e.printStackTrace();
 					System.out.println("DEu Algu Error");
 				}
 			}
 		});
 
+		chart = new ChartComposite(this, SWT.NONE);
+		setGridData(chart, SWT.LEAD, SWT.BOTTOM, 10, 800, 400);
 		this.pack();
 	}
 
@@ -284,32 +282,26 @@ public class RayTracing extends Composite {
 
 	public void setGridData(Control component, int horizontalAlign,
 			int verticalAlign, int horizontalSpan) {
-		GridData gd = new GridData();
-		gd.horizontalAlignment = horizontalAlign;
-		gd.verticalAlignment = verticalAlign;
-		gd.horizontalSpan = horizontalSpan;
-		component.setLayoutData(gd);
+		setGridData(component, horizontalAlign, verticalAlign, horizontalSpan,
+				0);
 	}
 
 	public void setGridData(Control component, int horizontalAlign,
 			int verticalAlign, int horizontalSpan, int width) {
+		setGridData(component, horizontalAlign, verticalAlign, horizontalSpan,
+				width, 0);
+	}
+
+	public void setGridData(Control component, int horizontalAlign,
+			int verticalAlign, int horizontalSpan, int width, int height) {
 		GridData gd = new GridData();
 		gd.horizontalAlignment = horizontalAlign;
 		gd.verticalAlignment = verticalAlign;
+		gd.horizontalSpan = horizontalSpan;
 		if (width != 0)
 			gd.widthHint = width;
-		gd.horizontalSpan = horizontalSpan;
-		component.setLayoutData(gd);
-	}
-	
-	public void setGridData2(Control component, int horizontalAlign,
-			int verticalAlign, int width, int height) {
-		GridData gd = new GridData();
-		gd.horizontalAlignment = horizontalAlign;
-		gd.verticalAlignment = verticalAlign;
-		gd.horizontalSpan = 10;
-		gd.widthHint = width;
-		gd.heightHint = height;
+		if (height != 0)
+			gd.heightHint = height;
 		component.setLayoutData(gd);
 	}
 
@@ -320,58 +312,65 @@ public class RayTracing extends Composite {
 	public void compute() {
 
 		List<NormalSector> sectors = generateSectorsFor();
-		List<Triade> vectors = new RandomAcousticSource().generate(rays.getSelection());
+		List<Triade> vectors = new RandomAcousticSource().generate(rays
+				.getSelection());
 		Triade soundSourceCenter = newTriadeFor(sourceX, sourceY, sourceZ);
-		Triade sphericalReceptorCenter = newTriadeFor(receiverX, receiverY, receiverZ);
+		Triade sphericalReceptorCenter = newTriadeFor(receiverX, receiverY,
+				receiverZ);
 		double sphericalReceptorRadius = getValue(radius);
 		double soundSpeed = Double.valueOf(this.soundSpeed.getText());
 		double mCoeficient = Double.valueOf(soundAtenuation.getText());
-		RayTracingSimulation simulation = new RayTracingSimulation(sectors, vectors, soundSourceCenter,
-				sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed,
-				INITIAL_ENERGY, mCoeficient, K);
-		
+		RayTracingSimulation simulation = new RayTracingSimulation(sectors,
+				vectors, soundSourceCenter, sphericalReceptorCenter,
+				sphericalReceptorRadius, soundSpeed, INITIAL_ENERGY,
+				mCoeficient, K);
+
 		simulation.simulate();
-		Map<Double, Double> histogram = simulation.getSphericalReceptorHistogram();
-		ChartBuilder cb = new ChartBuilder(histogram);
-		ChartComposite cc = cb.show(this);
-		
-		GridData cg = new GridData();
-		setGridData2(cc, SWT.LEAD, SWT.BOTTOM, 800, 450);
-		//setGridData(cc, SWT.LEAD, SWT.BOTTOM, SWT.CENTER, 10);
+		Map<Double, Double> histogram = simulation
+				.getSphericalReceptorHistogram();
+		ChartBuilder builder = new ChartBuilder(histogram);
+		chart.setChart(builder.getChart());
+		chart.forceRedraw();
 		this.pack();
 	}
 
 	private List<NormalSector> generateSectorsFor() {
-		
+
 		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
 		double w = getValue(width);
 		double h = getValue(height);
 		double l = getValue(length);
-		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0), getValue(floorCoeficient)));
-		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h), getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h), getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h), getValue(ceilCoeficient)));
-		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h), getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h), getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0),
+				getValue(floorCoeficient)));
+		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h),
+				getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h),
+				getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h),
+				getValue(ceilCoeficient)));
+		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h),
+				getValue(wallsCoeficients)));
+		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h),
+				getValue(wallsCoeficients)));
 		return result;
 	}
 
 	private Triade newTriadeFor(Spinner sourceX, Spinner sourceY,
 			Spinner sourceZ) {
-		return new Triade(getValue(sourceX), getValue(sourceY), getValue(sourceZ));
+		return new Triade(getValue(sourceX), getValue(sourceY),
+				getValue(sourceZ));
 	}
 
 	private double getValue(Spinner sourceX) {
 		double ret;
 
-		if(sourceX != null){
+		if (sourceX != null) {
 			double base = Math.pow(10, sourceX.getDigits());
 			ret = sourceX.getSelection() / base;
-		}
-		else{
+		} else {
 			ret = 0.0;
 		}
-		
+
 		return ret;
 	}
 
@@ -414,16 +413,16 @@ public class RayTracing extends Composite {
 			}
 		}
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setBounds(0, 0, 1000, 700);
-		
+
 		shell.open();
 		RayTracing rt = new RayTracing(shell, SWT.NONE);
-		while(!shell.isDisposed())
-			if(!display.readAndDispatch())
+		while (!shell.isDisposed())
+			if (!display.readAndDispatch())
 				display.sleep();
 		display.dispose();
 	}
