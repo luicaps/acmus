@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -45,7 +47,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.graphics.ChartBuilder;
@@ -59,6 +60,30 @@ import acmus.tools.structures.Triade;
  * @author vgp
  */
 public class RayTracing extends Composite {
+
+	private final class RoomSizeModifyListener implements ModifyListener {
+		private final Spinner roomAxis;
+		private final Spinner receiverAxis;
+		private final Spinner sourceAxis;
+
+		public RoomSizeModifyListener(Spinner roomAxis, Spinner sourceAxis,
+				Spinner receiverAxis) {
+					this.roomAxis = roomAxis;
+					this.sourceAxis = sourceAxis;
+					this.receiverAxis = receiverAxis;
+		}
+
+		@Override
+		public void modifyText(ModifyEvent e){
+			receiverAxis.setMaximum(roomAxis.getSelection());
+			sourceAxis.setMaximum(roomAxis.getSelection());
+			int min = Integer.MAX_VALUE;
+			if (min > width.getSelection() / 2) min = width.getSelection() / 2;
+			if (min > length.getSelection() / 2) min = length.getSelection() / 2;
+			if (min > height.getSelection() / 2) min = height.getSelection() / 2;
+			radius.setMaximum(min);
+		}
+	}
 
 	static final int K = 1000;
 	private static final double INITIAL_ENERGY = 100000;
@@ -102,6 +127,40 @@ public class RayTracing extends Composite {
 
 		// Impulsive response
 
+		// Source position
+		// WALLS definition
+
+		Group walls = new Group(this, SWT.None);
+		walls.setText("Room Definition");
+		walls.setLayout(new GridLayout(6, false));
+		GridData wallsGrid = new GridData(GridData.FILL_HORIZONTAL);
+		wallsGrid.horizontalSpan = 10;
+		walls.setLayoutData(wallsGrid);
+		
+		label = new Label(walls, SWT.None);
+		label.setText("Room Width: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		width = new Spinner(walls, SWT.None);
+		setSpinner(width, 2, 10000, 100);
+		setGridData(width, SWT.LEAD, SWT.CENTER, 1, 40);
+		
+		label = new Label(walls, SWT.NONE);
+		label.setText("Room Length: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		length = new Spinner(walls, SWT.None);
+		setSpinner(length, 2, 10000, 100);
+		setGridData(length, SWT.LEAD, SWT.CENTER, 1, 40);
+
+		label = new Label(walls, SWT.NONE);
+		label.setText("Room Height: ");
+		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
+
+		height = new Spinner(walls, SWT.None);
+		setSpinner(height, 2, 10000, 100);
+		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
+		
 		label = new Label(this, SWT.LEAD);
 		label.setText("Impulsive response (Hz): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
@@ -109,23 +168,21 @@ public class RayTracing extends Composite {
 		respostaImpulsivaText = new Text(this, SWT.NONE);
 		respostaImpulsivaText.setFocus();
 		setGridData(respostaImpulsivaText, SWT.LEAD, SWT.CENTER, 1, 40);
-
-		// Source position
-
+		
 		label = new Label(this, SWT.NONE);
 		label.setText("Source position: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceX = new Spinner(this, SWT.NONE);
-		setSpinner(sourceX, 2, (int) Math.ceil(getValue(width)), 0);
+		setSpinner(sourceX, 2, 100, 0);
 		setGridData(sourceX, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceY = new Spinner(this, SWT.NONE);
-		setSpinner(sourceY, 2, (int) getValue(length), 0);
+		setSpinner(sourceY, 2, 100, 0);
 		setGridData(sourceY, SWT.LEAD, SWT.CENTER, 1);
 
 		sourceZ = new Spinner(this, SWT.NONE);
-		setSpinner(sourceZ, 2, (int) getValue(height), 0);
+		setSpinner(sourceZ, 2, 100, 0);
 		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 1);
 
 		// Empty space to fit layout...
@@ -155,17 +212,20 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		receiverX = new Spinner(this, SWT.NONE);
-		setSpinner(receiverX, 2, 10000, 0);
+		setSpinner(receiverX, 2, 100, 0);
 		setGridData(receiverX, SWT.LEAD, SWT.CENTER, 1);
 
 		receiverY = new Spinner(this, SWT.NONE);
-		setSpinner(receiverY, 2, 10000, 0);
+		setSpinner(receiverY, 2, 100, 0);
 		setGridData(receiverY, SWT.LEAD, SWT.CENTER, 1);
 
 		receiverZ = new Spinner(this, SWT.NONE);
-		setSpinner(receiverZ, 2, 10000, 0);
+		setSpinner(receiverZ, 2, 100, 0);
 		setGridData(receiverZ, SWT.LEAD, SWT.CENTER, 5);
 
+		length.addModifyListener(new RoomSizeModifyListener(length, sourceY, receiverY));
+		width.addModifyListener(new RoomSizeModifyListener(width, sourceX, receiverX));
+		height.addModifyListener(new RoomSizeModifyListener(height, sourceZ, receiverZ));
 		// Sound's atenuation on air
 
 		label = new Label(this, SWT.NONE);
@@ -183,7 +243,7 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		radius = new Spinner(this, SWT.NONE);
-		setSpinner(radius, 2, 5, 0);
+		setSpinner(radius, 2, 50, 0);
 		setGridData(radius, SWT.LEAD, SWT.CENTER, 7, 40);
 
 		// Number of rays
@@ -195,32 +255,7 @@ public class RayTracing extends Composite {
 		setSpinner(rays, 0, Integer.MAX_VALUE, 0);
 		setGridData(rays, SWT.LEAD, SWT.CENTER, 9, 40);
 
-		// Number of walls
-
-		label = new Label(this, SWT.NONE);
-		label.setText("Room Width: ");
-		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-
-		width = new Spinner(this, SWT.None);
-		setSpinner(width, 2, 10000, 0);
-		setGridData(width, SWT.LEAD, SWT.CENTER, 1, 40);
-
-		label = new Label(this, SWT.NONE);
-		label.setText("Room Height: ");
-		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-
-		height = new Spinner(this, SWT.None);
-		setSpinner(height, 2, 10000, 0);
-		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
-
-		label = new Label(this, SWT.NONE);
-		label.setText("Room Length: ");
-		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
-
-		length = new Spinner(this, SWT.None);
-		setSpinner(length, 2, 10000, 0);
-		setGridData(length, SWT.LEAD, SWT.CENTER, 5, 40);
-
+				
 		// Coeficients
 		Group coefficients = new Group(this, SWT.None);
 		coefficients.setText("Acoustic Coefficients");
@@ -417,6 +452,7 @@ public class RayTracing extends Composite {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
+		shell.setText("Acoustic Simulation Tool");
 		shell.setBounds(0, 0, 1000, 700);
 
 		shell.open();
