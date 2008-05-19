@@ -590,13 +590,17 @@ public final class Util {
 	}
 
 	public static final double[] scaleToUnit(int a[], int max) {
+		if (max == Integer.MIN_VALUE) {
+			++max;
+		}
+		max = Math.abs(max);
 		double[] y = new double[a.length];
 		for (int i = 0; i < y.length; i++) {
-			if(Math.abs(a[i]) > max)
-				//FIXME this may happen with the minimum, as the
-				// minimum negative integer in module is larger by
-				// one than the maximum
+			if(Math.abs(a[i]) > max) {
+				// This works even for Integer.MIN_VALUE, check
+				// javadoc for Math.abs()
 				throw new IllegalArgumentException("Value in vector larger than max");
+			}
 			y[i] = a[i] / (double) max;
 		}
 		return y;
@@ -604,11 +608,9 @@ public final class Util {
 
 	public static final double[] scaleToUnit(double a[], double max) {
 		double[] y = new double[a.length];
+		max = Math.abs(max);
 		for (int i = 0; i < y.length; i++) {
 			if(Math.abs(a[i]) > max)
-				//FIXME this may happen with the minimum, as the
-				// minimum negative integer in module is larger by
-				// one than the maximum
 				throw new IllegalArgumentException("Value in vector larger than max");
 			y[i] = a[i] / max;
 		}
@@ -616,6 +618,12 @@ public final class Util {
 	}
 	
 	public static final int[] scaleToMax(double[] in, int max) {
+		// This method may fail for Integer.MIN_VALUE
+	
+		if (max == Integer.MIN_VALUE) {
+			++max;
+		}
+		max = Math.abs(max);
 		double currentMax = maxAbs(in);
 		int [] out = new int[in.length];
 		for (int i = 0; i < in.length; i++) {
@@ -625,6 +633,9 @@ public final class Util {
 	}
 
 	public static final double[] scaleToMax(double[] in, double max) {
+		// This method may fail for Integer.MIN_VALUE
+		
+		max = Math.abs(max);
 		double currentMax = maxAbs(in);
 		double [] out = new double[in.length];
 		for (int i = 0; i < in.length; i++) {
@@ -633,7 +644,6 @@ public final class Util {
 		return out;
 	}
 
-	
 	public static void wavWrite(double t[], String filename) {
 		wavWrite(t, 1, filename);
 	}
