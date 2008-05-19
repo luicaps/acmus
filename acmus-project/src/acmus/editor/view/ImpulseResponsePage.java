@@ -170,6 +170,9 @@ public class ImpulseResponsePage extends Composite {
 					double[] ir = Util.subArray(getIr(_aeIr), _aeIr
 							.getSelectionStartInSamples(), _aeIr
 							.getSelectionEndInSamples());
+					// FIXME This is one of the places to set 16 or 32 bits
+					// if we want to change the IR resolution
+					ir = Util.scaleToMax(ir, (double) Util.getLimit(32));
 					Util.wavWrite(ir, 1, 32, parent.getIrFile().getLocation()
 							.toOSString());
 					try {

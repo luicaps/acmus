@@ -654,8 +654,10 @@ public final class Util {
 
 	public static void wavWrite(double t[], int channels, int bitsPerSample,
 			String filename) {
-		int max = getLimit(bitsPerSample);
-		int[] samples = scaleToMax(t, max);
+		int[] samples = new int[t.length];
+		for (int i = 0; i < t.length; ++i) {
+			samples[i] = (int) t[i];
+		}
 		wavWrite(samples, channels, bitsPerSample, filename);
 	}
 
@@ -790,7 +792,7 @@ public final class Util {
 		for (int k = 0; k < data.length / 4; k++) {
 			int oldSample = littleEndian(data[k * 4], data[k * 4 + 1],
 					data[k * 4 + 2], data[k * 4 + 3]);
-			int newSample = (((1 << 15) - 1) * oldSample) / ((1 << 31) - 1);
+			int newSample = (Util.getLimit(16) * oldSample) / Util.getLimit(32);
 			res[j++] = (byte) (newSample & 255);
 			res[j++] = (byte) (newSample >> 8);
 		}
@@ -826,8 +828,8 @@ public final class Util {
 
 			int aa[][] = Util.splitAudioStream(format1.getChannels(), a);
 			int bb[][] = Util.splitAudioStream(format2.getChannels(), b);
-			int max1 = (1 << (format1.getSampleSizeInBits() - 1)) - 1;
-			int max2 = (1 << (format2.getSampleSizeInBits() - 1)) - 1;
+			int max1 = getLimit(format1.getSampleSizeInBits());
+			int max2 = getLimit(format2.getSampleSizeInBits());
 
 			monitor.beginTask("Convolving", 10 * aa.length * bb.length);
 
@@ -845,7 +847,8 @@ public final class Util {
 			}
 
 			monitor.beginTask("Writing output", 2);
-			Util.wavWrite(joinAudioStream(conv), conv.length, output);
+			double[] scaled = Util.scaleToMax(joinAudioStream(conv), (double) Util.getLimit(16));
+			Util.wavWrite(scaled, conv.length, output);
 			monitor.worked(2);
 
 			monitor.done();
@@ -941,7 +944,8 @@ public final class Util {
 				arrays.add(data[i]);
 			}
 		}
-		wavWrite(average(arrays), 1, bitsPerSample, outFile);
+		double[] scaled = scaleToMax (average(arrays), (double) getLimit(bitsPerSample));
+		wavWrite(scaled, 1, bitsPerSample, outFile);
 	}
 
 	static DecimalFormat _f = new DecimalFormat("#.######");
@@ -957,7 +961,7 @@ public final class Util {
 	}
 	
 	public static int getLimit (int bitsPerSample) {
-		return 1 << (bitsPerSample - 1) - 1;
+		return (1 << (bitsPerSample - 1)) - 1;
 	}
 
 }

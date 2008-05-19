@@ -699,7 +699,7 @@ public class SpectrumDisplay extends Composite {
 			for (int i = 0; i < _spectrumPoints.length; i++) {
 				_spectrumPoints[i] = new double[_bucketHeight];
 				double d[] = new double[_stepSize];
-				int max = (1 << (_bitsPerSample - 1)) - 1;
+				int max = Util.getLimit(_bitsPerSample);
 				for (int j = 0; j < _stepSize && start + j < dd[ch].length; j++) {
 					d[j] = (double) dd[ch][(start + j)] / max;
 				}

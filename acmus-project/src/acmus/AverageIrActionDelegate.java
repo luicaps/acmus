@@ -59,7 +59,9 @@ public class AverageIrActionDelegate implements IWorkbenchWindowActionDelegate {
 			props.setProperty("Name", "Average");
 			props.setProperty("recording", "false");
 			AcmusMeasurementWizard.createMeasurement(set, props);
-
+			
+			// FIXME This is one of the places to set 16 or 32 bits
+			// if we want to change the IR resolution
 			Util.wavAverage(avgFolder.getLocation().toOSString() + "/ir.wav",
 					32, irFiles);
 			try {

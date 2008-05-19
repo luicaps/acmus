@@ -269,6 +269,9 @@ public class Ir {
 				throw new IllegalArgumentException(
 						"Method must be either mls or sweep");
 			}
+			// FIXME This is one of the places to set 16 or 32 bits
+			// if we want to change the IR resolution
+			ir = Util.scaleToMax(ir, (double) Util.getLimit(32));
 			Util.wavWrite(ir, 1, 32, irFile.getLocation().toOSString());
 		} catch (Exception e) {
 			e.printStackTrace();

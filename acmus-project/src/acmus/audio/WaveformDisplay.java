@@ -183,7 +183,7 @@ public class WaveformDisplay extends Composite {
 	public void power() {
 		_sampleT = _powerSampleT;
 		setYMax((int) Math.ceil(_sampleT
-				.transf((1 << (_bitsPerSample - 1)) - 1)));
+				.transf(Util.getLimit(_bitsPerSample))));
 		// setYMax(((int)Math.ceil(_sampleT.unitMaxValue())));
 		updateYStart();
 		for (Waveform w : _wf)
@@ -193,7 +193,7 @@ public class WaveformDisplay extends Composite {
 	public void amplitude() {
 		_sampleT = _linearSampleT;
 		setYMax((int) Math.ceil(_sampleT
-				.transf((1 << (_bitsPerSample - 1)) - 1)));
+				.transf(Util.getLimit(_bitsPerSample))));
 		updateYStart();
 		for (Waveform w : _wf)
 			w.redraw();
@@ -647,7 +647,7 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void filter(Filter f) {
-		int max = (1 << (_bitsPerSample - 1)) - 1;
+		int max = Util.getLimit(_bitsPerSample);
 		for (SampleArray s : _sampleArrays) {
 			int[][] streams = Util.splitAudioStream(s.channels, s.data);
 			for (int i = 0; i < streams.length; i++) {
@@ -1324,7 +1324,7 @@ public class WaveformDisplay extends Composite {
 
 	class Linear implements SampleTransform {
 		public final double transf(int y) {
-			return (double) y / ((1 << (_bitsPerSample - 1) - 1));
+			return (double) y / Util.getLimit(_bitsPerSample);
 		}
 
 		public long unitsPerSample(long max) {
@@ -1361,7 +1361,7 @@ public class WaveformDisplay extends Composite {
 		}
 
 		public double unitValueRange() {
-			return transf(1 << (_bitsPerSample - 1));
+			return transf(Util.getLimit(_bitsPerSample));
 		}
 
 		public double unitMaxValue() {
@@ -1369,7 +1369,7 @@ public class WaveformDisplay extends Composite {
 		}
 
 		public double unitMinValue() {
-			return transf(-(1 << (_bitsPerSample - 1)));
+			return transf(-1 * Util.getLimit(_bitsPerSample));
 		}
 
 		public String label() {

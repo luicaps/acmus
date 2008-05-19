@@ -152,7 +152,8 @@ public class Test {
 	public static void testMlsWav() {
 		double mls[] = Signal.mls(15, 15, 1, 3);
 		Util.multLLL(mls, 0.5);
-		Util.wavWrite(mls, "/tmp/acmus-mls.wav");
+		double[] scaled = Util.scaleToMax (mls, (double) Util.getLimit(16));
+		Util.wavWrite(scaled, "/tmp/acmus-mls.wav");
 	}
 
 	public static void testMls() {
@@ -207,9 +208,9 @@ public class Test {
 			double fs = 44100;
 
 			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
-					(1 << 31) - 1);
+					Util.getLimit(32));
 			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
-					(1 << 31) - 1);
+					Util.getLimit(32));
 			System.out.println(" len " + a.length);
 
 			PrintStream ps = new PrintStream(new FileOutputStream(
@@ -228,9 +229,9 @@ public class Test {
 			double fs = 44100;
 
 			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
-					(1 << 31) - 1);
+					Util.getLimit(32));
 			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
-					(1 << 31) - 1);
+					Util.getLimit(32));
 			System.out.println(" len " + a.length);
 
 			PrintStream ps = new PrintStream(new FileOutputStream(
@@ -524,7 +525,8 @@ public class Test {
 			// y[i] = 0.8*y[i];
 		}
 		// double y[] = sweepLog(10, 1, 20, 40);
-		Util.wavWrite(y, "/tmp/foo.wav");
+		double[] scaled = Util.scaleToMax (y, (double) Util.getLimit(16));
+		Util.wavWrite(scaled, "/tmp/foo.wav");
 		// for (int i = 0; i < y.length; i++) { System.out.println(y[i] + " ");
 		// }
 	}
@@ -590,8 +592,8 @@ public class Test {
 					int b[] = AudioPlayer.readData(ais);
 
 					System.out.println(a.length + " " + b.length);
-					x = Util.scaleToUnit(a, 32768);
-					y = Util.scaleToUnit(b, 32768);
+					x = Util.scaleToUnit(a, Util.getLimit(16));
+					y = Util.scaleToUnit(b, Util.getLimit(16));
 					System.out.println(x.length + " " + y.length);
 				}
 
@@ -601,7 +603,8 @@ public class Test {
 				System.out.println("t: " + (System.currentTimeMillis() - t));
 				System.out.println(z.length);
 			}
-			Util.wavWrite(z, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
+			double[] scaled = Util.scaleToMax(z, (double) Util.getLimit(16));
+			Util.wavWrite(scaled, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -637,8 +640,11 @@ public class Test {
 			y[2 * i + 30000] = 1;
 			y[2 * i + 30001] = -1;
 		}
-		Util.wavWrite(x, 1, 16, "/tmp/clip16.wav");
+		double[] scaled = Util.scaleToMax(x, (double) Util.getLimit(16));
+		Util.wavWrite(scaled, 1, 16, "/tmp/clip16.wav");
+		scaled = Util.scaleToMax(x, (double) Util.getLimit(32));
 		Util.wavWrite(x, 1, 32, "/tmp/clip32.wav");
+		scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
 		Util.wavWrite(y, 1, 16, "/tmp/clip.wav");
 	}
 

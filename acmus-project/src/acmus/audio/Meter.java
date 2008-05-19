@@ -156,11 +156,11 @@ class SingleMeter extends Composite implements PaintListener {
 		this.setBackground(AcmusGraphics.BLACK);
 		// _maxVal = 2 * Math.log(2 << 15);
 		// _maxVal = (int)toDb(2<<15, 60);
-		_maxVal = (2 << 15) - 1;
+		_maxVal = Util.getLimit(16);
 	}
 
 	public void setData(int[] data, int b, int bitsPerSample) {
-		_maxVal = (1 << (bitsPerSample - 1)) - 1;
+		_maxVal = Util.getLimit(bitsPerSample);
 		_n = data.length;
 		_peak = new double[data.length / b + 1];
 		_rms = new double[data.length / b + 1];
