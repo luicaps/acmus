@@ -48,13 +48,8 @@ public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate 
 	}
 
 	public void run(IAction action) {
-		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay(); // pega
-																			// um
-																			// ponteiro
-																			// para
-																			// a
 																			// tela
-		Shell shell = new Shell(d);
+		Shell shell = new Shell();
 
 		GridLayout gd = new GridLayout();
 		gd.numColumns = 2;
@@ -64,7 +59,6 @@ public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate 
 
 		shell.setText("Ray Tracing");
 		
-
 		shell.pack();
 		
 		shell.setSize(950, 700);

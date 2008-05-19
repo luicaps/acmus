@@ -27,12 +27,9 @@
 package acmus.editor;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -79,10 +76,10 @@ import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 import acmus.MeasurementProject;
 import acmus.audio.AudioDevice;
-import acmus.dsp.Ir;
 import acmus.dsp.Parameters;
 import acmus.dsp.Plot;
 import acmus.dsp.Util;
+import acmus.editor.view.ImpulseResponsePage;
 import acmus.wizard.AcmusMeasurementWizard;
 import acmus.wizard.AcmusMeasurementWizardFirstPage;
 
@@ -94,7 +91,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	FileEditorInput _input;
 
 	int _audioIndex = -1;
-	int _irIndex = -1;
 	int _parametersIndex = -1;
 	int _propertiesIndex = -1;
 
@@ -103,11 +99,9 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	Combo _cSource;
 	Text _tSource;
 
-	AudioEditorControl _aeSource;
-	AudioEditorControl _aeRec;
-	AudioEditorControl _aeRecLf;
-	AudioEditorControl _aeIr;
-	AudioEditorControl _aeIrLf;
+	private AudioEditorControl _aeSource;
+	private AudioEditorControl _aeRec;
+	private AudioEditorControl _aeRecLf;
 
 
 	TabFolder _tfRecordings;
@@ -120,25 +114,19 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	Button _bRecord;
 	Button _bRecordLf;
 	Button _bIr;
-	Button _bParam;
-	Combo _cParamMethod;
 	Text _tTakes;
 
-	Button _bCutIr;
-	Button _bSetItdg;
-	Label _lItdg;
-
 	IFolder _sigFolder;
-	IFile _signalFile;
+	private IFile _signalFile;
 	IFolder _sigAudioFolder;
 	IFile _signalAudioFile;
-	IFolder _outFolder;
+	private IFolder _outFolder;
 	IFile _recFile;
-	IFile _recFileLf;
-	IFile _irFile;
-	IFile _irFileLf;
-	IFile _paramsFile;
-	IFolder _schroederFolder;
+	private IFile _recFileLf;
+	private IFile _irFile;
+	private IFile _irFileLf;
+	private IFile _paramsFile;
+	private IFolder _schroederFolder;
 	IFile _propsFile;
 
 	Properties _props;
@@ -147,34 +135,41 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	AudioFormat _format;
 
-	int _directSound;
-	int _firstReflection;
-	int _itdgInMillis;
-
-	ProgressMonitorPart _monitor;
-	ProgressMonitorPart _paramMonitor;
+	private ProgressMonitorPart _monitor;
 
 	MessageBox _warningDialog;
 
 	boolean _RecPage;
 
+	private ImpulseResponsePage impulseResponsePage;
+
 	// -------------------------------------------------------------------------
 
+	@Override
+	public Composite getContainer() {
+		return super.getContainer();
+	}
+	@Override
+	public void setPageText(int pageIndex, String text) {
+		super.setPageText(pageIndex, text);
+	}
+	
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
 		_input = (FileEditorInput) input;
-		_outFolder = (IFolder) _input.getFile().getParent();
+		setOutFolder((IFolder) _input.getFile().getParent());
 
-		_recFile = _outFolder.getFile("recording.wav");
-		_recFileLf = _outFolder.getFile("recording2.wav");
+		_recFile = getOutFolder().getFile("recording.wav");
+		setRecFileLf(getOutFolder().getFile("recording2.wav"));
 		IProject p = _input.getFile().getProject();
 		_sigFolder = p.getFolder("_signals.signal");
 		_sigAudioFolder = _sigFolder.getFolder("audio");
-		_paramsFile = _outFolder.getFile("parameters.txt");
-		_schroederFolder = _outFolder.getFolder("schroeder");
-		_irFile = _outFolder.getFile("ir.wav");
-		_irFileLf = _outFolder.getFile("ir2.wav");
+		setParamsFile(getOutFolder().getFile("parameters.txt"));
+		setSchroederFolder(getOutFolder().getFolder("schroeder"));
+		setIrFile(getOutFolder().getFile("ir.wav"));
+		setIrFileLf(getOutFolder().getFile("ir2.wav"));
 
 		_RecPage = Boolean.parseBoolean(MeasurementProject.getProperty(_input.getFile(),
 				"recording", "true"));
@@ -204,49 +199,52 @@ public class MeasurementEditor extends MultiPageEditorPart {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				_bIr.setEnabled((_method.equals("sweep") || _method
-						.equals("mls")));
+				_bIr.setEnabled(("sweep".equals(_method) || "mls"
+						.equals(_method)));
 			}
-			if (_recFileLf.exists()) {
+			if (getRecFileLf().exists()) {
 				try {
-					_aeRecLf.open(_recFileLf.getLocation().toOSString());
+					_aeRecLf.open(getRecFileLf().getLocation().toOSString());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				_bIr.setEnabled((_method.equals("sweep") || _method
-						.equals("mls")));
+				_bIr.setEnabled(("sweep".equals(_method) || "mls"
+						.equals(_method)));
 			}
 			this.setActivePage(_audioIndex);
 		}
 
-		if (_irFile.exists()) {
-			createIrPage();
-			this.setActivePage(_irIndex);
+		if (getIrFile().exists()) {
+			impulseResponsePage = newImpulseResponsePage();
+			this.setActivePage(impulseResponsePage.getIndex());
 		}
-		if (_paramsFile.exists() && _schroederFolder.exists()) {
+		if (getParamsFile().exists() && getSchroederFolder().exists()) {
 			createParametersPage();
 			this.setActivePage(_parametersIndex);
 		}
 
 	}
-
-	private boolean irPageCreated() {
-		return _irIndex >= 0;
+	private ImpulseResponsePage newImpulseResponsePage() {
+		return new ImpulseResponsePage(this, SWT.NONE);
 	}
 
-	private boolean parametersPageCreated() {
+	private boolean irPageCreated() {
+		return impulseResponsePage != null;
+	}
+
+	public boolean parametersPageCreated() {
 		return _parametersIndex >= 0;
 	}
 
 	private void removeIrPage() {
 		if (irPageCreated()) {
-			removePage(_irIndex);
-			_irIndex = -1;
+			removePage(impulseResponsePage.getIndex());
+			impulseResponsePage = null;
 			_parametersIndex--;
 		}
 	}
 
-	private void removeParametersPage() {
+	public void removeParametersPage() {
 		if (parametersPageCreated()) {
 			removePage(_parametersIndex);
 			_parametersIndex = -1;
@@ -359,9 +357,9 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		_bIr.setText("Calculate IR");
 		_bIr.setEnabled(false);
 
-		_monitor = new ProgressMonitorPart(page, null);
+		setMonitor(new ProgressMonitorPart(page, null));
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		_monitor.setLayoutData(gridData);
+		getMonitor().setLayoutData(gridData);
 
 		_warningDialog = new MessageBox(this.getContainer().getShell(), SWT.OK
 				| SWT.CANCEL);
@@ -372,18 +370,18 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		_bRecord.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 
-				if (_irFile.exists() || _paramsFile.exists()) {
+				if (getIrFile().exists() || getParamsFile().exists()) {
 					int warning = _warningDialog.open();
 					if (warning == SWT.CANCEL)
 						return;
 					try {
-						if (_irFile.exists())
-							_irFile.delete(true, null);
-						if (_paramsFile.exists())
-							_paramsFile.delete(true, null);
-						if (_schroederFolder.exists())
-							_schroederFolder.delete(true, null);
-						_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
+						if (getIrFile().exists())
+							getIrFile().delete(true, null);
+						if (getParamsFile().exists())
+							getParamsFile().delete(true, null);
+						if (getSchroederFolder().exists())
+							getSchroederFolder().delete(true, null);
+						getOutFolder().refreshLocal(IFolder.DEPTH_ONE, null);
 						removeIrPage();
 						removeParametersPage();
 					} catch (CoreException e) {
@@ -399,26 +397,26 @@ public class MeasurementEditor extends MultiPageEditorPart {
 					System.err.println("warning: invalid number of takes: "
 							+ _tTakes.getText());
 				}
-				_monitor.beginTask("Recording", takes);
-				_monitor.subTask("Take 1");
+				getMonitor().beginTask("Recording", takes);
+				getMonitor().subTask("Take 1");
 				record(_recFile.getLocation().toOSString());
 				try {
-					_outFolder.refreshLocal(IFolder.DEPTH_INFINITE, null);
+					getOutFolder().refreshLocal(IFolder.DEPTH_INFINITE, null);
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
 				loadRecording();
-				_monitor.worked(1);
-				IFolder setFolder = (IFolder) _outFolder.getParent();
+				getMonitor().worked(1);
+				IFolder setFolder = (IFolder) getOutFolder().getParent();
 				for (int i = 2; i <= takes; i++) {
-					_monitor.subTask("Take " + i);
+					getMonitor().subTask("Take " + i);
 
 					String name = AcmusMeasurementWizardFirstPage
 							.generateNameFor(setFolder, MeasurementProject
 									.removeSuffix(setFolder.getName()));
 					Properties props = new Properties();
 					props.setProperty("Name", name);
-					props.setProperty("Signal", _signalFile.getName());
+					props.setProperty("Signal", getSignalFile().getName());
 					props.setProperty("Method", _method);
 					IFolder takeFolder = AcmusMeasurementWizard
 							.createMeasurement(setFolder, props);
@@ -429,41 +427,41 @@ public class MeasurementEditor extends MultiPageEditorPart {
 					} catch (CoreException e) {
 						e.printStackTrace();
 					}
-					_monitor.worked(1);
+					getMonitor().worked(1);
 				}
-				_monitor.done();
+				getMonitor().done();
 			}
 		});
 
 		_bRecordLf.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 
-				_monitor.beginTask("Recording LF", 1);
-				record(_recFileLf.getLocation().toOSString());
+				getMonitor().beginTask("Recording LF", 1);
+				record(getRecFileLf().getLocation().toOSString());
 				try {
-					_outFolder.refreshLocal(IFolder.DEPTH_INFINITE, null);
+					getOutFolder().refreshLocal(IFolder.DEPTH_INFINITE, null);
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
 				loadRecordingLf();
-				_monitor.worked(1);
-				_monitor.done();
+				getMonitor().worked(1);
+				getMonitor().done();
 			}
 		});
 
 		_bIr.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				if (!irPageCreated())
-					createIrPage();
-				calculateIr();
-				calculateIrLf();
+					impulseResponsePage = newImpulseResponsePage();
+				impulseResponsePage.calculateIr();
+				impulseResponsePage.calculateIrLf();
 			}
 		});
 
 		_method = _props.getProperty("Method");
 
 		if (_props.containsKey("Signal")) {
-			_signalFile = _sigFolder.getFile(_props.getProperty("Signal"));
+			setSignalFile(_sigFolder.getFile(_props.getProperty("Signal")));
 			for (int i = 0; i < _cSource.getItemCount(); i++) {
 				if (_cSource.getItem(i).equals(_props.getProperty("Signal"))) {
 					_cSource.select(i);
@@ -475,251 +473,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		_audioIndex = addPage(page);
 		setPageText(_audioIndex, "Recording");
-	}
-
-	public void createIrPage() {
-
-		Composite page = new Composite(getContainer(), SWT.NONE);
-		page.setLayout(new GridLayout(1, false));
-
-		GridData gridData;
-		GridLayout gl;
-
-		TabFolder tf = new TabFolder(page, SWT.TOP);
-		gridData = new GridData(GridData.FILL_BOTH);
-		tf.setLayoutData(gridData);
-		TabItem ti = new TabItem(tf, SWT.NONE);
-		ti.setText("IR");
-		TabItem tiLf = new TabItem(tf, SWT.NONE);
-		tiLf.setText("IR 2");
-
-		// ------------------------------------------------------------------
-
-		int cols = 1;
-		Composite c = new Composite(tf, SWT.NONE);
-		gl = new GridLayout(cols, false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		c.setLayout(gl);
-
-		_aeIr = new AudioEditorControl(c, SWT.NONE, true, true, false);
-		gridData = new GridData(GridData.FILL_BOTH);
-		_aeIr.setLayoutData(gridData);
-
-		// -------------
-
-		Composite comp = new Composite(c, SWT.NONE);
-		gl = new GridLayout(3, false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		comp.setLayout(gl);
-
-		_bSetItdg = new Button(comp, SWT.CENTER);
-		_bSetItdg.setText("Set ITDG");
-		_lItdg = new Label(comp, SWT.NONE);
-		gridData = new GridData(SWT.LEFT);
-		gridData.widthHint = 100;
-		_lItdg.setLayoutData(gridData);
-
-		_bCutIr = new Button(comp, SWT.CENTER);
-		_bCutIr.setText("Save selected IR");
-		_bCutIr.setToolTipText("Replace IR with selection");
-		gridData = new GridData(SWT.NONE);
-		_bCutIr.setLayoutData(gridData);
-
-		ti.setControl(c);
-
-		// ------------------------------------------------------------------
-
-		cols = 1;
-		c = new Composite(tf, SWT.NONE);
-		gl = new GridLayout(cols, false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		c.setLayout(gl);
-
-		_aeIrLf = new AudioEditorControl(c, SWT.NONE, true, false, false);
-		gridData = new GridData(GridData.FILL_BOTH);
-		_aeIrLf.setLayoutData(gridData);
-
-		tiLf.setControl(c);
-		// -----------------------------------------------------------------------
-		comp = new Composite(page, SWT.NONE);
-		gl = new GridLayout(3, false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		comp.setLayout(gl);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gridData);
-
-		_bParam = new Button(comp, SWT.CENTER);
-		_bParam.setText("Calculate Parameters");
-		_bParam
-				.setToolTipText("Calculate acoustical parameteres using selected IR");
-
-		_cParamMethod = new Combo(comp, SWT.NONE);
-		_cParamMethod.add("Chu");
-		_cParamMethod.add("Lundeby");
-		if (_irFileLf.exists()) {
-			_cParamMethod.add("Hirata");
-		}
-		_cParamMethod.select(0);
-
-		_paramMonitor = new ProgressMonitorPart(comp, null);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		_paramMonitor.setLayoutData(gridData);
-
-		_bParam.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				calculateParameters();
-				if (parametersPageCreated()) {
-					removeParametersPage();
-				}
-				createParametersPage();
-			}
-		});
-
-		_bSetItdg.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				_directSound = _aeIr.getSelectionStartInSamples();
-				_firstReflection = _aeIr.getSelectionEndInSamples();
-				_itdgInMillis = _aeIr.getSelectionEndInMillis()
-						- _aeIr.getSelectionStartInMillis();
-				_bSetItdg.setToolTipText(_firstReflection + " - "
-						+ _directSound + " = "
-						+ (_firstReflection - _directSound));
-				_lItdg.setText("ITDG: " + _itdgInMillis + " ms");
-				_aeIr.eraseSelection();
-				_aeIr.redrawWf();
-			}
-		});
-
-		_bCutIr.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				if (_aeIr.selectionValid()) {
-					double[] ir = Util.subArray(getIr(_aeIr), _aeIr
-							.getSelectionStartInSamples(), _aeIr
-							.getSelectionEndInSamples());
-					Util
-							.wavWrite(ir, 1, 32, _irFile.getLocation()
-									.toOSString());
-					try {
-						_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					_aeIr.open(_irFile.getLocation().toOSString());
-					_aeIr.eraseSelection();
-				}
-
-			}
-		});
-
-		try {
-			if (_irFile.exists()) {
-				_aeIr.open(_irFile.getLocation().toOSString());
-			}
-			if (_irFileLf.exists()) {
-				_aeIrLf.open(_irFileLf.getLocation().toOSString());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		_irIndex = addPage(page);
-		setPageText(_irIndex, "Impulse Response");
-	}
-
-	private double[] getIr(AudioEditorControl ae) {
-		if (ae.getData() != null) {
-			return Util.scaleToUnit(ae.getData(), ae.getMaxSample());
-		}
-		return null;
-	}
-
-	private void calculateIr() {
-		Ir.calculateIr(_outFolder.getFile("recording.wav"), _irFile, _signalFile,
-				_monitor);
-		try {
-			_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		_aeIr.open(_irFile.getLocation().toOSString());
-	}
-
-	private void calculateIrLf() {
-		if (_recFileLf.exists()) {
-			Ir.calculateIr(_recFileLf, _irFileLf, _signalFile, _monitor);
-			try {
-				_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-			_aeIrLf.open(_irFileLf.getLocation().toOSString());
-		}
-	}
-
-	private void calculateParameters() {
-		try {
-			ByteArrayOutputStream baosTable = new ByteArrayOutputStream();
-			PrintStream outTable = new PrintStream(baosTable);
-
-			if (!_schroederFolder.exists()) {
-				_schroederFolder.create(true, true, null);
-			}
-
-			double[] ir2 = getIr(_aeIr);
-			if (_aeIr.selectionValid()) {
-				ir2 = Util.subArray(ir2, _aeIr.getSelectionStartInSamples(),
-						_aeIr.getSelectionEndInSamples());
-			}
-
-			double[] ir2Lf = getIr(_aeIrLf);
-			if (ir2Lf != null) {
-				int end = Parameters.inicio(ir2Lf) + (int) (44100 * 0.20); // guessed
-				ir2Lf = Util.subArray(ir2Lf, 0, end);
-			}
-
-			if ("Chu".equals(_cParamMethod.getItem(_cParamMethod
-					.getSelectionIndex()))) {
-				Parameters p = new Parameters(ir2, ir2Lf, 44100);
-				p.chuParam(_directSound, _firstReflection, outTable,
-						_schroederFolder.getLocation().toOSString(),
-						_paramMonitor);
-			} else if ("Lundeby".equals(_cParamMethod.getItem(_cParamMethod
-					.getSelectionIndex()))) {
-				Parameters.lundebyParam(ir2, ir2Lf, 44100, _directSound,
-						_firstReflection, outTable, _schroederFolder
-								.getLocation().toOSString());
-			} else if ("Hirata".equals(_cParamMethod.getItem(_cParamMethod
-					.getSelectionIndex()))) {
-				Parameters.hirataParam(ir2, ir2Lf, 44100, _directSound,
-						_firstReflection, outTable, _schroederFolder
-								.getLocation().toOSString());
-			} else {
-				System.err.println("Unknown method: "
-						+ _cParamMethod.getItem(_cParamMethod
-								.getSelectionIndex()));
-				System.err.println("  using Chu...");
-				Parameters.chuParamOld(ir2, ir2Lf, 44100, _directSound,
-						_firstReflection, outTable, _schroederFolder
-								.getLocation().toOSString(), _paramMonitor);
-			}
-
-			byte[] buf = baosTable.toByteArray();
-			if (!_paramsFile.exists()) {
-				_paramsFile.create(new ByteArrayInputStream(buf), true, null);
-			} else {
-				_paramsFile.setContents(new ByteArrayInputStream(buf), true,
-						true, null);
-			}
-
-			_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	Shell _plotShells[] = new Shell[11];
@@ -736,7 +489,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 				String separator = System.getProperty("file.separator", "/");
 				BufferedReader br = new BufferedReader(new FileReader(
-						_schroederFolder.getLocation().toOSString() + separator
+						getSchroederFolder().getLocation().toOSString() + separator
 								+ Parameters.CHANNEL_NAMES[index] + ".txt"));
 				String line = br.readLine();
 				int n = Integer.parseInt(line);
@@ -883,7 +636,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 						.setText("Decay curve - "
 								+ columnNames[index + 1]
 								+ " - "
-								+ MeasurementProject.removeSuffix(_outFolder
+								+ MeasurementProject.removeSuffix(getOutFolder()
 										.getName()));
 				_plotShells[index].setSize(400, 300);
 			}
@@ -897,8 +650,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	public void createParametersPage() {
 		try {
-			if (!_paramsFile.exists() || !_schroederFolder.exists()) {
-				calculateParameters();
+			if (!getParamsFile().exists() || !getSchroederFolder().exists()) {
+				impulseResponsePage.calculateParameters(this);
 			}
 
 			Composite page = new Composite(getContainer(), SWT.NONE);
@@ -914,7 +667,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			Label lTr = new Label(page, SWT.NONE);
 			Label lItgd = new Label(page, SWT.NONE);
 
-			BufferedReader br = new BufferedReader(new FileReader(_paramsFile
+			BufferedReader br = new BufferedReader(new FileReader(getParamsFile()
 					.getLocation().toOSString()));
 			String line = null;
 
@@ -961,9 +714,9 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	private final void loadSignal(String signal) {
 		try {
-			_signalFile = _sigFolder.getFile(signal);
+			setSignalFile(_sigFolder.getFile(signal));
 			Properties props = new Properties();
-			props.load(_signalFile.getContents());
+			props.load(getSignalFile().getContents());
 			String name = props.getProperty("Name");
 			_method = props.getProperty("Type", "");
 
@@ -1029,7 +782,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	private final void loadRecordingLf() {
 		try {
-			_aeRecLf.open(_recFileLf.getLocation().toOSString());
+			_aeRecLf.open(getRecFileLf().getLocation().toOSString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1044,7 +797,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	public void doSave(IProgressMonitor monitor) {
 		if (_method != null) {
 			_props.setProperty("Method", _method);
-			_props.setProperty("Signal", _signalFile.getName());
+			_props.setProperty("Signal", getSignalFile().getName());
 		}
 		_propertiesEditor.doSave(monitor);
 		// firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
@@ -1117,6 +870,65 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 
 
+	}
+
+	public void setIrFileLf(IFile _irFileLf) {
+		this._irFileLf = _irFileLf;
+	}
+
+	public IFile getIrFileLf() {
+		return _irFileLf;
+	}
+
+	public void setIrFile(IFile _irFile) {
+		this._irFile = _irFile;
+	}
+
+	public IFile getIrFile() {
+		return _irFile;
+	}
+
+	public void setOutFolder(IFolder _outFolder) {
+		this._outFolder = _outFolder;
+	}
+
+	public IFolder getOutFolder() {
+		return _outFolder;
+	}
+
+	public void setSignalFile(IFile _signalFile) {
+		this._signalFile = _signalFile;
+	}
+	public IFile getSignalFile() {
+		return _signalFile;
+	}
+
+	public void setRecFileLf(IFile _recFileLf) {
+		this._recFileLf = _recFileLf;
+	}
+	public IFile getRecFileLf() {
+		return _recFileLf;
+	}
+
+	public void setMonitor(ProgressMonitorPart _monitor) {
+		this._monitor = _monitor;
+	}
+	public ProgressMonitorPart getMonitor() {
+		return _monitor;
+	}
+
+	public void setParamsFile(IFile _paramsFile) {
+		this._paramsFile = _paramsFile;
+	}
+	public IFile getParamsFile() {
+		return _paramsFile;
+	}
+
+	public void setSchroederFolder(IFolder _schroederFolder) {
+		this._schroederFolder = _schroederFolder;
+	}
+	public IFolder getSchroederFolder() {
+		return _schroederFolder;
 	}
 
 	class PositionLabelProvider extends LabelProvider implements
