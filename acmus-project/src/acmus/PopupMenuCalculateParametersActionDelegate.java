@@ -38,7 +38,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import acmus.audio.AudioPlayer;
-import acmus.editor.MeasurementEditor;
+import acmus.dsp.Ir;
 
 public class PopupMenuCalculateParametersActionDelegate implements
 		IObjectActionDelegate {
@@ -100,7 +100,7 @@ public class PopupMenuCalculateParametersActionDelegate implements
 							.getContents());
 			IFile sigFile = irFile.getProject().getFolder("_signals.signal")
 					.getFile(props.getProperty("Signal"));
-			ir = MeasurementEditor.calculateIr(recFile, irFile, sigFile, null);
+			ir = Ir.calculateIr(recFile, irFile, sigFile, null);
 		} else {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(irFile
 					.getContents());
@@ -112,7 +112,7 @@ public class PopupMenuCalculateParametersActionDelegate implements
 
 		IFile _paramsFile = measureF.getFile("parameters.txt");
 		IFolder _schroederFolder = measureF.getFolder("schroeder");
-		MeasurementEditor.calculateParameters(ir, null, "Chu", _paramsFile,
+		Ir.calculateParameters(ir, null, "Chu", _paramsFile,
 				_schroederFolder);
 
 	}

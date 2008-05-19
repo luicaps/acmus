@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import acmus.editor.MeasurementEditor;
+import acmus.dsp.Ir;
 
 public class PopupMenuCalculateIrActionDelegate implements
 		IObjectActionDelegate {
@@ -98,7 +98,7 @@ public class PopupMenuCalculateIrActionDelegate implements
 					.getFile(props.getProperty("Signal"));
 			// ir = MeasurementEditor.calculateIr(recFile, irFile, sigFile,
 			// null);
-			MeasurementEditor.calculateIr(recFile, irFile, sigFile, null);
+			Ir.calculateIr(recFile, irFile, sigFile, null);
 		}
 
 	}

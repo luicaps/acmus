@@ -79,8 +79,6 @@ import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 import acmus.MeasurementProject;
 import acmus.audio.AudioDevice;
-import acmus.audio.AudioPlayer;
-import acmus.dsp.Filter;
 import acmus.dsp.Ir;
 import acmus.dsp.Parameters;
 import acmus.dsp.Plot;
@@ -640,7 +638,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	}
 
 	private void calculateIr() {
-		calculateIr(_outFolder.getFile("recording.wav"), _irFile, _signalFile,
+		Ir.calculateIr(_outFolder.getFile("recording.wav"), _irFile, _signalFile,
 				_monitor);
 		try {
 			_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
@@ -652,7 +650,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 	private void calculateIrLf() {
 		if (_recFileLf.exists()) {
-			calculateIr(_recFileLf, _irFileLf, _signalFile, _monitor);
+			Ir.calculateIr(_recFileLf, _irFileLf, _signalFile, _monitor);
 			try {
 				_outFolder.refreshLocal(IFolder.DEPTH_ONE, null);
 			} catch (CoreException e) {
@@ -660,100 +658,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 			}
 			_aeIrLf.open(_irFileLf.getLocation().toOSString());
 		}
-	}
-
-	public static double[] calculateIr(IFile recFile, IFile irFile,
-			IFile signalFile, IProgressMonitor monitor) {
-		double ir[] = null;
-		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(recFile
-					.getContents());
-			int data[] = AudioPlayer.readData(ais);
-
-			int max = Util.maxAbs(data);
-		    double[] tempData = null;
-			double[] x = new double[data.length / 2];
-			double[] y = new double[data.length / 2];
-
-			tempData = Util.scaleToUnit(data, max);
-			
-			String swapChannels = MeasurementProject.getProperty(recFile
-					.getProject(), "SWAP_RECORDING_CHANNELS", "no");
-			if (swapChannels.equalsIgnoreCase("no")
-					|| swapChannels.equalsIgnoreCase("false")) {
-				for (int i = 0; i < (tempData.length / 2); i++) {
-					x[i] = tempData[i * 2];
-					y[i] = tempData[i * 2 + 1];
-				}
-			} else {
-				System.out.println("Swap channels...");
-				for (int i = 0; i < (tempData.length / 2); i++) {
-					y[i] = tempData[i * 2];
-					x[i] = tempData[i * 2 + 1];
-				}
-				
-			}
-			
-			Properties props = new Properties();
-			props.load(signalFile.getContents());
-			String method = props.getProperty("Type", "");
-
-			if (method.equals("sweep")) {
-				Filter f = new Filter(props.getProperty("ButterB"), props
-						.getProperty("ButterA"));
-				// FIXME
-				System.out.println("Sweep filter: " + f);
-
-				ir = Ir.dechirp(x, y, f.b, f.a, (int) Math.pow(2, Math
-						.ceil(Math.log(x.length * 2) / Math.log(2))), monitor);
-
-				double sr = Double.parseDouble(props.getProperty("SampleRate",
-						"44100"));
-				double irLen = Double.parseDouble(MeasurementProject
-						.getProperty(recFile.getProject(), "IrLength", ""
-								+ Util.DEFAULT_IR_LENGTH));
-				int samples = (int) (sr * irLen);
-				// file
-				if (samples > ir.length)
-					samples = ir.length;
-				ir = Util.subArray(ir, 0, samples);
-
-				Util.wavWrite(ir, 1, 32, irFile.getLocation().toOSString());
-			} else if (method.equals("mls")) {
-				int[] row = Util.parseIntArray(props.getProperty("Row"));
-				int[] col = Util.parseIntArray(props.getProperty("Col"));
-				int reps = Integer.parseInt(props.getProperty("Repetitions"));
-				ir = Ir.demls(x, y, row, col, reps);
-				Util.wavWrite(ir, 1, 32, irFile.getLocation().toOSString());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ir;
-	}
-
-	public static void calculateParameters(double[] ir, double[] irLf,
-			String method, IFile paramsFile, IFolder schroederFolder) {
-		try {
-			ByteArrayOutputStream baosTable = new ByteArrayOutputStream();
-			PrintStream outTable = new PrintStream(baosTable);
-			if (!schroederFolder.exists()) {
-				schroederFolder.create(true, true, null);
-			}
-			String graphFolder = schroederFolder.getLocation().toOSString();
-			Parameters p = new Parameters(ir, irLf, 44100);
-			p.chuParam(0, 0, outTable, graphFolder, null);
-			byte[] buf = baosTable.toByteArray();
-			if (!paramsFile.exists()) {
-				paramsFile.create(new ByteArrayInputStream(buf), true, null);
-			} else {
-				paramsFile.setContents(new ByteArrayInputStream(buf), true,
-						true, null);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private void calculateParameters() {

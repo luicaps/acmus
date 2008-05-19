@@ -23,7 +23,20 @@
  */
 package acmus.dsp;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Properties;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import acmus.MeasurementProject;
+import acmus.audio.AudioPlayer;
 
 public class Ir {
 
@@ -185,6 +198,106 @@ public class Ir {
 			ir2[i] = ir[col[i] - 1];
 		}
 		return ir2;
+	}
+
+	private static void splitChannels(double[] left, double[] right,
+			int[] stereo) {
+
+		for (int i = 0; i < left.length; i++) {
+			left[i] = stereo[i * 2];
+			right[i] = stereo[i * 2 + 1];
+		}
+	}
+
+	private static boolean swap(IFile recFile) {
+		String swapChannels = MeasurementProject.getProperty(recFile
+				.getProject(), "SWAP_RECORDING_CHANNELS", "no");
+		return !swapChannels.equalsIgnoreCase("no")
+				&& !swapChannels.equalsIgnoreCase("false");
+	}
+
+	public static double[] calculateIr(IFile recFile, IFile irFile,
+			IFile signalFile, IProgressMonitor monitor) {
+
+		double ir[] = null;
+		try {
+			AudioInputStream ais = AudioSystem.getAudioInputStream(recFile
+					.getContents());
+			int data[] = AudioPlayer.readData(ais);
+			double[] left = new double[data.length / 2];
+			double[] right = new double[data.length / 2];
+			if (swap(recFile)) {
+				System.out.println("Swap channels...");
+				splitChannels(right, left, data);
+			}
+			else
+				splitChannels(left, right, data);
+			
+			left = Util.scaleToUnit(left, Util.maxAbs(left));
+			right = Util.scaleToUnit(right, Util.maxAbs(right));
+			Properties props = new Properties();
+			props.load(signalFile.getContents());
+			String method = props.getProperty("Type", "");
+
+			if (method.equals("sweep")) {
+				Filter f = new Filter(props.getProperty("ButterB"), props
+						.getProperty("ButterA"));
+				// FIXME
+				System.out.println("Sweep filter: " + f);
+
+				ir = dechirp(left, right, f.b, f.a, (int) Math.pow(2, Math.ceil(Math
+						.log(left.length * 2)
+						/ Math.log(2))), monitor);
+
+				double sr = Double.parseDouble(props.getProperty("SampleRate",
+						"44100"));
+				double irLen = Double.parseDouble(MeasurementProject
+						.getProperty(recFile.getProject(), "IrLength", ""
+								+ Util.DEFAULT_IR_LENGTH));
+				int samples = (int) (sr * irLen);
+				// file
+				if (samples > ir.length)
+					samples = ir.length;
+				ir = Util.subArray(ir, 0, samples);
+
+			} else if (method.equals("mls")) {
+				int[] row = Util.parseIntArray(props.getProperty("Row"));
+				int[] col = Util.parseIntArray(props.getProperty("Col"));
+				int reps = Integer.parseInt(props.getProperty("Repetitions"));
+				ir = demls(left, right, row, col, reps);
+			} else {
+				throw new IllegalArgumentException(
+						"Method must be either mls or sweep");
+			}
+			Util.wavWrite(ir, 1, 32, irFile.getLocation().toOSString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ir;
+	}
+
+	public static void calculateParameters(double[] ir, double[] irLf,
+			String method, IFile paramsFile, IFolder schroederFolder) {
+		try {
+			ByteArrayOutputStream baosTable = new ByteArrayOutputStream();
+			PrintStream outTable = new PrintStream(baosTable);
+			if (!schroederFolder.exists()) {
+				schroederFolder.create(true, true, null);
+			}
+			String graphFolder = schroederFolder.getLocation().toOSString();
+			Parameters p = new Parameters(ir, irLf, 44100);
+			p.chuParam(0, 0, outTable, graphFolder, null);
+			byte[] buf = baosTable.toByteArray();
+			if (!paramsFile.exists()) {
+				paramsFile.create(new ByteArrayInputStream(buf), true, null);
+			} else {
+				paramsFile.setContents(new ByteArrayInputStream(buf), true,
+						true, null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

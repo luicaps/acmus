@@ -858,8 +858,10 @@ public class AudioPlayer {
 
 	public static final double[] normalizeInPlace(double res[], int[] data,
 			int bits) {
-		// double[]res = new double[data.length];
-		int max = (1 << bits - 1) - 1;
+		// In ancient history (may/2008) this was calculated this way here;
+		// but it is most likely a bug.
+		//int max = (1 << bits - 1) - 1;
+		int max = Util.getLimit(bits);
 		for (int i = 0; i < res.length; i++) {
 			res[i] = (double) data[i] / max;
 		}

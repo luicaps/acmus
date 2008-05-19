@@ -593,21 +593,49 @@ public final class Util {
 		double[] y = new double[a.length];
 		for (int i = 0; i < y.length; i++) {
 			if(Math.abs(a[i]) > max)
+				//FIXME this may happen with the minimum, as the
+				// minimum negative integer in module is larger by
+				// one than the maximum
 				throw new IllegalArgumentException("Value in vector larger than max");
-			y[i] = (double) a[i] / max;
+			y[i] = a[i] / (double) max;
 		}
 		return y;
 	}
 
-	public static final int[] scaleToMax(double[] in, int out[], int max) {
+	public static final double[] scaleToUnit(double a[], double max) {
+		double[] y = new double[a.length];
+		for (int i = 0; i < y.length; i++) {
+			if(Math.abs(a[i]) > max)
+				//FIXME this may happen with the minimum, as the
+				// minimum negative integer in module is larger by
+				// one than the maximum
+				throw new IllegalArgumentException("Value in vector larger than max");
+			y[i] = a[i] / max;
+		}
+		return y;
+	}
+	
+	public static final int[] scaleToMax(double[] in, int max) {
+		double currentMax = maxAbs(in);
+		int [] out = new int[in.length];
 		for (int i = 0; i < in.length; i++) {
-			out[i] = (int) Math.round(in[i] * max);
+			out[i] = (int) Math.round((in[i] / currentMax) * max );
 		}
 		return out;
 	}
 
+	public static final double[] scaleToMax(double[] in, double max) {
+		double currentMax = maxAbs(in);
+		double [] out = new double[in.length];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = (in[i] / currentMax) * max ;
+		}
+		return out;
+	}
+
+	
 	public static void wavWrite(double t[], String filename) {
-		Util.wavWrite(t, 1, filename);
+		wavWrite(t, 1, filename);
 	}
 
 	public static void wavWrite(double t[], int channels, String filename) {
@@ -616,35 +644,25 @@ public final class Util {
 
 	public static void wavWrite(double t[], int channels, int bitsPerSample,
 			String filename) {
-		byte res[] = new byte[t.length * (bitsPerSample / 8)];
-		int max = (1 << (bitsPerSample - 1)) - 1;
+		int max = getLimit(bitsPerSample);
+		int[] samples = scaleToMax(t, max);
+		wavWrite(samples, channels, bitsPerSample, filename);
+	}
 
-		if (bitsPerSample == 32) {
-			for (int i = 0; i < t.length; i++) {
-				int sample = (int) (t[i] * max);
-				/* First byte is LSB (low order) */
-				res[i * 4] = (byte) (sample & 0xff);
-				res[i * 4 + 1] = (byte) (sample >> 8);
-				res[i * 4 + 2] = (byte) (sample >> 16);
-				/* Second byte is MSB (high order) */
-				res[i * 4 + 3] = (byte) (sample >> 24);
+	public static void wavWrite(int t[], int channels, int bitsPerSample,
+			String filename) {
+		byte[] samples = prepareSampleByteArray(t, bitsPerSample);
+		wavWrite(samples, (double) 44100, bitsPerSample, channels, false, filename);
+	}
 
-			}
-		} else if (bitsPerSample == 16) {
-			for (int i = 0; i < t.length; i++) {
-				int sample = (int) (t[i] * max);
-				/* First byte is LSB (low order) */
-				res[i * 2] = (byte) (sample & 0xff);
-				/* Second byte is MSB (high order) */
-				res[i * 2 + 1] = (byte) (sample >> 8);
-			}
-
-		}
-		try {
-			ByteArrayInputStream baos = new ByteArrayInputStream(res);
-			AudioFormat format = new AudioFormat(44100, bitsPerSample,
-					channels, true, false);
-			AudioInputStream ais = new AudioInputStream(baos, format, t.length);
+	public final static void wavWrite(byte data[], double rate,
+			int bitsPerSample, int channels, boolean bigEndian, String filename) {
+		try {		
+			ByteArrayInputStream baos = new ByteArrayInputStream(data);
+			AudioFormat format = new AudioFormat((float) rate, bitsPerSample,
+					channels, true, bigEndian);
+			AudioInputStream ais = new AudioInputStream(baos, format,
+					data.length * 8 / bitsPerSample);
 			if (AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(
 					filename)) == -1) {
 				throw new IOException("Problems writing to file");
@@ -654,14 +672,12 @@ public final class Util {
 			e.printStackTrace();
 		}
 	}
-
-	public static void wavWrite(int t[], int channels, int bitsPerSample,
-			String filename) {
-		byte res[] = new byte[t.length * (bitsPerSample / 8)];
-
+	
+	private static byte[] prepareSampleByteArray(int[] samples, int bitsPerSample) {
+		byte[] res = new byte[samples.length * (bitsPerSample / 8)];
 		if (bitsPerSample == 32) {
-			for (int i = 0; i < t.length; i++) {
-				int sample = t[i];
+			for (int i = 0; i < samples.length; i++) {
+				int sample = samples[i];
 				/* First byte is LSB (low order) */
 				res[i * 4] = (byte) (sample & 0xff);
 				res[i * 4 + 1] = (byte) (sample >> 8);
@@ -670,44 +686,15 @@ public final class Util {
 				res[i * 4 + 3] = (byte) (sample >> 24);
 			}
 		} else if (bitsPerSample == 16) {
-			for (int i = 0; i < t.length; i++) {
-				int sample = t[i];
+			for (int i = 0; i < samples.length; i++) {
+				int sample = samples[i];
 				/* First byte is LSB (low order) */
 				res[i * 2] = (byte) (sample & 0xff);
 				/* Second byte is MSB (high order) */
 				res[i * 2 + 1] = (byte) (sample >> 8);
 			}
 		}
-		try {
-			ByteArrayInputStream baos = new ByteArrayInputStream(res);
-			AudioFormat format = new AudioFormat(44100, bitsPerSample,
-					channels, true, false);
-			AudioInputStream ais = new AudioInputStream(baos, format, t.length
-					/ channels);
-			if (AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(
-					filename)) == -1) {
-				throw new IOException("Problems writing to file");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public final static void wavWrite(byte data[], double rate,
-			int bitsPerSample, int channels, boolean bigEndian, String filename) {
-		try {
-			ByteArrayInputStream baos = new ByteArrayInputStream(data);
-			AudioFormat format = new AudioFormat((float) rate, bitsPerSample,
-					channels, true, bigEndian);
-			AudioInputStream ais = new AudioInputStream(baos, format,
-					data.length);
-			if (AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(
-					filename)) == -1) {
-				throw new IOException("Problems writing to file");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return res;
 	}
 
 	public final static int[] wavRead(String filename) {
@@ -957,6 +944,10 @@ public final class Util {
 			}
 		}
 		return max;
+	}
+	
+	public static int getLimit (int bitsPerSample) {
+		return 1 << (bitsPerSample - 1) - 1;
 	}
 
 }

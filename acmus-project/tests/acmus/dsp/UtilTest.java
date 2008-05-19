@@ -39,6 +39,17 @@ public class UtilTest {
 			Assert.assertEquals(expected[i], actual[i], 0.01);
 		}
 	}
+	
+	@Test
+	public void testCalcScaleToMaxProperly() throws Exception {
+		double[] in = { -5, 3, 0, 17, -10};
+		int[] expected = { -147, 88, 0, 500, -294 };
+		Assert.assertArrayEquals(expected, Util.scaleToMax(in, 500));
+		double[] in2 = { 5, -3, 0, -17, 10};
+		int[] expected2 = { 147, -88, 0, -500, 294 };
+		Assert.assertArrayEquals(expected2, Util.scaleToMax(in2, 500));
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testPassingMaxLessThanVectorMax() throws Exception {
 		Util.scaleToUnit(new int[] {0, 10}, 1);
