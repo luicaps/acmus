@@ -265,7 +265,7 @@ public class RayTracing extends Composite {
 		coefficients.setText("Acoustic Coefficients");
 		coefficients.setLayout(new GridLayout(6, false));
 		GridData coefficientsGrid = new GridData(GridData.FILL_HORIZONTAL);
-		coefficientsGrid.horizontalSpan = 6;
+		coefficientsGrid.horizontalSpan = 10;
 		coefficients.setLayoutData(coefficientsGrid);
 		this.label = new Label(coefficients, SWT.NONE);
 		this.label.setText("Floor coefficient: ");
