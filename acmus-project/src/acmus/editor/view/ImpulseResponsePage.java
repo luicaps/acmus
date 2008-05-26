@@ -140,8 +140,8 @@ public class ImpulseResponsePage extends Composite {
 
 		_bParam.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				calculateParameters(parent);
-				if (parent.parametersPageCreated()) {
+				calculateParameters();
+				if (parent.isParametersPageCreated()) {
 					parent.removeParametersPage();
 				}
 				parent.createParametersPage();
@@ -244,7 +244,7 @@ public class ImpulseResponsePage extends Composite {
 		}
 	}
 
-	public void calculateParameters(MeasurementEditor parent) {
+	public void calculateParameters() {
 		try {
 			ByteArrayOutputStream baosTable = new ByteArrayOutputStream();
 			PrintStream outTable = new PrintStream(baosTable);

@@ -80,6 +80,7 @@ import acmus.dsp.Parameters;
 import acmus.dsp.Plot;
 import acmus.dsp.Util;
 import acmus.editor.view.ImpulseResponsePage;
+import acmus.editor.view.ParametersPage;
 import acmus.wizard.AcmusMeasurementWizard;
 import acmus.wizard.AcmusMeasurementWizardFirstPage;
 
@@ -91,7 +92,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	FileEditorInput _input;
 
 	int _audioIndex = -1;
-	int _parametersIndex = -1;
 	int _propertiesIndex = -1;
 
 	MeasurementPropertiesEditor _propertiesEditor;
@@ -142,7 +142,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	boolean _RecPage;
 
 	private ImpulseResponsePage impulseResponsePage;
-
+	private ParametersPage parametersPage;
 	// -------------------------------------------------------------------------
 
 	@Override
@@ -166,8 +166,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		IProject p = _input.getFile().getProject();
 		_sigFolder = p.getFolder("_signals.signal");
 		_sigAudioFolder = _sigFolder.getFolder("audio");
-		setParamsFile(getOutFolder().getFile("parameters.txt"));
-		setSchroederFolder(getOutFolder().getFolder("schroeder"));
+		this._paramsFile = getOutFolder().getFile("parameters.txt");
+		this._schroederFolder = getOutFolder().getFolder("schroeder");
 		setIrFile(getOutFolder().getFile("ir.wav"));
 		setIrFileLf(getOutFolder().getFile("ir2.wav"));
 
@@ -215,39 +215,39 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 
 		if (getIrFile().exists()) {
-			impulseResponsePage = newImpulseResponsePage();
-			this.setActivePage(impulseResponsePage.getIndex());
+			createIrPage();
 		}
 		if (getParamsFile().exists() && getSchroederFolder().exists()) {
 			createParametersPage();
-			this.setActivePage(_parametersIndex);
 		}
 
 	}
-	private ImpulseResponsePage newImpulseResponsePage() {
-		return new ImpulseResponsePage(this, SWT.NONE);
+	private void createIrPage() {
+		this.impulseResponsePage = new ImpulseResponsePage(this, SWT.NONE);
+		this.setActivePage(impulseResponsePage.getIndex());
 	}
-
-	private boolean irPageCreated() {
-		return impulseResponsePage != null;
+	public void createParametersPage() {
+		this.parametersPage = new ParametersPage(this, SWT.NONE);
+		this.setActivePage(parametersPage.getIndex());
 	}
-
-	public boolean parametersPageCreated() {
-		return _parametersIndex >= 0;
+	public boolean isParametersPageCreated() {
+		return parametersPage != null;
 	}
 
 	private void removeIrPage() {
-		if (irPageCreated()) {
+		if (impulseResponsePage != null) {
 			removePage(impulseResponsePage.getIndex());
-			impulseResponsePage = null;
-			_parametersIndex--;
+			this.impulseResponsePage = null;
+			if (parametersPage != null) {
+				parametersPage.setIndex(parametersPage.getIndex() - 1);
+			}
 		}
 	}
 
 	public void removeParametersPage() {
-		if (parametersPageCreated()) {
-			removePage(_parametersIndex);
-			_parametersIndex = -1;
+		if (parametersPage != null) {
+			removePage(parametersPage.getIndex());
+			this.parametersPage = null;
 		}
 	}
 
@@ -451,8 +451,8 @@ public class MeasurementEditor extends MultiPageEditorPart {
 
 		_bIr.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				if (!irPageCreated())
-					impulseResponsePage = newImpulseResponsePage();
+				if (impulseResponsePage == null)
+					createIrPage();
 				impulseResponsePage.calculateIr();
 				impulseResponsePage.calculateIrLf();
 			}
@@ -648,61 +648,6 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 	}
 
-	public void createParametersPage() {
-		try {
-			if (!getParamsFile().exists() || !getSchroederFolder().exists()) {
-				impulseResponsePage.calculateParameters(this);
-			}
-
-			Composite page = new Composite(getContainer(), SWT.NONE);
-			_parametersIndex = addPage(page);
-			setPageText(_parametersIndex, "Parameters");
-			page.setLayout(new GridLayout(1, false));
-
-			// GridData gridData;
-
-			createTableViewer(page);
-
-			Label lBr = new Label(page, SWT.NONE);
-			Label lTr = new Label(page, SWT.NONE);
-			Label lItgd = new Label(page, SWT.NONE);
-
-			BufferedReader br = new BufferedReader(new FileReader(getParamsFile()
-					.getLocation().toOSString()));
-			String line = null;
-
-			line = br.readLine();
-			line = br.readLine();
-			while (!line.trim().equals("")) {
-				StringTokenizer st = new StringTokenizer(line);
-				String name = st.nextToken() + " " + st.nextToken();
-				double[] ch = new double[11];
-				for (int i = 0; i < ch.length; i++) {
-					String s = st.nextToken();
-					if (s.equals("?")) {
-						ch[i] = Double.NaN;
-					} else {
-						ch[i] = Double.parseDouble(s);
-					}
-				}
-				fTPos.add(new Parameter(name, ch));
-				line = br.readLine();
-			}
-
-			while (line.trim().equals(""))
-				line = br.readLine();
-
-			lBr.setText(line);
-			lTr.setText(br.readLine());
-			lItgd.setText(br.readLine() + " ms");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// -------------------------------------------------------------------------
-
 	public String[] getSignals() {
 		File f = new File(_sigFolder.getLocation().toOSString());
 		return f.list(new FilenameFilter() {
@@ -823,7 +768,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	/* ========================================================================= */
 
 	private Table table;
-	private TableViewer fTPos;
+	public TableViewer fTPos;
 
 	class TColListener extends SelectionAdapter {
 		int _index;
@@ -843,7 +788,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 	private String[] columnNames = new String[] { "freq [Hz]", "63", "125",
 			"250", "500", "1000", "2000", "4000", "8000", "A", "C", "Linear" };
 
-	private void createTableViewer(Composite parent) {
+	public void createTableViewer(Composite parent) {
 		table = new Table(parent, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL);
 		table.setLinesVisible(true);
@@ -917,18 +862,16 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		return _monitor;
 	}
 
-	public void setParamsFile(IFile _paramsFile) {
-		this._paramsFile = _paramsFile;
-	}
 	public IFile getParamsFile() {
 		return _paramsFile;
 	}
 
-	public void setSchroederFolder(IFolder _schroederFolder) {
-		this._schroederFolder = _schroederFolder;
-	}
 	public IFolder getSchroederFolder() {
 		return _schroederFolder;
+	}
+
+	public ImpulseResponsePage getImpulseResponsePage() {
+		return impulseResponsePage;
 	}
 
 	class PositionLabelProvider extends LabelProvider implements
@@ -964,7 +907,7 @@ public class MeasurementEditor extends MultiPageEditorPart {
 		}
 	}
 
-	class Parameter {
+	public class Parameter {
 		double _channels[] = new double[11];
 		String _name;
 
