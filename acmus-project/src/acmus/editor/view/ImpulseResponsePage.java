@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,7 +18,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import acmus.dsp.Ir;
 import acmus.dsp.Parameters;
 import acmus.dsp.Util;
 import acmus.editor.AudioEditorControl;
@@ -208,6 +206,10 @@ public class ImpulseResponsePage extends Composite {
 		return _aeIr;
 	}
 
+	public AudioEditorControl getAeIrLf() {
+		return _aeIrLf;
+	}
+	
 	public int getIndex() {
 		return this._irIndex;
 	}
@@ -217,31 +219,6 @@ public class ImpulseResponsePage extends Composite {
 			return Util.scaleToUnit(ae.getData(), ae.getMaxSample());
 		}
 		return null;
-	}
-
-	public void calculateIr() {
-		Ir.calculateIr(parent.getOutFolder().getFile("recording.wav"), parent
-				.getIrFile(), parent.getSignalFile(), parent.getMonitor());
-		try {
-			parent.getOutFolder().refreshLocal(IFolder.DEPTH_ONE, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		getAeIr().open(parent.getIrFile().getLocation().toOSString());
-	}
-
-	public void calculateIrLf() {
-		if (parent.getRecFileLf().exists()) {
-			Ir.calculateIr(parent.getRecFileLf(), parent.getIrFileLf(), parent
-					.getSignalFile(), parent.getMonitor());
-			try {
-				parent.getOutFolder().refreshLocal(IFolder.DEPTH_ONE, null);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-			_aeIrLf.open(
-					parent.getIrFileLf().getLocation().toOSString());
-		}
 	}
 
 	public void calculateParameters() {
