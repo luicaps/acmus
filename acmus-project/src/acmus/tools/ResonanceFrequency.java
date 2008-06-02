@@ -143,67 +143,76 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		 * @param e
 		 *            ActionEvent
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent event) {
 			try {
-				w = Math.abs(Double.parseDouble(width.getText()));
-				l = Math.abs(Double.parseDouble(length.getText()));
-				h = Math.abs(Double.parseDouble(height.getText()));
-				CalculateFrequency cal = new CalculateFrequency(w, l, h);
+				ResonanceFrequency.this.w = Math.abs(Double
+						.parseDouble(ResonanceFrequency.this.width.getText()));
+				ResonanceFrequency.this.l = Math.abs(Double
+						.parseDouble(ResonanceFrequency.this.length.getText()));
+				ResonanceFrequency.this.h = Math.abs(Double
+						.parseDouble(ResonanceFrequency.this.height.getText()));
+				CalculateFrequency cal = new CalculateFrequency(
+						ResonanceFrequency.this.w, ResonanceFrequency.this.l,
+						ResonanceFrequency.this.h);
 				cal.calculateAxialFrequency();
 				cal.calculateTangentialFrequency();
 				cal.calculateObliqueFrequency();
 				if (cal.returnInputValidity() == false)
-					inputErrorDialog.open();
+					ResonanceFrequency.this.inputErrorDialog.open();
 				else {
-					drawGraph(hAxial, cal.axial_frequency, lAxial, "axial",
-							"Axial");
-					drawGraph2(hTangential, cal.tangential_frequency,
-							lTangential, "Tangential", "Tangential");
-					drawGraph2(hOblique, cal.oblique_frequency, lOblique,
-							"oblique", "Oblique");
-					Vector<Double> v = cal.axial_frequency;
-					text.setText("");
-					if (v.size() == 0) {
-						text
+					drawGraph(ResonanceFrequency.this.hAxial, cal
+							.getAxialFrequencyVector(),
+							ResonanceFrequency.this.lAxial, "axial", "Axial");
+					drawGraph2(ResonanceFrequency.this.hTangential, cal
+							.getTangentialFrequencyVector(),
+							ResonanceFrequency.this.lTangential, "Tangential",
+							"Tangential");
+					drawGraph2(ResonanceFrequency.this.hOblique, cal
+							.getObliqueFrequencyVector(),
+							ResonanceFrequency.this.lOblique, "oblique",
+							"Oblique");
+					Vector<Double> v = cal.getAxialFrequencyVector();
+					ResonanceFrequency.this.text.setText("");
+					if (v.size() == 0)
+						ResonanceFrequency.this.text
 								.append("All axial frequencies are greater than 300Hz"
 										+ newLine);
-					} else {
+					else
 						displayAxialFrequencies(v);
-					}
-					text.append(newLine);
-					v = cal.tangential_frequency;
-					if (v.size() == 0) {
-						text
+					ResonanceFrequency.this.text.append(newLine);
+					v = cal.getTangentialFrequencyVector();
+					if (v.size() == 0)
+						ResonanceFrequency.this.text
 								.append("All tangential frequencies are greater than 300Hz"
 										+ newLine);
-					} else {
+					else
 						displayTangentialFrequencies(v);
-					}
-					text.append(newLine);
-					v = cal.oblique_frequency;
-					if (v.size() == 0) {
-						text
+					ResonanceFrequency.this.text.append(newLine);
+					v = cal.getObliqueFrequencyVector();
+					if (v.size() == 0)
+						ResonanceFrequency.this.text
 								.append("All oblique frequencies are greater than 300Hz"
 										+ newLine);
-					} else {
+					else
 						displayObliqueFrequencies(v);
-					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				inputErrorDialog.open();
+				ResonanceFrequency.this.inputErrorDialog.open();
 			}
 		}
 
 		private void displayObliqueFrequencies(Vector<Double> v) {
-			text.append("Oblique frequencies:" + newLine);
+			ResonanceFrequency.this.text.append("Oblique frequencies:"
+					+ newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] oblique_frequency = new double[v.size()];
 			// double sum = 0.0;
 			double sum_difference = 0.0;
 			for (int i = 0; i < v.size(); i++) {
-				double d = ((Double) v.elementAt(i)).doubleValue();
+				double d = (v.elementAt(i)).doubleValue();
 				oblique_frequency[i] = d;
 			}
 			sort(oblique_frequency);
@@ -211,59 +220,58 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = oblique_frequency[i];
 				d = d * 10;
 				int aux = (int) d;
-				d = (double) aux / 10.0;
+				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = oblique_frequency[i - 1];
 					d1 = d1 * 10;
 					int aux1 = (int) d1;
-					d1 = (double) aux1 / 10.0;
+					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
-					d2 = (double) aux2 / 10.0;
-					text.append("" + d + newLine);
-				} else {
-					text.append("" + d + newLine);
-				}
+					d2 = aux2 / 10.0;
+					ResonanceFrequency.this.text.append("" + d + newLine);
+				} else
+					ResonanceFrequency.this.text.append("" + d + newLine);
 			}
 			double average;
 			if (v.size() > 1)
-				average = (double) sum_difference / (v.size() - 1);
+				average = sum_difference / (v.size() - 1);
 			else
 				average = sum_difference;
 			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++) {
+			for (int i = 0; i < index; i++)
 				standard_deviation += (difference[i] - average)
 						* (difference[i] - average);
-			}
 			if (v.size() > 1)
-				standard_deviation = (double) standard_deviation
-						/ (v.size() - 1);
+				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
 			standard_deviation *= 10.0;
 			int sd = (int) standard_deviation;
-			standard_deviation = (double) sd / 10.0;
-			text.append("Standard deviation: " + standard_deviation + newLine);
+			standard_deviation = sd / 10.0;
+			ResonanceFrequency.this.text.append("Standard deviation: "
+					+ standard_deviation + newLine);
 			if (v.size() > 1)
-				sum_difference = (double) sum_difference / (v.size() - 1);
+				sum_difference = sum_difference / (v.size() - 1);
 			sum_difference *= 10.0;
 			int s_d = (int) sum_difference;
-			sum_difference = (double) s_d / 10.0;
-			text.append("Average of the differences: " + sum_difference
-					+ newLine);
+			sum_difference = s_d / 10.0;
+			ResonanceFrequency.this.text.append("Average of the differences: "
+					+ sum_difference + newLine);
 		}
 
 		private void displayTangentialFrequencies(Vector<Double> v) {
-			text.append("Tangential frequencies:" + newLine);
+			ResonanceFrequency.this.text.append("Tangential frequencies:"
+					+ newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] tangential_frequency = new double[v.size()];
 			double sum_difference = 0.0;
 			for (int i = 0; i < v.size(); i++) {
-				double d = ((Double) v.elementAt(i)).doubleValue();
+				double d = (v.elementAt(i)).doubleValue();
 				tangential_frequency[i] = d;
 			}
 			sort(tangential_frequency);
@@ -271,53 +279,51 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = tangential_frequency[i];
 				d = d * 10;
 				int aux = (int) d;
-				d = (double) aux / 10.0;
+				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = tangential_frequency[i - 1];
 					d1 = d1 * 10;
 					int aux1 = (int) d1;
-					d1 = (double) aux1 / 10.0;
+					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
-					d2 = (double) aux2 / 10.0;
-					text.append("" + d + newLine);
-				} else {
-					text.append("" + d + newLine);
-				}
+					d2 = aux2 / 10.0;
+					ResonanceFrequency.this.text.append("" + d + newLine);
+				} else
+					ResonanceFrequency.this.text.append("" + d + newLine);
 			}
 			double average;
 			if (v.size() > 1)
-				average = (double) sum_difference / (v.size() - 1);
+				average = sum_difference / (v.size() - 1);
 			else
 				average = sum_difference;
 			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++) {
+			for (int i = 0; i < index; i++)
 				standard_deviation += (difference[i] - average)
 						* (difference[i] - average);
-			}
 			if (v.size() > 1)
-				standard_deviation = (double) standard_deviation
-						/ (v.size() - 1);
+				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
 			standard_deviation *= 10.0;
 			int sd = (int) standard_deviation;
-			standard_deviation = (double) sd / 10.0;
-			text.append("Standard deviation: " + standard_deviation + newLine);
+			standard_deviation = sd / 10.0;
+			ResonanceFrequency.this.text.append("Standard deviation: "
+					+ standard_deviation + newLine);
 			if (v.size() > 1)
-				sum_difference = (double) sum_difference / (v.size() - 1);
+				sum_difference = sum_difference / (v.size() - 1);
 			sum_difference *= 10.0;
 			int s_d = (int) sum_difference;
-			sum_difference = (double) s_d / 10.0;
-			text.append("Average of the differences: " + sum_difference
-					+ newLine);
+			sum_difference = s_d / 10.0;
+			ResonanceFrequency.this.text.append("Average of the differences: "
+					+ sum_difference + newLine);
 		}
 
 		private void displayAxialFrequencies(Vector<Double> v) {
-			text.append("Axial frequencies:" + newLine);
+			ResonanceFrequency.this.text.append("Axial frequencies:" + newLine);
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
 			double[] axial_frequency = new double[v.size()];
@@ -331,61 +337,58 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = axial_frequency[i];
 				d = d * 10;
 				int aux = (int) d;
-				d = (double) aux / 10.0;
+				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = axial_frequency[i - 1];
 					d1 = d1 * 10;
 					int aux1 = (int) d1;
-					d1 = (double) aux1 / 10.0;
+					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
 					d2 = d2 * 10;
 					int aux2 = (int) d2;
-					d2 = (double) aux2 / 10.0;
-					text.append("" + d + newLine);
-				} else {
-					text.append("" + d + newLine);
-				}
+					d2 = aux2 / 10.0;
+					ResonanceFrequency.this.text.append("" + d + newLine);
+				} else
+					ResonanceFrequency.this.text.append("" + d + newLine);
 			}
 			double average;
 			if (v.size() > 1)
-				average = (double) sum_difference / (v.size() - 1);
+				average = sum_difference / (v.size() - 1);
 			else
 				average = sum_difference;
 			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++) {
+			for (int i = 0; i < index; i++)
 				standard_deviation += (difference[i] - average)
 						* (difference[i] - average);
-			}
 			if (index > 1)
-				standard_deviation = (double) standard_deviation
-						/ (v.size() - 1);
+				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
 			standard_deviation *= 10.0;
 			int sd = (int) standard_deviation;
-			standard_deviation = (double) sd / 10.0;
-			text.append("Standard deviation: " + standard_deviation + newLine);
+			standard_deviation = sd / 10.0;
+			ResonanceFrequency.this.text.append("Standard deviation: "
+					+ standard_deviation + newLine);
 			if (v.size() > 1)
-				sum_difference = (double) sum_difference / (v.size() - 1);
+				sum_difference = sum_difference / (v.size() - 1);
 			sum_difference *= 10.0;
 			int s_d = (int) sum_difference;
-			sum_difference = (double) s_d / 10.0;
-			text.append("Average of the differences: " + sum_difference
-					+ newLine);
+			sum_difference = s_d / 10.0;
+			ResonanceFrequency.this.text.append("Average of the differences: "
+					+ sum_difference + newLine);
 		}
 
 		private void sort(double[] d) {
 			for (int i = 0; i < d.length; i++) {
 				int index = i;
 				double min = d[i];
-				for (int j = i + 1; j < d.length; j++) {
+				for (int j = i + 1; j < d.length; j++)
 					if (d[j] < min) {
 						index = j;
 						min = d[j];
 					}
-				}
 				if (index != i) {
 					double aux = d[i];
 					d[i] = d[index];
@@ -433,14 +436,14 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 	private void createShell() {
 		Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-		shell = new Shell(d);
+		this.shell = new Shell(d);
 
-		shell.setText("Resonance Frequency");
+		this.shell.setText("Resonance Frequency");
 
-		shell.setLayout(new GridLayout(1, false));
+		this.shell.setLayout(new GridLayout(1, false));
 		GridData gridData;
 
-		Group g = new Group(shell, SWT.SHADOW_ETCHED_IN);
+		Group g = new Group(this.shell, SWT.SHADOW_ETCHED_IN);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		g.setLayoutData(gridData);
 		g.setLayout(new GridLayout(1, false));
@@ -452,77 +455,78 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		c.setLayoutData(gridData);
 		c.setLayout(new GridLayout(7, false));
 
-		width = newText(c, "Width", "0");
-		length = newText(c, "Length", "0");
-		height = newText(c, "Height", "0");
+		this.width = newText(c, "Width", "0");
+		this.length = newText(c, "Length", "0");
+		this.height = newText(c, "Height", "0");
 
-		compute = new Button(c, SWT.NONE);
+		this.compute = new Button(c, SWT.NONE);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalAlignment = GridData.CENTER;
-		compute.setLayoutData(gridData);
-		compute.setText("Compute");
-		compute.addSelectionListener(computeListener);
+		this.compute.setLayoutData(gridData);
+		this.compute.setText("Compute");
+		this.compute.addSelectionListener(this.computeListener);
 
-		g = new Group(shell, SWT.SHADOW_ETCHED_IN);
+		g = new Group(this.shell, SWT.SHADOW_ETCHED_IN);
 		gridData = new GridData(GridData.FILL_BOTH);
 		g.setLayoutData(gridData);
 		g.setLayout(new GridLayout(2, false));
 
-		text = new Text(g, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		this.text = new Text(g, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL
+				| SWT.H_SCROLL);
 		gridData = new GridData(GridData.FILL_VERTICAL);
 		gridData.widthHint = 220;
 		gridData.horizontalAlignment = GridData.END;
-		text.setLayoutData(gridData);
-		text.setEditable(false);
+		this.text.setLayoutData(gridData);
+		this.text.setEditable(false);
 
 		Composite g2 = new Composite(g, SWT.NONE);
 		gridData = new GridData(GridData.FILL_BOTH);
 		g2.setLayoutData(gridData);
 		g2.setLayout(new GridLayout(1, false));
 
-		lAxial = new Label(g2, SWT.NONE);
-		lAxial.setText("Axial");
+		this.lAxial = new Label(g2, SWT.NONE);
+		this.lAxial.setText("Axial");
 		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		lAxial.setLayoutData(gridData);
-		hAxial = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		hAxial.setIntermediateTicks(4);
-		hAxial.setBarWidth(1);
-		hAxial.setXMax(300);
+		this.lAxial.setLayoutData(gridData);
+		this.hAxial = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
+		this.hAxial.setIntermediateTicks(4);
+		this.hAxial.setBarWidth(1);
+		this.hAxial.setXMax(300);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 140;
 		gridData.widthHint = 400;
-		hAxial.setLayoutData(gridData);
+		this.hAxial.setLayoutData(gridData);
 
-		lTangential = new Label(g2, SWT.NONE);
-		lTangential.setText("Tangential");
+		this.lTangential = new Label(g2, SWT.NONE);
+		this.lTangential.setText("Tangential");
 		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		lTangential.setLayoutData(gridData);
-		hTangential = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		hTangential.setIntermediateTicks(4);
-		hTangential.setBarWidth(1);
-		hTangential.setXMax(300);
+		this.lTangential.setLayoutData(gridData);
+		this.hTangential = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
+		this.hTangential.setIntermediateTicks(4);
+		this.hTangential.setBarWidth(1);
+		this.hTangential.setXMax(300);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 140;
 		gridData.widthHint = 400;
-		hTangential.setLayoutData(gridData);
+		this.hTangential.setLayoutData(gridData);
 
-		lOblique = new Label(g2, SWT.NONE);
-		lOblique.setText("Oblique");
+		this.lOblique = new Label(g2, SWT.NONE);
+		this.lOblique.setText("Oblique");
 		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		lOblique.setLayoutData(gridData);
-		hOblique = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		hOblique.setIntermediateTicks(4);
-		hOblique.setBarWidth(1);
-		hOblique.setXMax(300);
+		this.lOblique.setLayoutData(gridData);
+		this.hOblique = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
+		this.hOblique.setIntermediateTicks(4);
+		this.hOblique.setBarWidth(1);
+		this.hOblique.setXMax(300);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 140;
 		gridData.widthHint = 400;
-		hOblique.setLayoutData(gridData);
+		this.hOblique.setLayoutData(gridData);
 
-		inputErrorDialog = new MessageBox(shell, SWT.ICON_ERROR);
-		inputErrorDialog.setMessage("Please check the input data.");
+		this.inputErrorDialog = new MessageBox(this.shell, SWT.ICON_ERROR);
+		this.inputErrorDialog.setMessage("Please check the input data.");
 
-		shell.pack();
+		this.shell.pack();
 	}
 
 	/*
@@ -532,7 +536,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 	 */
 	public void run(IAction action) {
 		createShell();
-		shell.open();
+		this.shell.open();
 	}
 
 	/*

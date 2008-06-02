@@ -37,9 +37,9 @@ public class CalculateFrequency {
 	private double length;
 	private double height;
 	private boolean input_valid;
-	Vector<Double> axial_frequency = new Vector<Double>();
-	Vector<Double> tangential_frequency = new Vector<Double>();
-	Vector<Double> oblique_frequency = new Vector<Double>();
+	private Vector<Double> axial_frequency = new Vector<Double>();
+	private Vector<Double> tangential_frequency = new Vector<Double>();
+	private Vector<Double> oblique_frequency = new Vector<Double>();
 
 	/**
 	 * Creates a new CalculateFrequency
@@ -229,5 +229,17 @@ public class CalculateFrequency {
 			this.input_valid = false;
 		else
 			this.input_valid = true;
+	}
+
+	public Vector<Double> getAxialFrequencyVector() {
+		return this.axial_frequency;
+	}
+
+	public Vector<Double> getTangentialFrequencyVector() {
+		return this.tangential_frequency;
+	}
+
+	public Vector<Double> getObliqueFrequencyVector() {
+		return this.oblique_frequency;
 	}
 }
