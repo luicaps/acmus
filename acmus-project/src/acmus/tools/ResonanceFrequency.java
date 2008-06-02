@@ -220,46 +220,41 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 		private void displayFrequencies(Vector<Double> v) {
 			double[] difference = new double[v.size() - 1];
-			int index = 0;
 			double[] frequency = new double[v.size()];
 			// double sum = 0.0;
 			double sum_difference = 0.0;
-			for (int i = 0; i < v.size(); i++) {
-				double d = (v.elementAt(i)).doubleValue();
-				frequency[i] = d;
-			}
-			Arrays.sort(frequency);
-			for (int i = 0; i < v.size(); i++) {
-				double d = frequency[i];
-				if (i > 0) {
-					double d1 = frequency[i - 1];
-					double d2 = d - d1;
-					difference[index] = d2;
-					index++;
-					sum_difference += d2;
+			for (int i = 0; i < v.size(); i++)
+				frequency[i] = (v.elementAt(i)).doubleValue();
 
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
-				} else
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
+			Arrays.sort(frequency);
+
+			ResonanceFrequency.this.text.append(""
+					+ this.formatter.format(frequency[0]) + newLine);
+			for (int i = 1, index = 0; i < v.size(); i++, index++) {
+				difference[index] = frequency[i] - frequency[i - 1];
+				sum_difference += difference[index];
+				ResonanceFrequency.this.text.append(""
+						+ this.formatter.format(frequency[i]) + newLine);
 			}
-			double average;
+
+			double average = sum_difference;
 			if (v.size() > 1)
 				average = sum_difference / (v.size() - 1);
-			else
-				average = sum_difference;
+
 			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++)
+			for (int i = 0; i < difference.length; i++)
 				standard_deviation += (difference[i] - average)
 						* (difference[i] - average);
-			if (v.size() > 1)
+
+			if (v.size() > 1) {
 				standard_deviation = standard_deviation / (v.size() - 1);
+				sum_difference = sum_difference / (v.size() - 1);
+			}
+
 			standard_deviation = Math.sqrt(standard_deviation);
 			ResonanceFrequency.this.text.append("Standard deviation: "
 					+ this.formatter.format(standard_deviation) + newLine);
-			if (v.size() > 1)
-				sum_difference = sum_difference / (v.size() - 1);
+
 			ResonanceFrequency.this.text.append("Average of the differences: "
 					+ this.formatter.format(sum_difference) + newLine);
 		}
