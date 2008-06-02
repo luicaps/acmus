@@ -27,6 +27,7 @@
  */
 package acmus.tools;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
@@ -215,7 +216,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = (v.elementAt(i)).doubleValue();
 				oblique_frequency[i] = d;
 			}
-			sort(oblique_frequency);
+			Arrays.sort(oblique_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = oblique_frequency[i];
 				d = d * 10;
@@ -274,7 +275,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = (v.elementAt(i)).doubleValue();
 				tangential_frequency[i] = d;
 			}
-			sort(tangential_frequency);
+			Arrays.sort(tangential_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = tangential_frequency[i];
 				d = d * 10;
@@ -332,7 +333,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				double d = v.elementAt(i);
 				axial_frequency[i] = d;
 			}
-			sort(axial_frequency);
+			Arrays.sort(axial_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = axial_frequency[i];
 				d = d * 10;
@@ -378,23 +379,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			sum_difference = s_d / 10.0;
 			ResonanceFrequency.this.text.append("Average of the differences: "
 					+ sum_difference + newLine);
-		}
-
-		private void sort(double[] d) {
-			for (int i = 0; i < d.length; i++) {
-				int index = i;
-				double min = d[i];
-				for (int j = i + 1; j < d.length; j++)
-					if (d[j] < min) {
-						index = j;
-						min = d[j];
-					}
-				if (index != i) {
-					double aux = d[i];
-					d[i] = d[index];
-					d[index] = aux;
-				}
-			}
 		}
 
 	}; /* computeListener */
