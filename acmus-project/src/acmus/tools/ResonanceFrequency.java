@@ -183,24 +183,34 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 						ResonanceFrequency.this.text
 								.append("All axial frequencies are greater than 300Hz"
 										+ newLine);
-					else
-						displayAxialFrequencies(v);
+					else {
+						ResonanceFrequency.this.text
+								.append("Axial frequencies:" + newLine);
+						displayFrequencies(v);
+					}
 					ResonanceFrequency.this.text.append(newLine);
 					v = cal.getTangentialFrequencyVector();
 					if (v.size() == 0)
 						ResonanceFrequency.this.text
 								.append("All tangential frequencies are greater than 300Hz"
 										+ newLine);
-					else
-						displayTangentialFrequencies(v);
+					else {
+						ResonanceFrequency.this.text
+								.append("Tangential frequencies:" + newLine);
+						displayFrequencies(v);
+					}
 					ResonanceFrequency.this.text.append(newLine);
 					v = cal.getObliqueFrequencyVector();
 					if (v.size() == 0)
 						ResonanceFrequency.this.text
 								.append("All oblique frequencies are greater than 300Hz"
 										+ newLine);
-					else
-						displayObliqueFrequencies(v);
+					else {
+						ResonanceFrequency.this.text
+								.append("Oblique frequencies:" + newLine);
+						displayFrequencies(v);
+					}
+
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -208,23 +218,21 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			}
 		}
 
-		private void displayObliqueFrequencies(Vector<Double> v) {
-			ResonanceFrequency.this.text.append("Oblique frequencies:"
-					+ newLine);
+		private void displayFrequencies(Vector<Double> v) {
 			double[] difference = new double[v.size() - 1];
 			int index = 0;
-			double[] oblique_frequency = new double[v.size()];
+			double[] frequency = new double[v.size()];
 			// double sum = 0.0;
 			double sum_difference = 0.0;
 			for (int i = 0; i < v.size(); i++) {
 				double d = (v.elementAt(i)).doubleValue();
-				oblique_frequency[i] = d;
+				frequency[i] = d;
 			}
-			Arrays.sort(oblique_frequency);
+			Arrays.sort(frequency);
 			for (int i = 0; i < v.size(); i++) {
-				double d = oblique_frequency[i];
+				double d = frequency[i];
 				if (i > 0) {
-					double d1 = oblique_frequency[i - 1];
+					double d1 = frequency[i - 1];
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
@@ -246,95 +254,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 				standard_deviation += (difference[i] - average)
 						* (difference[i] - average);
 			if (v.size() > 1)
-				standard_deviation = standard_deviation / (v.size() - 1);
-			standard_deviation = Math.sqrt(standard_deviation);
-			ResonanceFrequency.this.text.append("Standard deviation: "
-					+ this.formatter.format(standard_deviation) + newLine);
-			if (v.size() > 1)
-				sum_difference = sum_difference / (v.size() - 1);
-			ResonanceFrequency.this.text.append("Average of the differences: "
-					+ this.formatter.format(sum_difference) + newLine);
-		}
-
-		private void displayTangentialFrequencies(Vector<Double> v) {
-			ResonanceFrequency.this.text.append("Tangential frequencies:"
-					+ newLine);
-			double[] difference = new double[v.size() - 1];
-			int index = 0;
-			double[] tangential_frequency = new double[v.size()];
-			double sum_difference = 0.0;
-			for (int i = 0; i < v.size(); i++) {
-				double d = (v.elementAt(i)).doubleValue();
-				tangential_frequency[i] = d;
-			}
-			Arrays.sort(tangential_frequency);
-			for (int i = 0; i < v.size(); i++) {
-				double d = tangential_frequency[i];
-				if (i > 0) {
-					double d1 = tangential_frequency[i - 1];
-					double d2 = d - d1;
-					difference[index] = d2;
-					index++;
-					sum_difference += d2;
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
-				} else
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
-			}
-			double average;
-			if (v.size() > 1)
-				average = sum_difference / (v.size() - 1);
-			else
-				average = sum_difference;
-			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++)
-				standard_deviation += (difference[i] - average)
-						* (difference[i] - average);
-			if (v.size() > 1)
-				standard_deviation = standard_deviation / (v.size() - 1);
-			standard_deviation = Math.sqrt(standard_deviation);
-			ResonanceFrequency.this.text.append("Standard deviation: "
-					+ this.formatter.format(standard_deviation) + newLine);
-			if (v.size() > 1)
-				sum_difference = sum_difference / (v.size() - 1);
-			ResonanceFrequency.this.text.append("Average of the differences: "
-					+ this.formatter.format(sum_difference) + newLine);
-		}
-
-		private void displayAxialFrequencies(Vector<Double> v) {
-			ResonanceFrequency.this.text.append("Axial frequencies:" + newLine);
-			double[] difference = new double[v.size() - 1];
-			int index = 0;
-			double[] axial_frequency = new double[v.size()];
-			double sum_difference = 0.0;
-			for (int i = 0; i < v.size(); i++)
-				axial_frequency[i] = v.elementAt(i);
-			Arrays.sort(axial_frequency);
-			for (int i = 0; i < v.size(); i++) {
-				double d = axial_frequency[i];
-				if (i > 0) {
-					double d1 = axial_frequency[i - 1];
-					double d2 = d - d1;
-					difference[index] = d2;
-					index++;
-					sum_difference += d2;
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
-				} else
-					ResonanceFrequency.this.text.append(""
-							+ this.formatter.format(d) + newLine);
-			}
-			double average;
-			if (v.size() > 1)
-				average = sum_difference / (v.size() - 1);
-			else
-				average = sum_difference;
-			double standard_deviation = 0.0;
-			for (int i = 0; i < index; i++)
-				standard_deviation += (difference[i] - average)
-						* (difference[i] - average);
-			if (index > 1)
 				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
 			ResonanceFrequency.this.text.append("Standard deviation: "
