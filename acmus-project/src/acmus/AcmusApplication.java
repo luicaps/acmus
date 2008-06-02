@@ -99,6 +99,7 @@ public class AcmusApplication implements IPlatformRunnable,
 
 	private static final int MIN_JVM_VERSION_SERVICE = 1;
 
+	public static final double SAMPLE_RATE = 44100;
 	/**
 	 * Creates a new IDE application.
 	 */

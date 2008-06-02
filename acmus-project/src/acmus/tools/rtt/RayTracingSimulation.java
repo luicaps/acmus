@@ -2,11 +2,12 @@ package acmus.tools.rtt;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.swt.widgets.ProgressBar;
 
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Triade;
@@ -25,15 +26,10 @@ public class RayTracingSimulation {
 	double mCoeficient;
 	double k;
 
-	public RayTracingSimulation(List<NormalSector> sectors, 
-			List<Triade> vectors, 
-			Triade soundSourceCenter, 
-			Triade sphericalReceptorCenter, 
-			double sphericalReceptorRadius, 
-			double soundSpeed, 
-			double initialEnergy, 
-			double mCoeficient, 
-			int k) {
+	public RayTracingSimulation(List<NormalSector> sectors,
+			List<Triade> vectors, Triade soundSourceCenter,
+			Triade sphericalReceptorCenter, double sphericalReceptorRadius,
+			double soundSpeed, double initialEnergy, double mCoeficient, int k) {
 		this.sectors = sectors;
 		this.vectors = vectors;
 		this.soundSource = soundSourceCenter;
@@ -43,7 +39,7 @@ public class RayTracingSimulation {
 		this.initialEnergy = initialEnergy;
 		this.mCoeficient = mCoeficient;
 		this.k = k;
-		
+
 		sphericalReceptorHistogram = new HashMap<Double, Double>();
 	}
 
@@ -61,7 +57,8 @@ public class RayTracingSimulation {
 		fw.close();
 	}
 
-	public void simulate() {
+	public void simulate(final ProgressBar progressBar) {
+
 		Triade q = soundSource;
 		Triade g = null;
 		Triade v;
@@ -72,12 +69,18 @@ public class RayTracingSimulation {
 		double alpha = 0.0;
 		double lReflection;
 		int uhu = 0;
+
 		// reflection
-		for (Triade vTemp : vectors) {
+		for (int i = 0; i < vectors.size(); i++) {
+			Triade vTemp = vectors.get(i);
+			if (i % (vectors.size()/100) == 0) {
+				progressBar.setSelection((int) (100.0*i/vectors.size()));
+			}
 			q = soundSource;
 			v = vTemp;
 			e = initialEnergy;
-			lReflection = 0; // acumulador de distancia percorrida pelo raio
+			lReflection = 0; // acumulador de distancia percorrida
+			// pelo raio
 			// reflexoes do raio
 			// teste de qual direcao o raio vai seguir
 			do {
@@ -98,10 +101,12 @@ public class RayTracingSimulation {
 								.sub(g));
 						double l = -1 * d / (v.produtoEscalar(s.normalVector));
 
-						// testa distancia minima da fonte a parede e ve se eh
+						// testa distancia minima da fonte a parede e ve
+						// se eh
 						// minima, dentre outras
 						// paredes
-						// este teste determina em qual parede o raio "bate"
+						// este teste determina em qual parede o raio
+						// "bate"
 						if (l <= lMin) {
 							lMin = l;
 							dMin = d;
@@ -120,7 +125,8 @@ public class RayTracingSimulation {
 
 				//
 				// verifica se este raio intercepta o receptor esferico
-				// TODO corrigir estes calculos que estao errados, pois ocorre
+				// TODO corrigir estes calculos que estao errados, pois
+				// ocorre
 				// um caso em que
 				// delta = 2 e na verdade o raio nao intercepta a esfera
 				{
@@ -133,7 +139,7 @@ public class RayTracingSimulation {
 						double t2hc = Math.pow(sphericalReceptorRadius, 2)
 								- l2oc + Math.pow(tca, 2);
 						if (t2hc > 0) {
-//							System.out.println("INTERCEPTA");
+							// System.out.println("INTERCEPTA");
 							double lThisReflection = tca - Math.sqrt(t2hc);
 
 							double distance = lReflection + lThisReflection;
@@ -147,12 +153,14 @@ public class RayTracingSimulation {
 										.get(time);
 								sphericalReceptorHistogram.put(time, temp
 										+ eSphere);
-//								System.out.println("t: " + time + "e: " + temp
-//										+ eSphere);
+								// System.out.println("t: " + time + "e:
+								// " + temp
+								// + eSphere);
 							} else {
 								sphericalReceptorHistogram.put(time, eSphere);
-//								System.out.println("t: " + time + "e: "
-//										+ eSphere);
+								// System.out.println("t: " + time + "e:
+								// "
+								// + eSphere);
 							}
 						}
 					}
@@ -160,43 +168,45 @@ public class RayTracingSimulation {
 				lReflection += lMin;
 				e = eTemp;
 				v = nR.multiplicaVetorEscalar(2 * dMin).sum(g.sub(q));
-				v = v.multiplicaVetorEscalar(1 / v.modulo());// AGORA TENHO
+				v = v.multiplicaVetorEscalar(1 / v.modulo());// AGORA
+				// TENHO
 				// QUE
 				// NORMALIZAR o
 				// vetor V
 
-			} while (e > (1 / k * initialEnergy)); // vai para a proxima
+			} while (e > (1 / k * initialEnergy)); // vai para a
+			// proxima
 			// reflexao, caso
 			// a energia seja maior do que o criterio de parada
 
 		}// fim for, vetores
-		System.out.println("UHU: "+ uhu);
+		System.out.println("UHU: " + uhu);
 	}
 
-	public Map<Double, Double> getSphericalReceptorHistogram(){
+	public Map<Double, Double> getSphericalReceptorHistogram() {
 		return sphericalReceptorHistogram;
 	}
-	
+
 	public void lista() throws IOException {
 		FileWriter fw = new FileWriter("/tmp/hist.txt");
 		StringBuilder sx = new StringBuilder(2000);
 		StringBuilder sy = new StringBuilder(2000);
 		StringBuilder ss = new StringBuilder(2000);
-		
+
 		for (Map.Entry<Double, Double> e : sphericalReceptorHistogram
 				.entrySet()) {
 			sx.append(e.getKey());
 			sx.append(" ");
 			sy.append(e.getValue());
 			sy.append(" ");
-			
+
 			ss.append(e.getKey());
 			ss.append("\t");
 			ss.append(e.getValue());
 			ss.append("\n");
-			
+
 		}
-//		fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
+		// fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
 		fw.write(ss.toString());
 		fw.close();
 	}

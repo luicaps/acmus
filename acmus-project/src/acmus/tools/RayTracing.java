@@ -29,6 +29,7 @@ package acmus.tools;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -42,13 +43,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
+import acmus.AcmusApplication;
+import acmus.dsp.Util;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.RandomAcousticSource;
 import acmus.tools.rtt.RayTracingSimulation;
@@ -61,32 +66,6 @@ import acmus.tools.structures.Triade;
  */
 public class RayTracing extends Composite {
 
-	private final class RoomSizeModifyListener implements ModifyListener {
-		private final Spinner roomAxis;
-		private final Spinner receiverAxis;
-		private final Spinner sourceAxis;
-
-		public RoomSizeModifyListener(Spinner roomAxis, Spinner sourceAxis,
-				Spinner receiverAxis) {
-			this.roomAxis = roomAxis;
-			this.sourceAxis = sourceAxis;
-			this.receiverAxis = receiverAxis;
-		}
-
-		public void modifyText(ModifyEvent e) {
-			this.receiverAxis.setMaximum(this.roomAxis.getSelection());
-			this.sourceAxis.setMaximum(this.roomAxis.getSelection());
-			int min = Integer.MAX_VALUE;
-			if (min > RayTracing.this.width.getSelection() / 2)
-				min = RayTracing.this.width.getSelection() / 2;
-			if (min > RayTracing.this.length.getSelection() / 2)
-				min = RayTracing.this.length.getSelection() / 2;
-			if (min > RayTracing.this.height.getSelection() / 2)
-				min = RayTracing.this.height.getSelection() / 2;
-			RayTracing.this.radius.setMaximum(min);
-		}
-	}
-
 	static final int K = 1000;
 	private static final double INITIAL_ENERGY = 100000;
 
@@ -94,8 +73,6 @@ public class RayTracing extends Composite {
 	private Label label;
 	private Text _input;
 	private Button compute;
-	private Spinner point;
-
 	// Algorithm variables
 	private static double v_som;
 	private static int taxa;
@@ -121,6 +98,10 @@ public class RayTracing extends Composite {
 	private Spinner rays;
 	private Text soundAtenuation;
 	private ChartComposite chart;
+	private Button saveIr;
+	private FileDialog fileDialog;
+	private Map<Double, Double> histogram;
+	private ProgressBar progressBar;
 
 	public RayTracing(Composite parent, int style) {
 		super(parent, style);
@@ -265,7 +246,7 @@ public class RayTracing extends Composite {
 		coefficients.setText("Acoustic Coefficients");
 		coefficients.setLayout(new GridLayout(6, false));
 		GridData coefficientsGrid = new GridData(GridData.FILL_HORIZONTAL);
-		coefficientsGrid.horizontalSpan = 10;
+		coefficientsGrid.horizontalSpan = 8;
 		coefficients.setLayoutData(coefficientsGrid);
 		this.label = new Label(coefficients, SWT.NONE);
 		this.label.setText("Floor coefficient: ");
@@ -303,14 +284,55 @@ public class RayTracing extends Composite {
 					compute();
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.out.println("Deu Algum Error");
+				}
+			}
+		});
+
+		this.saveIr = new Button(this, SWT.NONE);
+		this.saveIr.setText("&Save IR");
+		setGridData(this.saveIr, SWT.LEAD, SWT.CENTER, 1);
+		this.saveIr.setEnabled(false);
+		this.saveIr.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				try {
+					saveIr();
+				} catch (Exception e) {
+					e.printStackTrace();
 					System.out.println("DEu Algu Error");
 				}
 			}
 		});
 
+		this.progressBar = new ProgressBar(this, SWT.SMOOTH);
+		setGridData(this.progressBar, SWT.CENTER, SWT.CENTER, 10);
+		this.fileDialog = new FileDialog(this.getShell(), SWT.SAVE);
+		fileDialog.setFilterExtensions(new String[] { ".wav" });
+		fileDialog.setFilterNames(new String[] { "WAV file" });
+		fileDialog.setText("Save simulated Impulse Response as WAV");
+
 		this.chart = new ChartComposite(this, SWT.NONE);
 		setGridData(this.chart, SWT.LEAD, SWT.BOTTOM, 10, 800, 400);
 		this.pack();
+	}
+
+	private void saveIr() {
+		String filename = this.fileDialog.open();
+		if (filename == null)
+			return;
+
+		TreeSet<Double> orderedKeySet = new TreeSet<Double>(histogram.keySet());
+
+		int waveLength = (int) Math.ceil(orderedKeySet.last()
+				* AcmusApplication.SAMPLE_RATE);
+
+		double[] wave = new double[waveLength];
+		for (Double key : orderedKeySet) {
+			int i = (int) Math.floor(key * AcmusApplication.SAMPLE_RATE);
+			wave[i] = histogram.get(key);
+		}
+		Util.wavWrite(wave, filename);
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,
@@ -350,29 +372,37 @@ public class RayTracing extends Composite {
 	}
 
 	public void compute() {
+		if (rays.getSelection() == 0) return;
+		
+		getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
 
-		List<NormalSector> sectors = generateSectorsFor();
-		List<Triade> vectors = new RandomAcousticSource().generate(this.rays
-				.getSelection());
-		Triade soundSourceCenter = newTriadeFor(this.sourceX, this.sourceY,
-				this.sourceZ);
-		Triade sphericalReceptorCenter = newTriadeFor(this.receiverX,
-				this.receiverY, this.receiverZ);
-		double sphericalReceptorRadius = getValue(this.radius);
-		double soundSpeed = Double.valueOf(this.soundSpeed.getText());
-		double mCoeficient = Double.valueOf(this.soundAtenuation.getText());
-		RayTracingSimulation simulation = new RayTracingSimulation(sectors,
-				vectors, soundSourceCenter, sphericalReceptorCenter,
-				sphericalReceptorRadius, soundSpeed, INITIAL_ENERGY,
-				mCoeficient, K);
+				List<NormalSector> sectors = generateSectorsFor();
+				List<Triade> vectors = new RandomAcousticSource().generate(rays
+						.getSelection());
+				Triade soundSourceCenter = newTriadeFor(sourceX, sourceY,
+						sourceZ);
+				Triade sphericalReceptorCenter = newTriadeFor(receiverX,
+						receiverY, receiverZ);
+				double sphericalReceptorRadius = getValue(radius);
+				double speedOfSound = Double.valueOf(soundSpeed.getText());
+				double mCoeficient = Double.valueOf(soundAtenuation.getText());
+				RayTracingSimulation simulation = new RayTracingSimulation(
+						sectors, vectors, soundSourceCenter,
+						sphericalReceptorCenter, sphericalReceptorRadius,
+						speedOfSound, INITIAL_ENERGY, mCoeficient, K);
+				progressBar.setSelection(0);
+				simulation.simulate(progressBar);
+				progressBar.setSelection(100);
+				histogram = simulation.getSphericalReceptorHistogram();
+				ChartBuilder builder = new ChartBuilder(histogram);
+				chart.setChart(builder.getChart());
+				chart.forceRedraw();
+				saveIr.setEnabled(true);
+			}
+		});
 
-		simulation.simulate();
-		Map<Double, Double> histogram = simulation
-				.getSphericalReceptorHistogram();
-		ChartBuilder builder = new ChartBuilder(histogram);
-		this.chart.setChart(builder.getChart());
-		this.chart.forceRedraw();
-		this.pack();
 	}
 
 	private List<NormalSector> generateSectorsFor() {
@@ -414,7 +444,7 @@ public class RayTracing extends Composite {
 		return ret;
 	}
 
-	public static void registraRaio(Response resp, double energia, double dist) {
+	public static void recordRay(Response resp, double energia, double dist) {
 		int indice;
 		Response aux, aux2;
 
@@ -459,11 +489,37 @@ public class RayTracing extends Composite {
 		shell.setBounds(0, 0, 1000, 700);
 
 		shell.open();
-		RayTracing rt = new RayTracing(shell, SWT.NONE);
+		new RayTracing(shell, SWT.NONE);
 		while (!shell.isDisposed())
 			if (!display.readAndDispatch())
 				display.sleep();
 		display.dispose();
+	}
+
+	private final class RoomSizeModifyListener implements ModifyListener {
+		private final Spinner roomAxis;
+		private final Spinner receiverAxis;
+		private final Spinner sourceAxis;
+
+		public RoomSizeModifyListener(Spinner roomAxis, Spinner sourceAxis,
+				Spinner receiverAxis) {
+			this.roomAxis = roomAxis;
+			this.sourceAxis = sourceAxis;
+			this.receiverAxis = receiverAxis;
+		}
+
+		public void modifyText(ModifyEvent e) {
+			this.receiverAxis.setMaximum(this.roomAxis.getSelection());
+			this.sourceAxis.setMaximum(this.roomAxis.getSelection());
+			int min = Integer.MAX_VALUE;
+			if (min > RayTracing.this.width.getSelection() / 2)
+				min = RayTracing.this.width.getSelection() / 2;
+			if (min > RayTracing.this.length.getSelection() / 2)
+				min = RayTracing.this.length.getSelection() / 2;
+			if (min > RayTracing.this.height.getSelection() / 2)
+				min = RayTracing.this.height.getSelection() / 2;
+			RayTracing.this.radius.setMaximum(min);
+		}
 	}
 
 }

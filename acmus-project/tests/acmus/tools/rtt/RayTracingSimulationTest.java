@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import acmus.graphics.ChartBuilder;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Triade;
 
@@ -68,7 +66,7 @@ public class RayTracingSimulationTest {
 	public void testSimulate() throws FileNotFoundException, IOException {
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
 		
-		rts.simulate();
+		rts.simulate(null);
 		
 		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
 
@@ -87,7 +85,7 @@ public class RayTracingSimulationTest {
 
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
 		
-		rts.simulate();
+		rts.simulate(null);
 		
 		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
 
@@ -111,7 +109,7 @@ public class RayTracingSimulationTest {
 //		meusVetores.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
 //		meusVetores.add(new Triade(1, 1, 0.01).normalize()); //vetor (1,1,0)
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, meusVetores, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
-		rts.simulate();
+		rts.simulate(null);
 		try{
 			rts.lista();
 		}

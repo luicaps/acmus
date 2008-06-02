@@ -14,6 +14,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
+import acmus.AcmusApplication;
+
 /**
  * @author lku
  * 
@@ -31,8 +33,8 @@ public class DefaultAudioDevice implements AudioDevice {
 	public DefaultAudioDevice() {
 		m_targetType = AudioFileFormat.Type.WAVE;
 
-		_format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F,
-				16, 2, 4, 44100.0F, false);
+		_format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, (float)AcmusApplication.SAMPLE_RATE,
+				16, 2, 4, (float)AcmusApplication.SAMPLE_RATE, false);
 
 		m_outputinfo = new DataLine.Info(TargetDataLine.class, _format);
 	}

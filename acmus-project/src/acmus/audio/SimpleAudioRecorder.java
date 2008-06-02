@@ -60,6 +60,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
+import acmus.AcmusApplication;
+
 /*
  * +DocBookXML <title>Recording to an audio file (simple version) </title>
  * 
@@ -153,7 +155,8 @@ public class SimpleAudioRecorder extends Thread {
 		// 8, 1, 1, 8000.0F, true);
 		// 44.1 kHz, 16 bit, stereo
 		audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-				44100.0F, 16, 2, 4, 44100.0F, false);
+				(float) AcmusApplication.SAMPLE_RATE, 16, 2, 4,
+				(float) AcmusApplication.SAMPLE_RATE, false);
 
 		DataLine.Info info = new DataLine.Info(TargetDataLine.class,
 				audioFormat);

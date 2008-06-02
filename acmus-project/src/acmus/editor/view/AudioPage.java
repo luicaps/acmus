@@ -250,7 +250,7 @@ public class AudioPage extends Composite {
 	
 		this._bIr.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				if (parent.isIrPageCreated())
+				if (!parent.isIrPageCreated())
 					parent.createIrPage();
 				calculateIr();
 				calculateIrLf();

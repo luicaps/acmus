@@ -40,6 +40,8 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import acmus.AcmusApplication;
+
 /**
  * @author lku
  */
@@ -804,7 +806,7 @@ public class Parameters {
 
 		double x[] = new double[E.length];
 		for (int i = 0; i < x.length; i++) {
-			x[i] = (double) i / 44100;
+			x[i] = (double) i / AcmusApplication.SAMPLE_RATE;
 		}
 
 		// // % Calcula os tempos de reverberacao da resposta impulsiva (T20 e
@@ -1347,7 +1349,7 @@ public class Parameters {
 
 			}
 			// end
-			// } <--- bug no protótipo?
+			// } <--- bug no protï¿½tipo?
 
 			//
 			// if nargout == 1
