@@ -27,6 +27,8 @@
  */
 package acmus.tools;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -82,6 +84,8 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 	static String newLine = System.getProperty("line.separator");
 
 	SelectionAdapter computeListener = new SelectionAdapter() {
+
+		NumberFormat formatter = new DecimalFormat("#####.0");
 
 		private void drawGraph(Histogram hist, Vector<Double> val, Label label,
 				String str1, String str2) {
@@ -219,24 +223,18 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			Arrays.sort(oblique_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = oblique_frequency[i];
-				d = d * 10;
-				int aux = (int) d;
-				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = oblique_frequency[i - 1];
-					d1 = d1 * 10;
-					int aux1 = (int) d1;
-					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
-					d2 = d2 * 10;
-					int aux2 = (int) d2;
-					d2 = aux2 / 10.0;
-					ResonanceFrequency.this.text.append("" + d + newLine);
+
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 				} else
-					ResonanceFrequency.this.text.append("" + d + newLine);
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 			}
 			double average;
 			if (v.size() > 1)
@@ -250,18 +248,12 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			if (v.size() > 1)
 				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
-			standard_deviation *= 10.0;
-			int sd = (int) standard_deviation;
-			standard_deviation = sd / 10.0;
 			ResonanceFrequency.this.text.append("Standard deviation: "
-					+ standard_deviation + newLine);
+					+ this.formatter.format(standard_deviation) + newLine);
 			if (v.size() > 1)
 				sum_difference = sum_difference / (v.size() - 1);
-			sum_difference *= 10.0;
-			int s_d = (int) sum_difference;
-			sum_difference = s_d / 10.0;
 			ResonanceFrequency.this.text.append("Average of the differences: "
-					+ sum_difference + newLine);
+					+ this.formatter.format(sum_difference) + newLine);
 		}
 
 		private void displayTangentialFrequencies(Vector<Double> v) {
@@ -278,24 +270,17 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			Arrays.sort(tangential_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = tangential_frequency[i];
-				d = d * 10;
-				int aux = (int) d;
-				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = tangential_frequency[i - 1];
-					d1 = d1 * 10;
-					int aux1 = (int) d1;
-					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
-					d2 = d2 * 10;
-					int aux2 = (int) d2;
-					d2 = aux2 / 10.0;
-					ResonanceFrequency.this.text.append("" + d + newLine);
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 				} else
-					ResonanceFrequency.this.text.append("" + d + newLine);
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 			}
 			double average;
 			if (v.size() > 1)
@@ -309,18 +294,12 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			if (v.size() > 1)
 				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
-			standard_deviation *= 10.0;
-			int sd = (int) standard_deviation;
-			standard_deviation = sd / 10.0;
 			ResonanceFrequency.this.text.append("Standard deviation: "
-					+ standard_deviation + newLine);
+					+ this.formatter.format(standard_deviation) + newLine);
 			if (v.size() > 1)
 				sum_difference = sum_difference / (v.size() - 1);
-			sum_difference *= 10.0;
-			int s_d = (int) sum_difference;
-			sum_difference = s_d / 10.0;
 			ResonanceFrequency.this.text.append("Average of the differences: "
-					+ sum_difference + newLine);
+					+ this.formatter.format(sum_difference) + newLine);
 		}
 
 		private void displayAxialFrequencies(Vector<Double> v) {
@@ -329,31 +308,22 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			int index = 0;
 			double[] axial_frequency = new double[v.size()];
 			double sum_difference = 0.0;
-			for (int i = 0; i < v.size(); i++) {
-				double d = v.elementAt(i);
-				axial_frequency[i] = d;
-			}
+			for (int i = 0; i < v.size(); i++)
+				axial_frequency[i] = v.elementAt(i);
 			Arrays.sort(axial_frequency);
 			for (int i = 0; i < v.size(); i++) {
 				double d = axial_frequency[i];
-				d = d * 10;
-				int aux = (int) d;
-				d = aux / 10.0;
 				if (i > 0) {
 					double d1 = axial_frequency[i - 1];
-					d1 = d1 * 10;
-					int aux1 = (int) d1;
-					d1 = aux1 / 10.0;
 					double d2 = d - d1;
 					difference[index] = d2;
 					index++;
 					sum_difference += d2;
-					d2 = d2 * 10;
-					int aux2 = (int) d2;
-					d2 = aux2 / 10.0;
-					ResonanceFrequency.this.text.append("" + d + newLine);
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 				} else
-					ResonanceFrequency.this.text.append("" + d + newLine);
+					ResonanceFrequency.this.text.append(""
+							+ this.formatter.format(d) + newLine);
 			}
 			double average;
 			if (v.size() > 1)
@@ -367,18 +337,12 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			if (index > 1)
 				standard_deviation = standard_deviation / (v.size() - 1);
 			standard_deviation = Math.sqrt(standard_deviation);
-			standard_deviation *= 10.0;
-			int sd = (int) standard_deviation;
-			standard_deviation = sd / 10.0;
 			ResonanceFrequency.this.text.append("Standard deviation: "
-					+ standard_deviation + newLine);
+					+ this.formatter.format(standard_deviation) + newLine);
 			if (v.size() > 1)
 				sum_difference = sum_difference / (v.size() - 1);
-			sum_difference *= 10.0;
-			int s_d = (int) sum_difference;
-			sum_difference = s_d / 10.0;
 			ResonanceFrequency.this.text.append("Average of the differences: "
-					+ sum_difference + newLine);
+					+ this.formatter.format(sum_difference) + newLine);
 		}
 
 	}; /* computeListener */
@@ -403,10 +367,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		t.setText(str);
 		return t;
 	}
-
-	// private Text newText(Composite parent, String lb) {
-	// return newText(parent, lb, "0");
-	// }
 
 	/*
 	 * (non-Javadoc)
