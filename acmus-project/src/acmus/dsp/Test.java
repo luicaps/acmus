@@ -641,11 +641,11 @@ public class Test {
 			y[2 * i + 30001] = -1;
 		}
 		double[] scaled = Util.scaleToMax(x, (double) Util.getLimit(16));
-		Util.wavWrite(scaled, 1, 16, "/tmp/clip16.wav");
+		Util.wavWrite(scaled, 1, 16, "/tmp/clip16.wav", true);
 		scaled = Util.scaleToMax(x, (double) Util.getLimit(32));
-		Util.wavWrite(x, 1, 32, "/tmp/clip32.wav");
+		Util.wavWrite(x, 1, 32, "/tmp/clip32.wav", true);
 		scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
-		Util.wavWrite(y, 1, 16, "/tmp/clip.wav");
+		Util.wavWrite(y, 1, 16, "/tmp/clip.wav", true);
 	}
 
 	public static void testSplit() {

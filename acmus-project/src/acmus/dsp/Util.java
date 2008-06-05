@@ -596,9 +596,8 @@ public final class Util {
 		max = Math.abs(max);
 		double[] y = new double[a.length];
 		for (int i = 0; i < y.length; i++) {
-			if(Math.abs(a[i]) > max) {
-				// This works even for Integer.MIN_VALUE, check
-				// javadoc for Math.abs()
+			if(Math.abs(a[i]) > max || a[i] == Integer.MIN_VALUE) {
+				// check javadoc for Math.abs() before messing with this
 				throw new IllegalArgumentException("Value in vector larger than max");
 			}
 			y[i] = a[i] / (double) max;
@@ -617,19 +616,20 @@ public final class Util {
 		return y;
 	}
 	
-	public static final int[] scaleToMax(double[] in, int max) {
+	public static final int[] scaleToMax(double[] in, int max, boolean dither) {
 		// This method may fail for Integer.MIN_VALUE
-	
 		if (max == Integer.MIN_VALUE) {
 			++max;
 		}
 		max = Math.abs(max);
-		double currentMax = maxAbs(in);
-		int [] out = new int[in.length];
-		for (int i = 0; i < in.length; i++) {
-			out[i] = (int) Math.round((in[i] / currentMax) * max );
+		if (dither) {
+			// dithering may clip the signal; let's leave some headroom
+			--max;
 		}
-		return out;
+		
+		double[] tmp;
+		tmp = scaleToMax(in, (double) max);
+		return doubleToInt(tmp, dither);
 	}
 
 	public static final double[] scaleToMax(double[] in, double max) {
@@ -649,16 +649,31 @@ public final class Util {
 	}
 
 	public static void wavWrite(double t[], int channels, String filename) {
-		wavWrite(t, channels, 16, filename);
+		wavWrite(t, channels, 16, filename, false);
 	}
 
 	public static void wavWrite(double t[], int channels, int bitsPerSample,
-			String filename) {
-		int[] samples = new int[t.length];
-		for (int i = 0; i < t.length; ++i) {
-			samples[i] = (int) t[i];
-		}
+			String filename, boolean dither) {
+		int[] samples = doubleToInt(t, dither);
 		wavWrite(samples, channels, bitsPerSample, filename);
+	}
+
+	public static int[] doubleToInt(double[] data, boolean dither) {
+		int[] samples = new int[data.length];
+		if (dither) {
+			for (int i = 0; i < data.length; ++i) {
+				// This is a simple dithering with Triangular
+				// Probability Density Function; browse the web
+				// for "dither", "noise shaping" and TPDF
+				//FIXME this may overload...
+				samples[i] = (int) Math.round(data[i] + Math.random() - Math.random());
+			}
+		} else {
+			for (int i = 0; i < data.length; ++i) {
+				samples[i] = (int) Math.round(data[i]);
+			}
+		}
+		return samples;
 	}
 
 	public static void wavWrite(int t[], int channels, int bitsPerSample,
@@ -945,7 +960,7 @@ public final class Util {
 			}
 		}
 		double[] scaled = scaleToMax (average(arrays), (double) getLimit(bitsPerSample));
-		wavWrite(scaled, 1, bitsPerSample, outFile);
+		wavWrite(scaled, 1, bitsPerSample, outFile, false);
 	}
 
 	static DecimalFormat _f = new DecimalFormat("#.######");
@@ -955,6 +970,10 @@ public final class Util {
 		for (int i = 0; i < data.length; ++i) {
 			if (Math.abs(data[i]) > max) {
 				max = Math.abs(data[i]);
+			} else if (data[i] == Integer.MIN_VALUE) {
+				// Check javadoc for Math.abs & Integer.MIN_VALUE before messing with this
+				// This is not very good, but is probably the best we can do
+				max = Integer.MAX_VALUE;
 			}
 		}
 		return max;

@@ -281,7 +281,7 @@ public class ImpulseResponsePage extends Composite {
 			// if we want to change the IR resolution
 			ir = Util.scaleToMax(ir, (double) Util.getLimit(32));
 			Util.wavWrite(ir, 1, 32, parent.getIrFile().getLocation()
-					.toOSString());
+					.toOSString(), false);
 			try {
 				parent.getOutFolder().refreshLocal(IFolder.DEPTH_ONE,
 						null);
