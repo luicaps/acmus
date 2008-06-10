@@ -404,7 +404,8 @@ public class RayTracing extends Composite {
 						.getSphericalReceptorHistogram();
 				ChartBuilder builder = new ChartBuilder(
 						RayTracing.this.histogram);
-				RayTracing.this.chart.setChart(builder.getChart());
+				RayTracing.this.chart.setChart(builder.getChart("Time",
+						"Energy", "Title"));
 				RayTracing.this.chart.forceRedraw();
 				RayTracing.this.saveIr.setEnabled(true);
 			}
