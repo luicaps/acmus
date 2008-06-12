@@ -802,14 +802,15 @@ public final class Util {
 
 	public final static byte[] downsample32to16(byte[] data) {
 		byte[] res = new byte[data.length / 2];
-		// int i = 0;
-		int j = 0;
+		int i = 0;
 		for (int k = 0; k < data.length / 4; k++) {
 			int oldSample = littleEndian(data[k * 4], data[k * 4 + 1],
 					data[k * 4 + 2], data[k * 4 + 3]);
-			int newSample = (Util.getLimit(16) * oldSample) / Util.getLimit(32);
-			res[j++] = (byte) (newSample & 255);
-			res[j++] = (byte) (newSample >> 8);
+			double factor = (double) Util.getLimit(16) / (double) Util.getLimit(32); 
+			double scaled = (double) oldSample * factor;
+			int newSample = (int) Math.round(scaled);
+			res[i++] = (byte) (newSample & 255);
+			res[i++] = (byte) (newSample >> 8);
 		}
 		return res;
 	}
