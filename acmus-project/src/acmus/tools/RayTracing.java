@@ -42,6 +42,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -104,6 +105,7 @@ public class RayTracing extends Composite {
 	private FileDialog fileDialog;
 	private Map<Double, Double> histogram;
 	private ProgressBar progressBar;
+	private Combo impulseResponse;
 
 	public RayTracing(Composite parent, int style) {
 		super(parent, style);
@@ -147,12 +149,14 @@ public class RayTracing extends Composite {
 		setGridData(height, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		label = new Label(this, SWT.LEAD);
-		label.setText("Impulsive response (Hz): ");
+		label.setText("Frequency Band (Hz): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
-		respostaImpulsivaText = new Text(this, SWT.NONE);
-		respostaImpulsivaText.setFocus();
-		setGridData(respostaImpulsivaText, SWT.LEAD, SWT.CENTER, 1, 40);
+		impulseResponse = new Combo(this, SWT.READ_ONLY);
+		impulseResponse.setItems(new String[] { "32 to 512", "512 to 2048",
+				"2048 to 8192", "8192 to 16000" });
+		impulseResponse.setFocus();
+		setGridData(impulseResponse, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Source position: ");
@@ -417,7 +421,9 @@ public class RayTracing extends Composite {
 				progressBar.setSelection(100);
 				histogram = simulation.getSphericalReceptorHistogram();
 				ChartBuilder builder = new ChartBuilder(histogram);
-				chart.setChart(builder.getChart("Time", "Energy", "Title"));
+				chart.setChart(builder.getChart("Time", "Energy",
+						"Simulated Impulse Response for "
+								+ impulseResponse.getText() + " Hz"));
 				chart.forceRedraw();
 				saveIr.setEnabled(true);
 			}
