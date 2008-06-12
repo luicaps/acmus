@@ -74,7 +74,7 @@ public class RayTracingSimulation {
 		// reflection
 		for (int i = 0; i < vectors.size(); i++) {
 			Triade vTemp = vectors.get(i);
-			if (i % (vectors.size()/100) == 0) {
+			if (i % Math.max(1,(vectors.size()/100)) == 0) {
 				progressBar.setSelection((int) (100.0*i/vectors.size()));
 			}
 			q = soundSource;

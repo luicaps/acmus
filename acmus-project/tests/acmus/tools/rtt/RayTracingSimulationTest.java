@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.widgets.ProgressBar;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +31,7 @@ public class RayTracingSimulationTest {
 	private double mCoeficient;
 	private int k;
 	private List<NormalSector> sectors;
+	private ProgressBar bar;
 
 	@Before
 	public void setUp(){
@@ -52,6 +57,19 @@ public class RayTracingSimulationTest {
 		initialEnergy = 10000000;
 		mCoeficient = 0.0001;
 		k = 500;
+
+		Mockery mockery = new Mockery() {
+			{
+				setImposteriser(ClassImposteriser.INSTANCE);
+			}
+		};
+		
+		bar = mockery.mock(ProgressBar.class);
+		mockery.checking(new Expectations() {
+			{
+				ignoring(bar);
+			}
+		});
 		
 	}
 	@Test
@@ -65,8 +83,8 @@ public class RayTracingSimulationTest {
 	@Test
 	public void testSimulate() throws FileNotFoundException, IOException {
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
-		
-		rts.simulate(null);
+
+		rts.simulate(bar);
 		
 		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
 
@@ -85,7 +103,7 @@ public class RayTracingSimulationTest {
 
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
 		
-		rts.simulate(null);
+		rts.simulate(bar);
 		
 		Iterator<Double> itr = rts.getSphericalReceptorHistogram().keySet().iterator();
 
@@ -109,7 +127,7 @@ public class RayTracingSimulationTest {
 //		meusVetores.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0)
 //		meusVetores.add(new Triade(1, 1, 0.01).normalize()); //vetor (1,1,0)
 		RayTracingSimulation rts = new RayTracingSimulation(sectors, meusVetores, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, initialEnergy, mCoeficient, k);
-		rts.simulate(null);
+		rts.simulate(bar);
 		try{
 			rts.lista();
 		}

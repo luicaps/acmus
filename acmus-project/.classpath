@@ -10,6 +10,12 @@
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.9-experimental.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.9-swt.jar"/>
 	<classpathentry kind="lib" path="lib/swtgraphics2d.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-library-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-2.1_3-src.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib/objenesis-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/jmock-2.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
