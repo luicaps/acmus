@@ -26,6 +26,9 @@
  */
 package acmus.tools;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -307,10 +310,10 @@ public class RayTracing extends Composite {
 
 		this.progressBar = new ProgressBar(this, SWT.SMOOTH);
 		setGridData(this.progressBar, SWT.CENTER, SWT.CENTER, 10);
-		this.fileDialog = new FileDialog(getShell(), SWT.SAVE);
-		this.fileDialog.setFilterExtensions(new String[] { ".wav" });
-		this.fileDialog.setFilterNames(new String[] { "WAV file" });
-		this.fileDialog.setText("Save simulated Impulse Response as WAV");
+		this.fileDialog = new FileDialog(this.getShell(), SWT.SAVE);
+		fileDialog.setFilterExtensions(new String[] { ".wav" });
+		fileDialog.setFilterNames(new String[] { "WAV file" });
+		fileDialog.setText("Save simulated Impulse Response as WAV");
 
 		this.chart = new ChartComposite(this, SWT.NONE);
 		setGridData(this.chart, SWT.LEAD, SWT.BOTTOM, 10, 800, 400);
@@ -322,18 +325,36 @@ public class RayTracing extends Composite {
 		if (filename == null)
 			return;
 
-		TreeSet<Double> orderedKeySet = new TreeSet<Double>(this.histogram
-				.keySet());
+		TreeSet<Double> orderedKeySet = new TreeSet<Double>(histogram.keySet());
 
-		int waveLength = (int) Math.ceil(orderedKeySet.last()
-				* AcmusApplication.SAMPLE_RATE);
+		int waveLength = (int) Math.ceil(orderedKeySet.last() * AcmusApplication.SAMPLE_RATE);
 
 		double[] wave = new double[waveLength];
 		for (Double key : orderedKeySet) {
 			int i = (int) Math.floor(key * AcmusApplication.SAMPLE_RATE);
-			wave[i] = this.histogram.get(key);
+			wave[i] = histogram.get(key);
 		}
-		Util.wavWrite(wave, filename);
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter("/tmp/wave.txt");
+
+			for (int i = 0; i < wave.length; i++) {
+				fw.write(wave[i] + "\n");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		Util.wavWrite(Util.scaleToMax(wave, (double) Util.getLimit(16)), filename);
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,
@@ -373,41 +394,34 @@ public class RayTracing extends Composite {
 	}
 
 	public void compute() {
-		if (this.rays.getSelection() == 0)
-			return;
-
+		if (rays.getSelection() == 0) return;
+		
 		getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Triade> vectors = new RandomAcousticSource()
-						.generate(RayTracing.this.rays.getSelection());
-				Triade soundSourceCenter = newTriadeFor(
-						RayTracing.this.sourceX, RayTracing.this.sourceY,
-						RayTracing.this.sourceZ);
-				Triade sphericalReceptorCenter = newTriadeFor(
-						RayTracing.this.receiverX, RayTracing.this.receiverY,
-						RayTracing.this.receiverZ);
-				double sphericalReceptorRadius = getValue(RayTracing.this.radius);
-				double speedOfSound = Double.valueOf(RayTracing.this.soundSpeed
-						.getText());
-				double mCoeficient = Double
-						.valueOf(RayTracing.this.soundAtenuation.getText());
+				List<Triade> vectors = new RandomAcousticSource().generate(rays
+						.getSelection());
+				Triade soundSourceCenter = newTriadeFor(sourceX, sourceY,
+						sourceZ);
+				Triade sphericalReceptorCenter = newTriadeFor(receiverX,
+						receiverY, receiverZ);
+				double sphericalReceptorRadius = getValue(radius);
+				double speedOfSound = Double.valueOf(soundSpeed.getText());
+				double mCoeficient = Double.valueOf(soundAtenuation.getText());
 				RayTracingSimulation simulation = new RayTracingSimulation(
 						sectors, vectors, soundSourceCenter,
 						sphericalReceptorCenter, sphericalReceptorRadius,
 						speedOfSound, INITIAL_ENERGY, mCoeficient, K);
-				RayTracing.this.progressBar.setSelection(0);
-				simulation.simulate(RayTracing.this.progressBar);
-				RayTracing.this.progressBar.setSelection(100);
-				RayTracing.this.histogram = simulation
-						.getSphericalReceptorHistogram();
-				ChartBuilder builder = new ChartBuilder(
-						RayTracing.this.histogram);
-				RayTracing.this.chart.setChart(builder.getChart("Time",
-						"Energy", "Title"));
-				RayTracing.this.chart.forceRedraw();
-				RayTracing.this.saveIr.setEnabled(true);
+				progressBar.setSelection(0);
+				simulation.simulate(progressBar);
+				progressBar.setSelection(100);
+				histogram = simulation.getSphericalReceptorHistogram();
+				ChartBuilder builder = new ChartBuilder(histogram);
+				chart.setChart(builder.getChart("Time", "Energy", "Title"));
+				chart.forceRedraw();
+				saveIr.setEnabled(true);
 			}
 		});
 
@@ -415,7 +429,8 @@ public class RayTracing extends Composite {
 
 	private List<NormalSector> generateSectorsFor() {
 
-		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
+		ArrayList<
+		NormalSector> result = new ArrayList<NormalSector>();
 		double w = getValue(this.width);
 		double h = getValue(this.height);
 		double l = getValue(this.length);
