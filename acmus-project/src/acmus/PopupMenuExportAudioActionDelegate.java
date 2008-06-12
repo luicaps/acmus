@@ -50,7 +50,7 @@ public class PopupMenuExportAudioActionDelegate implements
 			
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 		dialog.setText("Select destination File");
-		dialog.setFilterExtensions(new String[] { "*.wave", "*.wav" });
+		dialog.setFilterExtensions(new String[] {"*.wav" });
 		String destFile = dialog.open();
 		if (destFile != null) {
 			IFile source = (IFile) sel.getFirstElement();

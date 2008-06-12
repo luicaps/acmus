@@ -43,6 +43,7 @@ public class RayTracingSimulation {
 		sphericalReceptorHistogram = new HashMap<Double, Double>();
 	}
 
+	//XXX it will be erased! Move it!
 	private void saveVectors() throws IOException {
 		FileWriter fw = new FileWriter("/tmp/fonte3d.txt");
 
