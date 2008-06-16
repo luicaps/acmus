@@ -589,73 +589,75 @@ public final class Util {
 		return output;
 	}
 
-	public static final double[] scaleToUnit(int a[], int max) {
-		if (max == Integer.MIN_VALUE) {
-			++max;
+	public static double[] scale(double factor, int[] data) {
+		double[] scaled = new double [data.length];
+		for (int i = 0; i < scaled.length; ++i) {
+			scaled[i] = (double) data[i] * factor;
 		}
-		max = Math.abs(max);
-		double[] y = new double[a.length];
-		for (int i = 0; i < y.length; i++) {
-			if(Math.abs(a[i]) > max || a[i] == Integer.MIN_VALUE) {
-				// check javadoc for Math.abs() before messing with this
-				throw new IllegalArgumentException("Value in vector larger than max");
-			}
-			y[i] = a[i] / (double) max;
-		}
-		return y;
-	}
-
-	public static final double[] scaleToUnit(double a[], double max) {
-		double[] y = new double[a.length];
-		max = Math.abs(max);
-		for (int i = 0; i < y.length; i++) {
-			if(Math.abs(a[i]) > max)
-				throw new IllegalArgumentException("Value in vector larger than max");
-			y[i] = a[i] / max;
-		}
-		return y;
+		return scaled;
 	}
 	
-	public static final int[] scaleToMax(double[] in, int max, boolean dither) {
-		// This method may fail for Integer.MIN_VALUE
-		if (max == Integer.MIN_VALUE) {
-			++max;
+	public static double[] scale(double factor, double[] data) {
+		double[] scaled = new double [data.length];
+		for (int i = 0; i < scaled.length; ++i) {
+			scaled[i] = data[i] * factor;
 		}
-		max = Math.abs(max);
+		return scaled;
+	}
+	
+	public static double[] scaleToMax(int[] data, double currentMax, double newMax) {
+		currentMax = Math.abs(currentMax);
+		newMax = Math.abs(newMax);
+		double factor = newMax / currentMax;
+		return scale(factor, data);
+	}
+	
+	public static double[] scaleToMax(double[] data, double currentMax, double newMax) {
+		currentMax = Math.abs(currentMax);
+		newMax = Math.abs(newMax);
+		double factor = newMax / currentMax;
+		return scale(factor, data);
+	}
+
+	public static final double[] scaleToMax(double[] data, double newMax) {
+		newMax = Math.abs(newMax);
+		double currentMax = maxAbs(data);
+		return scaleToMax(data, currentMax, newMax);
+	}
+	
+	public static final int[] scaleToMax(double[] data, int newMax, boolean dither) {
+		// This method may fail for Integer.MIN_VALUE
+		if (newMax == Integer.MIN_VALUE) {
+			++newMax;
+		}
+		newMax = Math.abs(newMax);
 		if (dither) {
 			// dithering may clip the signal; let's leave some headroom
-			--max;
+			--newMax;
 		}
-		
-		double[] tmp;
-		tmp = scaleToMax(in, (double) max);
+		double[] tmp = scaleToMax(data, newMax);
 		return doubleToInt(tmp, dither);
 	}
 
-	public static final double[] scaleToMax(double[] in, double max) {
-		// This method may fail for Integer.MIN_VALUE
-		
-		max = Math.abs(max);
-		double currentMax = maxAbs(in);
-		double [] out = new double[in.length];
-		for (int i = 0; i < in.length; i++) {
-			out[i] = (in[i] / currentMax) * max ;
+	public static final double[] scaleToUnit(int[] data, int currentMax) {
+		// This method will return something smaller than -1 for Integer.MIN_VALUE
+		if (currentMax == Integer.MIN_VALUE) {
+			++currentMax;
 		}
-		return out;
+		currentMax = Math.abs(currentMax);
+		return scaleToMax(data, currentMax, 1);
 	}
 
-	public static void wavWrite(double t[], String filename) {
-		wavWrite(t, 1, filename);
+	public static final double[] scaleToUnit(double[] data, double currentMax) {
+		return scaleToMax(data, currentMax, 1);
 	}
-
-	public static void wavWrite(double t[], int channels, String filename) {
-		wavWrite(t, channels, 16, filename, false);
+	
+	public static final double[] scaleToUnit(int[] data) {
+		return scaleToUnit(data, Util.maxAbs(data));
 	}
-
-	public static void wavWrite(double t[], int channels, int bitsPerSample,
-			String filename, boolean dither) {
-		int[] samples = doubleToInt(t, dither);
-		wavWrite(samples, channels, bitsPerSample, filename);
+	
+	public static final double[] scaleToUnit(double[] data) {
+		return scaleToUnit(data, Util.maxAbs(data));
 	}
 
 	public static int[] doubleToInt(double[] data, boolean dither) {
@@ -675,10 +677,31 @@ public final class Util {
 		}
 		return samples;
 	}
+	
+	public static void wavWrite(double t[], String filename) {
+		wavWrite(t, 1, filename);
+	}
+
+	public static void wavWrite(double t[], int channels, String filename) {
+		wavWrite(t, channels, 16, filename, false);
+	}
+
+	public static void wavWrite(double t[], int channels, int bitsPerSample,
+			String filename, boolean dither) {
+		int[] samples = doubleToInt(t, dither);
+		wavWrite(samples, channels, bitsPerSample, filename);
+	}
 
 	public static void wavWrite(int t[], int channels, int bitsPerSample,
 			String filename) {
-		byte[] samples = prepareSampleByteArray(t, bitsPerSample);
+		byte[] samples;
+		if (bitsPerSample == 32) {
+			samples = intTo32bitsLittleEndian(t);
+		} else if (bitsPerSample == 16) {
+			samples = intTo16bitsLittleEndian(t);
+		} else {
+			throw new RuntimeException("Oops! Only know how to handle 16 or 32 bits audio");
+		}
 		wavWrite(samples, (double) 44100, bitsPerSample, channels, false, filename);
 	}
 
@@ -698,30 +721,6 @@ public final class Util {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private static byte[] prepareSampleByteArray(int[] samples, int bitsPerSample) {
-		byte[] res = new byte[samples.length * (bitsPerSample / 8)];
-		if (bitsPerSample == 32) {
-			for (int i = 0; i < samples.length; i++) {
-				int sample = samples[i];
-				/* First byte is LSB (low order) */
-				res[i * 4] = (byte) (sample & 0xff);
-				res[i * 4 + 1] = (byte) (sample >> 8);
-				res[i * 4 + 2] = (byte) (sample >> 16);
-				/* Second byte is MSB (high order) */
-				res[i * 4 + 3] = (byte) (sample >> 24);
-			}
-		} else if (bitsPerSample == 16) {
-			for (int i = 0; i < samples.length; i++) {
-				int sample = samples[i];
-				/* First byte is LSB (low order) */
-				res[i * 2] = (byte) (sample & 0xff);
-				/* Second byte is MSB (high order) */
-				res[i * 2 + 1] = (byte) (sample >> 8);
-			}
-		}
-		return res;
 	}
 
 	public final static int[] wavRead(String filename) {
@@ -760,7 +759,7 @@ public final class Util {
 					AudioPlayer.readData(ais));
 			res = new double[data.length][data[0].length];
 			for (int i = 0; i < res.length; i++) {
-				AudioPlayer.normalizeInPlace(res[i], data[i], ais.getFormat()
+				AudioPlayer.scaleToUnitInPlace(res[i], data[i], ais.getFormat()
 						.getSampleSizeInBits());
 			}
 			ais.close();
@@ -800,29 +799,140 @@ public final class Util {
 		return res;
 	}
 
-	public final static byte[] downsample32to16(byte[] data) {
-		byte[] res = new byte[data.length / 2];
-		int i = 0;
-		for (int k = 0; k < data.length / 4; k++) {
-			int oldSample = littleEndian(data[k * 4], data[k * 4 + 1],
-					data[k * 4 + 2], data[k * 4 + 3]);
-			double factor = (double) Util.getLimit(16) / (double) Util.getLimit(32); 
-			double scaled = (double) oldSample * factor;
-			int newSample = (int) Math.round(scaled);
-			res[i++] = (byte) (newSample & 255);
-			res[i++] = (byte) (newSample >> 8);
+	public final static byte[] downsample32to16(boolean isBigEndian, byte[] data) {
+		// We need to leave some headroom for dithering, thats why "-1"
+		double factor = (double) (Util.getLimit(16) - 1) / (double) Util.getLimit(32);
+		int[] oldSamples, newSamples;
+		double[] scaled;
+		if (isBigEndian) {
+			oldSamples = bigEndian32bitsToInt(data);
+			scaled = scale(factor, oldSamples);
+			newSamples = doubleToInt(scaled, true);
+			return intTo16bitsBigEndian(newSamples);
+		} else {
+			oldSamples = littleEndian32bitsToInt(data);
+			scaled = scale(factor, oldSamples);
+			newSamples = doubleToInt(scaled, true);
+			return intTo16bitsLittleEndian(newSamples);
 		}
-		return res;
+	}
+	
+	public static byte[] intTo16bitsLittleEndian (int[] data) {
+		byte[] result = new byte[data.length * 2];
+		for (int i = 0; i < data.length; ++i) {
+			result[i * 2] = (byte) (data[i] & 255);
+			result[i * 2 + 1] = (byte) ((data[i] >> 8) & 255);
+		}
+		return result;
 	}
 
-	public final static int littleEndian(byte b1, byte b2, byte b3, byte b4) {
-		return b4 << 24 | b3 << 16 | b2 << 8 | (255 & b1);
+	public static byte[] intTo16bitsBigEndian (int[] data) {
+		byte[] result = new byte[data.length * 2];
+		for (int i = 0; i < data.length; ++i) {
+			result[i * 2 + 1] = (byte) (data[i] & 255);
+			result[i * 2] = (byte) ((data[i] >> 8) & 255);
+		}
+		return result;
+	}
+	
+	public static byte[] intTo32bitsLittleEndian (int[] data) {
+		byte[] result = new byte[data.length * 4];
+		for (int i = 0; i < data.length; ++i) {
+			result[i * 4] = (byte) (data[i] & 255);
+			result[i * 4 + 1] = (byte) ((data[i] >> 8) & 255);
+			result[i * 4 + 2] = (byte) ((data[i] >> 16) & 255);
+			result[i * 4 + 3] = (byte) ((data[i] >> 24) & 255);
+		}
+		return result;
 	}
 
-	public final static int littleEndian(byte b1, byte b2) {
-		return b2 << 8 | (255 & b1);
+	public static byte[] intTo32bitsBigEndian (int[] data) {
+		byte[] result = new byte[data.length * 4];
+		for (int i = 0; i < data.length; ++i) {
+			result[i * 4 + 3] = (byte) (data[i] & 255);
+			result[i * 4 + 2] = (byte) ((data[i] >> 8) & 255);
+			result[i * 4 + 1] = (byte) ((data[i] >> 16) & 255);
+			result[i * 4] = (byte) ((data[i] >> 24) & 255);
+		}
+		return result;
+	}
+	
+	public final static int[] littleEndian16bitsToInt(byte[] data) {
+		int[] result = new int[data.length / 2];
+		for (int i = 0; i < result.length; ++i) {
+			result[i] = littleEndianToInt (data[i * 2], data[i * 2 + 1]);
+		}
+		return result;
+	}
+	
+	public final static int[] bigEndian16bitsToInt(byte[] data) {
+		int[] result = new int[data.length / 2];
+		for (int i = 0; i < result.length; ++i) {
+			result[i] = bigEndianToInt (data[i * 2], data[i * 2 + 1]);
+		}
+		return result;
+	}
+	
+	public final static int[] littleEndian32bitsToInt(byte[] data) {
+		int[] result = new int[data.length / 4];
+		for (int i = 0; i < result.length; ++i) {
+			result[i] = littleEndianToInt (data[i * 4], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
+		}
+		return result;
+	}
+	
+	public final static int[] bigEndian32bitsToInt(byte[] data) {
+		int[] result = new int[data.length / 4];
+		for (int i = 0; i < result.length; ++i) {
+			result[i] = bigEndianToInt (data[i * 4], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
+		}
+		return result;
+	}
+	
+	public final static int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
+		// YES, we need to do it this way; NO, the obvious solution does not work
+		// The sign bit will bite you if you are not careful
+		int i1, i2, i3, i4;
+		// These are NOT redundant or unnecessary
+		i1 = b1 & 255;
+		i2 = b2 & 255;
+		i3 = b3 & 255;
+		i4 = b4 & 255;
+		return (i4 << 24) | (i3 << 16) | (i2 << 8) | i1;
 	}
 
+	public final static int bigEndianToInt(byte b1, byte b2, byte b3, byte b4) {
+		// YES, we need to do it this way; NO, the obvious solution does not work
+		// The sign bit will bite you if you are not careful
+		int i1, i2, i3, i4;
+		// These are NOT redundant or unnecessary
+		i1 = b1 & 255;
+		i2 = b2 & 255;
+		i3 = b3 & 255;
+		i4 = b4 & 255;
+		return (i1 << 24) | (i2 << 16) | (i3 << 8) | i4;
+	}
+	
+	public final static int littleEndianToInt(byte b1, byte b2) {
+		// YES, we need to do it this way; NO, the obvious solution does not work
+		// The sign bit will bite you if you are not careful
+		int i1, i2;
+		i1 = b1 & 255;
+		i2 = b2 & 255;
+		// We need to put the sign bit on the right place for an int
+		return ((i2 << 24) >> 16) | i1;
+	}
+
+	public final static int bigEndianToInt(byte b1, byte b2) {
+		// YES, we need to do it this way; NO, the obvious solution does not work
+		// The sign bit will bite you if you are not careful
+		int i1, i2;
+		i1 = b1 & 255;
+		i2 = b2 & 255;
+		// We need to put the sign bit on the right place for an int
+		return ((i1 << 24) >> 16) | i2;
+	}
+	
 	public static final void convolve(String input1, String input2,
 			String output, IProgressMonitor monitor) {
 

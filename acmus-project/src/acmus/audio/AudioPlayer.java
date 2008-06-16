@@ -199,7 +199,7 @@ public class AudioPlayer {
 			DataLine.Info info = null;
 			AudioFormat format = _audioStream.getFormat();
 			if (format.getSampleSizeInBits() == 32) {
-				_audioBytes = Util.downsample32to16(_audioBytes);
+				_audioBytes = Util.downsample32to16(format.isBigEndian(), _audioBytes);
 				format = new AudioFormat(format.getEncoding(), format
 						.getSampleRate(), 16, format.getChannels(), 2, format
 						.getFrameRate(), format.isBigEndian());
@@ -207,8 +207,7 @@ public class AudioPlayer {
 				System.out
 						.println("32 bit audio playback unsupported, downsampling (for playback only).");
 			} else {
-				info = new DataLine.Info(SourceDataLine.class, _audioStream
-						.getFormat());
+				info = new DataLine.Info(SourceDataLine.class, format);
 			}
 
 			try {
@@ -777,53 +776,16 @@ public class AudioPlayer {
 
 		int[] audioData = null;
 		if (format.getSampleSizeInBits() == 32) {
-			int nlengthInSamples = audioBytes.length / 4;
-			audioData = new int[nlengthInSamples];
 			if (format.isBigEndian()) {
-				for (int i = 0; i < nlengthInSamples; i++) {
-					/* First byte is MSB (high order) */
-					int MSB = (int) audioBytes[4 * i];
-					int B2 = (int) audioBytes[4 * i + 1];
-					int B3 = (int) audioBytes[4 * i + 2];
-					/* Last byte is LSB (low order) */
-					int LSB = (int) audioBytes[4 * i + 3];
-					audioData[i] = MSB << 24 | B2 << 16 | B3 << 8 | (255 & LSB);
-				}
+				audioData = Util.bigEndian32bitsToInt(audioBytes);
 			} else {
-				for (int i = 0; i < nlengthInSamples; i++) {
-					/* First byte is LSB (low order) */
-					int LSB = (int) audioBytes[4 * i];
-					int B3 = (int) audioBytes[4 * i + 1];
-					int B2 = (int) audioBytes[4 * i + 2];
-					/* Last byte is MSB (high order) */
-					int MSB = (int) audioBytes[4 * i + 3];
-					audioData[i] = (255 & MSB) << 24 | (255 & B2) << 16
-							| (255 & B3) << 8 | (255 & LSB);
-					// System.out.println(MSB + " " + B2 + " " + B3 + " " +
-					// LSB);
-					// System.out.println("laudioData " + i + " " +
-					// audioData[i]);
-				}
+				audioData = Util.littleEndian32bitsToInt(audioBytes);
 			}
 		} else if (format.getSampleSizeInBits() == 16) {
-			int nlengthInSamples = audioBytes.length / 2;
-			audioData = new int[nlengthInSamples];
 			if (format.isBigEndian()) {
-				for (int i = 0; i < nlengthInSamples; i++) {
-					/* First byte is MSB (high order) */
-					int MSB = (int) audioBytes[2 * i];
-					/* Second byte is LSB (low order) */
-					int LSB = (int) audioBytes[2 * i + 1];
-					audioData[i] = MSB << 8 | (255 & LSB);
-				}
+				audioData = Util.bigEndian16bitsToInt(audioBytes);
 			} else {
-				for (int i = 0; i < nlengthInSamples; i++) {
-					/* First byte is LSB (low order) */
-					int LSB = (int) audioBytes[2 * i];
-					/* Second byte is MSB (high order) */
-					int MSB = (int) audioBytes[2 * i + 1];
-					audioData[i] = MSB << 8 | (255 & LSB);
-				}
+				audioData = Util.littleEndian16bitsToInt(audioBytes);
 			}
 		} else if (format.getSampleSizeInBits() == 8) {
 			int nlengthInSamples = audioBytes.length;
@@ -856,14 +818,17 @@ public class AudioPlayer {
 		return parseData(audioBytes, format);
 	}
 
-	public static final double[] normalizeInPlace(double res[], int[] data,
+	public static final double[] scaleToUnitInPlace(double res[], int[] data,
 			int bits) {
 		// In ancient history (may/2008) this was calculated this way here;
-		// but it is most likely a bug.
+		// but it is most likely a bug (precedence is wrong).
 		//int max = (1 << bits - 1) - 1;
-		int max = Util.getLimit(bits);
+		// This is probably what the above line meant:
+		//int max = Util.getLimit(bits);
+		// But what is probably correct is this:
+		int max = Util.maxAbs(data);
 		for (int i = 0; i < res.length; i++) {
-			res[i] = (double) data[i] / max;
+			res[i] = (double) data[i] / (double) max;
 		}
 		return res;
 	}

@@ -309,6 +309,8 @@ public class UtilTest {
 		}
 	}
 
+	// These dont make sense anymore...
+	/* 
 	@Test(expected=IllegalArgumentException.class)
 	public void testPassingMaxLessThanVectorMax() throws Exception {
 		Util.scaleToUnit(new int[] {0, 10}, 1);
@@ -317,5 +319,105 @@ public class UtilTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testPassingIntegerMIN_VALUE() throws Exception {
 		Util.scaleToUnit(new int[] {0, Integer.MIN_VALUE}, Integer.MAX_VALUE);
+	}
+	*/
+	
+	@Test
+	public void testDownsample32to16() throws Exception {
+		int[] samples = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, 346, 1000000, -1000000, 2000000 };
+		int[] expected = { 0, Short.MAX_VALUE, Short.MIN_VALUE, 0, 15, -15, 31 }; 
+		
+		byte [] sampleBytes = new byte[28];
+		for (int i = 0; i < samples.length; i++) {
+			int sample = samples[i];
+			sampleBytes[i * 4] = (byte) (sample & 255);
+			sampleBytes[i * 4 + 1] = (byte) ((sample >> 8) & 255);
+			sampleBytes[i * 4 + 2] = (byte) ((sample >> 16) & 255);
+			sampleBytes[i * 4 + 3] = (byte) ((sample >> 24) & 255);
+		}
+
+		// This downsampling uses dithering, which may cause differences
+		// in value. Since dithering uses random numbers, lets perform
+		// the test a few times to increase the chance of error
+		for (int i = 0; i < 200; ++i) {
+			byte[] resultBytes = Util.downsample32to16(false, sampleBytes);
+
+			int[] actual = new int[7];
+			int s1, s2;
+			for (int j = 0; j < actual.length; ++j) {
+				s1 = resultBytes[j * 2];
+				s2 = resultBytes[j * 2 + 1];
+				s1 &= 255;
+				s2 &= 255;
+				actual[j] = ((s2 << 24) >> 16) | s1;
+			}
+			for (int j = 0; j < expected.length; ++j) {
+				Assert.assertEquals(expected[j], actual[j], 3);
+			}
+		}
+	}
+
+	@Test
+	public void testLittleEndia32bitsToInt() throws Exception {
+		int[] expected = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, -1000000, 1000000 };
+		byte[] original = { 0, 0, 0, 0, -1, -1, -1, 127, 0, 0, 0, -128, -64, -67, -16, -1, 64, 66, 15, 0 };
+		int[] actual = Util.littleEndian32bitsToInt(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+
+	@Test
+	public void testBigEndia32bitsToInt() throws Exception {
+		int[] expected = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, -1000000, 1000000 };
+		byte[] original = { 0, 0, 0, 0, 127, -1, -1, -1, -128, 0, 0, 0, -1, -16, -67, -64, 0, 15, 66, 64 }; 
+		int[] actual = Util.bigEndian32bitsToInt(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testLittleEndian16bitsToInt() throws Exception {
+		int[] expected = { 0, Short.MAX_VALUE, Short.MIN_VALUE, 1000, -1000 };
+		byte[] original = { 0, 0, -1, 127, 0, -128, -24, 3, 24, -4 };
+		int[] actual = Util.littleEndian16bitsToInt(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testBigEndian16bitsToInt() throws Exception {
+		int[] expected = { 0, Short.MAX_VALUE, Short.MIN_VALUE, 1000, -1000 };
+		byte[] original = { 0, 0, 127, -1, -128, 0, 3, -24, -4, 24 };
+		int[] actual = Util.bigEndian16bitsToInt(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testIntTo16bitsLittleEndian() throws Exception {
+		int[] original = { 0, Short.MAX_VALUE, Short.MIN_VALUE, 1000, -1000 };
+		byte[] expected = { 0, 0, -1, 127, 0, -128, -24, 3, 24, -4 };
+		byte[] actual = Util.intTo16bitsLittleEndian(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testIntTo16bitsBigEndian() throws Exception {
+		int[] original = { 0, Short.MAX_VALUE, Short.MIN_VALUE, 1000, -1000 };
+		byte[] expected = { 0, 0, 127, -1, -128, 0, 3, -24, -4, 24 };
+		byte[] actual = Util.intTo16bitsBigEndian(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testIntTo32bitsLittleEndian() throws Exception {
+		int[] original = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, -1000000, 1000000 };
+		byte[] expected = { 0, 0, 0, 0, -1, -1, -1, 127, 0, 0, 0, -128, -64, -67, -16, -1, 64, 66, 15, 0 };
+		byte[] actual = Util.intTo32bitsLittleEndian(original);
+		Assert.assertArrayEquals(expected, actual);
+	}
+	
+	@Test
+	public void testIntTo32bitsBigEndian() throws Exception {
+		int[] original = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, -1000000, 1000000 };
+		byte[] expected = { 0, 0, 0, 0, 127, -1, -1, -1, -128, 0, 0, 0, -1, -16, -67, -64, 0, 15, 66, 64 };
+		byte[] actual = Util.intTo32bitsBigEndian(original);
+		Assert.assertArrayEquals(expected, actual);
 	}
 }

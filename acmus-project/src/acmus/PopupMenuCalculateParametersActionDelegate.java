@@ -106,7 +106,7 @@ public class PopupMenuCalculateParametersActionDelegate implements
 					.getContents());
 			int wav[] = AudioPlayer.readData(ais);
 			ir = new double[wav.length];
-			ir = AudioPlayer.normalizeInPlace(ir, wav, ais.getFormat()
+			ir = AudioPlayer.scaleToUnitInPlace(ir, wav, ais.getFormat()
 					.getSampleSizeInBits());
 		}
 
