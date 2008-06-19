@@ -40,12 +40,12 @@ public class RayTracingSimulationTest {
 		vectors.add(new Triade(0.7022468831767834, 0.7022468831767834, 0.11704114719613057));
 		
 		sectors = new ArrayList<NormalSector>();
-		sectors.add(new NormalSector(new Triade(0, 0, 1), new Triade(1, 1, 0), 0.5)); // base
-		sectors.add(new NormalSector(new Triade(0, 0, -1), new Triade(1, 1, 10), 0.5)); // topo
-		sectors.add(new NormalSector(new Triade(0, 1, 0), new Triade(1, 0, 1), 0.5)); 
-		sectors.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, 1, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(0, -1, 0), new Triade(1, 10, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(-1, 0, 0), new Triade(10, 1, 1), 0.5));
+		sectors.add(new NormalSector(new Triade(0, 0, 1), new Triade(1, 1, 0), 0.02)); // base
+		sectors.add(new NormalSector(new Triade(0, 0, -1), new Triade(1, 1, 10), 0.02)); // topo
+		sectors.add(new NormalSector(new Triade(0, 1, 0), new Triade(1, 0, 1), 0.02)); 
+		sectors.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, 1, 1), 0.02));
+		sectors.add(new NormalSector(new Triade(0, -1, 0), new Triade(1, 10, 1), 0.02));
+		sectors.add(new NormalSector(new Triade(-1, 0, 0), new Triade(10, 1, 1), 0.02));
 		
 		// soundSource = new Triade(0, 5, 5);
 		// sphericalReceptorCenter = new Triade(2.5, 2.5, 5);

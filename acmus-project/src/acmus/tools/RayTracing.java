@@ -29,6 +29,7 @@ package acmus.tools;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -155,8 +156,9 @@ public class RayTracing extends Composite {
 		impulseResponse = new Combo(this, SWT.READ_ONLY);
 		impulseResponse.setItems(new String[] { "32 to 512", "512 to 2048",
 				"2048 to 8192", "8192 to 16000" });
+		impulseResponse.select(0);
 		impulseResponse.setFocus();
-		setGridData(impulseResponse, SWT.LEAD, SWT.CENTER, 1, 40);
+		setGridData(impulseResponse, SWT.LEAD, SWT.CENTER, 1, 150);
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Source position: ");
@@ -192,7 +194,7 @@ public class RayTracing extends Composite {
 
 		soundSpeed = new Text(this, SWT.NONE);
 		soundSpeed.setText("344.00"); // velocidade padrao do som
-		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 40);
+		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 60);
 
 		// spherical receiver position
 
@@ -218,15 +220,15 @@ public class RayTracing extends Composite {
 				receiverX));
 		height.addModifyListener(new RoomSizeModifyListener(height, sourceZ,
 				receiverZ));
-		// Sound's atenuation on air
 
+		// Sound's atenuation on air
 		label = new Label(this, SWT.NONE);
 		label.setText("Sound's atenuation on air: ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		soundAtenuation = new Text(this, SWT.NONE);
 		soundAtenuation.setText("0.01"); // default value
-		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 40);
+		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 60);
 
 		// Espherical receiver's radius
 
@@ -320,6 +322,9 @@ public class RayTracing extends Composite {
 
 		chart = new ChartComposite(this, SWT.NONE);
 		setGridData(chart, SWT.LEAD, SWT.BOTTOM, 10, 800, 400);
+		histogram = new HashMap<Double, Double>();
+//		histogram.put(0.0, 0);
+		plotChart();
 		this.pack();
 	}
 
@@ -420,11 +425,7 @@ public class RayTracing extends Composite {
 				simulation.simulate(progressBar);
 				progressBar.setSelection(100);
 				histogram = simulation.getSphericalReceptorHistogram();
-				ChartBuilder builder = new ChartBuilder(histogram);
-				chart.setChart(builder.getChart("Time", "Energy",
-						"Simulated Impulse Response for "
-								+ impulseResponse.getText() + " Hz"));
-				chart.forceRedraw();
+				plotChart();
 				saveIr.setEnabled(true);
 			}
 		});
@@ -468,6 +469,14 @@ public class RayTracing extends Composite {
 			ret = 0.0;
 
 		return ret;
+	}
+
+	private void plotChart() {
+		ChartBuilder builder = new ChartBuilder(histogram);
+		chart.setChart(builder.getChart("Time", "Energy",
+				"Simulated Impulse Response for "
+						+ impulseResponse.getText() + " Hz"));
+		chart.forceRedraw();
 	}
 
 	public static void recordRay(Response resp, double energia, double dist) {

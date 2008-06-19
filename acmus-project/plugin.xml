@@ -232,8 +232,8 @@
          point="org.eclipse.ui.editors">
       <editor
             name="Measurement Editor"
-            icon="icons/full/res16/measurement.gif"
-            filenames="measurement.properties"
+            icon="icons/full/res16/mt.gif"
+            filenames="meu.nome"
             class="acmus.editor.MeasurementEditor"
             id="acmus.editor.MeasurementEditor">
       </editor>
@@ -583,6 +583,10 @@
          <property
                name="windowImages"
                value="icons/appIcon16x16.gif,icons/appIcon32x32.gif"/>
+         <property
+               name="appName"
+               value="AcMus">
+         </property>
       </product>
    </extension>
 
