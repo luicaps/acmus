@@ -42,7 +42,8 @@ import org.eclipse.ui.IWorkbench;
 import acmus.dsp.Filter;
 import acmus.dsp.FilterBank;
 import acmus.dsp.Signal;
-import acmus.dsp.Util;
+import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 /**
  * @author lku
@@ -101,8 +102,8 @@ public class SweepWizard extends Wizard implements INewWizard {
 			for (int i = 0; i < y.length; i++) {
 				y[i] = y[i] * 0.8;
 			}
-			double[] scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
-			Util.wavWrite(scaled, audioFile.getLocation().toOSString());
+			double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
+			WaveUtils.wavWrite(scaled, audioFile.getLocation().toOSString());
 
 			Filter f = FilterBank.getSweepButter(startFreq, endFreq, 44100); // FIXME
 			props.put("ButterB", f.bToString());

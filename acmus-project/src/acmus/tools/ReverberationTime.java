@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Text;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
-import acmus.dsp.Util;
+import acmus.util.MathUtils;
 
 /**
  * @author lku
@@ -543,7 +543,7 @@ public class ReverberationTime extends Composite {
 		double Frn;
 		double alphaO, alphaN, alphaF, alphaNp;
 
-		X = 10.79586 * (1 - Tt / T) - 5.02808 * Util.log10(T / Tt) + 1.50474e-4
+		X = 10.79586 * (1 - Tt / T) - 5.02808 * MathUtils.log10(T / Tt) + 1.50474e-4
 				* (1 - Math.pow(10, -8.29692 * (T / Tt - 1))) + 0.42873e-3
 				* (-1 + Math.pow(10, 4.76955 * (1 - Tt / T))) - 2.2195983;
 

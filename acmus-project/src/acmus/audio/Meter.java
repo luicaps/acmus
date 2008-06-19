@@ -15,7 +15,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import acmus.AcmusGraphics;
-import acmus.dsp.Util;
+import acmus.util.MathUtils;
+import acmus.util.WaveUtils;
 
 public class Meter extends Canvas implements IMeter, MouseListener {
 
@@ -60,7 +61,7 @@ public class Meter extends Canvas implements IMeter, MouseListener {
 		}
 		_channels = channels;
 
-		int d[][] = Util.splitAudioStream(channels, data);
+		int d[][] = WaveUtils.splitAudioStream(channels, data);
 
 		for (int i = 0; i < _channels; i++) {
 			_meters.get(i).setData(d[i], b, bitsPerSample);
@@ -156,11 +157,11 @@ class SingleMeter extends Composite implements PaintListener {
 		this.setBackground(AcmusGraphics.BLACK);
 		// _maxVal = 2 * Math.log(2 << 15);
 		// _maxVal = (int)toDb(2<<15, 60);
-		_maxVal = Util.getLimit(16);
+		_maxVal = WaveUtils.getLimit(16);
 	}
 
 	public void setData(int[] data, int b, int bitsPerSample) {
-		_maxVal = Util.getLimit(bitsPerSample);
+		_maxVal = WaveUtils.getLimit(bitsPerSample);
 		_n = data.length;
 		_peak = new double[data.length / b + 1];
 		_rms = new double[data.length / b + 1];
@@ -322,7 +323,7 @@ class SingleMeter extends Composite implements PaintListener {
 	public static final double toDb(double v, double range) {
 		double db;
 		if (v > 0)
-			db = 20 * Util.log10(Math.abs(v));
+			db = 20 * MathUtils.log10(Math.abs(v));
 		else
 			db = -999;
 		// System.out.println("db " + db);

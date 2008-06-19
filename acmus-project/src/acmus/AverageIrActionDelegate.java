@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import acmus.dsp.Util;
+import acmus.util.WaveUtils;
 import acmus.wizard.AcmusMeasurementWizard;
 
 public class AverageIrActionDelegate implements IWorkbenchWindowActionDelegate {
@@ -62,7 +62,7 @@ public class AverageIrActionDelegate implements IWorkbenchWindowActionDelegate {
 			
 			// FIXME This is one of the places to set 16 or 32 bits
 			// if we want to change the IR resolution
-			Util.wavAverage(avgFolder.getLocation().toOSString() + "/ir.wav",
+			WaveUtils.wavAverage(avgFolder.getLocation().toOSString() + "/ir.wav",
 					32, irFiles);
 			try {
 				avgFolder.refreshLocal(IFolder.DEPTH_ONE, null);

@@ -378,7 +378,7 @@ public class AudioEditorControl extends Composite {
 	 * @return
 	 */
 	public int getLimit() {
-		return acmus.dsp.Util.getLimit(_ap.getBitsPerSample());
+		return acmus.util.WaveUtils.getLimit(_ap.getBitsPerSample());
 	}
 	
 	/**

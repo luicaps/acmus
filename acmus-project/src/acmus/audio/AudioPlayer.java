@@ -70,7 +70,8 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
-import acmus.dsp.Util;
+import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 import com.sun.media.renderer.audio.device.JavaSoundOutput;
 
@@ -199,7 +200,7 @@ public class AudioPlayer {
 			DataLine.Info info = null;
 			AudioFormat format = _audioStream.getFormat();
 			if (format.getSampleSizeInBits() == 32) {
-				_audioBytes = Util.downsample32to16(format.isBigEndian(), _audioBytes);
+				_audioBytes = WaveUtils.downsample32to16(format.isBigEndian(), _audioBytes);
 				format = new AudioFormat(format.getEncoding(), format
 						.getSampleRate(), 16, format.getChannels(), 2, format
 						.getFrameRate(), format.isBigEndian());
@@ -777,15 +778,15 @@ public class AudioPlayer {
 		int[] audioData = null;
 		if (format.getSampleSizeInBits() == 32) {
 			if (format.isBigEndian()) {
-				audioData = Util.bigEndian32bitsToInt(audioBytes);
+				audioData = WaveUtils.bigEndian32bitsToInt(audioBytes);
 			} else {
-				audioData = Util.littleEndian32bitsToInt(audioBytes);
+				audioData = WaveUtils.littleEndian32bitsToInt(audioBytes);
 			}
 		} else if (format.getSampleSizeInBits() == 16) {
 			if (format.isBigEndian()) {
-				audioData = Util.bigEndian16bitsToInt(audioBytes);
+				audioData = WaveUtils.bigEndian16bitsToInt(audioBytes);
 			} else {
-				audioData = Util.littleEndian16bitsToInt(audioBytes);
+				audioData = WaveUtils.littleEndian16bitsToInt(audioBytes);
 			}
 		} else if (format.getSampleSizeInBits() == 8) {
 			int nlengthInSamples = audioBytes.length;
@@ -826,7 +827,7 @@ public class AudioPlayer {
 		// This is probably what the above line meant:
 		//int max = Util.getLimit(bits);
 		// But what is probably correct is this:
-		int max = Util.maxAbs(data);
+		int max = ArrayUtils.maxAbs(data);
 		for (int i = 0; i < res.length; i++) {
 			res[i] = (double) data[i] / (double) max;
 		}
@@ -871,7 +872,7 @@ public class AudioPlayer {
 	 * @return
 	 */
 	public int getMaxSample() {
-		return Util.maxAbs(_audioData);
+		return ArrayUtils.maxAbs(_audioData);
 	}
 		
 }

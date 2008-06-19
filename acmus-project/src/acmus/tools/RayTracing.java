@@ -57,12 +57,13 @@ import org.eclipse.swt.widgets.Text;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.AcmusApplication;
-import acmus.dsp.Util;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.RandomAcousticSource;
 import acmus.tools.rtt.RayTracingSimulation;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Triade;
+import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 /**
  * @author mhct
@@ -361,7 +362,7 @@ public class RayTracing extends Composite {
 			}
 		}
 
-		Util.wavWrite(Util.scaleToMax(wave, Util.getLimit(16)), filename);
+		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)), filename);
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,

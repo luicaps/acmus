@@ -2,7 +2,6 @@ package acmus.tools.rtt;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -110,11 +109,6 @@ public class RayTracingSimulationTest {
 		Double expected = 0.02739239;
 		assertTrue(Math.abs(expected - itr.next()) < Triade.EPS);
 
-	}
-
-	@Test
-	public void testHistogram() {
-		fail("Not yet implemented");
 	}
 	
 	@Test

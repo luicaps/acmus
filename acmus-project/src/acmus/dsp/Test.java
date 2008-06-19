@@ -37,6 +37,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import acmus.audio.AudioPlayer;
+import acmus.util.Algorithms;
+import acmus.util.ArrayUtils;
+import acmus.util.PrintUtils;
+import acmus.util.WaveUtils;
 
 @Deprecated
 @SuppressWarnings("all")
@@ -132,7 +136,7 @@ public class Test {
 			System.out.print(y[i] + " ");
 		}
 
-		double x[] = Util.reverse(y);
+		double x[] = ArrayUtils.reverse(y);
 		double ir[] = Ir.demls(y, x, row, col, reps);
 
 		for (int i = 0; i < ir.length; i++) {
@@ -145,15 +149,15 @@ public class Test {
 		double a[] = { 2, 1, -3, -4, 1, 7, 4, 1, 1, 9, 1403, 0, 2 };
 
 		Parameters.fht(a);
-		Util.print(a);
+		PrintUtils.print(a);
 
 	}
 
 	public static void testMlsWav() {
 		double mls[] = Signal.mls(15, 15, 1, 3);
-		Util.multLLL(mls, 0.5);
-		double[] scaled = Util.scaleToMax (mls, (double) Util.getLimit(16));
-		Util.wavWrite(scaled, "/tmp/acmus-mls.wav");
+		ArrayUtils.multLLL(mls, 0.5);
+		double[] scaled = ArrayUtils.scaleToMax (mls, (double) WaveUtils.getLimit(16));
+		WaveUtils.wavWrite(scaled, "/tmp/acmus-mls.wav");
 	}
 
 	public static void testMls() {
@@ -165,11 +169,11 @@ public class Test {
 
 		Signal.mls(n, 9, 5, y, row, col);
 		System.out.println("y = ");
-		Util.print(y);
+		PrintUtils.print(y);
 		System.out.println("row = ");
-		Util.print(row);
+		PrintUtils.print(row);
 		System.out.println("col = ");
-		Util.print(col);
+		PrintUtils.print(col);
 	}
 
 	public static void testChu() {
@@ -207,10 +211,10 @@ public class Test {
 			// double a[] = new double[4000];
 			double fs = 44100;
 
-			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
-					Util.getLimit(32));
-			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
-					Util.getLimit(32));
+			double[] a = ArrayUtils.scaleToUnit(WaveUtils.wavRead("/tmp/ir.wav"),
+					WaveUtils.getLimit(32));
+			double[] b = ArrayUtils.scaleToUnit(WaveUtils.wavRead("/tmp/ir2.wav"),
+					WaveUtils.getLimit(32));
 			System.out.println(" len " + a.length);
 
 			PrintStream ps = new PrintStream(new FileOutputStream(
@@ -228,10 +232,10 @@ public class Test {
 			// double a[] = new double[4000];
 			double fs = 44100;
 
-			double[] a = Util.scaleToUnit(Util.wavRead("/tmp/ir.wav"),
-					Util.getLimit(32));
-			double[] b = Util.scaleToUnit(Util.wavRead("/tmp/ir2.wav"),
-					Util.getLimit(32));
+			double[] a = ArrayUtils.scaleToUnit(WaveUtils.wavRead("/tmp/ir.wav"),
+					WaveUtils.getLimit(32));
+			double[] b = ArrayUtils.scaleToUnit(WaveUtils.wavRead("/tmp/ir2.wav"),
+					WaveUtils.getLimit(32));
 			System.out.println(" len " + a.length);
 
 			PrintStream ps = new PrintStream(new FileOutputStream(
@@ -323,7 +327,7 @@ public class Test {
 
 		double ir[] = Filter.filter(b, a, x);
 		for (int i = 0; i < ir.length; i++) {
-			System.out.println(Util._f.format(ir[i]));
+			System.out.println(PrintUtils._f.format(ir[i]));
 		}
 	}
 
@@ -342,7 +346,7 @@ public class Test {
 
 		double ir[] = Filter.filterZ(b, a, x, zi);
 		for (int i = 0; i < ir.length; i++) {
-			System.out.println(Util._f.format(ir[i]));
+			System.out.println(PrintUtils._f.format(ir[i]));
 		}
 	}
 
@@ -445,14 +449,14 @@ public class Test {
 		FFT1d f = new FFT1d(xre.length);
 		f.fft(xre, xim);
 		for (int i = 0; i < xre.length; i++) {
-			System.out.println(Util._f.format(xre[i]) + " "
-					+ Util._f.format(xim[i]) + "i");
+			System.out.println(PrintUtils._f.format(xre[i]) + " "
+					+ PrintUtils._f.format(xim[i]) + "i");
 		}
 		IFFT1d ifft = new IFFT1d(xre.length);
 		ifft.ifft(xre, xim);
 		for (int i = 0; i < xre.length; i++) {
-			System.out.println(Util._f.format(xre[i]) + " "
-					+ Util._f.format(xim[i]) + "i");
+			System.out.println(PrintUtils._f.format(xre[i]) + " "
+					+ PrintUtils._f.format(xim[i]) + "i");
 		}
 		// doFFT(x);
 	}
@@ -512,10 +516,10 @@ public class Test {
 		double k = Filter.buttap(n, pRe, pIm);
 
 		for (int i = 0; i < n; i++) {
-			System.out.println(Util._f.format(pRe[i]) + " "
-					+ Util._f.format(pIm[i]) + "i");
+			System.out.println(PrintUtils._f.format(pRe[i]) + " "
+					+ PrintUtils._f.format(pIm[i]) + "i");
 		}
-		System.out.println(Util._f.format(k));
+		System.out.println(PrintUtils._f.format(k));
 	}
 
 	public static void testSweep() {
@@ -525,8 +529,8 @@ public class Test {
 			// y[i] = 0.8*y[i];
 		}
 		// double y[] = sweepLog(10, 1, 20, 40);
-		double[] scaled = Util.scaleToMax (y, (double) Util.getLimit(16));
-		Util.wavWrite(scaled, "/tmp/foo.wav");
+		double[] scaled = ArrayUtils.scaleToMax (y, (double) WaveUtils.getLimit(16));
+		WaveUtils.wavWrite(scaled, "/tmp/foo.wav");
 		// for (int i = 0; i < y.length; i++) { System.out.println(y[i] + " ");
 		// }
 	}
@@ -592,33 +596,23 @@ public class Test {
 					int b[] = AudioPlayer.readData(ais);
 
 					System.out.println(a.length + " " + b.length);
-					x = Util.scaleToUnit(a, Util.getLimit(16));
-					y = Util.scaleToUnit(b, Util.getLimit(16));
+					x = ArrayUtils.scaleToUnit(a, WaveUtils.getLimit(16));
+					y = ArrayUtils.scaleToUnit(b, WaveUtils.getLimit(16));
 					System.out.println(x.length + " " + y.length);
 				}
 
 				z = new double[x.length + y.length - 1];
 				long t = System.currentTimeMillis();
-				Util.conv(x, y, z, null);
+				Algorithms.conv(x, y, z, null);
 				System.out.println("t: " + (System.currentTimeMillis() - t));
 				System.out.println(z.length);
 			}
-			double[] scaled = Util.scaleToMax(z, (double) Util.getLimit(16));
-			Util.wavWrite(scaled, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
+			double[] scaled = ArrayUtils.scaleToMax(z, (double) WaveUtils.getLimit(16));
+			WaveUtils.wavWrite(scaled, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void testConv2() {
-		double a[] = { 2, -2, 1 };
-		double b[] = { 1, 3, 0.5, -1 };
-		double z[] = new double[a.length + b.length - 1];
-
-		Util.conv2(a, b, z);
-		Util.print(z);
-
 	}
 
 	public static void testFilter3() {
@@ -629,7 +623,7 @@ public class Test {
 
 		// Filter.filter(a,b,x,y);
 		y = Filter.filter(a, b, x);
-		Util.print(y);
+		PrintUtils.print(y);
 
 	}
 
@@ -640,19 +634,19 @@ public class Test {
 			y[2 * i + 30000] = 1;
 			y[2 * i + 30001] = -1;
 		}
-		double[] scaled = Util.scaleToMax(x, (double) Util.getLimit(16));
-		Util.wavWrite(scaled, 1, 16, "/tmp/clip16.wav", true);
-		scaled = Util.scaleToMax(x, (double) Util.getLimit(32));
-		Util.wavWrite(x, 1, 32, "/tmp/clip32.wav", true);
-		scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
-		Util.wavWrite(y, 1, 16, "/tmp/clip.wav", true);
+		double[] scaled = ArrayUtils.scaleToMax(x, (double) WaveUtils.getLimit(16));
+		WaveUtils.wavWrite(scaled, 1, 16, "/tmp/clip16.wav", true);
+		scaled = ArrayUtils.scaleToMax(x, (double) WaveUtils.getLimit(32));
+		WaveUtils.wavWrite(x, 1, 32, "/tmp/clip32.wav", true);
+		scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
+		WaveUtils.wavWrite(y, 1, 16, "/tmp/clip.wav", true);
 	}
 
 	public static void testSplit() {
-		int[] d = Util.wavRead("/tmp/stereo.wav");
-		int[][] dd = Util.splitAudioStream(2, d);
-		Util.wavWrite(dd[0], 1, 16, "/tmp/split1.wav");
-		Util.wavWrite(dd[1], 1, 16, "/tmp/split2.wav");
+		int[] d = WaveUtils.wavRead("/tmp/stereo.wav");
+		int[][] dd = WaveUtils.splitAudioStream(2, d);
+		WaveUtils.wavWrite(dd[0], 1, 16, "/tmp/split1.wav");
+		WaveUtils.wavWrite(dd[1], 1, 16, "/tmp/split2.wav");
 	}
 
 	public static void testWavAverage() {
@@ -660,14 +654,14 @@ public class Test {
 		int x2[] = { 0, 1, 2 };
 		int x3[] = { 0, 1, 2, 3, 4, 5 };
 		int x4[] = { 0, 1, 2, 3, 4, 5, -1, -2, -3 };
-		Util.wavWrite(x1, 1, 32, "/tmp/1.wav");
-		Util.wavWrite(x2, 1, 32, "/tmp/2.wav");
-		Util.wavWrite(x3, 1, 32, "/tmp/3.wav");
-		Util.wavWrite(x4, 1, 32, "/tmp/4.wav");
+		WaveUtils.wavWrite(x1, 1, 32, "/tmp/1.wav");
+		WaveUtils.wavWrite(x2, 1, 32, "/tmp/2.wav");
+		WaveUtils.wavWrite(x3, 1, 32, "/tmp/3.wav");
+		WaveUtils.wavWrite(x4, 1, 32, "/tmp/4.wav");
 
-		Util.wavAverage("/tmp/avg.wav", 32, "/tmp/1.wav", "/tmp/2.wav",
+		WaveUtils.wavAverage("/tmp/avg.wav", 32, "/tmp/1.wav", "/tmp/2.wav",
 				"/tmp/3.wav", "/tmp/4.wav");
-		int[] d = Util.wavRead("/tmp/avg.wav");
+		int[] d = WaveUtils.wavRead("/tmp/avg.wav");
 		for (int i = 0; i < d.length; i++) {
 			System.out.print(d[i] + " ");
 		}

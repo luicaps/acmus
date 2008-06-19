@@ -38,7 +38,8 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import acmus.dsp.Signal;
-import acmus.dsp.Util;
+import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 /**
  * @author lku
@@ -108,8 +109,8 @@ public class AcmusInputSignalWizard extends Wizard implements INewWizard {
 				for (int i = 0; i < y.length; i++) {
 					y[i] = y[i] * 0.8;
 				}
-				double[] scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
-				Util.wavWrite(scaled, file.getLocation().toOSString());
+				double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
+				WaveUtils.wavWrite(scaled, file.getLocation().toOSString());
 			} else if (type.equals("MLS")) {
 
 			} else if (type.equals("File")) {

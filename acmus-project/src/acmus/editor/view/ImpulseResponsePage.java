@@ -20,9 +20,10 @@ import org.eclipse.swt.widgets.TabItem;
 
 import acmus.AcmusApplication;
 import acmus.dsp.Parameters;
-import acmus.dsp.Util;
 import acmus.editor.AudioEditorControl;
 import acmus.editor.MeasurementEditor;
+import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 public class ImpulseResponsePage extends Composite {
 
@@ -187,7 +188,7 @@ public class ImpulseResponsePage extends Composite {
 
 	public double[] getIr(AudioEditorControl ae) {
 		if (ae.getData() != null) {
-			return Util.scaleToUnit(ae.getData(), ae.getMaxSample());
+			return ArrayUtils.scaleToUnit(ae.getData(), ae.getMaxSample());
 		}
 		return null;
 	}
@@ -203,7 +204,7 @@ public class ImpulseResponsePage extends Composite {
 
 			double[] ir2 = getIr(getAeIr());
 			if (getAeIr().selectionValid()) {
-				ir2 = Util.subArray(ir2,
+				ir2 = ArrayUtils.subArray(ir2,
 						getAeIr().getSelectionStartInSamples(), getAeIr()
 								.getSelectionEndInSamples());
 			}
@@ -211,7 +212,7 @@ public class ImpulseResponsePage extends Composite {
 			double[] ir2Lf = getIr(_aeIrLf);
 			if (ir2Lf != null) {
 				int end = Parameters.inicio(ir2Lf) + (int) (AcmusApplication.SAMPLE_RATE * 0.20); // guessed
-				ir2Lf = Util.subArray(ir2Lf, 0, end);
+				ir2Lf = ArrayUtils.subArray(ir2Lf, 0, end);
 			}
 
 			if ("Chu".equals(_cParamMethod.getItem(_cParamMethod
@@ -274,13 +275,13 @@ public class ImpulseResponsePage extends Composite {
 
 	private void cutIrSelection() {
 		if (_aeIr.selectionValid()) {
-			double[] ir = Util.subArray(getIr(_aeIr), _aeIr
+			double[] ir = ArrayUtils.subArray(getIr(_aeIr), _aeIr
 					.getSelectionStartInSamples(), _aeIr
 					.getSelectionEndInSamples());
 			// FIXME This is one of the places to set 16 or 32 bits
 			// if we want to change the IR resolution
-			ir = Util.scaleToMax(ir, (double) Util.getLimit(32));
-			Util.wavWrite(ir, 1, 32, parent.getIrFile().getLocation()
+			ir = ArrayUtils.scaleToMax(ir, (double) WaveUtils.getLimit(32));
+			WaveUtils.wavWrite(ir, 1, 32, parent.getIrFile().getLocation()
 					.toOSString(), false);
 			try {
 				parent.getOutFolder().refreshLocal(IFolder.DEPTH_ONE,

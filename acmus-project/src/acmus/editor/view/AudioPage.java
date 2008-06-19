@@ -32,9 +32,9 @@ import acmus.AcmusPlugin;
 import acmus.MeasurementProject;
 import acmus.audio.AudioDevice;
 import acmus.dsp.Ir;
-import acmus.dsp.Util;
 import acmus.editor.AudioEditorControl;
 import acmus.editor.MeasurementEditor;
+import acmus.util.Algorithms;
 import acmus.wizard.AcmusMeasurementWizard;
 import acmus.wizard.AcmusMeasurementWizardFirstPage;
 
@@ -359,7 +359,7 @@ public class AudioPage extends Composite {
 				int t = (int) Math.round(1000 * Double
 						.parseDouble(MeasurementProject.getProperty(parent.getRecFile()
 								.getProject(), "RecordingExtraTime", ""
-								+ Util.DEFAULT_REC_EXTRA)));
+								+ Algorithms.DEFAULT_REC_EXTRA)));
 				recorder.record(new File(outFile), getAeSource()
 						.getTotalDurationInMillis()
 						+ t);

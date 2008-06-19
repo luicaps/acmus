@@ -23,9 +23,9 @@ import acmus.AcmusPlugin;
 import acmus.MeasurementProject;
 import acmus.dsp.Parameters;
 import acmus.dsp.Plot;
-import acmus.dsp.Util;
 import acmus.editor.MeasurementEditor;
 import acmus.editor.PositionLabelProvider;
+import acmus.util.ArrayUtils;
 
 public class ParametersPage extends Composite {
 
@@ -275,7 +275,7 @@ public class ParametersPage extends Composite {
 					tmp[0] = ph.t20;
 					tmp[1] = ph.t30;
 					tmp[2] = ph.t40;
-					double xMax = Util.max(tmp);
+					double xMax = ArrayUtils.max(tmp);
 					plot.xLimit(0, xMax * 1.1);
 					double[] x = new double[2];
 					double[] y = new double[2];

@@ -58,7 +58,9 @@ import org.eclipse.swt.widgets.ScrollBar;
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 import acmus.dsp.Filter;
-import acmus.dsp.Util;
+import acmus.util.ArrayUtils;
+import acmus.util.MathUtils;
+import acmus.util.WaveUtils;
 
 /**
  * @author lku
@@ -183,7 +185,7 @@ public class WaveformDisplay extends Composite {
 	public void power() {
 		_sampleT = _powerSampleT;
 		setYMax((int) Math.ceil(_sampleT
-				.transf(Util.getLimit(_bitsPerSample))));
+				.transf(WaveUtils.getLimit(_bitsPerSample))));
 		// setYMax(((int)Math.ceil(_sampleT.unitMaxValue())));
 		updateYStart();
 		for (Waveform w : _wf)
@@ -193,7 +195,7 @@ public class WaveformDisplay extends Composite {
 	public void amplitude() {
 		_sampleT = _linearSampleT;
 		setYMax((int) Math.ceil(_sampleT
-				.transf(Util.getLimit(_bitsPerSample))));
+				.transf(WaveUtils.getLimit(_bitsPerSample))));
 		updateYStart();
 		for (Waveform w : _wf)
 			w.redraw();
@@ -647,15 +649,15 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void filter(Filter f) {
-		int max = Util.getLimit(_bitsPerSample);
+		int max = WaveUtils.getLimit(_bitsPerSample);
 		for (SampleArray s : _sampleArrays) {
-			int[][] streams = Util.splitAudioStream(s.channels, s.data);
+			int[][] streams = WaveUtils.splitAudioStream(s.channels, s.data);
 			for (int i = 0; i < streams.length; i++) {
-				double x[] = Util.scaleToUnit(streams[i], max);
+				double x[] = ArrayUtils.scaleToUnit(streams[i], max);
 				x = Filter.filtfilt(f.b, f.a, x);
-				streams[i] = Util.scaleToMax(x, max, false);
+				streams[i] = ArrayUtils.scaleToMax(x, max, false);
 			}
-			s.data = Util.joinAudioStream(streams);
+			s.data = WaveUtils.joinAudioStream(streams);
 		}
 		redrawWf();
 	}
@@ -665,7 +667,7 @@ public class WaveformDisplay extends Composite {
 		for (SampleArray s : _sampleArrays) {
 			int start = startSample * s.channels;
 			int end = endSample * s.channels;
-			s.data = Util.subArray(s.data, start, end);
+			s.data = ArrayUtils.subArray(s.data, start, end);
 		}
 		redrawWf();
 	}
@@ -679,7 +681,7 @@ public class WaveformDisplay extends Composite {
 		// _bitsPerSample, filename);
 
 		// save only the first samplearray
-		Util.wavWrite(_sampleArrays.get(0).data, _sampleArrays.get(0).channels,
+		WaveUtils.wavWrite(_sampleArrays.get(0).data, _sampleArrays.get(0).channels,
 				_bitsPerSample, filename);
 	}
 
@@ -1324,7 +1326,7 @@ public class WaveformDisplay extends Composite {
 
 	class Linear implements SampleTransform {
 		public final double transf(int y) {
-			return (double) y / Util.getLimit(_bitsPerSample);
+			return (double) y / WaveUtils.getLimit(_bitsPerSample);
 		}
 
 		public long unitsPerSample(long max) {
@@ -1350,7 +1352,7 @@ public class WaveformDisplay extends Composite {
 
 	class Power implements SampleTransform {
 		public final double transf(int y) {
-			double val = 20 * Util.log10(Math.abs(y));
+			double val = 20 * MathUtils.log10(Math.abs(y));
 			if (val == Double.NEGATIVE_INFINITY)
 				return -100;
 			return val;
@@ -1361,7 +1363,7 @@ public class WaveformDisplay extends Composite {
 		}
 
 		public double unitValueRange() {
-			return transf(Util.getLimit(_bitsPerSample));
+			return transf(WaveUtils.getLimit(_bitsPerSample));
 		}
 
 		public double unitMaxValue() {
@@ -1369,7 +1371,7 @@ public class WaveformDisplay extends Composite {
 		}
 
 		public double unitMinValue() {
-			return transf(-1 * Util.getLimit(_bitsPerSample));
+			return transf(-1 * WaveUtils.getLimit(_bitsPerSample));
 		}
 
 		public String label() {

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import acmus.AcmusPlugin;
+import acmus.util.MathUtils;
 
 public class Signal {
 
@@ -131,7 +132,7 @@ public class Signal {
 	public static double[] chirpLog(double[] t, double f0, double t1,
 			double f1, double phi) {
 
-		double beta = Util.log10(f1 - f0) / t1;
+		double beta = MathUtils.log10(f1 - f0) / t1;
 		// y = cos(
 		// 2*pi *
 		// (
@@ -141,10 +142,11 @@ public class Signal {
 
 		double y[] = new double[t.length];
 
+		double log10 = Math.log(10);
 		for (int i = 0; i < y.length; i++) {
 			y[i] = Math.cos(2
 					* Math.PI
-					* (((Math.pow(10, beta * t[i]) - 1) / (beta * Util._log10))
+					* (((Math.pow(10, beta * t[i]) - 1) / (beta * log10))
 							+ f0 * t[i] + phi / 360));
 		}
 

@@ -36,7 +36,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import acmus.dsp.Signal;
-import acmus.dsp.Util;
+import acmus.util.ArrayUtils;
+import acmus.util.PrintUtils;
+import acmus.util.WaveUtils;
 
 public class MlsWizard extends Wizard implements INewWizard {
 
@@ -86,12 +88,12 @@ public class MlsWizard extends Wizard implements INewWizard {
 			for (int i = 0; i < y.length; i++) {
 				y[i] = y[i] * 0.5;
 			}
-			double[] scaled = Util.scaleToMax(y, (double) Util.getLimit(16));
-			Util.wavWrite(scaled, audioFile.getLocation().toOSString());
+			double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
+			WaveUtils.wavWrite(scaled, audioFile.getLocation().toOSString());
 
 			props.put("Type", "mls");
-			props.put("Row", Util.toString(row));
-			props.put("Col", Util.toString(col));
+			props.put("Row", PrintUtils.toString(row));
+			props.put("Col", PrintUtils.toString(col));
 			props.put("SampleRate", "44100");
 
 			IFile file = folder.getFile(props.getProperty("Name") + ".signal");

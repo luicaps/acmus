@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Text;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
-import acmus.dsp.Util;
+import acmus.util.PrintUtils;
 
 /**
  * @author lku
@@ -294,8 +294,8 @@ public class SchroederDiffuser extends Composite {
 			int sn = (i * i % N);
 			res[i] = (double) (sn * c) / (2 * N * f0);
 			res[i] *= 1000;
-			_result.append(Util.fs("" + (i), 3) + " " + Util.fs("" + sn, 3)
-					+ " " + Util.fs(format.format(res[i]), 9) + newLine);
+			_result.append(PrintUtils.formatString("" + (i), 3) + " " + PrintUtils.formatString("" + sn, 3)
+					+ " " + PrintUtils.formatString(format.format(res[i]), 9) + newLine);
 		}
 
 		double periodLength = W * N;

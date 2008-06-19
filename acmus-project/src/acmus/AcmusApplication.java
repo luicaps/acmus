@@ -230,11 +230,15 @@ public class AcmusApplication implements IPlatformRunnable,
 
 		// -data "/valid/path", workspace already set
 		if (instanceLoc.isSet()) {
+			ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
+					.getURL());
+			URL workspaceURL = promptForWorkspace(shell, launchData, true);
 			// make sure the meta data version is compatible (or the user has
 			// chosen to overwrite it).
-			if (!checkValidWorkspace(shell, instanceLoc.getURL()))
+			if (!checkValidWorkspace(shell, workspaceURL))
 				return false;
 
+			launchData.writePersistedData();
 			// at this point its valid, so try to lock it and update the
 			// metadata version information if successful
 			try {

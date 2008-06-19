@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import acmus.dsp.Util;
+import acmus.util.Algorithms;
 
 public class Convolution extends Composite {
 
@@ -149,7 +149,7 @@ public class Convolution extends Composite {
 		_convolve.setText("Convolve");
 		_convolve.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Util.convolve(_input1.getText(), _input2.getText(), _output
+				Algorithms.convolve(_input1.getText(), _input2.getText(), _output
 						.getText(), _monitor);
 				validate();
 			}

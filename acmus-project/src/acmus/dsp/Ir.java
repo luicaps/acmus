@@ -37,12 +37,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import acmus.MeasurementProject;
 import acmus.audio.AudioPlayer;
+import acmus.util.Algorithms;
+import acmus.util.ArrayUtils;
+import acmus.util.MathUtils;
+import acmus.util.SWTUtils;
+import acmus.util.WaveUtils;
 
 public class Ir {
 
 	public static final double[] dechirp(double[] rec, double[] ref,
 			double[] B, double[] A, int n, IProgressMonitor monitor) {
-		monitor = Util.monitorFor(monitor);
+		monitor = SWTUtils.monitorFor(monitor);
 		monitor.beginTask("dechirp", 100);
 		// function ir = dechirp(gravacao,B,A,n)
 		//
@@ -74,7 +79,7 @@ public class Ir {
 		fft.fft(refRe, refIm);
 		monitor.worked(20);
 		monitor.subTask("Division");
-		Util.div(recRe, recIm, refRe, refIm);
+		MathUtils.complexDivision(recRe, recIm, refRe, refIm);
 		monitor.worked(5);
 		monitor.subTask("IFFT");
 		IFFT1d ifft = new IFFT1d(n);
@@ -112,7 +117,7 @@ public class Ir {
 
 		Parameters.doFFT(recRe, recRe, recIm);
 		Parameters.doFFT(refRe, refRe, refIm);
-		Util.div(recRe, recIm, refRe, refIm);
+		MathUtils.complexDivision(recRe, recIm, refRe, refIm);
 		IFFT1d ifft = new IFFT1d(n);
 		ifft.ifft(recRe, recIm);
 
@@ -151,7 +156,7 @@ public class Ir {
 		// inicio = min(
 		// find( abs(sinal(:,2)) > max(abs(sinal(:,2)))/10 ) );
 		int inicio = 0;
-		double val = Util.maxAbs(ref) / 10;
+		double val = ArrayUtils.maxAbs(ref) / 10;
 		for (int i = 0; i < ref.length; i++) {
 			if (ref[i] > val) {
 				inicio = i;
@@ -165,7 +170,7 @@ public class Ir {
 		// // media = zeros(t,1);
 
 		int t = row.length;
-		double aux[] = Util.subArray(rec, inicio + t);
+		double aux[] = ArrayUtils.subArray(rec, inicio + t);
 		double media[] = new double[t];
 		for (int i = 0; i < media.length; i++)
 			media[i] = 0;
@@ -175,10 +180,10 @@ public class Ir {
 		// // aux(1:t)=[];
 		// // end
 		for (int n = 0, begin = 0, end = t; n < reps - 1; n++, begin += t, end += t) {
-			media = Util.sumLLL(media, aux, begin, end);
+			media = ArrayUtils.sumLLL(media, aux, begin, end);
 		}
 		// // ir=media/(reps-1);
-		media = Util.divLLL(media, reps - 1);
+		media = ArrayUtils.scale(1.0/(reps - 1), media);
 		// // ir=ir(:);
 		// // ir=ir(row);
 		// // ir=[0; ir];
@@ -191,7 +196,7 @@ public class Ir {
 		// // ir=fht(ir);
 		Parameters.fht(ir);
 		// // ir(1)=[];
-		ir = Util.subArray(ir, 1);
+		ir = ArrayUtils.subArray(ir, 1);
 		// // ir=ir(col)/t;
 		double[] ir2 = new double[col.length];
 		for (int i = 0; i < col.length; i++) {
@@ -233,8 +238,8 @@ public class Ir {
 			else
 				splitChannels(left, right, data);
 			
-			left = Util.scaleToUnit(left, Util.maxAbs(left));
-			right = Util.scaleToUnit(right, Util.maxAbs(right));
+			left = ArrayUtils.scaleToUnit(left, ArrayUtils.maxAbs(left));
+			right = ArrayUtils.scaleToUnit(right, ArrayUtils.maxAbs(right));
 			Properties props = new Properties();
 			props.load(signalFile.getContents());
 			String method = props.getProperty("Type", "");
@@ -253,16 +258,16 @@ public class Ir {
 						"44100"));
 				double irLen = Double.parseDouble(MeasurementProject
 						.getProperty(recFile.getProject(), "IrLength", ""
-								+ Util.DEFAULT_IR_LENGTH));
+								+ Algorithms.DEFAULT_IR_LENGTH));
 				int samples = (int) (sr * irLen);
 				// file
 				if (samples > ir.length)
 					samples = ir.length;
-				ir = Util.subArray(ir, 0, samples);
+				ir = ArrayUtils.subArray(ir, 0, samples);
 
 			} else if (method.equals("mls")) {
-				int[] row = Util.parseIntArray(props.getProperty("Row"));
-				int[] col = Util.parseIntArray(props.getProperty("Col"));
+				int[] row = ArrayUtils.stringToIntArray(props.getProperty("Row"));
+				int[] col = ArrayUtils.stringToIntArray(props.getProperty("Col"));
 				int reps = Integer.parseInt(props.getProperty("Repetitions"));
 				ir = demls(left, right, row, col, reps);
 			} else {
@@ -271,8 +276,8 @@ public class Ir {
 			}
 			// FIXME This is one of the places to set 16 or 32 bits
 			// if we want to change the IR resolution
-			ir = Util.scaleToMax(ir, (double) Util.getLimit(32));
-			Util.wavWrite(ir, 1, 32, irFile.getLocation().toOSString(), false);
+			ir = ArrayUtils.scaleToMax(ir, (double) WaveUtils.getLimit(32));
+			WaveUtils.wavWrite(ir, 1, 32, irFile.getLocation().toOSString(), false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -41,6 +41,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import acmus.AcmusApplication;
+import acmus.util.Algorithms;
+import acmus.util.ArrayUtils;
+import acmus.util.MathUtils;
+import acmus.util.PrintUtils;
+import acmus.util.SWTUtils;
 
 /**
  * @author lku
@@ -74,7 +79,7 @@ public class Parameters {
 		for (int j = 0; j < length; j++) {
 			_temp[j] = signal[offset + j] * signal[offset + j];
 		}
-		return Util.average(_temp, 0, length);
+		return ArrayUtils.average(_temp, 0, length);
 	}
 
 	private double[] chuPower(double[] signal) {
@@ -88,18 +93,18 @@ public class Parameters {
 
 		double RMS = rms(signal);
 		int comeco = inicio(signal);
-		double power[] = Util.sumLLL(Util.sqrLLL(Util.subArray(signal, comeco,
+		double power[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(signal, comeco,
 				signal.length)), -RMS);
 		return power;
 	}
 
 	public void chuParam(int directSound, int firstReflection,
 			PrintStream outTable, String graphFolder, IProgressMonitor monitor) {
-		monitor = Util.monitorFor(monitor);
+		monitor = SWTUtils.monitorFor(monitor);
 
 		monitor.beginTask("Calculating parameters", 140);
 
-		IProgressMonitor subMonitor = Util.subMonitorFor(monitor, 20);
+		IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor, 20);
 
 		// // banda = filtros(IR,fs);
 		double[][] banda = filtros(_ir, _fs, subMonitor);
@@ -389,7 +394,7 @@ public class Parameters {
 		// // long length, i, j, k, ie, ie_half, kp;
 		// // double temp;
 		// //
-		int pwr2 = (int) Util.log2(data.length);
+		int pwr2 = (int) MathUtils.log2(data.length);
 		// // length = 1<<pwr2; /*tamanho da sequencia*/
 		int length = 1 << pwr2;
 		// // for (i = pwr2; i > 0; i--) {
@@ -442,11 +447,11 @@ public class Parameters {
 	public static void chuParamOld(double[] ir, double[] irLf, double fs,
 			int directSound, int firstReflection, PrintStream outTable,
 			String graphFolder, IProgressMonitor monitor) {
-		monitor = Util.monitorFor(monitor);
+		monitor = SWTUtils.monitorFor(monitor);
 
 		monitor.beginTask("Calculating parameters", 140);
 
-		IProgressMonitor subMonitor = Util.subMonitorFor(monitor, 20);
+		IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor, 20);
 
 		// // banda = filtros(IR,fs);
 		double[][] banda = filtros(ir, fs, subMonitor);
@@ -464,7 +469,7 @@ public class Parameters {
 		double ruidoLf[][] = null;
 		double RMSLf[] = null;
 		if (irLf != null) {
-			IProgressMonitor subMonitorLf = Util.subMonitorFor(monitor, 10);
+			IProgressMonitor subMonitorLf = SWTUtils.subMonitorFor(monitor, 10);
 			bandaLf = filtros(irLf, fs, subMonitorLf);
 
 			// // ruido = banda(round(.9*length(banda)):end,:).^2;
@@ -476,8 +481,8 @@ public class Parameters {
 							* bandaLf[i][offsetLf + j];
 				}
 			}
-			RMSLf = Util.sumLines(ruidoLf);
-			RMSLf = Util.div(RMSLf, ruidoLf[0].length);
+			RMSLf = ArrayUtils.sumLines(ruidoLf);
+			RMSLf = ArrayUtils.scale(1.0/(ruidoLf[0].length), RMSLf);
 		}
 
 		PrintStream outGraphs[] = channelFiles(graphFolder);
@@ -494,8 +499,8 @@ public class Parameters {
 		// mmm2.print(8,4);
 
 		// // RMS = sum(ruido)/length(ruido);
-		double RMS[] = Util.sumLines(ruido);
-		RMS = Util.div(RMS, ruido[0].length);
+		double RMS[] = ArrayUtils.sumLines(ruido);
+		RMS = ArrayUtils.scale(1.0/(ruido[0].length), RMS);
 
 		monitor.worked(10);
 
@@ -525,7 +530,7 @@ public class Parameters {
 			// comeco,
 			// banda[n].length),
 			// 2), -RMS[n]);
-			double aux[] = Util.sumLLL(Util.sqrLLL(Util.subArray(banda[n],
+			double aux[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(banda[n],
 					comeco, banda[n].length)), -RMS[n]);
 			// if (n==0)
 			// print(powLLL(subArray(banda[n], comeco, banda[n].length),2));
@@ -540,7 +545,7 @@ public class Parameters {
 			if (irLf != null) {
 				int comecoLf = inicio(bandaLf[n]);
 				System.out.println("b " + bandaLf[n][2000]);
-				double auxLf[] = Util.sumLLL(Util.sqrLLL(Util.subArray(
+				double auxLf[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(
 						bandaLf[n], comecoLf, bandaLf[n].length)), -RMSLf[n]);
 				// System.out.println("auxLf " + auxLf[2000]);
 				params.get("LF").val[n] = lf(aux, auxLf, fs);
@@ -594,11 +599,11 @@ public class Parameters {
 		// function [ponto,rms] = inicio(impulse)
 		//
 		// maximo = find(abs(impulse) == max(abs(impulse)));
-		int maximo = Util.maxIndAbs(impulse);
+		int maximo = ArrayUtils.absMaxIndex(impulse);
 		// energia = (impulse/impulse(maximo(1))).^2;
 		// double energia[] = Util.powLLL(Util.div(impulse, impulse[maximo]),
 		// 2);
-		double energia[] = Util.sqrLLL(Util.div(impulse, impulse[maximo]));
+		double energia[] = ArrayUtils.sqrLLL(ArrayUtils.scale(1.0/(impulse[maximo]), impulse));
 		//
 		// aux = energia(1:maximo(1)-1);
 		// -double aux [] = new double[maximo];
@@ -635,10 +640,10 @@ public class Parameters {
 	public final static int inicio(double impulse[]) {
 		// //
 		// // maximo = find(abs(impulse) == max(abs(impulse)));
-		int maximo = Util.maxIndAbs(impulse);
+		int maximo = ArrayUtils.absMaxIndex(impulse);
 
 		// // energia = (impulse/impulse(maximo(1))).^2;
-		double energia[] = Util.sqrLLL(Util.div(impulse, impulse[maximo]));
+		double energia[] = ArrayUtils.sqrLLL(ArrayUtils.scale(1.0/(impulse[maximo]), impulse));
 		// //
 		// // aux = energia(1:maximo(1)-1);
 		// // ponto = maximo(1);
@@ -693,17 +698,17 @@ public class Parameters {
 		// sum(energia(1:t50)) / sum(energia(t50:end))
 		// );
 		// System.out.println(energia.length + " " + t50);
-		double c50 = 10 * Util.log10(Util.sum(energia, 0, t50)
-				/ Util.sum(energia, t50 - 1, energia.length));
-		double c80 = 10 * Util.log10(Util.sum(energia, 0, t80)
-				/ Util.sum(energia, t80 - 1, energia.length));
+		double c50 = 10 * MathUtils.log10(ArrayUtils.sum(energia, 0, t50)
+				/ ArrayUtils.sum(energia, t50 - 1, energia.length));
+		double c80 = 10 * MathUtils.log10(ArrayUtils.sum(energia, 0, t80)
+				/ ArrayUtils.sum(energia, t80 - 1, energia.length));
 		// System.out.println(t50);
 		// System.out.println(Util.sum(energia, 0, t50) + " "
 		// + Util.sum(energia, t50 - 1, energia.length) + " " + c50);
 
 		// ST1 = (integral de 20ms a 100ms)/(integral de 0ms a 10ms).
-		double st1 = 10 * Util.log10(Util.sum(energia, t20, t100)
-				/ Util.sum(energia, 0, t10));
+		double st1 = 10 * MathUtils.log10(ArrayUtils.sum(energia, t20, t100)
+				/ ArrayUtils.sum(energia, 0, t10));
 		// //
 		// // %Definition = razao entre energia inicial do sinal, e energia
 		// total do
@@ -711,11 +716,11 @@ public class Parameters {
 		// // D50 = sum(energia(1:t50))/sum(energia)*100;
 		// // D80 = sum(energia(1:t80))/sum(energia)*100;
 
-		double d50 = (Util.sum(energia, 0, t50) / Util.sum(energia)) * 100;
-		double d80 = (Util.sum(energia, 0, t80) / Util.sum(energia)) * 100;
+		double d50 = (ArrayUtils.sum(energia, 0, t50) / ArrayUtils.sum(energia)) * 100;
+		double d80 = (ArrayUtils.sum(energia, 0, t80) / ArrayUtils.sum(energia)) * 100;
 
 		// drr (not in matlab prototype)
-		double drr = (Util.sum(energia, somDireto, primeiraReflexao) / Util
+		double drr = (ArrayUtils.sum(energia, somDireto, primeiraReflexao) / ArrayUtils
 				.sum(energia, somDireto, energia.length)) * 100;
 
 		// //
@@ -727,7 +732,7 @@ public class Parameters {
 		double x[] = new double[energia.length];
 		for (int i = 0; i < x.length; i++)
 			x[i] = i / fs;
-		double ct = Util.sum(Util.multLLL(x, energia)) / Util.sum(energia);
+		double ct = ArrayUtils.sum(ArrayUtils.multLLL(x, energia)) / ArrayUtils.sum(energia);
 
 		double res[] = new double[7];
 		res[0] = c50;
@@ -743,8 +748,8 @@ public class Parameters {
 	public static double lf(double[] energia1, double[] energia2, double fs) {
 		int t5 = (int) Math.round(0.005 * fs);
 		int t80 = (int) Math.round(0.08 * fs);
-		double lfc = (Util.sum(energia2, t5, t80 < energia2.length ? t80
-				: energia2.length) / Util.sum(energia1, 0, t80)) * 100;
+		double lfc = (ArrayUtils.sum(energia2, t5, t80 < energia2.length ? t80
+				: energia2.length) / ArrayUtils.sum(energia1, 0, t80)) * 100;
 		return lfc;
 	}
 
@@ -773,9 +778,8 @@ public class Parameters {
 		// Fs = varargin{2};
 		// E(length(ir):-1:1) = (cumsum(ir(length(ir):-1:1))/sum(ir));
 
-		double[] E = Util
-				.divLLL(Util.cumsumLLL(Util.reverse(ir)), Util.sum(ir));
-		Util.reverseLLL(E);
+		double[] E = ArrayUtils.scale(1.0/(ArrayUtils.sum(ir)), ArrayUtils.cumsumLLL(ArrayUtils.reverse(ir)));
+		ArrayUtils.reverseLLL(E);
 
 		//
 		// if find(E < 0)
@@ -792,9 +796,9 @@ public class Parameters {
 			}
 		}
 		if (neg >= 0) {
-			E = Util.subArray(E, 0, neg);
+			E = ArrayUtils.subArray(E, 0, neg);
 		}
-		E = Util.multLLL(Util.log10LLL(E), 10);
+		E = ArrayUtils.multLLL(MathUtils.log10LLL(E), 10);
 		//
 		// if nargin == 3
 		// flag = varargin{3};
@@ -836,8 +840,8 @@ public class Parameters {
 		// [A10,B10] = intlinear(x(1:t10),E(1:t10));
 		// EDT = (-60)/(B10);
 
-		int t10 = Util.firstLessThan(E, -15);
-		double[] ab = Util.intlinear(Util.subArray(x, 0, t10 + 1), Util
+		int t10 = ArrayUtils.firstLessThanIndex(E, -15);
+		double[] ab = Algorithms.intlinear(ArrayUtils.subArray(x, 0, t10 + 1), ArrayUtils
 				.subArray(E, 0, t10 + 1));
 		double EDT = ((double) -60) / (ab[1]);
 
@@ -852,10 +856,10 @@ public class Parameters {
 		// iteracao.
 		// t45 = min(find(E < -45));
 
-		int begin = Util.firstLessThan(E, -5);
-		int t25 = Util.firstLessThan(E, -25);
-		int t35 = Util.firstLessThan(E, -35);
-		int t45 = Util.firstLessThan(E, -45);
+		int begin = ArrayUtils.firstLessThanIndex(E, -5);
+		int t25 = ArrayUtils.firstLessThanIndex(E, -25);
+		int t35 = ArrayUtils.firstLessThanIndex(E, -35);
+		int t45 = ArrayUtils.firstLessThanIndex(E, -45);
 
 		//
 		// %Usando 20dB
@@ -869,7 +873,7 @@ public class Parameters {
 
 		double T20 = Double.NaN;
 		if (t25 >= 0) {
-			ab = Util.intlinear(Util.subArray(x, begin, t25 + 1), Util
+			ab = Algorithms.intlinear(ArrayUtils.subArray(x, begin, t25 + 1), ArrayUtils
 					.subArray(E, begin, t25 + 1));
 			T20 = ((double) -60) / (ab[1]);
 			out.println(ab[0] + " " + ab[1] + " " + T20);
@@ -888,7 +892,7 @@ public class Parameters {
 
 		double T30 = Double.NaN;
 		if (t35 >= 0) {
-			ab = Util.intlinear(Util.subArray(x, begin, t35 + 1), Util
+			ab = Algorithms.intlinear(ArrayUtils.subArray(x, begin, t35 + 1), ArrayUtils
 					.subArray(E, begin, t35 + 1));
 			T30 = ((double) -60) / (ab[1]);
 			out.println(ab[0] + " " + ab[1] + " " + T30);
@@ -911,7 +915,7 @@ public class Parameters {
 
 		double T40 = Double.NaN;
 		if (t45 >= 0) {
-			ab = Util.intlinear(Util.subArray(x, begin, t45 + 1), Util
+			ab = Algorithms.intlinear(ArrayUtils.subArray(x, begin, t45 + 1), ArrayUtils
 					.subArray(E, begin, t45 + 1));
 			T40 = ((double) -60) / (ab[1]);
 			out.println(ab[0] + " " + ab[1] + " " + T40);
@@ -992,13 +996,13 @@ public class Parameters {
 		// fprintf(fid,' Linear ');
 		// fprintf(fid,'\n');
 
-		out.print(Util.fs("freq [Hz]", k));
+		out.print(PrintUtils.formatString("freq [Hz]", k));
 		for (int i = 0; i < n - 3; i++) {
-			out.print(Util.fs(CHANNEL_NAMES[i], k) + " ");
+			out.print(PrintUtils.formatString(CHANNEL_NAMES[i], k) + " ");
 		}
-		out.print(Util.fs("A", k) + " ");
-		out.print(Util.fs("C", k) + " ");
-		out.print(Util.fs("Linear", k) + " ");
+		out.print(PrintUtils.formatString("A", k) + " ");
+		out.print(PrintUtils.formatString("C", k) + " ");
+		out.print(PrintUtils.formatString("Linear", k) + " ");
 		out.println();
 
 		// fprintf(fid,' C50 [dB]');
@@ -1065,13 +1069,13 @@ public class Parameters {
 		// "T40 [s]" };
 
 		for (String p : paramsOrder) {
-			out.print(Util.fs(p + " [" + s.get(p).unit + "]", k) + " ");
+			out.print(PrintUtils.formatString(p + " [" + s.get(p).unit + "]", k) + " ");
 			for (int j = 0; j < n; j++) {
 				double val = s.get(p).val[j];
 				if (val == Double.NaN)
-					out.print(Util.fs("NaN", k));
+					out.print(PrintUtils.formatString("NaN", k));
 				else
-					out.print(Util.fs(format.format(val), k));
+					out.print(PrintUtils.formatString(format.format(val), k));
 				out.print(" ");
 			}
 			out.println();
@@ -1144,8 +1148,8 @@ public class Parameters {
 		// )
 		// /max(energia_impulso)
 		// );
-		double max = Util.max(energia_impulso);
-		double rms_dB = 10 * Util.log10(Util.mean(energia_impulso, (int) Math
+		double max = ArrayUtils.max(energia_impulso);
+		double rms_dB = 10 * MathUtils.log10(ArrayUtils.mean(energia_impulso, (int) Math
 				.round(0.9 * energia_impulso.length) - 1,
 				energia_impulso.length)
 				/ max);
@@ -1171,17 +1175,17 @@ public class Parameters {
 		for (int n = 0; n < t; n++) {
 			// media[n] = mean(energia_impulso, ((n - 1) * v), n * v);
 			// eixo_tempo[n] = Math.ceil(v / 2) + ((n - 1) * v);
-			media[n] = Util.mean(energia_impulso, n * v, (n + 1) * v);
+			media[n] = ArrayUtils.mean(energia_impulso, n * v, (n + 1) * v);
 			eixo_tempo[n] = Math.ceil((double) v / 2) + (n * v);
 		}
 
-		Util.print(media);
-		Util.print(eixo_tempo);
+		PrintUtils.print(media);
+		PrintUtils.print(eixo_tempo);
 
 		// mediadB = 10*log10(media/max(energia_impulso));
 
-		double mediadB[] = Util
-				.multLLL(Util.log10LLL(Util.div(media, max)), 10);
+		double mediadB[] = ArrayUtils
+				.multLLL(MathUtils.log10LLL(ArrayUtils.scale(1.0/(max), media)), 10);
 
 		//
 		// %obtem a regressao linear o intervalo de 0dB e a media mais proxima
@@ -1220,7 +1224,7 @@ public class Parameters {
 		// [A,B] = intlinear(eixo_tempo(1:r),mediadB(1:r));
 		// cruzamento = (rms_dB-A)/B;
 
-		double[] ab = Util.intlinear(Util.subArray(eixo_tempo, 0, r + 1), Util
+		double[] ab = Algorithms.intlinear(ArrayUtils.subArray(eixo_tempo, 0, r + 1), ArrayUtils
 				.subArray(mediadB, 0, r + 1));
 		double cruzamento = (rms_dB - ab[0]) / ab[1];
 		System.out.println("cruzamento: " + cruzamento + " " + rms_dB);
@@ -1295,20 +1299,20 @@ public class Parameters {
 				System.out.println("eim " + energia_impulso.length + " " + t);
 				for (int n = 0; n < t; n++) {
 					System.out.println("  " + n);
-					media[n] = Util.mean(energia_impulso, n * v, (n + 1) * v);
+					media[n] = ArrayUtils.mean(energia_impulso, n * v, (n + 1) * v);
 					eixo_tempo[n] = Math.ceil((double) v / 2) + (n * v);
 				}
 
-				Util.print(media);
-				Util.print(eixo_tempo);
+				PrintUtils.print(media);
+				PrintUtils.print(eixo_tempo);
 				// mediadB = 10*log10(media/max(energia_impulso));
-				mediadB = Util.multLLL(Util.log10LLL(Util.div(media, Util
-						.max(energia_impulso))), 10);
+				mediadB = ArrayUtils.multLLL(MathUtils.log10LLL(ArrayUtils.scale(1.0/(ArrayUtils
+				.max(energia_impulso)), media)), 10);
 
 				//
 				// clear A B noise energia_ruido rms_dB;
 				// [A,B] = intlinear(eixo_tempo,mediadB);
-				ab = Util.intlinear(eixo_tempo, mediadB);
+				ab = Algorithms.intlinear(eixo_tempo, mediadB);
 
 				// %nova media da energia do ruido, iniciando no ponto da linha
 				// de
@@ -1323,16 +1327,16 @@ public class Parameters {
 						.round(0.1 * energia_impulso.length)) {
 					noiseStart = (int) Math.round(0.9 * energia_impulso.length);
 				}
-				double noise[] = Util.subArray(energia_impulso, noiseStart);
+				double noise[] = ArrayUtils.subArray(energia_impulso, noiseStart);
 				System.out.println("ns: " + noiseStart + " " + noise.length);
 				// print(noise);
 
 				// rms_dB = 10*log10(mean(noise)/max(energia_impulso));
-				rms_dB = 10 * Util.log10(Util.mean(noise)
-						/ Util.max(energia_impulso));
+				rms_dB = 10 * MathUtils.log10(ArrayUtils.mean(noise)
+						/ ArrayUtils.max(energia_impulso));
 
 				System.out.println("rms: " + rms_dB);
-				Util.print(ab);
+				PrintUtils.print(ab);
 				//
 				// %novo ponto de cruzamento.
 				// erro = abs(cruzamento - (rms_dB-A)/B)/cruzamento;
@@ -1372,11 +1376,11 @@ public class Parameters {
 			// end
 			ponto = (cruzamento > energia_impulso.length) ? energia_impulso.length
 					: cruzamento;
-			C = Util.max(energia_impulso)
+			C = ArrayUtils.max(energia_impulso)
 					* Math.pow(10, (ab[0] / 10))
-					* Math.exp(ab[1] / 10 / Util.log10(Math.exp(1))
+					* Math.exp(ab[1] / 10 / MathUtils.log10(Math.exp(1))
 							* cruzamento)
-					/ (-ab[1] / 10 / Util.log10(Math.exp(1)));
+					/ (-ab[1] / 10 / MathUtils.log10(Math.exp(1)));
 
 		}// <--- correcao do bug???
 
@@ -1457,7 +1461,7 @@ public class Parameters {
 			// // fim = lundeby(banda(comeco:end,n),fs,flag);
 			// int fim = (int) lundeby(Util.subArray(banda[n], comeco), fs)[0];
 			int fim = comeco
-					+ (int) lundeby(Util.subArray(banda[n], comeco), fs)[0];
+					+ (int) lundeby(ArrayUtils.subArray(banda[n], comeco), fs)[0];
 			// // title(['Ponto de Cruzamento - Banda ',num2str(s(1,n))])
 			// // if n == t-2
 			// // title('Ponto de Cruzamento - Compensacao A ')
@@ -1468,7 +1472,7 @@ public class Parameters {
 			// // end
 			// //
 			// // aux = banda(comeco:fim,n).^2;
-			double aux[] = Util.powLLL(Util.subArray(banda[n], comeco, fim), 2);
+			double aux[] = ArrayUtils.pow(ArrayUtils.subArray(banda[n], comeco, fim), 2);
 			// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
 			// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
 			double en[] = energeticos(aux, fs, directSound, firstReflection);
@@ -1482,11 +1486,11 @@ public class Parameters {
 			if (irLf != null) {
 				int comecoLf = inicio(bandaLf[n]);
 				int fimLf = comecoLf
-						+ (int) lundeby(Util.subArray(bandaLf[n], comecoLf), fs)[0];
+						+ (int) lundeby(ArrayUtils.subArray(bandaLf[n], comecoLf), fs)[0];
 				// double auxLf[] = Util.powLLL(Util.subArray(bandaLf[n],
 				// comecoLf, fimLf + 1), 2);
 				System.out.println(comecoLf + " " + fimLf);
-				double auxLf[] = Util.powLLL(Util.subArray(bandaLf[n],
+				double auxLf[] = ArrayUtils.pow(ArrayUtils.subArray(bandaLf[n],
 						comecoLf, fimLf), 2);
 
 				params.get("LF").val[n] = lf(aux, auxLf, fs);
@@ -1570,9 +1574,9 @@ public class Parameters {
 		// // IR1 = IR1(1:length(IR2));
 		// // end
 		if (ir1.length < ir2.length) {
-			ir2 = Util.subArray(ir2, 0, ir1.length);
+			ir2 = ArrayUtils.subArray(ir2, 0, ir1.length);
 		} else if (ir1.length > ir2.length) {
-			ir1 = Util.subArray(ir1, 0, ir2.length);
+			ir1 = ArrayUtils.subArray(ir1, 0, ir2.length);
 		}
 
 		// //
@@ -1603,12 +1607,12 @@ public class Parameters {
 		for (int n = 0; n < banda1.length; n++) {
 			// // s(1,n) = ceil(1000*2^(n-5));
 
-			double aux[] = Util.multLLL(banda1[n], banda2[n]);
+			double aux[] = ArrayUtils.multLLL(banda1[n], banda2[n]);
 
 			// // comeco = inicio(banda(:,n));
 			int comeco = inicio(banda1[n]);
 
-			aux = Util.subArray(aux, comeco);
+			aux = ArrayUtils.subArray(aux, comeco);
 
 			// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
 			// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
@@ -1682,7 +1686,7 @@ public class Parameters {
 	// // function [bandas] = filtros(sinal,fs)
 	public static double[][] filtros(double[] signal, double fs,
 			IProgressMonitor monitor) {
-		monitor = Util.monitorFor(monitor);
+		monitor = SWTUtils.monitorFor(monitor);
 
 		monitor.beginTask("filtering", 100);
 

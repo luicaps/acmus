@@ -57,7 +57,8 @@ import acmus.AcmusPlugin;
 import acmus.dsp.FFT1d;
 import acmus.dsp.Filter;
 import acmus.dsp.Parameters;
-import acmus.dsp.Util;
+import acmus.util.MathUtils;
+import acmus.util.WaveUtils;
 
 /**
  * @author lku
@@ -642,7 +643,7 @@ public class SpectrumDisplay extends Composite {
 		_data = data;
 		_stepSize = stepSize;
 
-		int[][] dd = Util.splitAudioStream(_channels, data);
+		int[][] dd = WaveUtils.splitAudioStream(_channels, data);
 
 		// int stepSize = (int) (Math.pow(2, Math.ceil(acmus.dsp.Util
 		// .log2(dd[0].length/300))));
@@ -699,7 +700,7 @@ public class SpectrumDisplay extends Composite {
 			for (int i = 0; i < _spectrumPoints.length; i++) {
 				_spectrumPoints[i] = new double[_bucketHeight];
 				double d[] = new double[_stepSize];
-				int max = Util.getLimit(_bitsPerSample);
+				int max = WaveUtils.getLimit(_bitsPerSample);
 				for (int j = 0; j < _stepSize && start + j < dd[ch].length; j++) {
 					d[j] = (double) dd[ch][(start + j)] / max;
 				}
@@ -742,7 +743,7 @@ public class SpectrumDisplay extends Composite {
 	}
 
 	public void setWindowSize(int size) {
-		int stepSize = (int) (Math.pow(2, Math.ceil(acmus.dsp.Util.log2(size))));
+		int stepSize = (int) (Math.pow(2, Math.ceil(acmus.util.MathUtils.log2(size))));
 		setData(_data, _channels, _sampleRate, _bitsPerSample, stepSize);
 		redrawSpecs3D();
 		redrawSpecs2D();
@@ -799,7 +800,7 @@ public class SpectrumDisplay extends Composite {
 
 		// Convert to decibels
 		for (i = 0; i < maxSamples; i++) {
-			processed[i] = 10 * Util.log10(processed[i] / windowSize / windows);
+			processed[i] = 10 * MathUtils.log10(processed[i] / windowSize / windows);
 			// printf(" %d= %f\n",i,processed[i]);
 		}
 

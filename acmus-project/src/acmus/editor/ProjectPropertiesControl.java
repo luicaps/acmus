@@ -42,7 +42,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import acmus.AcmusGraphics;
-import acmus.dsp.Util;
+import acmus.util.Algorithms;
 
 public class ProjectPropertiesControl extends Composite {
 
@@ -124,14 +124,14 @@ public class ProjectPropertiesControl extends Composite {
 		l = toolkit.createLabel(bodyRight, "Ir length (s):");
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		l.setLayoutData(gridData);
-		fIrLength = toolkit.createText(bodyRight, "" + Util.DEFAULT_IR_LENGTH);
+		fIrLength = toolkit.createText(bodyRight, "" + Algorithms.DEFAULT_IR_LENGTH);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fIrLength.setLayoutData(gridData);
 
 		l = toolkit.createLabel(bodyRight, "Recording extra time (s):");
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		l.setLayoutData(gridData);
-		fRecExtra = toolkit.createText(bodyRight, "" + Util.DEFAULT_REC_EXTRA);
+		fRecExtra = toolkit.createText(bodyRight, "" + Algorithms.DEFAULT_REC_EXTRA);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fRecExtra.setLayoutData(gridData);
 
@@ -165,9 +165,9 @@ public class ProjectPropertiesControl extends Composite {
 		fProjectDate.setText(fProperties.getProperty("Date", ""));
 		fProjectComments.setText(fProperties.getProperty("Comments", ""));
 		fIrLength.setText(fProperties.getProperty("IrLength", ""
-				+ Util.DEFAULT_IR_LENGTH));
+				+ Algorithms.DEFAULT_IR_LENGTH));
 		fRecExtra.setText(fProperties.getProperty("RecordingExtraTime", ""
-				+ Util.DEFAULT_REC_EXTRA));
+				+ Algorithms.DEFAULT_REC_EXTRA));
 	}
 
 	public void setProperties(Properties props) {

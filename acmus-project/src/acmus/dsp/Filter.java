@@ -32,6 +32,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import acmus.util.ArrayUtils;
+
 import Jama.Matrix;
 
 /**
@@ -88,6 +90,10 @@ public class Filter {
 		for (int i = 0; i < a.length; i++)
 			sb.append(FORMAT.format(a[i]) + " ");
 		return sb.toString();
+	}
+
+	private static int eye(int i, int j) {
+		return (i == j) ? 1 : 0;
 	}
 
 	public static double[] parseCoeficients(String str) {
@@ -243,15 +249,15 @@ public class Filter {
 		// zi = ( eye(nfilt-1) - [-a(2:nfilt).' [eye(nfilt-2);
 		// zeros(1,nfilt-2)]] )
 		for (int i = 0; i < nfilt - 1; i++) {
-			atmp[i][0] = Util.eye(i, 0) + a[i + 1];
+			atmp[i][0] = eye(i, 0) + a[i + 1];
 		}
 		for (int i = 0; i < nfilt - 2; i++) {
 			for (int j = 1; j < nfilt - 1; j++) {
-				atmp[i][j] = Util.eye(i, j) - Util.eye(i, j - 1);
+				atmp[i][j] = eye(i, j) - eye(i, j - 1);
 			}
 		}
 		for (int j = 1; j < nfilt - 1; j++) {
-			atmp[nfilt - 2][j] = Util.eye(nfilt - 2, j);
+			atmp[nfilt - 2][j] = eye(nfilt - 2, j);
 		}
 
 		// \ ( b(2:nfilt).' - a(2:nfilt).'*b(1) );
@@ -306,7 +312,7 @@ public class Filter {
 		y = filterZ(b, a, y, zitmp);
 
 		// y = y(length(y):-1:1);
-		Util.reverseLLL(y);
+		ArrayUtils.reverseLLL(y);
 
 		// y = filter(b,a,y,[zi*y(1)]);
 
@@ -316,7 +322,7 @@ public class Filter {
 		y = filterZ(b, a, y, zitmp);
 
 		// y = y(length(y):-1:1);
-		Util.reverseLLL(y);
+		ArrayUtils.reverseLLL(y);
 
 		// % remove extrapolated pieces of y
 		// y([1:nfact len+nfact+(1:nfact)]) = [];
