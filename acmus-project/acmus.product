@@ -6,7 +6,7 @@
    <aboutInfo>
       <image path="/acmus/images/logo3.gif"/>
       <text>
-         AcMus ver 20060730, Copyright (C) 2006 AcMus Group.
+         AcMus ver 1.1, Copyright (C) 2008 AcMus Group.
 
 This program is free software; you can redistribute it
 and/or modify it under the terms of the GNU General
@@ -26,7 +26,16 @@ AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,
 Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,
 Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,
 Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,
-Thiago C. de Souza., Mario H.C.T.
+Thiago C. de Souza., Mario H.C. Torres
+
+eXtreme Programming Team:
+2008
+Cauê H.P.Guerra
+Leandro de Moraes
+Lucas Cavalcanti
+Nelson Lago
+Mario H.C. Torres
+Thiago Coraini
       </text>
    </aboutInfo>
 
@@ -49,6 +58,7 @@ Thiago C. de Souza., Mario H.C.T.
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

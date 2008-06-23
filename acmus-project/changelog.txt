@@ -1,0 +1,13 @@
+CHANGELOG
+
+Release Name: AcMus 1.1
+
+Major Highlights:
+	
+	- import impulse response
+	- export impulse response
+	- export measurements
+	- new module for acoustic simulation with graphical and wave output integrated 
+	with acoustic parameters calculus
+	- improved waveform comparation
+	- miscellaneous interface improvements

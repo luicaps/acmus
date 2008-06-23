@@ -3,7 +3,7 @@
 <plugin
    id="acmus"
    name="Acmus Plug-in"
-   version="1.0.1"
+   version="1.0"
    provider-name=""
    class="acmus.AcmusPlugin">
 
@@ -579,7 +579,7 @@
                value="images/logo3.gif"/>
          <property
                name="aboutText"
-               value="AcMus ver 20060730, Copyright (C) 2006 AcMus Group.&#x0A;&#x0A;This program is free software; you can redistribute it&#x0A;and/or modify it under the terms of the GNU General&#x0A;Public License as published by the Free Software&#x0A;Foundation; either version 2 of the License, or (at&#x0A;your option) any later version.&#x0A;&#x0A;This program is distributed in the hope that it will be&#x0A;useful, but WITHOUT ANY WARRANTY; without even&#x0A;the implied warranty of MERCHANTABILITY or&#x0A;FITNESS FOR A PARTICULAR PURPOSE.  See the&#x0A;GNU General Public License for more details.&#x0A;&#x0A;http://gsd.ime.usp.br/acmus&#x0A;&#x0A;AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,&#x0A;Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,&#x0A;Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,&#x0A;Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,&#x0A;Thiago C. de Souza."/>
+               value="AcMus ver 1.1, Copyright (C) 2008 AcMus Group.&#x0A;&#x0A; This program is free software; you can redistribute it&#x0A;and/or modify it under the terms of the GNU General&#x0A; Public License as published by the Free Software&#x0A; Foundation; either version 2 of the License, or (at&#x0A; your option) any later version.&#x0A;&#x0A; This program is distributed in the hope that it will be&#x0A; useful, but WITHOUT ANY WARRANTY; without even&#x0A; the implied warranty of MERCHANTABILITY or&#x0A; FITNESS FOR A PARTICULAR PURPOSE.  See the&#x0A; GNU General Public License for more details.&#x0A;&#x0A; http://gsd.ime.usp.br/acmus&#x0A;&#x0A; AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,&#x0A; Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,&#x0A; Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,&#x0A; Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,&#x0A; Thiago C. de Souza.&#x0A;&#x0A; eXtreme Programming Team:&#x0A;&#x0A; 2008&#x0A; Cauê H.P.Guerra&#x0A; Leandro de Moraes&#x0A; Lucas Cavalcanti&#x0A; Nelson Lago&#x0A; Mario H.C. Torres&#x0A; Thiago Coraini."/>
          <property
                name="windowImages"
                value="icons/appIcon16x16.gif,icons/appIcon32x32.gif"/>
