@@ -38,13 +38,13 @@ public class ArrayUtils {
 	public final static double[] sumLines(double a[][]) {
 		double[] res = new double[a.length];
 		for (int i = 0; i < a.length; i++) {
-			res[i] = ArrayUtils.sum(a[i]);
+			res[i] = sum(a[i]);
 		}
 		return res;
 	}
 
 	public final static double sum(double a[]) {
-		return ArrayUtils.sum(a, 0, a.length);
+		return sum(a, 0, a.length);
 	}
 
 	public final static double sum(double a[], int begin, int end) {
@@ -90,32 +90,8 @@ public class ArrayUtils {
 		return res;
 	}
 
-	public final static double[] cumsum(double a[]) {
-		return cumsum(a, new double[a.length]);
-	}
-
 	public final static double[] cumsumLLL(double a[]) {
 		return cumsum(a, a);
-	}
-
-	public final static double mean(double a[]) {
-		return ArrayUtils.mean(a, 0, a.length);
-	}
-
-	public final static double mean(double a[], int begin, int end) {
-		double res = 0;
-		for (int i = begin; i < end; i++) {
-			res += a[i];
-		}
-		return res / (end - begin);
-	}
-
-	public final static double[] pow(double[] a, double b) {
-		double[] res = new double[a.length];
-		for (int i = 0; i < a.length; i++) {
-			res[i] = Math.pow(a[i], b);
-		}
-		return res;
 	}
 
 	// changes a
@@ -189,6 +165,21 @@ public class ArrayUtils {
 		for (int i = 0 + 1; i < a.length; i++) {
 			if (Math.abs(a[i]) > max) {
 				max = Math.abs(a[i]);
+			}
+		}
+		return max;
+	}
+
+	public static int maxAbs(int[] data) {
+		int max = 0;
+		for (int i = 0; i < data.length; ++i) {
+			if (Math.abs(data[i]) > max) {
+				max = Math.abs(data[i]);
+			} else if (data[i] == Integer.MIN_VALUE) {
+				// Check javadoc for Math.abs & Integer.MIN_VALUE before messing
+				// with this
+				// This is not very good, but is probably the best we can do
+				max = Integer.MAX_VALUE;
 			}
 		}
 		return max;
@@ -306,29 +297,19 @@ public class ArrayUtils {
 		return scaleToUnit(data, maxAbs(data));
 	}
 
-	public static final double average(double[] x, int begin, int end) {
-		double sum = 0;
+	
+	public final static double mean(double a[]) {
+		return mean(a, 0, a.length);
+	}
+
+	public final static double mean(double a[], int begin, int end) {
+		double res = 0;
 		for (int i = begin; i < end; i++) {
-			sum += x[i];
+			res += a[i];
 		}
-		return sum / (end - begin);
+		return res / (end - begin);
 	}
-
-	public static int maxAbs(int[] data) {
-		int max = 0;
-		for (int i = 0; i < data.length; ++i) {
-			if (Math.abs(data[i]) > max) {
-				max = Math.abs(data[i]);
-			} else if (data[i] == Integer.MIN_VALUE) {
-				// Check javadoc for Math.abs & Integer.MIN_VALUE before messing
-				// with this
-				// This is not very good, but is probably the best we can do
-				max = Integer.MAX_VALUE;
-			}
-		}
-		return max;
-	}
-
+	
 	public static double[] average(List<double[]> arrays) {
 		int maxLen = 0;
 		for (double[] v : arrays) {

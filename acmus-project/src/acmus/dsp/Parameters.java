@@ -79,7 +79,7 @@ public class Parameters {
 		for (int j = 0; j < length; j++) {
 			_temp[j] = signal[offset + j] * signal[offset + j];
 		}
-		return ArrayUtils.average(_temp, 0, length);
+		return ArrayUtils.mean(_temp, 0, length);
 	}
 
 	private double[] chuPower(double[] signal) {
@@ -1472,7 +1472,7 @@ public class Parameters {
 			// // end
 			// //
 			// // aux = banda(comeco:fim,n).^2;
-			double aux[] = ArrayUtils.pow(ArrayUtils.subArray(banda[n], comeco, fim), 2);
+			double aux[] = ArrayUtils.sqrLLL(ArrayUtils.subArray(banda[n], comeco, fim));
 			// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
 			// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
 			double en[] = energeticos(aux, fs, directSound, firstReflection);
@@ -1490,8 +1490,8 @@ public class Parameters {
 				// double auxLf[] = Util.powLLL(Util.subArray(bandaLf[n],
 				// comecoLf, fimLf + 1), 2);
 				System.out.println(comecoLf + " " + fimLf);
-				double auxLf[] = ArrayUtils.pow(ArrayUtils.subArray(bandaLf[n],
-						comecoLf, fimLf), 2);
+				double auxLf[] = ArrayUtils.sqrLLL(ArrayUtils.subArray(bandaLf[n],
+						comecoLf, fimLf));
 
 				params.get("LF").val[n] = lf(aux, auxLf, fs);
 			}
