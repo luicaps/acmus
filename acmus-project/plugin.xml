@@ -62,7 +62,7 @@
    <extension point="org.eclipse.ui.perspectives">
      <perspective
        id="acmus.perspective"
-       name="Acmus Perspective"
+       name="Acmus"
        class="acmus.AcmusPerspective">
      </perspective>
    </extension>
