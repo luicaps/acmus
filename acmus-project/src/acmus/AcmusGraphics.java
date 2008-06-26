@@ -96,8 +96,8 @@ public class AcmusGraphics {
 	public static final Image IMG_ZOOM;
 	public static final Image IMG_SELECTION;
 
-	public static final Image IMG_BACKWARD;
-	public static final Image IMG_FORWARD;
+	public static final Image IMG_UP;
+	public static final Image IMG_DOWN;
 
 	public static final Image IMG_TEST;
 
@@ -201,8 +201,8 @@ public class AcmusGraphics {
 		IMG_ZOOM = createImageDescriptor(prefix + "zoom.gif").createImage(); //$NON-NLS-1$
 		IMG_SELECTION = createImageDescriptor(prefix + "selection.gif").createImage(); //$NON-NLS-1$
 
-		IMG_BACKWARD = createImageDescriptor(prefix + "backward_nav.gif").createImage(); //$NON-NLS-1$
-		IMG_FORWARD = createImageDescriptor(prefix + "forward_nav.gif").createImage(); //$NON-NLS-1$
+		IMG_UP = createImageDescriptor(prefix + "up.gif").createImage(); //$NON-NLS-1$
+		IMG_DOWN = createImageDescriptor(prefix + "down.gif").createImage(); //$NON-NLS-1$
 
 		prefix = iconPath; //$NON-NLS-1$
 		IMG_FORMBANNER = createImageDescriptor(prefix + "form_banner.gif").createImage(); //$NON-NLS-1$

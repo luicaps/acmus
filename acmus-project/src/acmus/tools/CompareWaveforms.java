@@ -62,6 +62,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
@@ -83,6 +84,9 @@ public class CompareWaveforms extends Composite {
 	WaveformDisplay _waveform;
 
 	List<Image> _disposeList = new ArrayList<Image>();
+	private ToolBar _controlBar;
+	private ToolItem _tiUp;
+	private ToolItem _tiDown;
 
 	public CompareWaveforms(Shell shell, Composite parent, int style) {
 		super(parent, style);
@@ -162,6 +166,10 @@ public class CompareWaveforms extends Composite {
 		ToolBar zoom = ap.createZoomBar(c, SWT.NONE);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		zoom.setLayoutData(gridData);
+		
+		ToolBar arrows = createArrowsBar(c, SWT.NONE);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		arrows.setLayoutData(gridData);
 
 		// _waveform = new WaveformDisplay(this, SWT.NONE);
 		_waveform = ap.createWaveformDisplay(c, SWT.NONE);
@@ -170,6 +178,37 @@ public class CompareWaveforms extends Composite {
 		gridData.heightHint = 300;
 		_waveform.setLayoutData(gridData);
 	}
+	
+	public ToolBar createArrowsBar(Composite parent, int style) {
+        _controlBar = new ToolBar(parent, style);
+
+        _tiUp = new ToolItem(_controlBar, SWT.PUSH);
+        _tiUp.setEnabled(true);
+        _tiUp.setImage(AcmusGraphics.IMG_UP);
+        _tiUp.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                //if (_status == PLAYING)
+                    //pause();
+                //else
+                    //play();
+            }
+        });
+        _tiUp.setToolTipText("Play/Pause/Resume");
+
+        _tiDown = new ToolItem(_controlBar, SWT.PUSH);
+        _tiDown.setImage(AcmusGraphics.IMG_DOWN);
+        _tiDown.setEnabled(true);
+        _tiDown.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                //stop();
+            }
+        });
+        _tiDown.setToolTipText("Stop");
+
+        return _controlBar;
+    }
 
 	private void validate() {
 		if (_input.getText().trim().equals("")) {

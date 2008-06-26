@@ -599,29 +599,6 @@ public class AudioPlayer {
 				_waveform.yFit2();
 			}
 		});
-		_tiYFit.setToolTipText("Vertical Fit");
-
-		new ToolItem(_zoomBar, SWT.SEPARATOR);
-
-		_tiBackward = new ToolItem(_zoomBar, SWT.PUSH);
-		_tiBackward.setEnabled(true);
-		_tiBackward.setImage(AcmusGraphics.IMG_BACKWARD);
-		_tiBackward.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				_waveform.yZoomOut();
-			}
-		});
-		_tiBackward.setToolTipText("Go back");
-
-		_tiForward = new ToolItem(_zoomBar, SWT.PUSH);
-		_tiForward.setEnabled(true);
-		_tiForward.setImage(AcmusGraphics.IMG_FORWARD);
-		_tiForward.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				_waveform.yZoomOut();
-			}
-		});
-		_tiForward.setToolTipText("Go forward");
 
 		return _zoomBar;
 	}
