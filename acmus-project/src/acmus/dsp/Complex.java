@@ -56,7 +56,6 @@ public final class Complex {
 	}
 
 	public final void div(double re, double im) {
-		// mult(re/(re*re + im*im), -im/(re*re + im*im));
 		double x = (_r * re) + (_i * im);
 		double y = (-_r * im) + (_i * re);
 		double s = re * re + im * im;

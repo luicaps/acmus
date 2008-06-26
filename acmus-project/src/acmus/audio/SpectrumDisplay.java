@@ -63,14 +63,13 @@ import acmus.util.WaveUtils;
 /**
  * @author lku
  */
+//TODO Refactor!!!
 public class SpectrumDisplay extends Composite {
 	int _data[];
 	double _freq[] = new double[0];
-	// double _points[][] = new double[0][0];
 
 	Composite _parent;
 	float _sampleRate;
-	// private int _sampleSize;
 
 	ScrollBar _hbar;
 	ScrollBar _vbar;
@@ -78,8 +77,6 @@ public class SpectrumDisplay extends Composite {
 	int _viewWidth = -1, _viewHeight = -1;
 
 	int _xMark = 0;
-	// int _yMark = 0;
-	// double _zMark = 0;
 
 	int _windowFunc = 3;
 
@@ -128,8 +125,6 @@ public class SpectrumDisplay extends Composite {
 			GridLayout gl = new GridLayout(1, false);
 			gl.marginHeight = 0;
 			gl.marginWidth = 0;
-			// gl.horizontalSpacing = 0;
-			// gl.verticalSpacing = 0;
 			this.setLayout(gl);
 
 			GridData gridData;
@@ -162,13 +157,10 @@ public class SpectrumDisplay extends Composite {
 				for (int j = 0; j < points[i].length; j++) {
 					gc
 							.setForeground(AcmusGraphics.SPECTRUM_COLOR_SCALE[(int) ((AcmusGraphics.SPECTRUM_COLOR_SCALE.length - 1) * points[i][j])]);
-					// gc.drawLine(i, points[i].length - j - 1, i,
-					// points[i].length - j);
 					gc.drawPoint(i, points[i].length - j - 1);
 				}
 			}
 			_3d.setImage(img);
-			// _2d.setPoints(points);
 			gc.dispose();
 		}
 
@@ -250,9 +242,6 @@ public class SpectrumDisplay extends Composite {
 				}
 				gc.drawLine(x, 0, x, height);
 				gc.drawLine(0, y, width, y);
-				// gc.setForeground(AcmusGraphics.SPECTRUM_COLOR_SCALE[AcmusGraphics.SPECTRUM_COLOR_SCALE.length
-				// -1 - (int)(_zMark *
-				// (AcmusGraphics.SPECTRUM_COLOR_SCALE.length-1))]);
 				gc.drawRectangle(xm, ym, pointWidth, pointHeight);
 				gc
 						.setForeground(AcmusGraphics.SPECTRUM_COLOR_SCALE[(int) (_zMark * (AcmusGraphics.SPECTRUM_COLOR_SCALE.length - 1))]);
@@ -370,7 +359,6 @@ public class SpectrumDisplay extends Composite {
 					else
 						return;
 					setZoomWindow(winX, winY, winX2 - winX, winY2 - winY);
-					// System.out.println(winX + " " + _hbar.getSelection());
 					eraseWindowSelection();
 					redraw();
 				}
@@ -465,10 +453,6 @@ public class SpectrumDisplay extends Composite {
 				addPaintListener(this);
 			}
 
-			// public void setPoints(double[][] p) {
-			// _spectrumPoints = p;
-			// }
-
 			public void paintControl(PaintEvent e) {
 				GC gc = e.gc;
 				int width = getBounds().width;
@@ -509,16 +493,11 @@ public class SpectrumDisplay extends Composite {
 						width, height);
 				gc.setBackground(AcmusGraphics.DARK_PURPLE);
 				gc.fillPath(path);
-				// gc.setForeground(AcmusGraphics.YELLOW);
-				// gc.drawPath(path);
 
 				gc.setAlpha(120);
 				gc.setForeground(AcmusGraphics.LIGHT_BLUE);
 				gc.drawLine(0, (int) Math.round(_yMark * yScale), width,
 						(int) Math.round(_yMark * yScale));
-				// gc.setForeground(AcmusGraphics.SPECTRUM_COLOR_SCALE[AcmusGraphics.SPECTRUM_COLOR_SCALE.length
-				// -1 - (int)(_zMark *
-				// (AcmusGraphics.SPECTRUM_COLOR_SCALE.length-1))]);
 				gc
 						.setForeground(AcmusGraphics.SPECTRUM_COLOR_SCALE[(int) (_zMark * (AcmusGraphics.SPECTRUM_COLOR_SCALE.length - 1))]);
 				gc.drawLine((int) Math.round(_zMark * xScale), 0, (int) Math
@@ -554,7 +533,6 @@ public class SpectrumDisplay extends Composite {
 
 			public void widgetSelected(SelectionEvent se) {
 				_left = _hbar.getSelection();
-				// redrawSpecs2D();
 				redrawSpecs3D();
 			}
 		});
@@ -581,10 +559,6 @@ public class SpectrumDisplay extends Composite {
 		gl.verticalSpacing = 1;
 		this.setLayout(gl);
 
-		// _timeBar = new TimeBar(this);
-		// GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		// gridData.heightHint = _xBarHeight;
-		// _timeBar.setLayoutData(gridData);
 
 		_specs = new ArrayList<Spectrum>();
 	}
@@ -639,18 +613,14 @@ public class SpectrumDisplay extends Composite {
 		_channels = channels;
 		_bitsPerSample = sampleSizeInBits;
 		_sampleRate = sampleRate;
-		// _sampleSize = (1 << (_bitsPerSample-1))-1;
 		_data = data;
 		_stepSize = stepSize;
 
 		int[][] dd = WaveUtils.splitAudioStream(_channels, data);
 
-		// int stepSize = (int) (Math.pow(2, Math.ceil(acmus.dsp.Util
-		// .log2(dd[0].length/300))));
 		int steps = dd[0].length / _stepSize;
 
 		_bucketHeight = 256;
-		// _bucketHeight = 512;
 		_buckets = steps * 2;
 
 		if (_viewWidth < 0) {
@@ -665,37 +635,11 @@ public class SpectrumDisplay extends Composite {
 			_left = _buckets - _viewWidth;
 		}
 
-		// _vbar.setMaximum(_bucketHeight);
-		// _hbar.setMaximum(_buckets);
 		_hbar.setMaximum(10 + _buckets - _viewWidth);
 		_hbar.setSelection(_left);
 
 		for (int ch = 0; ch < _channels; ch++) {
-			// int stepSize = 475;
-			// System.out.println("Ss " + stepSize + " " + dd[0].length /
-			// _mainLength);
-			// System.out.println("Steps " + steps + " " + _mainLength);
 			double[][] _spectrumPoints = new double[_buckets][];
-			//
-			// double[] xre = new double[stepSize];
-			// double[] xim = new double[stepSize];
-			//
-			// int i = 0, k = 0;
-			// while (k < steps) {
-			// int j = 0;
-			// for (; j < stepSize && i < _data.length; j++) {
-			// xre[j] = _data[i++];
-			// xim[j] = 0;
-			// }
-			// for (; j < stepSize; j++) {
-			// xre[j] = 0;
-			// xim[j] = 0;
-			// }
-			// FFT1d fft = new FFT1d(stepSize);
-			// fft.fft(xre, xim);
-			// //Dsp.doFFT(xre, xre,xim);
-			// _points[k++] = Dsp.fftMag(xre, xim);
-			// }
 			int start = 0;
 			for (int i = 0; i < _spectrumPoints.length; i++) {
 				_spectrumPoints[i] = new double[_bucketHeight];
@@ -704,21 +648,13 @@ public class SpectrumDisplay extends Composite {
 				for (int j = 0; j < _stepSize && start + j < dd[ch].length; j++) {
 					d[j] = (double) dd[ch][(start + j)] / max;
 				}
-				// for (int j = 0; j < d.length; j++) {
-				// System.out.println(" data "+ j + "= "+ d[j]);
-				// }
 
 				computeSpectrum(d, _stepSize, _bucketHeight, 20000, _stepSize,
 						44100.0, _spectrumPoints[i]);
 				start += _stepSize / 2;
 
-				// for (int j = 0; j < height; j++) {
-				// System.out.println(" gs " + j + "= "+ _points[i][j]);
-				// }
 			}
 
-			// _left = 0;
-			// _totalHeight = 200;//getBounds().height;
 
 			_specs.get(ch).setData(_spectrumPoints);
 		}
@@ -755,8 +691,6 @@ public class SpectrumDisplay extends Composite {
 		if (width < windowSize)
 			return false;
 
-		// if (!data || !grayscaleOut)
-		// return true;
 
 		double[] processed = new double[windowSize];
 
@@ -767,7 +701,6 @@ public class SpectrumDisplay extends Composite {
 
 		double[] in = new double[windowSize];
 		double[] out = new double[windowSize];
-		// double[] out2 = new double[windowSize];
 
 		int start = 0;
 		int windows = 0;
@@ -777,14 +710,9 @@ public class SpectrumDisplay extends Composite {
 
 			Filter.WindowFunc(_windowFunc, windowSize, in);
 
-			// Dsp.PowerSpectrum(windowSize, in, out);
 			FFT1d fft = new FFT1d(windowSize);
 			fft.fft(in, out);
-			// Dsp.doFFT(xre, xre,xim);
 			out = Parameters.fftMag(in, out);
-
-			// for (i = 0; i < windowSize/2; i++)
-			// System.out.println("out " + i +" "+ out[i]);
 
 			for (i = 0; i < half; i++) {
 				processed[i] += out[i];
@@ -801,7 +729,6 @@ public class SpectrumDisplay extends Composite {
 		// Convert to decibels
 		for (i = 0; i < maxSamples; i++) {
 			processed[i] = 10 * MathUtils.log10(processed[i] / windowSize / windows);
-			// printf(" %d= %f\n",i,processed[i]);
 		}
 
 		// Finally, put it into bins in grayscaleOut[], normalized to a 0.0-1.0

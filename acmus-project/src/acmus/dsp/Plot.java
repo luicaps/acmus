@@ -82,7 +82,6 @@ public class Plot extends Canvas implements PaintListener, ControlListener {
 			public void widgetDisposed(DisposeEvent e) {
 				_points.clear();
 				_points = null;
-				// System.out.println("Plot disposed.");
 			}
 
 		});

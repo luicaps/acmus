@@ -72,7 +72,6 @@ public class WaveformDisplay extends Composite {
 
 	Composite _parent;
 
-	// int[] _data = new int[0];
 	List<SampleArray> _sampleArrays;
 
 	int _channels;
@@ -160,7 +159,6 @@ public class WaveformDisplay extends Composite {
 		_sampleArrays = new ArrayList<SampleArray>();
 
 		setBackground(AcmusGraphics.WHITE);
-		// addControlListener(this);
 
 		GridLayout gl = new GridLayout();
 		gl.marginHeight = 0;
@@ -169,7 +167,6 @@ public class WaveformDisplay extends Composite {
 		gl.verticalSpacing = 1;
 		this.setLayout(gl);
 
-		// _timeBar = new HorizontalBar(this,"s", _yBarWidth);
 		_timeBar = new TimeBar(this);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = _xBarHeight;
@@ -186,7 +183,6 @@ public class WaveformDisplay extends Composite {
 		_sampleT = _powerSampleT;
 		setYMax((int) Math.ceil(_sampleT
 				.transf(WaveUtils.getLimit(_bitsPerSample))));
-		// setYMax(((int)Math.ceil(_sampleT.unitMaxValue())));
 		updateYStart();
 		for (Waveform w : _wf)
 			w.redraw();
@@ -236,8 +232,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void updateYStart() {
-		// _yStart = 1 - (2 * _vbar.getSelection() / (_wf.get(0)
-		// .drawingAreaHeight() * _yZoom));
 		_yStart = _sampleT.unitMaxValue()
 				- (_sampleT.unitValueRange() * _vbar.getSelection() / (_drawingAreaHeight * _yZoom));
 	}
@@ -247,8 +241,6 @@ public class WaveformDisplay extends Composite {
 		_xMark = (int) (sample / _samplesPerDot) - _xvStart;
 		for (Waveform w : _wf)
 			w.redraw();
-		// redraw(_xMark, 0, _xMark - 20, _parent.getBounds().height, false);
-		// System.out.println(time + " " + _xMark);
 	}
 
 	public void setXMarkInSamples(long sample) {
@@ -296,10 +288,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void setSelectionStart(int sample) {
-		// _selSampleStart = sample;
-		// if (_selSampleEnd < _selSampleStart) {
-		// _selSampleEnd = _numSamples;
-		// }
 		setSelection(sample, _selSampleEnd);
 	}
 
@@ -309,10 +297,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void setSelectionEnd(int sample) {
-		// _selSampleEnd = sample;
-		// if (_selSampleEnd < _selSampleStart) {
-		// _selSampleStart = 0;
-		// }
 		setSelection(_selSampleStart, sample);
 	}
 
@@ -338,7 +322,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void setXPos(int pos) {
-		// System.out.println("setXPos " + pos);
 		_xvStart = pos;
 		_hbar.setSelection(pos);
 	}
@@ -466,7 +449,6 @@ public class WaveformDisplay extends Composite {
 				min = v;
 			}
 		}
-		// System.out.println(max - min);
 		if (Double.isInfinite(max - min)) {
 			yFit();
 		} else {
@@ -542,24 +524,11 @@ public class WaveformDisplay extends Composite {
 		_sampleRate = sampleRate;
 		_bitsPerSample = bitsPerSample;
 
-		// _channels = channels;
-		// _sampleRate = sampleRate;
-		// _data = data;
-		// _numSamples = _data.length / _channels;
-		// int yMax = 0;
-		// for (int i = 0; i < _data.length; i++) {
-		// if (Math.abs(_data[i]) > yMax)
-		// yMax = Math.abs(_data[i]);
-		// }
-
 		if (_positionDisplayListener != null) {
 			_wf.get(0).removeMouseMoveListener(_positionDisplayListener);
 			_wf.get(0).addMouseMoveListener(_positionDisplayListener);
 		}
 
-		// setYMax(yMax);
-		// System.out.println(yMax + " " + Math.pow(2, 15));
-		// setYMax((int) Math.pow(2, 15));
 		layout();
 		setZoom(1.0, 1.0);
 	}
@@ -607,29 +576,6 @@ public class WaveformDisplay extends Composite {
 		return s;
 	}
 
-	public static double[] findStepDur2(double len) {
-		System.out.println("find " + len);
-		double[] res = new double[2];
-		res[0] = 1;
-		res[1] = 0;
-		if (len / res[0] > 1) {
-			while (len / res[0] > 10) {
-				res[0] *= 10;
-				res[1]++;
-			}
-		} else {
-			while (len / res[0] < 1) {
-				res[0] /= 10;
-				res[1]--;
-			}
-		}
-		if (len / res[0] < 5) {
-			res[0] /= 5;
-		}
-		System.out.println(res[0] + " " + res[1]);
-		return res;
-	}
-
 	public void setPositionDisplayListener(MouseMoveListener l) {
 		_positionDisplayListener = l;
 	}
@@ -663,7 +609,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void cut(int startSample, int endSample) {
-		// int max = (1 << (_bitsPerSample-1)) - 1;
 		for (SampleArray s : _sampleArrays) {
 			int start = startSample * s.channels;
 			int end = endSample * s.channels;
@@ -673,13 +618,6 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void save(String filename) {
-		// int[][] streams = new int[_sampleArrays.size()][];
-		// for (int i = 0; i < streams.length; i++) {
-		// streams[i] = _sampleArrays.get(i).data;
-		// }
-		// Util.wavWrite(Util.joinAudioStream(streams), streams.length,
-		// _bitsPerSample, filename);
-
 		// save only the first samplearray
 		WaveUtils.wavWrite(_sampleArrays.get(0).data, _sampleArrays.get(0).channels,
 				_bitsPerSample, filename);
@@ -725,21 +663,11 @@ public class WaveformDisplay extends Composite {
 		public void zoomMode() {
 			_mouseL = _zoomMl;
 			_mMoveL = _zoomMl;
-			// didn't work:
-			// removeMouseListener(_selMl);
-			// removeMouseMoveListener(_selMl);
-			// addMouseListener(_zoomMl);
-			// addMouseMoveListener(_zoomMl);
 		}
 
 		public void selectMode() {
 			_mouseL = _selMl;
 			_mMoveL = _selMl;
-			// didn't work:
-			// removeMouseListener(_zoomMl);
-			// removeMouseMoveListener(_zoomMl);
-			// addMouseListener(_selMl);
-			// addMouseMoveListener(_selMl);
 		}
 
 		public final int drawingAreaWidth() {
@@ -756,10 +684,6 @@ public class WaveformDisplay extends Composite {
 
 			_samplesPerDot = ((double) _numSamples / (_width - _yBarWidth))
 					/ _xZoom;
-
-			// _timeBar.update(_width, _xvStart *_samplesPerDot/_sampleRate,
-			// _width *
-			// _samplesPerDot/_sampleRate);
 
 			GC gc;
 			Image buffer = null;
@@ -780,13 +704,6 @@ public class WaveformDisplay extends Composite {
 			int yShift = (int) Math.round((_sampleT.unitMaxValue() - _yStart)
 					/ _sampleT.unitValueRange() * _yZoom * _height);
 
-			// // Too slow!!!
-			// Transform tr = new
-			// Transform(AcmusPlugin.getDefault().getWorkbench()
-			// .getDisplay());
-			// tr.translate(_xOffset, 0);
-			// gc.setTransform(tr);
-
 			for (SampleArray sa : _sampleArrays) {
 
 				if (!sa.draw)
@@ -802,11 +719,6 @@ public class WaveformDisplay extends Composite {
 							* channels + _ch < data.length) {
 
 						int step = (int) Math.round(1 / _samplesPerDot);
-						// int xShift = (int) Math
-						// .round(((1 - (((double) _xvStart / step) -
-						// Math.floor(_xvStart
-						// / step))))
-						// * step);
 						gc.setForeground(color);
 
 						{
@@ -852,12 +764,6 @@ public class WaveformDisplay extends Composite {
 								gc.drawOval(x2 - _dotRadius + _yBarWidth, y2
 										- _dotRadius, _dotRadius * 2,
 										_dotRadius * 2);
-								// if (i * _channels + ch == _data.length - 1) {
-								// gc.setBackground(AcmusGraphics.RED);
-								// gc.fillOval(x2 - _dotRadius, y2 - _dotRadius,
-								// _dotRadius * 2,
-								// _dotRadius * 2);
-								// }
 							}
 						}
 					}
@@ -890,7 +796,6 @@ public class WaveformDisplay extends Composite {
 						// gc.setAlpha(100);
 						for (int i = (int) (_xvStart * _samplesPerDot), k = 0; i <= data.length
 								/ channels - _samplesPerDot
-								// && k < _width; i +=_samplesPerDot, ++k){
 								&& k < _width; i = (int) Math
 								.round((_xvStart * _samplesPerDot)
 										+ (_samplesPerDot * ++k))) {
@@ -920,10 +825,6 @@ public class WaveformDisplay extends Composite {
 									.transf(data[left]))
 									* scale)
 									- yShift;
-							// System.out.println(_yMax + " " + _yvStart + " " +
-							// _yScale
-							// + " " +y2
-							// + " " + _height + " " + _data[left]);
 							drawLine(gc, color, color, x1 + _yBarWidth, y1, x2
 									+ _yBarWidth, y2);
 							x1 = x2;
@@ -938,7 +839,6 @@ public class WaveformDisplay extends Composite {
 							y1 = y2;
 
 						}
-						// gc.setAlpha(255);
 					}
 				}
 			}
@@ -1007,18 +907,10 @@ public class WaveformDisplay extends Composite {
 			double initialGapVal = ((((_yStart + _sampleT.unitMaxValue()) / stepVal) - Math
 					.floor((_yStart + _sampleT.unitMaxValue()) / stepVal)))
 					* stepVal;
-			// double initialGapVal = ((((_yStart + 1) / 2
-			// * _sampleT.unitValueRange() / stepVal) - Math
-			// .floor(((_yStart + 1) / 2 * _sampleT.unitValueRange() /
-			// stepVal))))
-			// * stepVal;
 			int initialGapLen = (int) Math.round(initialGapVal
 					* (drawingAreaHeight() * _yZoom)
 					/ _sampleT.unitValueRange());
 
-			// System.out.println("sv " + stepVal + " s " + steps + " sl " +
-			// stepLen +
-			// " igv " + initialGapVal + " _ys " + _yStart);
 			for (int i = 0; i <= steps; i++) {
 				int y = initialGapLen + (int) Math.round(i * stepLen);
 				gc.setForeground(AcmusGraphics.WHITE);
@@ -1042,37 +934,7 @@ public class WaveformDisplay extends Composite {
 		private final void drawLine(GC gc, Color out, Color in, int x1, int y1,
 				int x2, int y2) {
 			gc.setForeground(out);
-			// gc.setAlpha(200);
 			gc.drawLine(x1, y1, x2, y2);
-			// gc.setAlpha(255);
-
-			// gc.setForeground(out);
-			// gc.drawLine(x1, y1, x2, y2);
-			//
-			// int xx1, xx2, yy1, yy2;
-			//
-			// int xDif = Math.abs(x1 - x2);
-			// int yDif = Math.abs(y1 - y2);
-			// double scale = 0.75;
-			//
-			// if (x1 > x2) {
-			// xx1 = Math.round((int) (x1 - xDif * scale));
-			// xx2 = Math.round((int) (x2 + xDif * scale));
-			// } else {
-			// xx1 = Math.round((int) (x1 + xDif * scale));
-			// xx2 = Math.round((int) (x2 - xDif * scale));
-			// }
-			//
-			// if (y1 > y2) {
-			// yy1 = Math.round((int) (y1 - yDif * scale));
-			// yy2 = Math.round((int) (y2 + yDif * scale));
-			// } else {
-			// yy1 = Math.round((int) (y1 + yDif * scale));
-			// yy2 = Math.round((int) (y2 - yDif * scale));
-			// }
-			//
-			// gc.setForeground(in);
-			// gc.drawLine(xx1, yy1, xx2, yy2);
 		}
 
 		public void controlMoved(ControlEvent e) {
@@ -1138,7 +1000,6 @@ public class WaveformDisplay extends Composite {
 				else
 					return;
 				setZoomWindow(winX, winY, winX2 - winX, winY2 - winY);
-				// System.out.println(winX + " " + _hbar.getSelection());
 				eraseWindowSelection();
 				redraw();
 			}
@@ -1278,13 +1139,11 @@ public class WaveformDisplay extends Composite {
 					* stepLen);
 
 			if (steps > 0) {
-				// gc.setAlpha(100);
 				gc.setForeground(AcmusGraphics.BLACK);
 				gc.setFont(AcmusGraphics.BOLD);
 				String yLabel = "time (" + (millis ? "ms" : "s") + ")";
 				gc.drawString(yLabel, width / 2
 						- (gc.stringExtent(yLabel).x / 2), 2);
-				// gc.setAlpha(255);
 
 				gc.setFont(AcmusGraphics.DEFAULT_FONT);
 
@@ -1376,81 +1235,6 @@ public class WaveformDisplay extends Composite {
 
 		public String label() {
 			return "power (db)";
-		}
-	}
-}
-
-/* ========================================================================= */
-
-class HorizontalBar extends Canvas implements PaintListener {
-	private int _xStart;
-	private int _xEnd;
-	private double _valStart;
-	private double _valEnd;
-	private String _unit;
-	private double _valMin = 0;
-
-	private double _valPerDot;
-
-	DecimalFormat format = new DecimalFormat("#.##");
-
-	public HorizontalBar(Composite parent, String unit, int start) {
-		super(parent, SWT.NONE);
-		setBackground(AcmusGraphics.GRAY);
-		addPaintListener(this);
-		_unit = unit;
-		_xStart = start;
-	}
-
-	public final void update(int xStart, int xEnd, double valStart,
-			double valEnd) {
-		System.out.println("update " + xStart + " " + xEnd + " " + valStart
-				+ " " + valEnd);
-		_xStart = xStart;
-		_xEnd = xEnd;
-		_valStart = valStart;
-		_valEnd = valEnd;
-		_valPerDot = (_valEnd - _valStart) / (_xEnd - _xStart);
-	}
-
-	public final void update(int xEnd, double valStart, double valEnd) {
-		update(_xStart, xEnd, valStart, valEnd);
-	}
-
-	public void paintControl(PaintEvent e) {
-		GC gc = e.gc;
-
-		int width = getBounds().width;
-		int height = getBounds().height;
-
-		double valLength = _valEnd - _valStart;
-		double[] step = WaveformDisplay.findStepDur2(valLength);
-		double xStepLen = step[0] / _valPerDot;
-		System.out.println("stepLen " + xStepLen);
-
-		gc.setForeground(AcmusGraphics.BLACK);
-		gc.setFont(AcmusGraphics.BOLD);
-		String yLabel = "time (" + _unit + " " + step[1] + ")";
-		gc.drawString(yLabel, width / 2 - (gc.stringExtent(yLabel).x / 2), 2);
-
-		int x = _xStart;
-		while (x > 0) {
-			x -= xStepLen;
-		}
-
-		while (x < width) {
-			gc.setForeground(AcmusGraphics.WHITE);
-			gc.drawLine(x, height, x, height - 5);
-			gc.setForeground(AcmusGraphics.BLACK);
-			double val = _valStart + ((x - _xStart) * _valPerDot);
-			if (val > _valMin) {
-				val *= Math.pow(10, step[1]);
-				String l = format.format(val);
-				Point strSize = gc.stringExtent(l);
-				gc.drawString(l, x - strSize.x / 2, height - 6 - strSize.y,
-						true);
-			}
-			x += xStepLen;
 		}
 	}
 }

@@ -64,7 +64,7 @@ package acmus.dsp;
 // each row/column of a matrix has the same length.
 //
 
-public class FFT1d extends TempVars {
+public class FFT1d {
 	// Maximum numbers of factors allowed.
 	// private static final int MaxFactorsNumber = 30;
 	private static final int MaxFactorsNumber = 37;
@@ -90,8 +90,6 @@ public class FFT1d extends TempVars {
 
 	// OnetoSqrt2 = 1/sqrt(2), used in fft8().
 	private static final double OnetoSqrt2 = 7.0710678118655E-01f;
-
-	// private static int lastRadix = 0;
 
 	int N; // length of N point FFT.
 	int NumofFactors; // Number of factors of N.
@@ -201,10 +199,6 @@ public class FFT1d extends TempVars {
 			}
 		}
 		NumofFactors = index;
-		// if(temFactors[NumofFactors-1] > 10)
-		// maxFactor = n;
-		// else
-		// maxFactor = 10;
 
 		// Inverse temFactors and store factors into factors[].
 		factors = new int[NumofFactors];
@@ -269,7 +263,6 @@ public class FFT1d extends TempVars {
 		int dataOffset = 0, groupOffset = 0, address = 0;
 
 		for (int dataNo = 0; dataNo < sofarRadix; dataNo++) {
-			// System.out.println("datano="+dataNo);
 			if (sofarRadix > 1) {
 				twiddleRe[0] = 1.0f;
 				twiddleIm[0] = 0.0f;
@@ -287,7 +280,6 @@ public class FFT1d extends TempVars {
 				twRe = tem;
 			}
 			for (int groupNo = 0; groupNo < remainRadix; groupNo++) {
-				// System.out.println("groupNo="+groupNo);
 				if ((sofarRadix > 1) && (dataNo > 0)) {
 					temRe[0] = outputRe[address];
 					temIm[0] = outputIm[address];
@@ -304,13 +296,10 @@ public class FFT1d extends TempVars {
 					} while (blockIndex < radix);
 				} else
 					for (int i = 0; i < radix; i++) {
-						// System.out.println("temRe.length="+temRe.length);
-						// System.out.println("i = "+i);
 						temRe[i] = outputRe[address];
 						temIm[i] = outputIm[address];
 						address += sofarRadix;
 					}
-				// System.out.println("radix="+radix);
 				switch (radix) {
 
 				case 2:

@@ -1,5 +1,7 @@
 package acmus.utils;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -7,8 +9,35 @@ import acmus.util.WaveUtils;
 
 public class WaveUtilsTest {
 
+	@Test
+	public void testReadWriteWaves() throws Exception {
+		int[] wave = new int[] {0, 1, -1, 10000};
+		WaveUtils.wavWrite(wave, 1, 16, "temp.wav");
+		Assert.assertArrayEquals(wave, WaveUtils.wavRead("temp.wav"));
+		
+		double[] waved = new double[] {0, 1, -1, 10000};
+		
+		Assert.assertTrue(new File("temp.wav").delete());
+		
+		WaveUtils.wavWrite(waved, "temp.wav");
+		Assert.assertArrayEquals(wave, WaveUtils.wavRead("temp.wav"));
+		
+		Assert.assertTrue(new File("temp.wav").delete());
+	}
 	
-	
+	@Test
+	public void testSplitJoinWaves() throws Exception {
+		int[] wave = new int[] {0, 1, -1, 10000};
+		
+		int[][] split = WaveUtils.splitAudioStream(1, wave);
+		Assert.assertArrayEquals(wave, WaveUtils.joinAudioStream(split));
+		
+		int[] wave2 = new int[] {0, 1, -1};
+		WaveUtils.wavWrite(wave2, 1, 32, "temp.wav");
+		double[][] splitd = WaveUtils.wavReadSplitDouble("temp.wav");
+		MathUtilsTest.assertArrayEquals(new double[] {0, 1, -1}, WaveUtils.joinAudioStream(splitd), 0.000001);
+		Assert.assertTrue(new File("temp.wav").delete());
+	}
 	@Test
 	public void testDownsample32to16() throws Exception {
 		int[] samples = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, 346, 1000000, -1000000, 2000000 };

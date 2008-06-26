@@ -46,25 +46,20 @@ public class FilterBank {
 		BufferedReader br = null;
 
 		URL u = null;
-		// String __p = "/home/lku/Workspace/acmus/data/filters";
 		try {
 			u = AcmusPlugin.getDefault().getBundle().getEntry(
 					"data/filters/1d8.txt");
 			br = new BufferedReader(new InputStreamReader(u.openStream()));
-			// br = new BufferedReader(new FileReader(__p + "/1d8.txt"));
 			read1d8(br);
 
 			u = AcmusPlugin.getDefault().getBundle().getEntry(
 					"data/filters/sweep-butter.txt");
 			br = new BufferedReader(new InputStreamReader(u.openStream()));
-			// br = new BufferedReader(new FileReader(__p +
-			// "/sweep-butter.txt"));
 			readSweepButter(br);
 
 			u = AcmusPlugin.getDefault().getBundle().getEntry(
 					"data/filters/comp.txt");
 			br = new BufferedReader(new InputStreamReader(u.openStream()));
-			// br = new BufferedReader(new FileReader(__p + "/comp.txt"));
 			readComp(br);
 		} catch (Exception e) {
 			e.printStackTrace();

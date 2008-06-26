@@ -37,8 +37,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import acmus.audio.AudioPlayer;
 import acmus.dsp.Ir;
+import acmus.util.WaveUtils;
 
 public class PopupMenuCalculateParametersActionDelegate implements
 		IObjectActionDelegate {
@@ -104,9 +104,9 @@ public class PopupMenuCalculateParametersActionDelegate implements
 		} else {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(irFile
 					.getContents());
-			int wav[] = AudioPlayer.readData(ais);
+			int wav[] = WaveUtils.readData(ais);
 			ir = new double[wav.length];
-			ir = AudioPlayer.scaleToUnitInPlace(ir, wav, ais.getFormat()
+			ir = WaveUtils.scaleToUnitInPlace(ir, wav, ais.getFormat()
 					.getSampleSizeInBits());
 		}
 

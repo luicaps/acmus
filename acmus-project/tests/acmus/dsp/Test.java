@@ -36,7 +36,12 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import acmus.audio.AudioPlayer;
+import acmus.dsp.FFT1d;
+import acmus.dsp.Filter;
+import acmus.dsp.IFFT1d;
+import acmus.dsp.Ir;
+import acmus.dsp.Parameters;
+import acmus.dsp.Signal;
 import acmus.util.Algorithms;
 import acmus.util.ArrayUtils;
 import acmus.util.PrintUtils;
@@ -590,10 +595,10 @@ public class Test {
 					AudioInputStream ais = AudioSystem
 							.getAudioInputStream(new File(
 									"/home/lku/Workspace/acmus/data/tone1.wav"));
-					int a[] = AudioPlayer.readData(ais);
+					int a[] = WaveUtils.readData(ais);
 					ais = AudioSystem.getAudioInputStream(new File(
 							"/home/lku/Workspace/acmus/data/ir3.wav"));
-					int b[] = AudioPlayer.readData(ais);
+					int b[] = WaveUtils.readData(ais);
 
 					System.out.println(a.length + " " + b.length);
 					x = ArrayUtils.scaleToUnit(a, WaveUtils.getLimit(16));

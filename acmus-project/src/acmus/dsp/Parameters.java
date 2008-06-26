@@ -83,14 +83,6 @@ public class Parameters {
 	}
 
 	private double[] chuPower(double[] signal) {
-		// // for n = 1:size(banda,2)
-		// // s(1,n) = ceil(1000*2^(n-5));
-		// // comeco = inicio(banda(:,n));
-		// // aux = banda(comeco:end,n).^2-RMS(n);
-		// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-		// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
-		// // end
-
 		double RMS = rms(signal);
 		int comeco = inicio(signal);
 		double power[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(signal, comeco,
@@ -106,25 +98,13 @@ public class Parameters {
 
 		IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor, 20);
 
-		// // banda = filtros(IR,fs);
 		double[][] banda = filtros(_ir, _fs, subMonitor);
 
 		double[][] bandaLf = null;
 		if (_ir2 != null)
 			bandaLf = filtros(_ir2, _fs, subMonitor);
 
-		// // ruido = banda(round(.9*length(banda)):end,:).^2;
-		// // RMS = sum(ruido)/length(ruido);
-
 		PrintStream outGraphs[] = channelFiles(graphFolder);
-
-		// // for n = 1:size(banda,2)
-		// // s(1,n) = ceil(1000*2^(n-5));
-		// // comeco = inicio(banda(:,n));
-		// // aux = banda(comeco:end,n).^2-RMS(n);
-		// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-		// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
-		// // end
 
 		Map<String, Parameter> params = new HashMap<String, Parameter>();
 		for (int i = 0; i < energ.length; i++) {
@@ -160,15 +140,6 @@ public class Parameters {
 			}
 			monitor.worked(10);
 		}
-
-		// // if nargout == 1
-		// // saida = s;
-		// // saida(1,9) = (['A']);
-		// // saida(1,10) = (['C']);
-		// // saida(1,11) = (['L']);
-		// // else
-		// // tabela(s,size(banda,2))
-		// // end
 
 		List<String> pOrder = new ArrayList<String>();
 		for (String pName : energ)
@@ -267,7 +238,6 @@ public class Parameters {
 		}
 
 		FFT1d fft = new FFT1d(Half);
-		// FFT(Half, 0, tmpReal, tmpImag, RealOut, ImagOut);
 		fft.fft(RealOut, ImagOut);
 
 		double wtemp = (double) (Math.sin(0.5 * theta));
@@ -318,10 +288,6 @@ public class Parameters {
 		int n = xre.length;
 		double[] mag = new double[n / 2];
 		// calculate Magnitude
-		// mag[0] = (double) (Math.sqrt(xre[0] * xre[0] + xim[0] * xim[0])) / n;
-		// for (int i = 1; i < n/2; i++)
-		// mag[i] = 2 * (double) (Math.sqrt(xre[i] * xre[i] + xim[i] * xim[i]))
-		// / n;
 		for (int i = 0; i < n / 2; i++)
 			mag[i] = (xre[i] * xre[i] + xim[i] * xim[i]);
 		return mag;
@@ -340,48 +306,6 @@ public class Parameters {
 		return k;
 	}
 
-	// ==========================================================================
-
-	// void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray
-	// *prhs[] )
-	//
-	// {
-	// double *vct;
-	// double *data;
-	// unsigned int i,m,n,t;
-	//    
-	//
-	// /* Check for proper number of arguments */
-	//
-	// if (nrhs != 1) {
-	// mexErrMsgTxt("One input arguments required.");
-	// } else if (nlhs != 1) {
-	// mexErrMsgTxt("One input arguments required.");
-	// }
-	//
-	// /* Check the dimensions of DATA */
-	// m = (int)mxGetM(DATA_IN);
-	// n = (int)mxGetN(DATA_IN);
-	// t = log2(m);
-	//      
-	// /* Create a matrix for the return argument */
-	// VCT_OUT = mxCreateDoubleMatrix(m, 1, mxREAL);
-	//
-	// /* Assign pointers to the various parameters */
-	// vct = mxGetPr(VCT_OUT);
-	// data = mxGetPr(DATA_IN);
-	//
-	// /* Do the actual computations in a subroutine */
-	//
-	// if (n != 1) mexErrMsgTxt("DATA must be a colummwise vector");
-	// else for(i=0;i<m;i++) vct[i] = data[i];
-	//
-	// /* Do the actual computations in a subroutine */
-	// FHT(vct,t);
-	// return;
-	// }
-	//
-
 	// * fht.c
 	// *
 	// * Calculates the Fast Hadamard Transform of a radix 2 sequence.
@@ -389,27 +313,8 @@ public class Parameters {
 	// *
 	// * Bruno Masiero, Feb 2004
 	public static final void fht(double[] data) {
-		// // void FHT(double *data, int pwr2)
-		// // {
-		// // long length, i, j, k, ie, ie_half, kp;
-		// // double temp;
-		// //
 		int pwr2 = (int) MathUtils.log2(data.length);
-		// // length = 1<<pwr2; /*tamanho da sequencia*/
 		int length = 1 << pwr2;
-		// // for (i = pwr2; i > 0; i--) {
-		// // ie = 1<<i;
-		// // ie_half = ie>>1;
-		// //
-		// // for (j = 0; j < ie_half; j++) {
-		// // for (k = j; k < length; k += ie) {
-		// // kp = k+ie_half;
-		// // temp = *(data+k)+*(data+kp);
-		// // *(data+kp) = *(data+k)-*(data+kp);
-		// // *(data+k) = temp;
-		// // }
-		// // }
-		// // }
 		for (int i = pwr2; i > 0; i--) {
 			int ie = 1 << i;
 			int ie_half = ie >> 1;
@@ -488,29 +393,10 @@ public class Parameters {
 		PrintStream outGraphs[] = channelFiles(graphFolder);
 
 		monitor.worked(10);
-		// print(banda[4]);
-		// System.out.println("banda: ");
-		// Matrix mmm = new Matrix(banda);
-		// mmm.print(8,4);
-		//
-		// System.out.println(offset);
-		// System.out.println("ruido: ");
-		// Matrix mmm2 = new Matrix(ruido);
-		// mmm2.print(8,4);
-
-		// // RMS = sum(ruido)/length(ruido);
 		double RMS[] = ArrayUtils.sumLines(ruido);
 		RMS = ArrayUtils.scale(1.0/(ruido[0].length), RMS);
 
 		monitor.worked(10);
-
-		// // for n = 1:size(banda,2)
-		// // s(1,n) = ceil(1000*2^(n-5));
-		// // comeco = inicio(banda(:,n));
-		// // aux = banda(comeco:end,n).^2-RMS(n);
-		// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-		// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
-		// // end
 
 		Map<String, Parameter> params = new HashMap<String, Parameter>();
 		for (int i = 0; i < energ.length; i++) {
@@ -525,16 +411,8 @@ public class Parameters {
 
 		for (int n = 0; n < banda.length; n++) {
 			int comeco = inicio(banda[n]);
-			// System.out.println("come?o: " + comeco);
-			// double aux[] = Util.sumLLL(Util.powLLL(Util.subArray(banda[n],
-			// comeco,
-			// banda[n].length),
-			// 2), -RMS[n]);
 			double aux[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(banda[n],
 					comeco, banda[n].length)), -RMS[n]);
-			// if (n==0)
-			// print(powLLL(subArray(banda[n], comeco, banda[n].length),2));
-			// print(aux);
 			double en[] = energeticos(aux, fs, directSound, firstReflection);
 			for (int i = 0; i < energ.length - 1; i++) {
 				params.get(energ[i]).val[n] = en[i];
@@ -547,7 +425,6 @@ public class Parameters {
 				System.out.println("b " + bandaLf[n][2000]);
 				double auxLf[] = ArrayUtils.sumLLL(ArrayUtils.sqrLLL(ArrayUtils.subArray(
 						bandaLf[n], comecoLf, bandaLf[n].length)), -RMSLf[n]);
-				// System.out.println("auxLf " + auxLf[2000]);
 				params.get("LF").val[n] = lf(aux, auxLf, fs);
 			}
 
@@ -559,15 +436,6 @@ public class Parameters {
 			}
 			monitor.worked(10);
 		}
-
-		// // if nargout == 1
-		// // saida = s;
-		// // saida(1,9) = (['A']);
-		// // saida(1,10) = (['C']);
-		// // saida(1,11) = (['L']);
-		// // else
-		// // tabela(s,size(banda,2))
-		// // end
 
 		List<String> pOrder = new ArrayList<String>();
 		for (String pName : energ)
@@ -596,23 +464,9 @@ public class Parameters {
 	// % A entrada e a resposta impulsiva do sinal.
 	//
 	public final static int inicioOld(double impulse[]) {
-		// function [ponto,rms] = inicio(impulse)
-		//
-		// maximo = find(abs(impulse) == max(abs(impulse)));
 		int maximo = ArrayUtils.absMaxIndex(impulse);
-		// energia = (impulse/impulse(maximo(1))).^2;
-		// double energia[] = Util.powLLL(Util.div(impulse, impulse[maximo]),
-		// 2);
 		double energia[] = ArrayUtils.sqrLLL(ArrayUtils.scale(1.0/(impulse[maximo]), impulse));
-		//
-		// aux = energia(1:maximo(1)-1);
-		// -double aux [] = new double[maximo];
-		// ponto = maximo(1);
 		int ponto = maximo;
-		// if any(aux > 0.01)
-		// ponto=min(find(aux > 0.01));
-		// aux = energia(1:ponto-1);
-		// end
 		for (int i = 0; i < maximo; i++) {
 			if (energia[i] > 0.01) {
 				ponto = i;
@@ -621,10 +475,6 @@ public class Parameters {
 		}
 
 		return ponto;
-		//
-		// if nargout == 2
-		// rms = 10*log10(sum(aux)/length(aux));
-		// end
 	}
 
 	// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -638,22 +488,10 @@ public class Parameters {
 	// //
 	// // function [ponto,rms] = inicio(impulse)
 	public final static int inicio(double impulse[]) {
-		// //
-		// // maximo = find(abs(impulse) == max(abs(impulse)));
 		int maximo = ArrayUtils.absMaxIndex(impulse);
 
-		// // energia = (impulse/impulse(maximo(1))).^2;
 		double energia[] = ArrayUtils.sqrLLL(ArrayUtils.scale(1.0/(impulse[maximo]), impulse));
-		// //
-		// // aux = energia(1:maximo(1)-1);
-		// // ponto = maximo(1);
 		int ponto = maximo;
-
-		// // if any(aux(round(end/2):end) > 0.001)
-		// // posicao = (find(aux > 0.001));
-		// // ponto = min(posicao(find(posicao > length(aux)/2)));
-		// // aux = energia(1:ponto-1);
-		// // end
 
 		for (int i = maximo / 2; i < maximo; i++) {
 			if (energia[i] > 0.001) {
@@ -663,11 +501,6 @@ public class Parameters {
 		}
 
 		return ponto;
-		// //
-		// // if nargout == 2
-		// // rms = 10*log10(sum(aux)/length(aux));
-		// // end
-
 	}
 
 	// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -681,40 +514,17 @@ public class Parameters {
 	// // function [C50,C80,D50,D80,CT]=energeticos(energia,Fs);
 	public final static double[] energeticos(double[] energia, double fs,
 			int somDireto, int primeiraReflexao) {
-		// // t50 = round(0.05*Fs);
-		// // t80 = round(0.08*Fs);
 		int t10 = (int) Math.round(0.01 * fs);
 		int t20 = (int) Math.round(0.02 * fs);
 		int t50 = (int) Math.round(0.05 * fs);
 		int t80 = (int) Math.round(0.08 * fs);
 		int t100 = (int) Math.round(0.1 * fs);
-		// // %Clarity = razao entre energia inicial do sinal, e energia
-		// remanescente.
-		// // C50 = 10*log10(sum(energia(1:t50))/sum(energia(t50:end)));
-		// // C80 = 10*log10(sum(energia(1:t80))/sum(energia(t80:end)));
-
-		// C50 = 10*
-		// log10(
-		// sum(energia(1:t50)) / sum(energia(t50:end))
-		// );
-		// System.out.println(energia.length + " " + t50);
 		double c50 = 10 * MathUtils.log10(ArrayUtils.sum(energia, 0, t50)
 				/ ArrayUtils.sum(energia, t50 - 1, energia.length));
 		double c80 = 10 * MathUtils.log10(ArrayUtils.sum(energia, 0, t80)
 				/ ArrayUtils.sum(energia, t80 - 1, energia.length));
-		// System.out.println(t50);
-		// System.out.println(Util.sum(energia, 0, t50) + " "
-		// + Util.sum(energia, t50 - 1, energia.length) + " " + c50);
-
-		// ST1 = (integral de 20ms a 100ms)/(integral de 0ms a 10ms).
 		double st1 = 10 * MathUtils.log10(ArrayUtils.sum(energia, t20, t100)
 				/ ArrayUtils.sum(energia, 0, t10));
-		// //
-		// // %Definition = razao entre energia inicial do sinal, e energia
-		// total do
-		// // sinal.
-		// // D50 = sum(energia(1:t50))/sum(energia)*100;
-		// // D80 = sum(energia(1:t80))/sum(energia)*100;
 
 		double d50 = (ArrayUtils.sum(energia, 0, t50) / ArrayUtils.sum(energia)) * 100;
 		double d80 = (ArrayUtils.sum(energia, 0, t80) / ArrayUtils.sum(energia)) * 100;
@@ -722,12 +532,6 @@ public class Parameters {
 		// drr (not in matlab prototype)
 		double drr = (ArrayUtils.sum(energia, somDireto, primeiraReflexao) / ArrayUtils
 				.sum(energia, somDireto, energia.length)) * 100;
-
-		// //
-		// // %Tempo Central, equivalente ao centro de gravidade da curva de
-		// energia.
-		// // x=(0:length(energia)-1)/Fs;
-		// // CT = sum(energia(:).*x(:))/sum(energia);
 
 		double x[] = new double[energia.length];
 		for (int i = 0; i < x.length; i++)
@@ -772,22 +576,9 @@ public class Parameters {
 	// graficos.
 	//
 	public static double[] reverberacao(PrintStream out, double ir[], double fs) {
-		// function [EDT,T20,T30,T40] = reverberacao(varargin)
-		//
-		// ir = varargin{1};
-		// Fs = varargin{2};
-		// E(length(ir):-1:1) = (cumsum(ir(length(ir):-1:1))/sum(ir));
-
 		double[] E = ArrayUtils.scale(1.0/(ArrayUtils.sum(ir)), ArrayUtils.cumsumLLL(ArrayUtils.reverse(ir)));
 		ArrayUtils.reverseLLL(E);
 
-		//
-		// if find(E < 0)
-		// E(min(find(E < 0)):end) = [];
-		// E=10*log10(E);
-		// else
-		// E=10*log10(E);
-		// end
 		int neg = -1;
 		for (int i = 0; i < E.length; i++) {
 			if (E[i] < 0) {
@@ -799,14 +590,6 @@ public class Parameters {
 			E = ArrayUtils.subArray(E, 0, neg);
 		}
 		E = ArrayUtils.multLLL(MathUtils.log10LLL(E), 10);
-		//
-		// if nargin == 3
-		// flag = varargin{3};
-		// else
-		// flag = 0;
-		// end
-		//
-		// x = (0:length(E)-1)/44100;
 
 		double x[] = new double[E.length];
 		for (int i = 0; i < x.length; i++) {
@@ -818,10 +601,6 @@ public class Parameters {
 		// // a partir
 		// // % curva de Schroeder (em dB) fornecida no argumento de entrada.
 		// //
-		// // if flag == 1
-		// // %grafico de saida
-		// // figure, plot(x,E,'LineWidth',1.5);
-		// // end
 		out.println(x.length);
 		for (int i = 0; i < x.length; i++) {
 			out.print(x[i] + " ");
@@ -836,9 +615,6 @@ public class Parameters {
 		// fornecida deve
 		// %ter sido obtida a partir de uma resposta impulsiva sem ruido de
 		// inicio.
-		// t10 = min(find(E < -15));
-		// [A10,B10] = intlinear(x(1:t10),E(1:t10));
-		// EDT = (-60)/(B10);
 
 		int t10 = ArrayUtils.firstLessThanIndex(E, -15);
 		double[] ab = Algorithms.intlinear(ArrayUtils.subArray(x, 0, t10 + 1), ArrayUtils
@@ -899,15 +675,6 @@ public class Parameters {
 		} else
 			out.println("?");
 
-		//
-		// if nargout == 4
-		// %Usando 40dB
-		// if ~isempty(t45)
-		// [A40,B40] = intlinear(x(begin:t45),E(begin:t45));
-		// T40 = (-60)/(B40);
-		// else
-		// T40=NaN;
-		// end
 		// else
 		// T40=NaN; %Caso a resposta impulsiva nao apresentefaixa dinamica
 		// suficiente
@@ -928,28 +695,6 @@ public class Parameters {
 		res[2] = T30;
 		res[3] = T40;
 		return res;
-		//
-		// if flag == 1
-		// title('Aproximacao dos tempos de Decaimento');
-		// ylim([-70 0]);
-		// ylimit = ylim;
-		// xlabel('tempo (s)'), ylabel('dB')
-		// xlim([0 max([T20 T30 T40])*1.1]);
-		// xlimit=xlim;
-		//      
-		// line([0,(-60-A10)/(B10)],[A10,-60],'Color','m','LineWidth',.5);
-		// line([0,(-60-A20)/(B20)],[A20,-60],'Color','r','LineWidth',.5);
-		// line([0,(-60-A30)/(B30)],[A30,-60],'Color','g','LineWidth',.5);
-		// if nargout == 4
-		// line([0,(-60-A40)/(B40)],[A40,-60],'Color','y','LineWidth',.5);
-		// end
-		// line([xlimit(1),xlimit(2)],[-60,-60],'Color',[.4,.4,.4],'LineWidth',.5);
-		//    
-		// legend('Curva de Schroeder',['EDT (ms) = ',num2str(EDT*1000)],['T_2_0
-		// (ms) = ',num2str(T20*1000)],...
-		// ['T_3_0 (ms) = ',num2str(T30*1000)],['T_4_0 (ms) =
-		// ',num2str(T40*1000)])
-		// end
 	}
 
 	public static double bassRatio(Parameter t20) {
@@ -971,9 +716,8 @@ public class Parameters {
 	//
 	public final static void tabela(PrintStream out, Map<String, Parameter> s,
 			List<String> paramsOrder, int n, double br, double tr, int itdg) {
-		// function tabela(s,n)
 
-		DecimalFormat format;// = new DecimalFormat("#.###");
+		DecimalFormat format;
 		NumberFormat f = DecimalFormat.getInstance(new Locale("en"));
 		if (f instanceof DecimalFormat) {
 			format = (DecimalFormat) DecimalFormat
@@ -983,18 +727,6 @@ public class Parameters {
 			format = new DecimalFormat("#.###");
 		}
 		int k = 9;
-		//
-		//
-		// fid = fopen('parametros.txt','w');
-		//
-		// fprintf(fid,'freq [Hz]');
-		// for m=1:(n-3)
-		// fprintf(fid,' %5d ',s(1,m));
-		// end
-		// fprintf(fid,' A ');
-		// fprintf(fid,' C ');
-		// fprintf(fid,' Linear ');
-		// fprintf(fid,'\n');
 
 		out.print(PrintUtils.formatString("freq [Hz]", k));
 		for (int i = 0; i < n - 3; i++) {
@@ -1004,69 +736,6 @@ public class Parameters {
 		out.print(PrintUtils.formatString("C", k) + " ");
 		out.print(PrintUtils.formatString("Linear", k) + " ");
 		out.println();
-
-		// fprintf(fid,' C50 [dB]');
-		// for m=1:n
-		// fprintf(fid,' %-5.2f ',s(2,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' C80 [dB]');
-		// for m=1:n
-		// fprintf(fid,' %-5.2f ',s(3,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' D50 [%%] ');
-		// for m=1:n
-		// fprintf(fid,' %-5.2f ',s(4,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' D80 [%%] ');
-		// for m=1:n
-		// fprintf(fid,' %-5.2f ',s(5,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' CT [ms]');
-		// for m=1:n
-		// fprintf(fid,' %-5.2f ',s(6,m)*1000);
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' EDT [s] ');
-		// for m=1:n
-		// fprintf(fid,' %-2.3f ',s(7,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' T20 [s] ');
-		// for m=1:n
-		// fprintf(fid,' %-2.3f ',s(8,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' T30 [s] ');
-		// for m=1:n
-		// fprintf(fid,' %-2.3f ',s(9,m));
-		// end
-		// fprintf(fid,'\n');
-		//
-		// fprintf(fid,' T40 [s] ');
-		// for m=1:n
-		// fprintf(fid,' %-2.3f ',s(10,m));
-		// end
-		//    
-		// fprintf(fid,'\n');
-		// fprintf(fid,'\n');
-		// fprintf(fid,'\n');
-		//  
-
-		// String lineLabels[] = { "C50 [dB]", "C80 [dB]", "ST1 [dB]", "D50
-		// [%%]",
-		// "D80 [%%]", "DRR [%%]", "CT [ms]", "EDT [s]", "T20 [s]", "T30 [s]",
-		// "T40 [s]" };
 
 		for (String p : paramsOrder) {
 			out.print(PrintUtils.formatString(p + " [" + s.get(p).unit + "]", k) + " ");
@@ -1082,17 +751,11 @@ public class Parameters {
 		}
 		out.println();
 		out.println();
-		// fprintf(fid,' BR: %-2.3f \n',(s(8,2)+s(8,3))/(s(8,4)+s(8,5)));
-		// fprintf(fid,' TR: %-2.3f \n',(s(8,6)+s(8,7))/(s(8,4)+s(8,5)));
 
 		out.println("   BR:   " + format.format(br));
-		// + format.format((s[7][1] + s[7][2]) / (s[7][3] + s[7][4])));
 		out.println("   TR:   " + format.format(tr));
-		// + format.format((s[7][5] + s[7][6]) / (s[7][3] + s[7][4])));
 		out.println(" ITDG:   " + (itdg));
 
-		//      
-		// fclose(fid)
 	}
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1112,42 +775,16 @@ public class Parameters {
 	// %niveis encontrados.
 	//
 	public static double[] lundeby(double[] ir, double fs) {
-		// function [ponto,C]=lundeby(varargin)
-
 		double ponto, C;
-
-		//
-		// warning off
-		//
-		// energia_impulso = varargin{1}.^2;
-		// Fs = varargin{2};
 
 		double energia_impulso[] = new double[ir.length];
 		for (int i = 0; i < energia_impulso.length; i++) {
 			energia_impulso[i] = ir[i] * ir[i];
 		}
 
-		// if nargin == 3
-		// flag = varargin{3};
-		// else
-		// flag = 0;
-		// end
-		//
-		//
 		// %Calcula o nivel de ruido dos ultimos 10% do sinal, onde se assume
 		// que o
 		// %ruido ja domine o sinal
-		// rms_dB =
-		// 10*log10(mean(energia_impulso(round(.9*length(energia_impulso)):end))/max(energia_impulso));
-
-		// rms_dB =
-		// 10*
-		// log10(
-		// mean(
-		// energia_impulso(round(.9*length(energia_impulso)):end)
-		// )
-		// /max(energia_impulso)
-		// );
 		double max = ArrayUtils.max(energia_impulso);
 		double rms_dB = 10 * MathUtils.log10(ArrayUtils.mean(energia_impulso, (int) Math
 				.round(0.9 * energia_impulso.length) - 1,
@@ -1155,26 +792,15 @@ public class Parameters {
 				/ max);
 
 		System.out.println("max: " + max + "  rms:" + rms_dB);
-		//
 		// %divide em intervalos e obtem media
-		// t = floor(length(energia_impulso)/Fs/0.01);
-		// v = floor(length(energia_impulso)/t);
-
 		int t = (int) Math.floor(energia_impulso.length / fs / 0.01);
 		int v = (int) Math.floor(energia_impulso.length / t);
 
 		System.out.println("t: " + t + "  v:" + v);
 
-		//
-		// for n=1:t
-		// media(n) = mean(energia_impulso((((n-1)*v)+1):(n*v)));
-		// eixo_tempo(n) = ceil(v/2)+((n-1)*v);
-		// end
 		double media[] = new double[t];
 		double eixo_tempo[] = new double[t];
 		for (int n = 0; n < t; n++) {
-			// media[n] = mean(energia_impulso, ((n - 1) * v), n * v);
-			// eixo_tempo[n] = Math.ceil(v / 2) + ((n - 1) * v);
 			media[n] = ArrayUtils.mean(energia_impulso, n * v, (n + 1) * v);
 			eixo_tempo[n] = Math.ceil((double) v / 2) + (n * v);
 		}
@@ -1182,30 +808,18 @@ public class Parameters {
 		PrintUtils.print(media);
 		PrintUtils.print(eixo_tempo);
 
-		// mediadB = 10*log10(media/max(energia_impulso));
-
 		double mediadB[] = ArrayUtils
 				.multLLL(MathUtils.log10LLL(ArrayUtils.scale(1.0/(max), media)), 10);
 
-		//
 		// %obtem a regressao linear o intervalo de 0dB e a media mais proxima
 		// de
 		// %rms+10dB
-		// r = max(find(mediadB > rms_dB+10));
 		int r = -1;
 		for (int i = 0; i < mediadB.length; i++) {
 			if (mediadB[i] > rms_dB + 10)
 				r = i;
 		}
 
-		// if any (mediadB(1:r) < rms_dB+10)
-		// r = min(find(mediadB(1:r) < rms_dB+10));
-		// end
-		// if isempty(r)
-		// r=10
-		// elseif r<10
-		// r=10;
-		// end
 		System.out.println("r: " + r);
 		for (int i = 0; i <= r; i++) {
 			if (mediadB[i] < rms_dB + 10) {
@@ -1220,40 +834,26 @@ public class Parameters {
 
 		System.out.println("r: " + r);
 
-		//
-		// [A,B] = intlinear(eixo_tempo(1:r),mediadB(1:r));
-		// cruzamento = (rms_dB-A)/B;
 
 		double[] ab = Algorithms.intlinear(ArrayUtils.subArray(eixo_tempo, 0, r + 1), ArrayUtils
 				.subArray(mediadB, 0, r + 1));
 		double cruzamento = (rms_dB - ab[0]) / ab[1];
 		System.out.println("cruzamento: " + cruzamento + " " + rms_dB);
 
-		// if rms_dB > -20
 		if (rms_dB > -20) {
 
 			// %Relacao sinal ruido insuficiente
-			// ponto=length(energia_impulso);
 			ponto = energia_impulso.length;
-			// if nargout==2
-			// C=0;
-			// end
 			C = 0;
 
-			// else
 		} else {
 			//
 			// %%%%%%%%%%%%%%%%%%%%%%%%INICIA A PARTE ITERATIVA DO
 			// PROCESSO%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			//
-			// erro=1;
-			// INTMAX=50;
-			// vezes=1;
 			double erro = 1;
 			int INTMAX = 50;
 			int vezes = 1;
 
-			// while (erro > 0.0001 & vezes <= INTMAX)
 			while (erro > 0.0001 & vezes <= INTMAX) {
 				//
 				// %Calcula novos intervalos de tempo para media, com
@@ -1286,12 +886,6 @@ public class Parameters {
 					t = 1;
 				}
 
-				//
-				// for n=1:t
-				// media(n) = mean(energia_impulso((((n-1)*v)+1):(n*v)));
-				// eixo_tempo(n) = ceil(v/2)+((n-1)*v);
-				// end
-
 				if (t != media.length) {
 					media = new double[t];
 					eixo_tempo = new double[t];
@@ -1305,33 +899,18 @@ public class Parameters {
 
 				PrintUtils.print(media);
 				PrintUtils.print(eixo_tempo);
-				// mediadB = 10*log10(media/max(energia_impulso));
 				mediadB = ArrayUtils.multLLL(MathUtils.log10LLL(ArrayUtils.scale(1.0/(ArrayUtils
 				.max(energia_impulso)), media)), 10);
 
-				//
-				// clear A B noise energia_ruido rms_dB;
-				// [A,B] = intlinear(eixo_tempo,mediadB);
 				ab = Algorithms.intlinear(eixo_tempo, mediadB);
 
-				// %nova media da energia do ruido, iniciando no ponto da linha
-				// de
-				// % tendencia 10dB abaixo do cruzamento.
-				// noise = energia_impulso(round(cruzamento+delta):end);
 				int noiseStart = (int) Math.round(cruzamento + delta) - 1;
-				// if (length(noise) < round(.1*length(energia_impulso)))
-				// noise =
-				// energia_impulso(round(.9*length(energia_impulso)):end);
-				// end
 				if (energia_impulso.length - noiseStart < Math
 						.round(0.1 * energia_impulso.length)) {
 					noiseStart = (int) Math.round(0.9 * energia_impulso.length);
 				}
 				double noise[] = ArrayUtils.subArray(energia_impulso, noiseStart);
 				System.out.println("ns: " + noiseStart + " " + noise.length);
-				// print(noise);
-
-				// rms_dB = 10*log10(mean(noise)/max(energia_impulso));
 				rms_dB = 10 * MathUtils.log10(ArrayUtils.mean(noise)
 						/ ArrayUtils.max(energia_impulso));
 
@@ -1385,19 +964,6 @@ public class Parameters {
 		}// <--- correcao do bug???
 
 		System.out.println(ponto + " C:" + C);
-		//
-		// if (nargout == 0 | flag == 1)
-		// figure
-		// plot((1:length(energia_impulso))/Fs,10*log10(energia_impulso/max(energia_impulso)));
-		// hold
-		// stairs(eixo_tempo/Fs,mediadB,'r');
-		// plot((1:cruzamento+1000)/Fs,A+(1:cruzamento+1000)*B,'g');
-		// line([cruzamento-1000,length(energia_impulso)]/Fs,[rms_dB,rms_dB],'Color',[.4,.4,.4]);
-		// plot(cruzamento/Fs,rms_dB,'o','MarkerFaceColor','y','MarkerSize',10);
-		// hold
-		// end
-		//
-		//  
 		double[] res = new double[2];
 		res[0] = ponto;
 		res[1] = C;
@@ -1428,16 +994,12 @@ public class Parameters {
 	public static void lundebyParam(double[] ir, double irLf[], double fs,
 			int directSound, int firstReflection, PrintStream outTable,
 			String graphFolder) {
-		// // banda = filtros(IR,fs);
 		double[][] banda = filtros(ir, fs, null);
-		// // t = size(banda,2);
 		int t = banda.length;
 
 		double[][] bandaLf = null;
 		if (irLf != null)
 			bandaLf = filtros(irLf, fs, null);
-
-		// double s[][] = new double[12][banda.length];
 
 		PrintStream outGraphs[] = channelFiles(graphFolder);
 
@@ -1453,28 +1015,10 @@ public class Parameters {
 		}
 
 		for (int n = 0; n < t; n++) {
-			// // for n = 1:t
-			// // s(1,n) = ceil(1000*2^(n-5));
-
-			// // comeco = inicio(banda(:,n));
 			int comeco = inicio(banda[n]);
-			// // fim = lundeby(banda(comeco:end,n),fs,flag);
-			// int fim = (int) lundeby(Util.subArray(banda[n], comeco), fs)[0];
 			int fim = comeco
 					+ (int) lundeby(ArrayUtils.subArray(banda[n], comeco), fs)[0];
-			// // title(['Ponto de Cruzamento - Banda ',num2str(s(1,n))])
-			// // if n == t-2
-			// // title('Ponto de Cruzamento - Compensacao A ')
-			// // elseif n == t-1
-			// // title('Ponto de Cruzamento - Compensacao C ')
-			// // elseif n == t
-			// // title('Ponto de Cruzamento - Linear ')
-			// // end
-			// //
-			// // aux = banda(comeco:fim,n).^2;
 			double aux[] = ArrayUtils.sqrLLL(ArrayUtils.subArray(banda[n], comeco, fim));
-			// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-			// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
 			double en[] = energeticos(aux, fs, directSound, firstReflection);
 
 			for (int i = 0; i < energ.length - 1; i++) {
@@ -1487,8 +1031,6 @@ public class Parameters {
 				int comecoLf = inicio(bandaLf[n]);
 				int fimLf = comecoLf
 						+ (int) lundeby(ArrayUtils.subArray(bandaLf[n], comecoLf), fs)[0];
-				// double auxLf[] = Util.powLLL(Util.subArray(bandaLf[n],
-				// comecoLf, fimLf + 1), 2);
 				System.out.println(comecoLf + " " + fimLf);
 				double auxLf[] = ArrayUtils.sqrLLL(ArrayUtils.subArray(bandaLf[n],
 						comecoLf, fimLf));
@@ -1500,25 +1042,7 @@ public class Parameters {
 			for (int i = 0; i < rev.length; i++) {
 				params.get(reverb[i]).val[n] = rev[i];
 			}
-			// // title(['Curva de Decaimento - Banda ',num2str(s(1,n))])
-			// // if n == t-2
-			// // title('Curva de Decaimento - Compensacao A ')
-			// // elseif n == t-1
-			// // title('Curva de Decaimento - Compensacao C ')
-			// // elseif n == t
-			// // title('Curva de Decaimento - Linear ')
-			// // end
-			// //
-			// // end
 		}
-		// // if nargout == 1
-		// // saida = s;
-		// // saida(1,t-2) = (['A']);
-		// // saida(1,t-1) = (['C']);
-		// // saida(1,t) = (['L']);
-		// // else
-		// // tabela(s,size(banda,2))
-		// // end
 
 		List<String> pOrder = new ArrayList<String>();
 		for (String pName : energ)
@@ -1535,8 +1059,6 @@ public class Parameters {
 		tabela(outTable, params, pOrder, banda.length, br, tr, (int) Math
 				.round((firstReflection - directSound) / fs * 1000));
 
-		// tabela(outTable, s, banda.length,
-		// (int)Math.round((firstReflection-directSound)/fs*1000));
 	}
 
 	// // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1567,33 +1089,14 @@ public class Parameters {
 	public static void hirataParam(double[] ir1, double ir2[], double fs,
 			int directSound, int firstReflection, PrintStream outTable,
 			String graphFolder) {
-		// //
-		// // if size(IR1,1) < size(IR2,1) %condiciona o tamanho das sequencias
-		// // IR2 = IR2(1:size(IR1,1));
-		// // elseif size(IR1,1) > size(IR2,1)
-		// // IR1 = IR1(1:length(IR2));
-		// // end
 		if (ir1.length < ir2.length) {
 			ir2 = ArrayUtils.subArray(ir2, 0, ir1.length);
 		} else if (ir1.length > ir2.length) {
 			ir1 = ArrayUtils.subArray(ir1, 0, ir2.length);
 		}
 
-		// //
-		// // banda1 = filtros(IR1,fs);
-		// // banda2 = filtros(IR2,fs);
 		double[][] banda1 = filtros(ir1, fs, null);
 		double[][] banda2 = filtros(ir2, fs, null);
-
-		// //
-		// // for n = 1:size(banda1,2)
-		// // s(1,n) = ceil(1000*2^(n-5));
-		// // aux = banda1(:,n).*banda2(:,n);
-		// // comeco = inicio(aux);
-		// // aux = aux(comeco:end);
-		// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-		// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
-		// // end
 
 		PrintStream outGraphs[] = channelFiles(graphFolder);
 		Map<String, Parameter> params = new HashMap<String, Parameter>();
@@ -1605,17 +1108,12 @@ public class Parameters {
 		}
 
 		for (int n = 0; n < banda1.length; n++) {
-			// // s(1,n) = ceil(1000*2^(n-5));
-
 			double aux[] = ArrayUtils.multLLL(banda1[n], banda2[n]);
 
-			// // comeco = inicio(banda(:,n));
 			int comeco = inicio(banda1[n]);
 
 			aux = ArrayUtils.subArray(aux, comeco);
 
-			// // [s(2,n),s(3,n),s(4,n),s(5,n),s(6,n)] = energeticos(aux,fs);
-			// // [s(7,n),s(8,n),s(9,n),s(10,n)] = reverberacao(aux,fs,flag);
 			double en[] = energeticos(aux, fs, directSound, firstReflection);
 
 			for (int i = 0; i < energ.length - 1; i++) {
@@ -1630,17 +1128,6 @@ public class Parameters {
 			}
 
 		}
-		// //
-		// // if nargout == 1
-		// // saida = s;
-		// // saida(1,9) = (['A']);
-		// // saida(1,10) = (['C']);
-		// // saida(1,11) = (['L']);
-		// // else
-		// // tabela(s,size(banda1,2))
-		// // end
-		// tabela(out, s, banda1.length,
-		// (int)Math.round((firstReflection-directSound)/fs*1000));
 
 		List<String> pOrder = new ArrayList<String>();
 		for (String pName : energ)
@@ -1692,57 +1179,7 @@ public class Parameters {
 
 		double[][] res = new double[11][];
 
-		// // warning off MATLAB:nearlySingularMatrix
-		// //
-		// // fc = 1000 * 2.^[-4 -3 -2 -1 0 1 2 3]; %frequencia central [63 125
-		// 250
-		// 500
-		// // 1k 2k 4k 8k]
-		// // n = 3; %ordem do filtro butterworth
-
 		double fc[] = { 62.5, 125, 250, 500, 1000, 2000, 4000, 8000 };
-		// int n = 3;
-
-		//    
-		// // delta = inv(sqrt(2)*(sqrt(2)-1)^(1/2/n)); %Correcao para filtro
-		// causal
-		// // a = (delta+sqrt(delta^2+4))/2;
-
-		// double delta = 8.1899443301849650e-01; // for n=3
-		// double a = (delta + Math.sqrt(Math.pow(delta,2)+4))/2;
-
-		//    
-		// // %-------------63--------------
-		// // [b63,a63] = butter(n,[fc(1)/(fs/2)/a,fc(1)/(fs/2)*a]);
-		// // bandas(:,1) = filtfilt(b63,a63,sinal);
-		// //
-		// // %-------------125--------------
-		// // [b125,a125] = butter(n,[fc(2)/(fs/2)/a,fc(2)/(fs/2)*a]);
-		// // bandas(:,2) = filtfilt(b125,a125,sinal);
-		// //
-		// // %-------------250--------------
-		// // [b250,a250] = butter(n,[fc(3)/(fs/2)/a,fc(3)/(fs/2)*a]);
-		// // bandas(:,3) = filtfilt(b250,a250,sinal);
-		// //
-		// // %-------------500--------------
-		// // [b500,a500] = butter(n,[fc(4)/(fs/2)/a,fc(4)/(fs/2)*a]);
-		// // bandas(:,4) = filtfilt(b500,a500,sinal);
-		// //
-		// // %-------------1000--------------
-		// // [b1000,a1000] = butter(n,[fc(5)/(fs/2)/a,fc(5)/(fs/2)*a]);
-		// // bandas(:,5) = filtfilt(b1000,a1000,sinal);
-		// //
-		// // %-------------2000--------------
-		// // [b2000,a2000] = butter(n,[fc(6)/(fs/2)/a,fc(6)/(fs/2)*a]);
-		// // bandas(:,6) = filtfilt(b2000,a2000,sinal);
-		// //
-		// // %-------------4000--------------
-		// // [b4000,a4000] = butter(n,[fc(7)/(fs/2)/a,fc(7)/(fs/2)*a]);
-		// // bandas(:,7) = filtfilt(b4000,a4000,sinal);
-		// //
-		// // %-------------8000--------------
-		// // [b8000,a8000] = butter(n,[fc(8)/(fs/2)/a,fc(8)/(fs/2)*a]);
-		// // bandas(:,8) = filtfilt(b8000,a8000,sinal);
 
 		for (int i = 0; i < fc.length; i++) {
 			Filter f = FilterBank.get1d8(fc[i], fs);
@@ -1782,10 +1219,6 @@ public class Parameters {
 		f = FilterBank.getComp("c", fs);
 		res[9] = Filter.filter(f.b, f.a, signal);
 		monitor.worked(10);
-
-		//    
-		// // %-------------Linear------------
-		// // bandas(:,11) = sinal;
 
 		res[10] = signal;
 

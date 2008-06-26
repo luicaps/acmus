@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import acmus.MeasurementProject;
-import acmus.audio.AudioPlayer;
 import acmus.util.Algorithms;
 import acmus.util.ArrayUtils;
 import acmus.util.MathUtils;
@@ -49,9 +48,6 @@ public class Ir {
 			double[] B, double[] A, int n, IProgressMonitor monitor) {
 		monitor = SWTUtils.monitorFor(monitor);
 		monitor.beginTask("dechirp", 100);
-		// function ir = dechirp(gravacao,B,A,n)
-		//
-		// ir = real(ifft(fft(gravacao(:,1),n)./fft(gravacao(:,2),n)));
 		double recRe[] = new double[n];
 		double recIm[] = new double[n];
 		double refRe[] = new double[n];
@@ -95,9 +91,6 @@ public class Ir {
 
 	public static final double[] dechirp2(double[] rec, double[] ref,
 			double[] B, double[] A, int n) {
-		// function ir = dechirp(gravacao,B,A,n)
-		//
-		// ir = real(ifft(fft(gravacao(:,1),n)./fft(gravacao(:,2),n)));
 		double recRe[] = new double[n];
 		double recIm[] = new double[n];
 		double refRe[] = new double[n];
@@ -145,16 +138,6 @@ public class Ir {
 	// //
 	public static final double[] demls(double[] rec, double ref[], int[] row,
 			int[] col, int reps) {
-		// // function ir = demls(sinal,row,col,reps)
-		// //
-		// // if size(sinal,2) == 2
-		// // inicio = min(find(abs(sinal(:,2)) > max(abs(sinal(:,2)))/10));
-		// // elseif size(sinal,2) == 1
-		// // inicio = min(find(abs(sinal) > max(abs(sinal))/10));
-		// // end
-
-		// inicio = min(
-		// find( abs(sinal(:,2)) > max(abs(sinal(:,2)))/10 ) );
 		int inicio = 0;
 		double val = ArrayUtils.maxAbs(ref) / 10;
 		for (int i = 0; i < ref.length; i++) {
@@ -164,40 +147,24 @@ public class Ir {
 			}
 		}
 
-		// //
-		// // t = length(row);
-		// // aux = sinal(inicio+t:end,1);
-		// // media = zeros(t,1);
-
 		int t = row.length;
 		double aux[] = ArrayUtils.subArray(rec, inicio + t);
 		double media[] = new double[t];
 		for (int i = 0; i < media.length; i++)
 			media[i] = 0;
 
-		// // for n = 1:(reps-1)
-		// // media = media + aux(1:t);
-		// // aux(1:t)=[];
-		// // end
 		for (int n = 0, begin = 0, end = t; n < reps - 1; n++, begin += t, end += t) {
 			media = ArrayUtils.sumLLL(media, aux, begin, end);
 		}
-		// // ir=media/(reps-1);
 		media = ArrayUtils.scale(1.0/(reps - 1), media);
-		// // ir=ir(:);
-		// // ir=ir(row);
-		// // ir=[0; ir];
 		double[] ir = new double[row.length + 1];
 		ir[0] = 0;
 		System.out.println(row.length);
 		for (int i = 1; i < row.length; i++) {
 			ir[i] = media[row[i] - 1];
 		}
-		// // ir=fht(ir);
 		Parameters.fht(ir);
-		// // ir(1)=[];
 		ir = ArrayUtils.subArray(ir, 1);
-		// // ir=ir(col)/t;
 		double[] ir2 = new double[col.length];
 		for (int i = 0; i < col.length; i++) {
 			ir2[i] = ir[col[i] - 1];
@@ -228,7 +195,7 @@ public class Ir {
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(recFile
 					.getContents());
-			int data[] = AudioPlayer.readData(ais);
+			int data[] = WaveUtils.readData(ais);
 			double[] left = new double[data.length / 2];
 			double[] right = new double[data.length / 2];
 			if (swap(recFile)) {

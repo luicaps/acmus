@@ -11,7 +11,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import acmus.audio.AudioPlayer;
 
 public class WaveUtils {
 
@@ -67,7 +66,7 @@ public class WaveUtils {
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
 					filename));
-			res = AudioPlayer.readData(ais);
+			res = WaveUtils.readData(ais);
 			ais.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,10 +80,10 @@ public class WaveUtils {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
 					filename));
 			int data[][] = WaveUtils.splitAudioStream(ais.getFormat().getChannels(),
-					AudioPlayer.readData(ais));
+					WaveUtils.readData(ais));
 			res = new double[data.length][data[0].length];
 			for (int i = 0; i < res.length; i++) {
-				AudioPlayer.scaleToUnitInPlace(res[i], data[i], ais.getFormat()
+				WaveUtils.scaleToUnitInPlace(res[i], data[i], ais.getFormat()
 						.getSampleSizeInBits());
 			}
 			ais.close();
@@ -272,6 +271,67 @@ public class WaveUtils {
 		double[] scaled = ArrayUtils.scaleToMax(ArrayUtils.average(arrays),
 				(double) getLimit(bitsPerSample));
 		wavWrite(scaled, 1, bitsPerSample, outFile, false);
+	}
+
+	public static int[] parseData(byte[] audioBytes, AudioFormat format) {
+	
+		int[] audioData = null;
+		if (format.getSampleSizeInBits() == 32) {
+			if (format.isBigEndian()) {
+				audioData = bigEndian32bitsToInt(audioBytes);
+			} else {
+				audioData = littleEndian32bitsToInt(audioBytes);
+			}
+		} else if (format.getSampleSizeInBits() == 16) {
+			if (format.isBigEndian()) {
+				audioData = bigEndian16bitsToInt(audioBytes);
+			} else {
+				audioData = littleEndian16bitsToInt(audioBytes);
+			}
+		} else if (format.getSampleSizeInBits() == 8) {
+			int nlengthInSamples = audioBytes.length;
+			audioData = new int[nlengthInSamples];
+			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {
+				for (int i = 0; i < audioBytes.length; i++) {
+					audioData[i] = audioBytes[i];
+				}
+			} else {
+				for (int i = 0; i < audioBytes.length; i++) {
+					audioData[i] = audioBytes[i] - 128;
+				}
+			}
+		}
+		return audioData;
+	}
+
+	public static int[] readData(AudioInputStream ais) {
+	
+		AudioFormat format = ais.getFormat();
+		byte[] audioBytes = new byte[(int) (ais.getFrameLength() * format
+				.getFrameSize())];
+	
+		try {
+			ais.read(audioBytes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		return parseData(audioBytes, format);
+	}
+
+	public static final double[] scaleToUnitInPlace(double res[], int[] data,
+			int bits) {
+		// In ancient history (may/2008) this was calculated this way here;
+		// but it is most likely a bug (precedence is wrong).
+		//int max = (1 << bits - 1) - 1;
+		// This is probably what the above line meant:
+		//int max = Util.getLimit(bits);
+		// But what is probably correct is this:
+		int max = ArrayUtils.maxAbs(data);
+		for (int i = 0; i < res.length; i++) {
+			res[i] = (double) data[i] / (double) max;
+		}
+		return res;
 	}
 
 }
