@@ -179,7 +179,7 @@ public class CompareWaveforms extends Composite {
 		_waveform.setLayoutData(gridData);
 	}
 	
-	public ToolBar createArrowsBar(Composite parent, int style) {
+	private ToolBar createArrowsBar(Composite parent, int style) {
         _controlBar = new ToolBar(parent, style);
 
         _tiUp = new ToolItem(_controlBar, SWT.PUSH);
@@ -188,13 +188,9 @@ public class CompareWaveforms extends Composite {
         _tiUp.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                //if (_status == PLAYING)
-                    //pause();
-                //else
-                    //play();
+               moveWaveUp();
             }
         });
-        _tiUp.setToolTipText("Play/Pause/Resume");
 
         _tiDown = new ToolItem(_controlBar, SWT.PUSH);
         _tiDown.setImage(AcmusGraphics.IMG_DOWN);
@@ -209,6 +205,18 @@ public class CompareWaveforms extends Composite {
 
         return _controlBar;
     }
+	
+	private void moveWaveUp() {
+		int position = _table.getSelectionIndex();
+		if (position == 0)
+			return;
+		Object element = _tViewer.getElementAt(position); 
+		_table.remove(position);
+		_tViewer.insert(element, position - 1);
+		_tViewer.setChecked(element, true);
+		
+		
+	}
 
 	private void validate() {
 		if (_input.getText().trim().equals("")) {
