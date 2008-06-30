@@ -127,11 +127,11 @@ public class CompareWaveforms extends Composite {
 		_inputBrowse = new Button(c, SWT.NONE);
 		_inputBrowse.setText("Browse");
 		_inputBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String filename = _inputFileDialog.open();
-				if (filename != null) {
+				if (filename != null)
 					_input.setText(filename);
-				}
 			}
 		});
 
@@ -142,6 +142,7 @@ public class CompareWaveforms extends Composite {
 		_bAdd.setLayoutData(gridData);
 		_bAdd.setText("Add");
 		_bAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				open(_input.getText());
 				_input.setText("");
@@ -153,9 +154,9 @@ public class CompareWaveforms extends Composite {
 		createTableViewer(this);
 
 		c = new Composite(this, SWT.NONE);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
-		gl = new GridLayout(1, false);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 1;
+		gl = new GridLayout(2, false);
 		gl.marginWidth = 0;
 		gl.marginHeight = 0;
 		c.setLayout(gl);
@@ -164,64 +165,79 @@ public class CompareWaveforms extends Composite {
 		AudioPlayer ap = new AudioPlayer();
 
 		ToolBar zoom = ap.createZoomBar(c, SWT.NONE);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gridData.horizontalSpan = 1;
 		zoom.setLayoutData(gridData);
-		
+
 		ToolBar arrows = createArrowsBar(c, SWT.NONE);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.horizontalSpan = 1;
 		arrows.setLayoutData(gridData);
 
 		// _waveform = new WaveformDisplay(this, SWT.NONE);
 		_waveform = ap.createWaveformDisplay(c, SWT.NONE);
 		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 2;
 		gridData.widthHint = 400;
 		gridData.heightHint = 300;
 		_waveform.setLayoutData(gridData);
 	}
-	
+
 	private ToolBar createArrowsBar(Composite parent, int style) {
-        _controlBar = new ToolBar(parent, style);
+		_controlBar = new ToolBar(parent, style);
 
-        _tiUp = new ToolItem(_controlBar, SWT.PUSH);
-        _tiUp.setEnabled(true);
-        _tiUp.setImage(AcmusGraphics.IMG_UP);
-        _tiUp.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-               moveWaveUp();
-            }
-        });
+		_tiUp = new ToolItem(_controlBar, SWT.PUSH);
+		_tiUp.setEnabled(true);
+		_tiUp.setImage(AcmusGraphics.IMG_UP);
+		_tiUp.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				moveWaveUp();
+			}
+		});
 
-        _tiDown = new ToolItem(_controlBar, SWT.PUSH);
-        _tiDown.setImage(AcmusGraphics.IMG_DOWN);
-        _tiDown.setEnabled(true);
-        _tiDown.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                //stop();
-            }
-        });
-        _tiDown.setToolTipText("Stop");
+		_tiDown = new ToolItem(_controlBar, SWT.PUSH);
+		_tiDown.setImage(AcmusGraphics.IMG_DOWN);
+		_tiDown.setEnabled(true);
+		_tiDown.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				moveWaveDown();
+			}
+		});
+		_tiDown.setToolTipText("Stop");
 
-        return _controlBar;
-    }
-	
+		return _controlBar;
+	}
+
 	private void moveWaveUp() {
 		int position = _table.getSelectionIndex();
 		if (position == 0)
 			return;
-		Object element = _tViewer.getElementAt(position); 
+		Object element = _tViewer.getElementAt(position);
 		_table.remove(position);
 		_tViewer.insert(element, position - 1);
 		_tViewer.setChecked(element, true);
-		
-		
+		_waveform.moveWaveUp(position);
+		_table.setSelection(position - 1);
+	}
+
+	private void moveWaveDown() {
+		int position = _table.getSelectionIndex();
+		if (position == _waveform.numberOfArrays() - 1)
+			return;
+		Object element = _tViewer.getElementAt(position);
+		_table.remove(position);
+		_tViewer.insert(element, position + 1);
+		_tViewer.setChecked(element, true);
+		_waveform.moveWaveDown(position);
+		_table.setSelection(position + 1);
 	}
 
 	private void validate() {
-		if (_input.getText().trim().equals("")) {
+		if (_input.getText().trim().equals(""))
 			_bAdd.setEnabled(false);
-		} else {
+		else {
 			File fi = new File(_input.getText());
 			if (!fi.exists())
 				_bAdd.setEnabled(false);
@@ -231,9 +247,8 @@ public class CompareWaveforms extends Composite {
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				for (Image i : _disposeList) {
+				for (Image i : _disposeList)
 					i.dispose();
-				}
 				_disposeList.clear();
 			}
 		});
@@ -248,19 +263,17 @@ public class CompareWaveforms extends Composite {
 			AudioInputStream audioStream = AudioSystem
 					.getAudioInputStream(new FileInputStream(filename));
 			int[] audioData = AudioPlayer.readData(audioStream);
-			if (_waveform.numberOfArrays() < 1) {
+			if (_waveform.numberOfArrays() < 1)
 				_waveform
 						.setData(audioData, audioStream.getFormat()
 								.getChannels(), audioStream.getFormat()
 								.getSampleRate(), audioStream.getFormat()
 								.getSampleSizeInBits(), getColor(0));
-
-			} else {
+			else
 				_waveform.addData(audioData, audioStream.getFormat()
 						.getChannels(),
 						audioStream.getFormat().getSampleRate(),
 						getColor(_waveform.numberOfArrays()));
-			}
 
 			String sep = System.getProperty("file.separator");
 			int ind = filename.lastIndexOf(sep, filename.lastIndexOf(sep) - 1);
@@ -272,9 +285,11 @@ public class CompareWaveforms extends Composite {
 					getColor(_waveform.numberOfArrays() - 1));
 			_tViewer.add(o);
 			_tViewer.setChecked(o, true);
-					
-			/* Graph update - drawing the wave added 
-			 * The arg true is because the wave is checked for sure. So, it need to be drawed */
+
+			/*
+			 * Graph update - drawing the wave added The arg true is because the
+			 * wave is checked for sure. So, it need to be drawed
+			 */
 			_waveform.drawArray(_waveform.numberOfArrays() - 1, true);
 
 		} catch (Exception e) {
@@ -292,7 +307,7 @@ public class CompareWaveforms extends Composite {
 	private CheckboxTableViewer _tViewer;
 
 	// Set column names
-	private String[] columnNames = new String[] { "file", "color" };
+	private final String[] columnNames = new String[] { "file", "color" };
 
 	private void createTableViewer(Composite parent) {
 		_table = new Table(parent, SWT.SINGLE | SWT.CHECK | SWT.BORDER
@@ -307,14 +322,12 @@ public class CompareWaveforms extends Composite {
 		_tViewer.setLabelProvider(new PositionLabelProvider());
 		_tViewer.setColumnProperties(columnNames);
 
-		
 		_tViewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				for (int i = 0; i < _waveform.numberOfArrays(); i++) {
+				for (int i = 0; i < _waveform.numberOfArrays(); i++)
 					_waveform.drawArray(i, _tViewer.getChecked(_tViewer
 							.getElementAt(i)));
-				}
 			}
 
 		});
@@ -336,8 +349,9 @@ public class CompareWaveforms extends Composite {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-		 *      int)
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+		 * .lang.Object, int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex != 1)
@@ -349,8 +363,9 @@ public class CompareWaveforms extends Composite {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-		 *      int)
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+		 * lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			if (columnIndex != 0)
