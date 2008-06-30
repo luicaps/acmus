@@ -32,12 +32,22 @@ package acmus.view;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
+import acmus.AcmusApplication;
 import acmus.AcmusGraphics;
 
 /**
@@ -45,6 +55,26 @@ import acmus.AcmusGraphics;
  */
 public class ProjectExplorer extends ResourceNavigator {
 
+	// the listener we register with the selection service 
+	private ISelectionListener listener = new ISelectionListener() {
+		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
+			if(ProjectExplorer.class.isInstance(sourcepart)){
+				String[] temp = selection.toString().split("P/");
+				if(temp.length > 1)
+					AcmusApplication.setTitle("AcMus - " + temp[1].substring(0, temp[1].length()-1));
+			}
+		}
+	};
+
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		
+		if(site != null){
+			site.getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
+		}
+	}
+	
 	protected void handleOpen(OpenEvent event) {
 		super.handleOpen(event);
 		System.out.println("handleOpen " + getActionGroup());

@@ -43,6 +43,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
+import acmus.AcmusApplication;
 import acmus.AcmusGraphics;
 
 /**
@@ -135,7 +136,7 @@ public class AcmusMeasurementProjectWizard extends Wizard implements INewWizard 
 
 			IFile prjFile = project.getFile(".project");
 			prjFile.setTeamPrivateMember(true);
-
+			
 		} catch (CoreException e) {
 			e.printStackTrace();
 

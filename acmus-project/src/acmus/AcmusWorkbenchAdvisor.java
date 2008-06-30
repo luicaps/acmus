@@ -24,17 +24,19 @@
 package acmus;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
 public class AcmusWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
-	@Override
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
+	@Override
 	public String getInitialWindowPerspectiveId() {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 
@@ -47,7 +49,13 @@ public class AcmusWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			// perspectiveId = IDE.RESOURCE_PERSPECTIVE_ID;
 			perspectiveId = "acmus.perspective";
 		}
+		
 		return perspectiveId;
+	}
+	
+	public IWorkbenchWindowConfigurer  getConfigurer(){
+		IWorkbenchConfigurer IWConfigurer = getWorkbenchConfigurer();
+		return IWConfigurer.getWindowConfigurer(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 	}
 
 	// public String getInitialWindowPerspectiveId() {

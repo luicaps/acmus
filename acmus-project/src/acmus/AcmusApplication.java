@@ -48,6 +48,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -82,6 +84,9 @@ public class AcmusApplication implements IPlatformRunnable,
 	private static final int MIN_JVM_VERSION_SERVICE = 1;
 
 	public static final double SAMPLE_RATE = 44100;
+	
+	private static AcmusWorkbenchAdvisor acmusWorkbenchAdvisor;
+	
 	/**
 	 * Creates a new IDE application.
 	 */
@@ -119,9 +124,11 @@ public class AcmusApplication implements IPlatformRunnable,
 			// N.B. createWorkbench remembers the advisor, and also registers
 			// the workbench globally so that all UI plug-ins can find it using
 			// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
+			AcmusApplication.acmusWorkbenchAdvisor = new AcmusWorkbenchAdvisor();
+			
 			int returnCode = PlatformUI.createAndRunWorkbench(display,
-					new AcmusWorkbenchAdvisor());
-
+					acmusWorkbenchAdvisor);
+			
 			// the workbench doesn't support relaunch yet (bug 61809) so
 			// for now restart is used, and exit data properties are checked
 			// here to substitute in the relaunch return code if needed
@@ -158,6 +165,15 @@ public class AcmusApplication implements IPlatformRunnable,
 		// There is nothing to do for IDEApplication
 	}
 
+	/**
+	 * defines Workbench Window title 
+	 * @param title
+	 */
+	public static void setTitle(String title){
+		IWorkbenchWindowConfigurer configurer = AcmusApplication.acmusWorkbenchAdvisor.getConfigurer();
+		configurer.setTitle(title);
+	}
+	
 	/**
 	 * Return a boolean value indicating whether or not the version of the Java
 	 * runtime ("java.version" system property) is deemed to be compatible with
@@ -244,9 +260,22 @@ public class AcmusApplication implements IPlatformRunnable,
 		}
 
 		// -data @noDefault or -data not specified, prompt and set
-		ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
-				.getDefault());
-
+		ChooseWorkspaceData launchData = null;
+		try {
+			String homeDirectory = System.getProperty("user.home");
+			if (homeDirectory == null) {
+				homeDirectory = File.separator;
+			}
+			else{
+				homeDirectory += File.separator;
+			}
+			
+			launchData = new ChooseWorkspaceData(new URL("file://" + homeDirectory + "acmus-workspace"));
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		boolean force = false;
 		while (true) {
 			URL workspaceUrl = promptForWorkspace(shell, launchData, force);
