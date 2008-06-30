@@ -175,7 +175,7 @@ public class AudioPlayer {
 			_player.addControllerListener(_cListener);
 			Control cs[] = _player.getControls();
 			Object owner;
-			for (int i = 0; i < cs.length; i++) {
+			for (int i = 0; i < cs.length; i++)
 				if (cs[i] instanceof Owned && cs[i] instanceof BufferControl) {
 					owner = ((Owned) cs[i]).getOwner();
 					if (owner instanceof Renderer) {
@@ -184,11 +184,9 @@ public class AudioPlayer {
 								+ ((BufferControl) cs[i]).getBufferLength());
 					}
 				}
-			}
 			_gainControl = _player.getGainControl();
-			if (_audioStream != null) {
+			if (_audioStream != null)
 				_audioStream.close();
-			}
 			_audioStream = AudioSystem.getAudioInputStream(new FileInputStream(
 					filename));
 			_audioData = readData(_audioStream);
@@ -200,16 +198,16 @@ public class AudioPlayer {
 			DataLine.Info info = null;
 			AudioFormat format = _audioStream.getFormat();
 			if (format.getSampleSizeInBits() == 32) {
-				_audioBytes = WaveUtils.downsample32to16(format.isBigEndian(), _audioBytes);
+				_audioBytes = WaveUtils.downsample32to16(format.isBigEndian(),
+						_audioBytes);
 				format = new AudioFormat(format.getEncoding(), format
 						.getSampleRate(), 16, format.getChannels(), 2, format
 						.getFrameRate(), format.isBigEndian());
 				info = new DataLine.Info(SourceDataLine.class, format);
 				System.out
 						.println("32 bit audio playback unsupported, downsampling (for playback only).");
-			} else {
+			} else
 				info = new DataLine.Info(SourceDataLine.class, format);
-			}
 
 			try {
 				_sdl = (SourceDataLine) AudioSystem.getLine(info);
@@ -218,23 +216,21 @@ public class AudioPlayer {
 				e.printStackTrace();
 			}
 
-			if (_waveform != null) {
+			if (_waveform != null)
 				_waveform.setData(_audioData, _audioStream.getFormat()
 						.getChannels(), _audioStream.getFormat()
 						.getSampleRate(), _audioStream.getFormat()
 						.getSampleSizeInBits());
-			}
 
 			_dbMeter.setData(_audioData,
 					_audioStream.getFormat().getChannels(), 1000, _audioStream
 							.getFormat().getSampleSizeInBits());
 
-			if (_spectrum != null) {
+			if (_spectrum != null)
 				_spectrum.setData(_audioData, _audioStream.getFormat()
 						.getChannels(), _audioStream.getFormat()
 						.getSampleRate(), _audioStream.getFormat()
 						.getSampleSizeInBits(), 1024);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -246,7 +242,7 @@ public class AudioPlayer {
 
 	int _off;
 	int nBytesRead;
-	byte[] _audioBytes;
+	static byte[] _audioBytes;
 
 	public void play() {
 		System.out.println("Playing... " + this);
@@ -270,6 +266,7 @@ public class AudioPlayer {
 		_status = PLAYING;
 
 		(new Thread() {
+			@Override
 			public void run() {
 				int nBytesWritten = 1;
 				int bufSizeInMillis = 1000;
@@ -303,6 +300,7 @@ public class AudioPlayer {
 		}).start();
 
 		(new Thread() {
+			@Override
 			public void run() {
 				System.out.println(_sdl.getMicrosecondPosition());
 				// long length = (long) (_audioStream.getFrameLength() *
@@ -312,7 +310,8 @@ public class AudioPlayer {
 					AcmusPlugin.getDefault().getWorkbench().getDisplay()
 							.syncExec(new Runnable() {
 								public void run() {
-									// System.out.println(_player.getMediaNanoseconds()
+									// System.out.println(_player.
+									// getMediaNanoseconds()
 									// + " - " +
 									// _status);
 									_waveform.setXMarkInNanoseconds(_sdl
@@ -330,7 +329,7 @@ public class AudioPlayer {
 					} catch (Exception e) {
 					}
 				}
-				// AcmusPlugin.getDefault().getWorkbench().getDisplay().syncExec(
+				//AcmusPlugin.getDefault().getWorkbench().getDisplay().syncExec(
 				// new Runnable() {
 				// public void run() {
 				// _dbMeter.showLast();
@@ -368,9 +367,9 @@ public class AudioPlayer {
 	}
 
 	public void pause() {
-		if (_status == PAUSED) {
+		if (_status == PAUSED)
 			play();
-		} else {
+		else {
 			_player.stop();
 			_status = PAUSED;
 			_tiPlay.setImage(_imgPlay);
@@ -420,6 +419,7 @@ public class AudioPlayer {
 		_spectrumWindowFunc.add("Hanning");
 		_spectrumWindowFunc.select(2);
 		_spectrumWindowFunc.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_spectrum.setWindowFunc(_spectrumWindowFunc
 						.getItem(_spectrumWindowFunc.getSelectionIndex()));
@@ -439,6 +439,7 @@ public class AudioPlayer {
 		_spectrumWindowSize.add("4096");
 		_spectrumWindowSize.select(2);
 		_spectrumWindowSize.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_spectrum.setWindowSize(Integer.parseInt(_spectrumWindowSize
 						.getItem(_spectrumWindowSize.getSelectionIndex())));
@@ -451,9 +452,8 @@ public class AudioPlayer {
 		_spectrumFreq = new Text(parent, style);
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Hz");
-		if (_spectrum != null) {
+		if (_spectrum != null)
 			_spectrum.setFrequencyDisplay(_spectrumFreq);
-		}
 		return _spectrumFreq;
 	}
 
@@ -461,9 +461,8 @@ public class AudioPlayer {
 		_spectrumDb = new Text(parent, style);
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("dB");
-		if (_spectrum != null) {
+		if (_spectrum != null)
 			_spectrum.setDbDisplay(_spectrumDb);
-		}
 		return _spectrumDb;
 	}
 
@@ -484,6 +483,7 @@ public class AudioPlayer {
 		_gainSlider.setSelection(50);
 		_gainSlider.setMinimum(0);
 		_gainSlider.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				System.out.println(_gainSlider.getSelection());
 				_gainControl.setLevel((float) _gainSlider.getSelection() / 100);
@@ -500,6 +500,7 @@ public class AudioPlayer {
 		_tiPlay.setEnabled(true);
 		_tiPlay.setImage(AcmusGraphics.IMG_PLAY);
 		_tiPlay.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (_status == PLAYING)
 					pause();
@@ -513,6 +514,7 @@ public class AudioPlayer {
 		_tiStop.setImage(AcmusGraphics.IMG_STOP);
 		_tiStop.setEnabled(false);
 		_tiStop.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				stop();
 			}
@@ -529,6 +531,7 @@ public class AudioPlayer {
 		_tiXZoomIn.setEnabled(true);
 		_tiXZoomIn.setImage(AcmusGraphics.IMG_XZOOMIN);
 		_tiXZoomIn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.zoomIn();
 			}
@@ -540,6 +543,7 @@ public class AudioPlayer {
 		_tiXFit.setImage(AcmusGraphics.IMG_XZOOMFIT);
 		// _tiXFit.setText("Fit");
 		_tiXFit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.xFit();
 			}
@@ -551,6 +555,7 @@ public class AudioPlayer {
 		_tiXZoomOut.setImage(AcmusGraphics.IMG_XZOOMOUT);
 		_tiXZoomOut.setText("");
 		_tiXZoomOut.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.zoomOut();
 			}
@@ -563,6 +568,7 @@ public class AudioPlayer {
 		_tiYZoomIn.setEnabled(true);
 		_tiYZoomIn.setImage(AcmusGraphics.IMG_YZOOMIN);
 		_tiYZoomIn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.yZoomIn();
 			}
@@ -574,6 +580,7 @@ public class AudioPlayer {
 		_tiYReset.setImage(AcmusGraphics.IMG_YZOOMFIT);
 		// _tiYFit.setText("Fit");
 		_tiYReset.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.yFit();
 			}
@@ -584,6 +591,7 @@ public class AudioPlayer {
 		_tiYZoomOut.setEnabled(true);
 		_tiYZoomOut.setImage(AcmusGraphics.IMG_YZOOMOUT);
 		_tiYZoomOut.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.yZoomOut();
 			}
@@ -595,6 +603,7 @@ public class AudioPlayer {
 		// _tiYFit.setText("Vertical Fit");
 		_tiYFit.setImage(AcmusGraphics.IMG_YZOOMVFIT);
 		_tiYFit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.yFit2();
 			}
@@ -611,6 +620,7 @@ public class AudioPlayer {
 		_tiZoomMode.setImage(AcmusGraphics.IMG_ZOOM);
 		_tiZoomMode.setEnabled(true);
 		_tiZoomMode.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.zoomMode();
 			}
@@ -623,6 +633,7 @@ public class AudioPlayer {
 		_tiSelectXMode.setImage(AcmusGraphics.IMG_SELECTION);
 		_tiSelectXMode.setEnabled(true);
 		_tiSelectXMode.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_waveform.selectMode();
 			}
@@ -640,6 +651,7 @@ public class AudioPlayer {
 		_graphMode.select(0);
 		_graphMode.setToolTipText("Select audio display mode");
 		_graphMode.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				switch (_graphMode.getSelectionIndex()) {
 				case 0:
@@ -663,6 +675,7 @@ public class AudioPlayer {
 		_bExplain = new Button(parent, SWT.NONE);
 		_bExplain.setText("Explain");
 		_bExplain.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				explain();
 			}
@@ -674,9 +687,8 @@ public class AudioPlayer {
 		_tPosition = new Text(parent, SWT.BORDER | style);
 		_tPosition.setToolTipText("Cursor position in milliseconds");
 		_tPosition.setText("");
-		if (_spectrum != null) {
+		if (_spectrum != null)
 			_spectrum.setPositionDisplay(_tPosition);
-		}
 		return _tPosition;
 	}
 
@@ -750,7 +762,7 @@ public class AudioPlayer {
 		shell.open();
 	}
 
-	private int[] readData(AudioInputStream ais) {
+	public static int[] readData(AudioInputStream ais) {
 
 		AudioFormat format = ais.getFormat();
 		_audioBytes = new byte[(int) (ais.getFrameLength() * format
@@ -783,14 +795,15 @@ public class AudioPlayer {
 	}
 
 	/**
-	 * Returns the maximum absolute value that is actually stored
-	 * inside this file
+	 * Returns the maximum absolute value that is actually stored inside this
+	 * file
+	 * 
 	 * @return
 	 */
 	public int getMaxSample() {
 		return ArrayUtils.maxAbs(_audioData);
 	}
-		
+
 }
 
 class NullDbMeter implements IMeter {

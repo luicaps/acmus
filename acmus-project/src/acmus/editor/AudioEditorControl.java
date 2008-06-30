@@ -85,9 +85,8 @@ public class AudioEditorControl extends Composite {
 			createBar(selection);
 		}
 		createDisplays();
-		if (saveBar) {
+		if (saveBar)
 			createSaveBar();
-		}
 	}
 
 	private void createGraphArea() {
@@ -145,6 +144,7 @@ public class AudioEditorControl extends Composite {
 
 		_graphMode.add("Spectrum");
 		_graphMode.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				switch (_graphMode.getSelectionIndex()) {
 				case 0:
@@ -167,9 +167,8 @@ public class AudioEditorControl extends Composite {
 					setZoomSelectionEnabled(true);
 					break;
 				case 2:
-					if (_spectrum == null) {
+					if (_spectrum == null)
 						createSpectrum();
-					}
 					_spectrumComposite.setVisible(true);
 					((GridData) _spectrumComposite.getLayoutData()).exclude = false;
 					((GridData) _waveformComposite.getLayoutData()).exclude = true;
@@ -233,9 +232,8 @@ public class AudioEditorControl extends Composite {
 
 		_ap.createControlBar(bar, SWT.NONE);
 		_zoomBar = _ap.createZoomBar(bar, SWT.NONE);
-		if (selection) {
+		if (selection)
 			_selectionBar = _ap.createSelModeBar(bar, SWT.NONE);
-		}
 
 		_graphMode = _ap.createGraphMode(bar, SWT.NONE);
 
@@ -273,10 +271,9 @@ public class AudioEditorControl extends Composite {
 
 				public void keyReleased(KeyEvent e) {
 					System.out.println(e.keyCode);
-					if (e.keyCode == SWT.CR) {
+					if (e.keyCode == SWT.CR)
 						_wf.setSelectionStartInMillis(Integer
 								.parseInt(_tSelStart.getText()));
-					}
 				}
 			});
 
@@ -286,10 +283,9 @@ public class AudioEditorControl extends Composite {
 
 				public void keyReleased(KeyEvent e) {
 					System.out.println(e.keyCode);
-					if (e.keyCode == SWT.CR) {
+					if (e.keyCode == SWT.CR)
 						_wf.setSelectionEndInMillis(Integer.parseInt(_tSelEnd
 								.getText()));
-					}
 				}
 			});
 		}
@@ -313,6 +309,7 @@ public class AudioEditorControl extends Composite {
 		bFilter.setText("Filter");
 
 		bFilter.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				Filter f = FilterBank.get1d8(Double
 						.parseDouble(filterList[cFilters.getSelectionIndex()]),
@@ -334,6 +331,7 @@ public class AudioEditorControl extends Composite {
 		cut.setText("Cut");
 
 		cut.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (selectionValid()) {
 					_wf.cut(getSelectionStartInSamples(),
@@ -351,6 +349,7 @@ public class AudioEditorControl extends Composite {
 		save.setText("Save");
 
 		save.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				_wf.save(_dir + System.getProperty("file.separator") + _file);
 				_ap.open(_dir + System.getProperty("file.separator") + _file);
@@ -365,6 +364,7 @@ public class AudioEditorControl extends Composite {
 		_ap.open(filename);
 	}
 
+	@Override
 	public int[] getData() {
 		return _ap.getData();
 	}
@@ -375,19 +375,22 @@ public class AudioEditorControl extends Composite {
 
 	/**
 	 * Returns the highest integer that may be represented by this kind of file
+	 * 
 	 * @return
 	 */
 	public int getLimit() {
 		return acmus.util.WaveUtils.getLimit(_ap.getBitsPerSample());
 	}
-	
+
 	/**
 	 * Returns the highest sample currently held on this file
+	 * 
 	 * @return
 	 */
 	public int getMaxSample() {
 		return _ap.getMaxSample();
 	}
+
 	public int getSelectionStartInSamples() {
 		return _wf.getSelectionStartInSamples();
 	}
