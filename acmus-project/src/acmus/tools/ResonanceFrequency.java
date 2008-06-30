@@ -49,97 +49,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.AcmusPlugin;
+import acmus.graphics.ChartBuilder;
 
 /**
  * @author lku
  */
 public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
-	Shell shell;
-	private Text width;
-	private Text length;
-	private Text height;
-	private Text text;
-	private Button compute;
-
-	private double w = 0.0;
-	private double l = 0.0;
-	private double h = 0.0;
-
-	MessageBox inputErrorDialog;
-
-	Histogram hAxial;
-	Histogram hTangential;
-	Histogram hOblique;
-	static String[] histLabels = { "50", "100", "150", "200", "250", "300" };
-	static String[] emptyTopLabels = new String[0];
-	static double[] emptyDataX = new double[0];
-	static double[] emptyDataY = new double[0];
-	Label lAxial;
-	Label lTangential;
-	Label lOblique;
-	// static String newLine = System.getenv("line.separator");
-	static String newLine = System.getProperty("line.separator");
-
-	SelectionAdapter computeListener = new SelectionAdapter() {
-
-		NumberFormat formatter = new DecimalFormat("#####.0");
-
-		private void drawGraph(Histogram hist, Vector<Double> val, Label label,
-				String str1, String str2) {
-			if (val.isEmpty() == true) {
-				label.setText("All " + str1
-						+ " frequencies are greater than 300Hz");
-				hist.setData(emptyDataX, emptyDataY, emptyTopLabels);
-			} else {
-				label.setText(str2);
-				double dataX[] = new double[val.size()];
-				double dataY[] = new double[dataX.length];
-				String topLabels[] = new String[dataX.length];
-
-				for (int i = 0; i < val.size(); i++) {
-					dataX[i] = val.elementAt(i);
-					dataY[i] = 1;
-					int number = 0;
-					for (int j = 0; j < val.size(); j++) {
-						double aux1 = val.elementAt(i);
-						double aux2 = val.elementAt(j);
-						if (aux1 == aux2)
-							number++;
-					}
-					if (number > 1)
-						topLabels[i] = "" + number;
-					else
-						topLabels[i] = "";
-				}
-				hist.setData(dataX, dataY, topLabels);
-				hist.setYMax(1.5);
-			}
-		}
-
-		private void drawGraph2(Histogram hist, Vector<Double> val,
-				Label label, String str1, String str2) {
-			if (val.isEmpty() == true) {
-				label.setText("All " + str1
-						+ " frequencies are greater than 300Hz");
-				hist.setData(emptyDataX, emptyDataY, emptyTopLabels);
-			} else {
-				label.setText(str2);
-				double dataX[] = new double[val.size()];
-				double dataY[] = new double[dataX.length];
-				String topLabels[] = new String[dataX.length];
-
-				for (int i = 0; i < val.size(); i++) {
-					dataX[i] = val.elementAt(i);
-					dataY[i] = 1;
-					topLabels[i] = "";
-				}
-				hist.setData(dataX, dataY, topLabels);
-				hist.setYMax(1.5);
-			}
-		}/* method drawAxialGraph */
+	private final class SelectionAdapterImpl extends SelectionAdapter {
+		private NumberFormat formatter = new DecimalFormat("#####.0");
 
 		/**
 		 * Reads inputs, computes resonance frequencies and generates result in
@@ -150,78 +71,51 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		 */
 		@Override
 		public void widgetSelected(SelectionEvent event) {
+			ResonanceFrequency parent = ResonanceFrequency.this;
 			try {
-				ResonanceFrequency.this.w = Math.abs(Double
-						.parseDouble(ResonanceFrequency.this.width.getText()));
-				ResonanceFrequency.this.l = Math.abs(Double
-						.parseDouble(ResonanceFrequency.this.length.getText()));
-				ResonanceFrequency.this.h = Math.abs(Double
-						.parseDouble(ResonanceFrequency.this.height.getText()));
-				CalculateFrequency cal = new CalculateFrequency(
-						ResonanceFrequency.this.w, ResonanceFrequency.this.l,
-						ResonanceFrequency.this.h);
-				cal.calculateAxialFrequency();
-				cal.calculateTangentialFrequency();
-				cal.calculateObliqueFrequency();
-				if (cal.returnInputValidity() == false)
-					ResonanceFrequency.this.inputErrorDialog.open();
-				else {
-					drawGraph(ResonanceFrequency.this.hAxial, cal
-							.getAxialFrequencyVector(),
-							ResonanceFrequency.this.lAxial, "axial", "Axial");
-					drawGraph2(ResonanceFrequency.this.hTangential, cal
-							.getTangentialFrequencyVector(),
-							ResonanceFrequency.this.lTangential, "Tangential",
-							"Tangential");
-					drawGraph2(ResonanceFrequency.this.hOblique, cal
-							.getObliqueFrequencyVector(),
-							ResonanceFrequency.this.lOblique, "oblique",
-							"Oblique");
-					Vector<Double> v = cal.getAxialFrequencyVector();
-					ResonanceFrequency.this.text.setText("");
-					if (v.size() == 0)
-						ResonanceFrequency.this.text
-								.append("All axial frequencies are greater than 300Hz"
-										+ newLine);
-					else {
-						ResonanceFrequency.this.text
-								.append("Axial frequencies:" + newLine);
-						displayFrequencies(v);
-					}
-					ResonanceFrequency.this.text.append(newLine);
-					v = cal.getTangentialFrequencyVector();
-					if (v.size() == 0)
-						ResonanceFrequency.this.text
-								.append("All tangential frequencies are greater than 300Hz"
-										+ newLine);
-					else {
-						ResonanceFrequency.this.text
-								.append("Tangential frequencies:" + newLine);
-						displayFrequencies(v);
-					}
-					ResonanceFrequency.this.text.append(newLine);
-					v = cal.getObliqueFrequencyVector();
-					if (v.size() == 0)
-						ResonanceFrequency.this.text
-								.append("All oblique frequencies are greater than 300Hz"
-										+ newLine);
-					else {
-						ResonanceFrequency.this.text
-								.append("Oblique frequencies:" + newLine);
-						displayFrequencies(v);
-					}
+				CalculateFrequency cal = new CalculateFrequency(parent.width
+						.getText(), parent.length.getText(), parent.height
+						.getText());
+				cal.calculateFrequencies();
+				parent.chart.setChart(new ChartBuilder().getHistogram()
+						.addData(cal.getAxialFrequencyVector(), "Axial")
+						.addData(cal.getTangentialFrequencyVector(),
+								"Tangential").addData(
+								cal.getObliqueFrequencyVector(), "Oblique")
+						.setAxisLabels("Frequency (Hz)", "Incidence").setTitle(
+								"Resonance Frequencies").build());
+				parent.chart.forceRedraw();
 
-				}
+				displayFrequencies(cal);
+
 			} catch (Exception e) {
 				e.printStackTrace();
-				ResonanceFrequency.this.inputErrorDialog.open();
+				parent.inputErrorDialog.open();
 			}
+		}
+
+		private void displayFrequencies(CalculateFrequency cal) {
+			text.setText("");
+
+			displayFrequencies(cal.getAxialFrequencyVector(), "Axial");
+			displayFrequencies(cal.getTangentialFrequencyVector(), "Tangential");
+			displayFrequencies(cal.getObliqueFrequencyVector(), "Oblique");
+		}
+
+		private void displayFrequencies(Vector<Double> v, String type) {
+			if (v.size() == 0)
+				text.append("All " + type +	" frequencies are greater than 300Hz"
+						+ newLine);
+			else {
+				text.append(type + " frequencies:" + newLine);
+				displayFrequencies(v);
+			}
+			text.append(newLine);
 		}
 
 		private void displayFrequencies(Vector<Double> v) {
 			double[] difference = new double[v.size() - 1];
 			double[] frequency = new double[v.size()];
-			// double sum = 0.0;
 			double sum_difference = 0.0;
 			for (int i = 0; i < v.size(); i++)
 				frequency[i] = (v.elementAt(i)).doubleValue();
@@ -258,8 +152,21 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			ResonanceFrequency.this.text.append("Average of the differences: "
 					+ this.formatter.format(sum_difference) + newLine);
 		}
+	}
 
-	}; /* computeListener */
+	private Shell shell;
+	private Text width;
+	private Text length;
+	private Text height;
+	private Text text;
+	private Button compute;
+
+	private MessageBox inputErrorDialog;
+
+	private static String newLine = System.getProperty("line.separator");
+
+	private SelectionAdapter computeListener = new SelectionAdapterImpl(); /* computeListener */
+	private ChartComposite chart;
 
 	/*
 	 * (non-Javadoc)
@@ -267,7 +174,6 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -342,49 +248,21 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		g2.setLayoutData(gridData);
 		g2.setLayout(new GridLayout(1, false));
 
-		this.lAxial = new Label(g2, SWT.NONE);
-		this.lAxial.setText("Axial");
-		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		this.lAxial.setLayoutData(gridData);
-		this.hAxial = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		this.hAxial.setIntermediateTicks(4);
-		this.hAxial.setBarWidth(1);
-		this.hAxial.setXMax(300);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 140;
-		gridData.widthHint = 400;
-		this.hAxial.setLayoutData(gridData);
-
-		this.lTangential = new Label(g2, SWT.NONE);
-		this.lTangential.setText("Tangential");
-		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		this.lTangential.setLayoutData(gridData);
-		this.hTangential = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		this.hTangential.setIntermediateTicks(4);
-		this.hTangential.setBarWidth(1);
-		this.hTangential.setXMax(300);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 140;
-		gridData.widthHint = 400;
-		this.hTangential.setLayoutData(gridData);
-
-		this.lOblique = new Label(g2, SWT.NONE);
-		this.lOblique.setText("Oblique");
-		gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.CENTER);
-		this.lOblique.setLayoutData(gridData);
-		this.hOblique = new Histogram(g2, SWT.NONE, "Hz", "", histLabels);
-		this.hOblique.setIntermediateTicks(4);
-		this.hOblique.setBarWidth(1);
-		this.hOblique.setXMax(300);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 140;
-		gridData.widthHint = 400;
-		this.hOblique.setLayoutData(gridData);
+		chart = createChart(g2);
 
 		this.inputErrorDialog = new MessageBox(this.shell, SWT.ICON_ERROR);
 		this.inputErrorDialog.setMessage("Please check the input data.");
 
 		this.shell.pack();
+	}
+
+	private ChartComposite createChart(Composite g2) {
+		ChartComposite result = new ChartComposite(g2, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 420;
+		gridData.widthHint = 400;
+		result.setLayoutData(gridData);
+		return result;
 	}
 
 	/*
@@ -404,7 +282,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
 
 	}
+
 }

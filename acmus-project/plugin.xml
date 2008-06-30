@@ -313,7 +313,7 @@
 	   	   <action id="acmus_tools_resonance"
 			   menubarPath="acmus_tools/slot1"
 			   label="Resonance Frequency"
-			   tooltip="AcMus Tools - Descobre a Frequencia de ressonancia do arquivo WAV... legal"
+			   tooltip="AcMus Tools - Calculate Resonance Frequencies for given cuboid room"
 			   icon="icons/full/ctool16/tools.gif"
 			   class="acmus.tools.ResonanceFrequency">
 		   </action>

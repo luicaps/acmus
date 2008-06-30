@@ -54,24 +54,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 
-// public class AcmusApplication extends IDEApplication {
-//
-// public Object run(Object args) throws Exception {
-// System.out.println( "AcmusApplication");
-// super.run(args);
-// AcmusWorkbenchAdvisor workbenchAdvisor = new AcmusWorkbenchAdvisor();
-// Display display = PlatformUI.createDisplay();
-// int returnCode = PlatformUI
-// .createAndRunWorkbench(display, workbenchAdvisor);
-// if (returnCode == PlatformUI.RETURN_RESTART) {
-// return IPlatformRunnable.EXIT_RESTART;
-// } else {
-// return IPlatformRunnable.EXIT_OK;
-// }
-// }
-//
-// }
-
 // FIXME remover a interface deprecada
 @SuppressWarnings("deprecation")
 public class AcmusApplication implements IPlatformRunnable,

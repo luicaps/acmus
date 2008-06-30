@@ -84,7 +84,6 @@ public class RayTracing extends Composite {
 
 	// Todos os campos devem ficar aqui para serem usados no calculo realizado
 	// por compute()
-	private Text respostaImpulsivaText;
 	private Text soundSpeed;
 
 	private Spinner sourceX;
@@ -473,8 +472,8 @@ public class RayTracing extends Composite {
 	}
 
 	private void plotChart() {
-		ChartBuilder builder = new ChartBuilder(histogram);
-		chart.setChart(builder.getChart("Time", "Energy",
+		ChartBuilder builder = new ChartBuilder();
+		chart.setChart(builder.getChart(histogram, "Time", "Energy",
 				"Simulated Impulse Response for "
 						+ impulseResponse.getText() + " Hz"));
 		chart.forceRedraw();
