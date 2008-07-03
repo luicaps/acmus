@@ -1,10 +1,13 @@
 package acmus.graphics;
 
+import java.awt.Font;
 import java.util.Map;
 import java.util.Vector;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
@@ -16,20 +19,31 @@ public class ChartBuilder {
 	private IntervalXYDataset createDataset(Map<Double, Double> map) {
 		XYIntervalSeriesCollection dataset = new XYIntervalSeriesCollection();
 		XYIntervalSeries series = new XYIntervalSeries("energy");
-		
+
 		for (Map.Entry<Double, Double> e : map.entrySet())
-			series.add(e.getKey(), e.getKey(), e.getKey(), e.getValue(), e.getValue(), e.getValue());
-		
+			series.add(e.getKey(), e.getKey(), e.getKey(), e.getValue(), e
+					.getValue(), e.getValue());
+
 		dataset.addSeries(series);
 		return dataset;
 	}
 
 	public JFreeChart getChart(Map<Double, Double> map, String x, String y,
 			String title) {
-		return ChartFactory.createHistogram(title, x, y,
+		Font labelFont = new Font(Font.SANS_SERIF, Font.BOLD, 18);
+		Font tickFont = new Font(Font.SANS_SERIF, Font.PLAIN, 15);
+		
+		JFreeChart chart = ChartFactory.createHistogram(title, x, y,
 				createDataset(map), PlotOrientation.VERTICAL, false, false,
 				false);
 
+		// Setting the fonts for the axis
+		chart.getXYPlot().getRangeAxis().setLabelFont(labelFont);
+		chart.getXYPlot().getRangeAxis().setTickLabelFont(tickFont);
+		chart.getXYPlot().getDomainAxis().setLabelFont(labelFont);
+		chart.getXYPlot().getDomainAxis().setTickLabelFont(tickFont);
+		
+		return chart;
 	}
 
 	public HistogramBuilder getHistogram() {
@@ -42,14 +56,14 @@ public class ChartBuilder {
 		private String title;
 		private String xLabel;
 		private String yLabel;
-		
+
 		public HistogramBuilder() {
 			dataset = new HistogramDataset();
 			title = "";
 			xLabel = "";
 			yLabel = "";
 		}
-		
+
 		public HistogramBuilder addData(Vector<Double> data, String title) {
 			double[] points = new double[data.size()];
 			for (int i = 0; i < points.length; i++) {
@@ -58,21 +72,21 @@ public class ChartBuilder {
 			dataset.addSeries(title, points, DEFAULT_BINS);
 			return this;
 		}
-		
+
 		public HistogramBuilder setTitle(String title) {
 			this.title = title;
 			return this;
 		}
-		
+
 		public HistogramBuilder setAxisLabels(String xLabel, String yLabel) {
 			this.xLabel = xLabel;
 			this.yLabel = yLabel;
 			return this;
 		}
+
 		public JFreeChart build() {
-			return ChartFactory.createHistogram(title, xLabel, yLabel,
-					dataset, PlotOrientation.VERTICAL, true, false,
-					false);
+			return ChartFactory.createHistogram(title, xLabel, yLabel, dataset,
+					PlotOrientation.VERTICAL, true, false, false);
 		}
 	}
 }
