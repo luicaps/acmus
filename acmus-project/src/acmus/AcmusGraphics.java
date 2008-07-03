@@ -47,7 +47,8 @@ import org.eclipse.ui.forms.FormColors;
 /**
  * @author lku
  * 
- * Convenience class for storing references to image descriptors and colors.
+ *         Convenience class for storing references to image descriptors and
+ *         colors.
  */
 
 public class AcmusGraphics {
@@ -260,12 +261,17 @@ public class AcmusGraphics {
 			gc.drawPoint(i, 0);
 		}
 
-		COMP_COLORS = new Color[5];
+		COMP_COLORS = new Color[10];
 		COMP_COLORS[0] = BLUE2;
 		COMP_COLORS[1] = RED;
 		COMP_COLORS[2] = GREEN;
 		COMP_COLORS[3] = YELLOW;
-		COMP_COLORS[4] = WHITE;
+		COMP_COLORS[4] = DARK_PURPLE;
+		COMP_COLORS[5] = GRAY;
+		COMP_COLORS[6] = MAGENTA;
+		COMP_COLORS[7] = LIGHT_BLUE;
+		COMP_COLORS[8] = LIGHT_GREEN;
+		COMP_COLORS[9] = WHITE;
 
 		FIXED_SMALL = new Font(d, "fixed", 8, SWT.NORMAL);
 		FIXED_FONT = new Font(d, "courier", 9, SWT.NORMAL);
@@ -277,8 +283,8 @@ public class AcmusGraphics {
 	}
 
 	/**
-	 * Utility method to create an <code>ImageDescriptor</code> from a path to
-	 * a file.
+	 * Utility method to create an <code>ImageDescriptor</code> from a path to a
+	 * file.
 	 */
 	public static ImageDescriptor createImageDescriptor(String path) {
 		try {
