@@ -1,36 +1,34 @@
 package acmus.graphics;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.data.xy.XYIntervalSeries;
+import org.jfree.data.xy.XYIntervalSeriesCollection;
 
 public class ChartBuilder {
 
-	private CategoryDataset createDataset(Map<Double, Double> map) {
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		map = new TreeMap<Double, Double>(map);
-
+	private IntervalXYDataset createDataset(Map<Double, Double> map) {
+		XYIntervalSeriesCollection dataset = new XYIntervalSeriesCollection();
+		XYIntervalSeries series = new XYIntervalSeries("energy");
+		
 		for (Map.Entry<Double, Double> e : map.entrySet())
-			dataset.setValue(e.getValue(), "energy", e.getKey());
-
+			series.add(e.getKey(), e.getKey(), e.getKey(), e.getValue(), e.getValue(), e.getValue());
+		
+		dataset.addSeries(series);
 		return dataset;
 	}
 
 	public JFreeChart getChart(Map<Double, Double> map, String x, String y,
 			String title) {
-		JFreeChart chart = ChartFactory.createBarChart(title, x, y,
+		return ChartFactory.createHistogram(title, x, y,
 				createDataset(map), PlotOrientation.VERTICAL, false, false,
 				false);
-		chart.getPlot().setForegroundAlpha(0.5f);
-
-		return chart;
 
 	}
 
