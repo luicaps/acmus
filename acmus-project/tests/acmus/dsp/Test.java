@@ -36,12 +36,6 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import acmus.dsp.FFT1d;
-import acmus.dsp.Filter;
-import acmus.dsp.IFFT1d;
-import acmus.dsp.Ir;
-import acmus.dsp.Parameters;
-import acmus.dsp.Signal;
 import acmus.util.Algorithms;
 import acmus.util.ArrayUtils;
 import acmus.util.PrintUtils;

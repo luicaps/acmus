@@ -13,7 +13,6 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import acmus.tools.rtt.RandomAcousticSource;
 import acmus.tools.structures.Triade;
 
 public class RandomAcousticSourceTest {

@@ -43,7 +43,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-import acmus.AcmusApplication;
 import acmus.AcmusGraphics;
 
 /**

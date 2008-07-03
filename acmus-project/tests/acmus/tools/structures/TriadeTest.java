@@ -1,7 +1,6 @@
 package acmus.tools.structures;
 
 import junit.framework.TestCase;
-import acmus.tools.structures.Triade;
 
 public class TriadeTest extends TestCase {
 

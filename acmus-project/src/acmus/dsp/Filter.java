@@ -32,9 +32,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import acmus.util.ArrayUtils;
-
 import Jama.Matrix;
+import acmus.util.ArrayUtils;
 
 /**
  * @author lku
