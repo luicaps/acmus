@@ -425,6 +425,10 @@ public class RayTracing extends Composite {
 				simulation.simulate(progressBar);
 				progressBar.setSelection(100);
 				histogram = simulation.getSphericalReceptorHistogram();
+				for (Map.Entry<Double, Double> map : histogram.entrySet()) {
+					map.setValue(map.getValue() / 1000);
+					
+				}
 				plotChart();
 				saveIr.setEnabled(true);
 			}
@@ -473,7 +477,7 @@ public class RayTracing extends Composite {
 
 	private void plotChart() {
 		ChartBuilder builder = new ChartBuilder();
-		chart.setChart(builder.getChart(histogram, "Time", "Energy",
+		chart.setChart(builder.getChart(histogram, "Time (s)", "Energy (KJ)",
 				"Simulated Impulse Response for "
 						+ impulseResponse.getText() + " Hz"));
 		chart.forceRedraw();
