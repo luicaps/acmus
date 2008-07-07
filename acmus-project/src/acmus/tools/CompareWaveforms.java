@@ -75,323 +75,333 @@ import acmus.audio.WaveformDisplay;
  */
 public class CompareWaveforms extends Composite {
 
-	Text _input;
-	Button _inputBrowse;
-	FileDialog _inputFileDialog;
+    Text _input;
+    Button _inputBrowse;
+    FileDialog _inputFileDialog;
 
-	Button _bAdd;
+    Button _bAdd;
 
-	WaveformDisplay _waveform;
+    WaveformDisplay _waveform;
 
-	List<Image> _disposeList = new ArrayList<Image>();
-	private ToolBar _controlBar;
-	private ToolItem _tiUp;
-	private ToolItem _tiDown;
+    List<Image> _disposeList = new ArrayList<Image>();
+    private ToolBar _controlBar;
+    private ToolItem _tiUp;
+    private ToolItem _tiDown;
 
-	public CompareWaveforms(Shell shell, Composite parent, int style) {
-		super(parent, style);
+    public CompareWaveforms(Shell shell, Composite parent, int style) {
+	super(parent, style);
 
-		_inputFileDialog = new FileDialog(shell, SWT.OPEN);
+	_inputFileDialog = new FileDialog(shell, SWT.OPEN);
 
-		GridLayout gl;
+	GridLayout gl;
 
-		setLayout(new GridLayout(3, false));
+	setLayout(new GridLayout(3, false));
 
-		Label l;
-		GridData gridData;
+	Label l;
+	GridData gridData;
 
-		ModifyListener ml = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				validate();
-			}
-		};
+	ModifyListener ml = new ModifyListener() {
+	    public void modifyText(ModifyEvent e) {
+		validate();
+	    }
+	};
 
-		Composite c = new Composite(this, SWT.NONE);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
-		gl = new GridLayout(3, false);
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		c.setLayout(gl);
-		c.setLayoutData(gridData);
+	Composite c = new Composite(this, SWT.NONE);
+	gridData = new GridData(GridData.FILL_HORIZONTAL);
+	gridData.horizontalSpan = 3;
+	gl = new GridLayout(3, false);
+	gl.marginWidth = 0;
+	gl.marginHeight = 0;
+	c.setLayout(gl);
+	c.setLayoutData(gridData);
 
-		l = new Label(c, SWT.LEFT);
-		l.setText("Input");
+	l = new Label(c, SWT.LEFT);
+	l.setText("Input");
 
-		_input = new Text(c, SWT.BORDER);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 200;
-		_input.setLayoutData(gridData);
-		_input.addModifyListener(ml);
+	_input = new Text(c, SWT.BORDER);
+	gridData = new GridData(GridData.FILL_HORIZONTAL);
+	gridData.widthHint = 200;
+	_input.setLayoutData(gridData);
+	_input.addModifyListener(ml);
 
-		_inputBrowse = new Button(c, SWT.NONE);
-		_inputBrowse.setText("Browse");
-		_inputBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String filename = _inputFileDialog.open();
-				if (filename != null)
-					_input.setText(filename);
-			}
-		});
+	_inputBrowse = new Button(c, SWT.NONE);
+	_inputBrowse.setText("Browse");
+	_inputBrowse.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent e) {
+		String filename = _inputFileDialog.open();
+		if (filename != null) {
+		    _input.setText(filename);
+		}
+	    }
+	});
 
-		_bAdd = new Button(this, SWT.NONE);
-		gridData = new GridData();
-		gridData.horizontalSpan = 3;
-		gridData.horizontalAlignment = SWT.CENTER;
-		_bAdd.setLayoutData(gridData);
-		_bAdd.setText("Add");
-		_bAdd.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				open(_input.getText());
-				_input.setText("");
-				validate();
-			}
-		});
+	_bAdd = new Button(this, SWT.NONE);
+	gridData = new GridData();
+	gridData.horizontalSpan = 3;
+	gridData.horizontalAlignment = SWT.CENTER;
+	_bAdd.setLayoutData(gridData);
+	_bAdd.setText("Add");
+	_bAdd.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent e) {
+		open(_input.getText());
+		_input.setText("");
+		validate();
+	    }
+	});
+	_bAdd.setEnabled(false);
+
+	createTableViewer(this);
+
+	c = new Composite(this, SWT.NONE);
+	gridData = new GridData(GridData.FILL_HORIZONTAL);
+	gridData.horizontalSpan = 1;
+	gl = new GridLayout(2, false);
+	gl.marginWidth = 0;
+	gl.marginHeight = 0;
+	c.setLayout(gl);
+	c.setLayoutData(gridData);
+
+	AudioPlayer ap = new AudioPlayer();
+
+	ToolBar zoom = ap.createZoomBar(c, SWT.NONE);
+	gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
+	gridData.horizontalSpan = 1;
+	zoom.setLayoutData(gridData);
+
+	ToolBar arrows = createArrowsBar(c, SWT.NONE);
+	gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+	gridData.horizontalSpan = 1;
+	arrows.setLayoutData(gridData);
+
+	// _waveform = new WaveformDisplay(this, SWT.NONE);
+	_waveform = ap.createWaveformDisplay(c, SWT.NONE);
+	gridData = new GridData(GridData.FILL_BOTH);
+	gridData.horizontalSpan = 2;
+	gridData.widthHint = 400;
+	gridData.heightHint = 300;
+	_waveform.setLayoutData(gridData);
+    }
+
+    private ToolBar createArrowsBar(Composite parent, int style) {
+	_controlBar = new ToolBar(parent, style);
+
+	_tiUp = new ToolItem(_controlBar, SWT.PUSH);
+	_tiUp.setEnabled(true);
+	_tiUp.setImage(AcmusGraphics.IMG_UP);
+	_tiUp.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		moveWaveUp();
+	    }
+	});
+
+	_tiDown = new ToolItem(_controlBar, SWT.PUSH);
+	_tiDown.setImage(AcmusGraphics.IMG_DOWN);
+	_tiDown.setEnabled(true);
+	_tiDown.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		moveWaveDown();
+	    }
+	});
+	_tiDown.setToolTipText("Stop");
+
+	return _controlBar;
+    }
+
+    private void moveWaveUp() {
+	int position = _table.getSelectionIndex();
+	if (position == 0) {
+	    return;
+	}
+	Object element = _tViewer.getElementAt(position);
+	_table.remove(position);
+	_tViewer.insert(element, position - 1);
+	_tViewer.setChecked(element, true);
+	_waveform.moveWaveUp(position);
+	_table.setSelection(position - 1);
+    }
+
+    private void moveWaveDown() {
+	int position = _table.getSelectionIndex();
+	if (position == _waveform.numberOfArrays() - 1) {
+	    return;
+	}
+	Object element = _tViewer.getElementAt(position);
+	_table.remove(position);
+	_tViewer.insert(element, position + 1);
+	_tViewer.setChecked(element, true);
+	_waveform.moveWaveDown(position);
+	_table.setSelection(position + 1);
+    }
+
+    private void validate() {
+	if (_input.getText().trim().equals("")) {
+	    _bAdd.setEnabled(false);
+	} else {
+	    File fi = new File(_input.getText());
+	    if (!fi.exists()) {
 		_bAdd.setEnabled(false);
-
-		createTableViewer(this);
-
-		c = new Composite(this, SWT.NONE);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 1;
-		gl = new GridLayout(2, false);
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		c.setLayout(gl);
-		c.setLayoutData(gridData);
-
-		AudioPlayer ap = new AudioPlayer();
-
-		ToolBar zoom = ap.createZoomBar(c, SWT.NONE);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gridData.horizontalSpan = 1;
-		zoom.setLayoutData(gridData);
-
-		ToolBar arrows = createArrowsBar(c, SWT.NONE);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.horizontalSpan = 1;
-		arrows.setLayoutData(gridData);
-
-		// _waveform = new WaveformDisplay(this, SWT.NONE);
-		_waveform = ap.createWaveformDisplay(c, SWT.NONE);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
-		gridData.widthHint = 400;
-		gridData.heightHint = 300;
-		_waveform.setLayoutData(gridData);
+	    } else {
+		_bAdd.setEnabled(true);
+	    }
 	}
 
-	private ToolBar createArrowsBar(Composite parent, int style) {
-		_controlBar = new ToolBar(parent, style);
-
-		_tiUp = new ToolItem(_controlBar, SWT.PUSH);
-		_tiUp.setEnabled(true);
-		_tiUp.setImage(AcmusGraphics.IMG_UP);
-		_tiUp.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				moveWaveUp();
-			}
-		});
-
-		_tiDown = new ToolItem(_controlBar, SWT.PUSH);
-		_tiDown.setImage(AcmusGraphics.IMG_DOWN);
-		_tiDown.setEnabled(true);
-		_tiDown.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				moveWaveDown();
-			}
-		});
-		_tiDown.setToolTipText("Stop");
-
-		return _controlBar;
-	}
-
-	private void moveWaveUp() {
-		int position = _table.getSelectionIndex();
-		if (position == 0)
-			return;
-		Object element = _tViewer.getElementAt(position);
-		_table.remove(position);
-		_tViewer.insert(element, position - 1);
-		_tViewer.setChecked(element, true);
-		_waveform.moveWaveUp(position);
-		_table.setSelection(position - 1);
-	}
-
-	private void moveWaveDown() {
-		int position = _table.getSelectionIndex();
-		if (position == _waveform.numberOfArrays() - 1)
-			return;
-		Object element = _tViewer.getElementAt(position);
-		_table.remove(position);
-		_tViewer.insert(element, position + 1);
-		_tViewer.setChecked(element, true);
-		_waveform.moveWaveDown(position);
-		_table.setSelection(position + 1);
-	}
-
-	private void validate() {
-		if (_input.getText().trim().equals(""))
-			_bAdd.setEnabled(false);
-		else {
-			File fi = new File(_input.getText());
-			if (!fi.exists())
-				_bAdd.setEnabled(false);
-			else
-				_bAdd.setEnabled(true);
+	addDisposeListener(new DisposeListener() {
+	    public void widgetDisposed(DisposeEvent e) {
+		for (Image i : _disposeList) {
+		    i.dispose();
 		}
+		_disposeList.clear();
+	    }
+	});
+    }
 
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				for (Image i : _disposeList)
-					i.dispose();
-				_disposeList.clear();
-			}
-		});
+    public void open(IFile file) {
+	open(file.getLocation().toOSString());
+    }
+
+    public void open(String filename) {
+	try {
+	    AudioInputStream audioStream = AudioSystem
+		    .getAudioInputStream(new FileInputStream(filename));
+	    int[] audioData = AudioPlayer.readData(audioStream);
+	    if (_waveform.numberOfArrays() < 1) {
+		_waveform
+			.setData(audioData, audioStream.getFormat()
+				.getChannels(), audioStream.getFormat()
+				.getSampleRate(), audioStream.getFormat()
+				.getSampleSizeInBits(), getColor(0));
+	    } else {
+		_waveform.addData(audioData, audioStream.getFormat()
+			.getChannels(),
+			audioStream.getFormat().getSampleRate(),
+			getColor(_waveform.numberOfArrays()));
+	    }
+
+	    String sep = System.getProperty("file.separator");
+	    int ind = filename.lastIndexOf(sep, filename.lastIndexOf(sep) - 1);
+	    String name = filename;
+	    if (ind > 0) {
+		name = filename.substring(ind + 1);
+	    }
+
+	    Object o = new TableLine(name,
+		    getColor(_waveform.numberOfArrays() - 1));
+	    _tViewer.add(o);
+	    _tViewer.setChecked(o, true);
+
+	    /*
+	     * Graph update - drawing the wave added The arg true is because the
+	     * wave is checked for sure. So, it need to be drawed
+	     */
+	    _waveform.drawArray(_waveform.numberOfArrays() - 1, true);
+
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
+    }
 
-	public void open(IFile file) {
-		open(file.getLocation().toOSString());
-	}
+    private Color getColor(int i) {
+	return AcmusGraphics.COMP_COLORS[i % AcmusGraphics.COMP_COLORS.length];
+    }
 
-	public void open(String filename) {
-		try {
-			AudioInputStream audioStream = AudioSystem
-					.getAudioInputStream(new FileInputStream(filename));
-			int[] audioData = AudioPlayer.readData(audioStream);
-			if (_waveform.numberOfArrays() < 1)
-				_waveform
-						.setData(audioData, audioStream.getFormat()
-								.getChannels(), audioStream.getFormat()
-								.getSampleRate(), audioStream.getFormat()
-								.getSampleSizeInBits(), getColor(0));
-			else
-				_waveform.addData(audioData, audioStream.getFormat()
-						.getChannels(),
-						audioStream.getFormat().getSampleRate(),
-						getColor(_waveform.numberOfArrays()));
+    /* ========================================================================= */
 
-			String sep = System.getProperty("file.separator");
-			int ind = filename.lastIndexOf(sep, filename.lastIndexOf(sep) - 1);
-			String name = filename;
-			if (ind > 0)
-				name = filename.substring(ind + 1);
+    private Table _table;
+    private CheckboxTableViewer _tViewer;
 
-			Object o = new TableLine(name,
-					getColor(_waveform.numberOfArrays() - 1));
-			_tViewer.add(o);
-			_tViewer.setChecked(o, true);
+    // Set column names
+    private final String[] columnNames = new String[] { "file", "color" };
 
-			/*
-			 * Graph update - drawing the wave added The arg true is because the
-			 * wave is checked for sure. So, it need to be drawed
-			 */
-			_waveform.drawArray(_waveform.numberOfArrays() - 1, true);
+    private void createTableViewer(Composite parent) {
+	_table = new Table(parent, SWT.SINGLE | SWT.CHECK | SWT.BORDER
+		| SWT.V_SCROLL | SWT.H_SCROLL);
+	_table.setLinesVisible(false);
+	_table.setHeaderVisible(true);
+	GridData gridData = new GridData(GridData.FILL_BOTH);
+	gridData.horizontalSpan = 3;
+	_table.setLayoutData(gridData);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+	_tViewer = new CheckboxTableViewer(_table);
+	_tViewer.setLabelProvider(new PositionLabelProvider());
+	_tViewer.setColumnProperties(columnNames);
+
+	_tViewer.addCheckStateListener(new ICheckStateListener() {
+
+	    public void checkStateChanged(CheckStateChangedEvent event) {
+		for (int i = 0; i < _waveform.numberOfArrays(); i++) {
+		    _waveform.drawArray(i, _tViewer.getChecked(_tViewer
+			    .getElementAt(i)));
 		}
+	    }
+
+	});
+
+	TableColumn tc = new TableColumn(_table, SWT.LEFT);
+	tc.setResizable(true);
+	tc.setWidth(500);
+	tc.setText(columnNames[0]);
+
+	tc = new TableColumn(_table, SWT.LEFT);
+	tc.setResizable(true);
+	tc.setWidth(40);
+	tc.setText(columnNames[1]);
+    }
+
+    class PositionLabelProvider extends LabelProvider implements
+	    ITableLabelProvider {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+	 * .lang.Object, int)
+	 */
+	public Image getColumnImage(Object element, int columnIndex) {
+	    if (columnIndex != 1) {
+		return null;
+	    }
+	    TableLine t = (TableLine) element;
+	    return createRectangle(20, 10, t.color);
 	}
 
-	private Color getColor(int i) {
-		return AcmusGraphics.COMP_COLORS[i % AcmusGraphics.COMP_COLORS.length];
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+	 * lang.Object, int)
+	 */
+	public String getColumnText(Object element, int columnIndex) {
+	    if (columnIndex != 0) {
+		return null;
+	    }
+	    TableLine t = (TableLine) element;
+	    return t.name;
 	}
 
-	/* ========================================================================= */
-
-	private Table _table;
-	private CheckboxTableViewer _tViewer;
-
-	// Set column names
-	private final String[] columnNames = new String[] { "file", "color" };
-
-	private void createTableViewer(Composite parent) {
-		_table = new Table(parent, SWT.SINGLE | SWT.CHECK | SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
-		_table.setLinesVisible(false);
-		_table.setHeaderVisible(true);
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 3;
-		_table.setLayoutData(gridData);
-
-		_tViewer = new CheckboxTableViewer(_table);
-		_tViewer.setLabelProvider(new PositionLabelProvider());
-		_tViewer.setColumnProperties(columnNames);
-
-		_tViewer.addCheckStateListener(new ICheckStateListener() {
-
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				for (int i = 0; i < _waveform.numberOfArrays(); i++)
-					_waveform.drawArray(i, _tViewer.getChecked(_tViewer
-							.getElementAt(i)));
-			}
-
-		});
-
-		TableColumn tc = new TableColumn(_table, SWT.LEFT);
-		tc.setResizable(true);
-		tc.setWidth(500);
-		tc.setText(columnNames[0]);
-
-		tc = new TableColumn(_table, SWT.LEFT);
-		tc.setResizable(true);
-		tc.setWidth(40);
-		tc.setText(columnNames[1]);
+	private Image createRectangle(int width, int height, Color c) {
+	    Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
+	    Image img = new Image(d, width, height);
+	    GC gc = new GC(img);
+	    gc.setBackground(c);
+	    gc.fillRectangle(0, 0, width, height);
+	    return img;
 	}
+    }
 
-	class PositionLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+    class TableLine {
+	String name;
+	Color color;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
-		 * .lang.Object, int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex != 1)
-				return null;
-			TableLine t = (TableLine) element;
-			return createRectangle(20, 10, t.color);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
-		 * lang.Object, int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			if (columnIndex != 0)
-				return null;
-			TableLine t = (TableLine) element;
-			return t.name;
-		}
-
-		private Image createRectangle(int width, int height, Color c) {
-			Display d = AcmusPlugin.getDefault().getWorkbench().getDisplay();
-			Image img = new Image(d, width, height);
-			GC gc = new GC(img);
-			gc.setBackground(c);
-			gc.fillRectangle(0, 0, width, height);
-			return img;
-		}
+	public TableLine(String name, Color color) {
+	    this.name = name;
+	    this.color = color;
 	}
-
-	class TableLine {
-		String name;
-		Color color;
-
-		public TableLine(String name, Color color) {
-			this.name = name;
-			this.color = color;
-		}
-	}
+    }
 
 }
