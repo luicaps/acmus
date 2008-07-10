@@ -279,6 +279,9 @@ public class CompareWaveforms extends Composite {
 			.getChannels(),
 			audioStream.getFormat().getSampleRate(),
 			getColor(_waveform.numberOfArrays()));
+		
+		_waveform.updateYStart();
+		_waveform.updateXStart();
 	    }
 
 	    String sep = System.getProperty("file.separator");
