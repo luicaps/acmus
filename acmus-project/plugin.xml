@@ -31,6 +31,12 @@
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.ide.application"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.appserver"/>
+      <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.help.webapp"/>
+      <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.tomcat"/>
    </requires>
    
    <extension-point
@@ -58,6 +64,11 @@
 		</run>
 	</application>
 </extension> 
+	
+	<extension point="org.eclipse.help.toc">
+		<toc file="toc.xml" primary="true" />
+	</extension>
+
 
    <extension point="org.eclipse.ui.perspectives">
      <perspective
@@ -331,16 +342,9 @@
 			   icon="icons/full/ctool16/tools.gif"
 			   class="acmus.tools.CompareWaveformsActionDelegate">
 		   </action>
-	   	   <action id="acmus_tools_compareWavefo"
-			   menubarPath="acmus_tools/slot1"
-			   label="Compare"
-			   tooltip="AcMus Tools - Compare Waveforms"
-			   icon="icons/full/ctool16/tools.gif"
-			   class="acmus.tools.CompareWaveformsActionDelegate">
-		   </action>
 		   <action id="acmus_tools_rayTracing"
 			   menubarPath="acmus_tools/slot2"
-			   label="Ray Tracing-Acoustic Simulation"
+			   label="Ray-Tracing Acoustic Simulation"
 			   tooltip="AcMus Tools - Tracado de Raios"
 			   icon="icons/full/ctool16/tools.gif"
 			   class="acmus.tools.RayTracingActionDelegate">
