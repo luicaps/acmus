@@ -400,7 +400,8 @@ public class WaveformDisplay extends Composite {
 			_vbar.setVisible(true);
 		} else {
 			_vbar.setVisible(false);
-			_yStart = _sampleT.unitMaxValue();
+			// This is wrong!
+			//_yStart = _sampleT.unitMaxValue();
 		}
 
 		for (Waveform w : _wf) {
@@ -423,8 +424,8 @@ public class WaveformDisplay extends Composite {
 
 		double xPos = prop * newXMax;
 		_hbar.setSelection((int) Math.round(xPos));
-
-		updateXStart();
+		// This seems unnecessary...
+		//updateXStart();
 	}
 
 	public final void updateYBar() {
@@ -436,8 +437,9 @@ public class WaveformDisplay extends Composite {
 		_vbar.setSelection((int) Math.round(yPos));
 
 		_vbar.setMaximum(newYMax);
-
-		updateYStart();
+		// This seems unnecessary and causes some problems when changing zooms
+		// making the graph become off-center
+		//updateYStart();
 	}
 
 	public void zoomIn() {
@@ -467,6 +469,7 @@ public class WaveformDisplay extends Composite {
 	}
 
 	public void yFit() {
+		updateYStart();
 		setZoom(_xZoom, 1);
 	}
 
@@ -486,6 +489,7 @@ public class WaveformDisplay extends Composite {
 		if (Double.isInfinite(max - min)) {
 			yFit();
 		} else {
+			updateYStart();
 			setZoom(_xZoom, 0.9 * _sampleT.unitValueRange() / (max - min));
 			setYPos((int) ((_drawingAreaHeight * _yZoom)
 					* ((_sampleT.unitMaxValue() - max) / _sampleT
