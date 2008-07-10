@@ -84,8 +84,20 @@ public class ChartBuilder {
 	}
 
 	public JFreeChart build() {
-	    return ChartFactory.createHistogram(title, xLabel, yLabel, dataset,
-		    PlotOrientation.VERTICAL, true, false, false);
+	    Font labelFont = new Font(null, Font.BOLD, 18);
+	    Font tickFont = new Font(null, Font.PLAIN, 15);
+
+	    JFreeChart chart = ChartFactory.createHistogram(title, xLabel,
+		    yLabel, dataset, PlotOrientation.VERTICAL, true, false,
+		    false);
+
+	    // Setting the fonts for the axis
+	    chart.getXYPlot().getRangeAxis().setLabelFont(labelFont);
+	    chart.getXYPlot().getRangeAxis().setTickLabelFont(tickFont);
+	    chart.getXYPlot().getDomainAxis().setLabelFont(labelFont);
+	    chart.getXYPlot().getDomainAxis().setTickLabelFont(tickFont);
+
+	    return chart;
 	}
     }
 }
