@@ -146,24 +146,18 @@ public class AudioEditorControl extends Composite {
 		_graphMode.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
+				((GridData) _spectrumComposite.getLayoutData()).exclude = true;
+				_spectrumComposite.setVisible(false);
+				((GridData) _waveformComposite.getLayoutData()).exclude = true;
+				_waveformComposite.setVisible(false);	
+				
 				switch (_graphMode.getSelectionIndex()) {
+				// Both cases are treated equally here, but differently
+				// at AudioPlayer.java
 				case 0:
-					((GridData) _spectrumComposite.getLayoutData()).exclude = true;
-					_spectrumComposite.setVisible(false);
-					((GridData) _waveformComposite.getLayoutData()).exclude = false;
-					_waveformComposite.setVisible(true);
-					_graphArea.layout();
-					// _waveform.amplitude(); <-- already called by default
-					// listener
-					setZoomSelectionEnabled(true);
-					break;
 				case 1:
-					((GridData) _spectrumComposite.getLayoutData()).exclude = true;
-					_spectrumComposite.setVisible(false);
 					((GridData) _waveformComposite.getLayoutData()).exclude = false;
-					_waveformComposite.setVisible(true);
-					_graphArea.layout();
-					// _waveform.power(); <-- already called by default listener
+					_waveformComposite.setVisible(true);	
 					setZoomSelectionEnabled(true);
 					break;
 				case 2:
@@ -171,12 +165,10 @@ public class AudioEditorControl extends Composite {
 						createSpectrum();
 					_spectrumComposite.setVisible(true);
 					((GridData) _spectrumComposite.getLayoutData()).exclude = false;
-					((GridData) _waveformComposite.getLayoutData()).exclude = true;
-					_waveformComposite.setVisible(false);
-					_graphArea.layout();
 					setZoomSelectionEnabled(false);
 					break;
 				}
+				_graphArea.layout();
 			}
 		});
 	}
