@@ -6,7 +6,7 @@
    <aboutInfo>
       <image path="/acmus/images/logo3.gif"/>
       <text>
-         AcMus ver 1.1, Copyright (C) 2008 AcMus Group.
+         AcMus ver 1.0.2, Copyright (C) 2008 AcMus Group.
 
 This program is free software; you can redistribute it
 and/or modify it under the terms of the GNU General
@@ -58,6 +58,7 @@ Thiago Coraini
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
