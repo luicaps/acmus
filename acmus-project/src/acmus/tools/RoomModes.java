@@ -57,7 +57,7 @@ import acmus.graphics.ChartBuilder;
 /**
  * @author lku
  */
-public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
+public class RoomModes implements IWorkbenchWindowActionDelegate {
 
 	private final class SelectionAdapterImpl extends SelectionAdapter {
 		private NumberFormat formatter = new DecimalFormat("#####.0");
@@ -71,7 +71,7 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 		 */
 		@Override
 		public void widgetSelected(SelectionEvent event) {
-			ResonanceFrequency parent = ResonanceFrequency.this;
+			RoomModes parent = RoomModes.this;
 			try {
 				CalculateFrequency cal = new CalculateFrequency(parent.width
 						.getText(), parent.length.getText(), parent.height
@@ -122,12 +122,12 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 
 			Arrays.sort(frequency);
 
-			ResonanceFrequency.this.text.append(""
+			RoomModes.this.text.append(""
 					+ this.formatter.format(frequency[0]) + newLine);
 			for (int i = 1, index = 0; i < v.size(); i++, index++) {
 				difference[index] = frequency[i] - frequency[i - 1];
 				sum_difference += difference[index];
-				ResonanceFrequency.this.text.append(""
+				RoomModes.this.text.append(""
 						+ this.formatter.format(frequency[i]) + newLine);
 			}
 
@@ -146,10 +146,10 @@ public class ResonanceFrequency implements IWorkbenchWindowActionDelegate {
 			}
 
 			standard_deviation = Math.sqrt(standard_deviation);
-			ResonanceFrequency.this.text.append("Standard deviation: "
+			RoomModes.this.text.append("Standard deviation: "
 					+ this.formatter.format(standard_deviation) + newLine);
 
-			ResonanceFrequency.this.text.append("Average of the differences: "
+			RoomModes.this.text.append("Average of the differences: "
 					+ this.formatter.format(sum_difference) + newLine);
 		}
 	}

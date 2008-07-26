@@ -480,7 +480,7 @@ public class RayTracing extends Composite {
 			miliHistogram.put(map.getKey(), map.getValue()/1000);
 			
 		}
-		chart.setChart(builder.getChart(miliHistogram, "Time (s)", "Energy (Pa)",
+		chart.setChart(builder.getChart(miliHistogram, "Time (s)", "Energy (Thousands)",
 				"Simulated Impulse Response for "
 						+ impulseResponse.getText() + " Hz"));
 		chart.forceRedraw();
