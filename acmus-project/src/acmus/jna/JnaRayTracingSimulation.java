@@ -67,9 +67,9 @@ public class JnaRayTracingSimulation {
                 sphericalReceptorRadius, speedOfSound, INITIAL_ENERGY,
                 mCoeficient, K);
 
-        NativeLibrary.addSearchPath("simulacao", "/var/local/caueguerra/");
-        MySharedLibrary lib = (MySharedLibrary) Native.loadLibrary("simulacao",
-                MySharedLibrary.class);
+        NativeLibrary.addSearchPath("simulation", "/var/local/caueguerra/");
+        MySharedLibrary lib = (MySharedLibrary) Native.loadLibrary(
+                "simulation", MySharedLibrary.class);
 
         lib.simulate(simulation.soundSpeed, simulation.jnaSoundSource,
                 simulation.jnaVectors, simulation.initialEnergy,
