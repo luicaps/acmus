@@ -15,10 +15,10 @@ import com.sun.jna.NativeLibrary;
 
 public class JnaRayTracingSimulation {
 
-    private JnaTriade[] vectors;
-    private JnaNormalSector[] sectors;
-    private JnaTriade soundSource;
-    private JnaTriade sphericalReceptorCenter;
+    private JnaTriade[] jnaVectors;
+    private JnaNormalSector[] jnaSectors;
+    private JnaTriade jnaSoundSource;
+    private JnaTriade jnaSphericalReceptorCenter;
     private HashMap<Double, Double> sphericalReceptorHistogram;
 
     double sphericalReceptorRadius;
@@ -49,6 +49,8 @@ public class JnaRayTracingSimulation {
     }
 
     public static void main(String[] args) {
+        double tempo_inicial = System.currentTimeMillis();
+
         final int K = 1000;
         final double INITIAL_ENERGY = 100000;
 
@@ -65,15 +67,14 @@ public class JnaRayTracingSimulation {
                 sphericalReceptorRadius, speedOfSound, INITIAL_ENERGY,
                 mCoeficient, K);
 
-        double tempo_inicial = System.currentTimeMillis();
         NativeLibrary.addSearchPath("simulacao", "/var/local/caueguerra/");
         MySharedLibrary lib = (MySharedLibrary) Native.loadLibrary("simulacao",
                 MySharedLibrary.class);
 
-        lib.simulate(simulation.soundSpeed, simulation.soundSource,
-                simulation.vectors, simulation.initialEnergy,
-                simulation.sectors, simulation.mCoeficient,
-                simulation.sphericalReceptorCenter,
+        lib.simulate(simulation.soundSpeed, simulation.jnaSoundSource,
+                simulation.jnaVectors, simulation.initialEnergy,
+                simulation.jnaSectors, simulation.mCoeficient,
+                simulation.jnaSphericalReceptorCenter,
                 simulation.sphericalReceptorRadius, simulation.k, vectors
                         .size(), sectors.size());
 
@@ -86,33 +87,68 @@ public class JnaRayTracingSimulation {
                 + "milisegundos");
     }
 
-    public JnaRayTracingSimulation(List<NormalSector> sectors,
-            List<Triade> vectors, Triade soundSourceCenter,
+    private List<JnaNormalSector> normalSectorConverter(
+            List<NormalSector> normalSectors) {
+        List<JnaNormalSector> jnaNs = new ArrayList<JnaNormalSector>();
+
+        for (NormalSector ns : normalSectors) {
+            JnaNormalSector t = new JnaNormalSector();
+            t.absorventCoeficient = ns.absorventCoeficient;
+            t.iPoint = new JnaTriade(ns.iPoint.getX(), ns.iPoint.getY(),
+                    ns.iPoint.getZ());
+            t.normalVector = new JnaTriade(ns.normalVector.getX(),
+                    ns.normalVector.getY(), ns.normalVector.getZ());
+
+            jnaNs.add(t);
+        }
+
+        return jnaNs;
+    }
+
+    private List<JnaTriade> triadeConverter(List<Triade> triades) {
+        List<JnaTriade> jnaT = new ArrayList<JnaTriade>();
+
+        for (Triade t : triades) {
+            JnaTriade triade = new JnaTriade(t.getX(), t.getY(), t.getZ());
+            jnaT.add(triade);
+        }
+
+        return jnaT;
+    }
+
+    public JnaRayTracingSimulation(List<NormalSector> sectorsList,
+            List<Triade> vectorsList, Triade soundSourceCenter,
             Triade sphericalReceptorCenter, double sphericalReceptorRadius,
             double soundSpeed, double initialEnergy, double mCoeficient, int k) {
-        this.sectors = (JnaNormalSector[]) new JnaNormalSector()
-                .toArray(sectors.size());
-        JnaNormalSector[] ns = sectors.toArray(new JnaNormalSector[sectors
+
+        List<JnaNormalSector> jnaSectorsList = normalSectorConverter(sectorsList);
+        List<JnaTriade> jnaVectorsList = triadeConverter(vectorsList);
+
+        this.jnaSectors = (JnaNormalSector[]) new JnaNormalSector()
+                .toArray(jnaSectorsList.size());
+        JnaNormalSector[] ns = jnaSectorsList
+                .toArray(new JnaNormalSector[jnaSectorsList.size()]);
+        this.jnaVectors = (JnaTriade[]) new JnaTriade().toArray(jnaVectorsList
+                .size());
+        JnaTriade[] t = jnaVectorsList.toArray(new JnaTriade[jnaVectorsList
                 .size()]);
-        this.vectors = (JnaTriade[]) new JnaTriade().toArray(vectors.size());
-        JnaTriade[] t = vectors.toArray(new JnaTriade[vectors.size()]);
 
-        for (int i = 0; i < this.sectors.length; i++) {
-            this.sectors[i].absorventCoeficient = ns[i].absorventCoeficient;
-            this.sectors[i].iPoint = ns[i].iPoint;
-            this.sectors[i].normalVector = ns[i].normalVector;
+        for (int i = 0; i < this.jnaSectors.length; i++) {
+            this.jnaSectors[i].absorventCoeficient = ns[i].absorventCoeficient;
+            this.jnaSectors[i].iPoint = ns[i].iPoint;
+            this.jnaSectors[i].normalVector = ns[i].normalVector;
         }
 
-        for (int i = 0; i < this.vectors.length; i++) {
-            this.vectors[i].x = t[i].x;
-            this.vectors[i].y = t[i].y;
-            this.vectors[i].z = t[i].z;
+        for (int i = 0; i < this.jnaVectors.length; i++) {
+            this.jnaVectors[i].x = t[i].x;
+            this.jnaVectors[i].y = t[i].y;
+            this.jnaVectors[i].z = t[i].z;
         }
 
-        this.soundSource = new JnaTriade(soundSourceCenter.getX(),
+        this.jnaSoundSource = new JnaTriade(soundSourceCenter.getX(),
                 soundSourceCenter.getY(), soundSourceCenter.getZ());
 
-        this.sphericalReceptorCenter = new JnaTriade(sphericalReceptorCenter
+        this.jnaSphericalReceptorCenter = new JnaTriade(sphericalReceptorCenter
                 .getX(), sphericalReceptorCenter.getY(),
                 sphericalReceptorCenter.getZ());
 
