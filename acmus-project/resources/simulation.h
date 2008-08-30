@@ -1,5 +1,5 @@
-#ifndef simulacao_H
-#define simulacao_H
+#ifndef simulation_H
+#define simulation_H
 
 typedef struct _JnaTriade {
 	int x, y, z;

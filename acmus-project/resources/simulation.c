@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include "simulacao.h"
+#include "simulation.h"
 
 void simulate(double soundSpeed, JnaTriade* soundSource, JnaTriade vectors[],
                 double initialEnergy, JnaNormalSector sectors[],
