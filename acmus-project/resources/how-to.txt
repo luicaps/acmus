@@ -1,0 +1,4 @@
+To create a library from the simulation.c source:
+
+gcc -c -fPIC simulation.c -o simulation.o
+gcc -shared -Wl,-soname,libsimulation.so.1 -o libsimulation.so simulation.o
