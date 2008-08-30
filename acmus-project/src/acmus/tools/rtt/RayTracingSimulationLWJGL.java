@@ -172,7 +172,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 						if( l<=lMin ){
 							lMin = l;
 							dMin = d;
-							alpha = s.absorbentCoeficient;
+							alpha = s.absorventCoeficient;
 							nR = s.normalVector;
 						}
 					}
