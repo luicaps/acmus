@@ -1,14 +1,14 @@
 package acmus.tools.structures;
 
 public class NormalSector {
-    public Triade normalVector;
-    public double absorventCoeficient;
-    public Triade iPoint;
+	public Vector normalVector;
+	public double absorbentCoeficient;
+	public Vector iPoint;
 
-    public NormalSector(Triade normalVector, Triade iPoint,
-            double absorbentCoeficient) {
-        this.normalVector = normalVector;
-        this.iPoint = iPoint;
-        this.absorventCoeficient = absorbentCoeficient;
-    }
+	public NormalSector(Vector normalVector, Vector iPoint,
+			double absorbentCoeficient) {
+		this.normalVector = normalVector;
+		this.iPoint = iPoint;
+		this.absorbentCoeficient = absorbentCoeficient;
+	}
 }

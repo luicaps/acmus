@@ -61,7 +61,7 @@ import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.RandomAcousticSource;
 import acmus.tools.rtt.RayTracingSimulation;
 import acmus.tools.structures.NormalSector;
-import acmus.tools.structures.Triade;
+import acmus.tools.structures.Vector;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 
@@ -408,11 +408,11 @@ public class RayTracing extends Composite {
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Triade> vectors = new RandomAcousticSource().generate(rays
+				List<Vector> vectors = new RandomAcousticSource().generate(rays
 						.getSelection());
-				Triade soundSourceCenter = newTriadeFor(sourceX, sourceY,
+				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
-				Triade sphericalReceptorCenter = newTriadeFor(receiverX,
+				Vector sphericalReceptorCenter = newTriadeFor(receiverX,
 						receiverY, receiverZ);
 				double sphericalReceptorRadius = getValue(radius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
@@ -436,38 +436,38 @@ public class RayTracing extends Composite {
 	private List<NormalSector> generateSectorsFor() {
 
 		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
-		double w = getValue(width);
-		double h = getValue(height);
-		double l = getValue(length);
-		result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0),
+		float w = getValue(width);
+		float h = getValue(height);
+		float l = getValue(length);
+		result.add(new NormalSector(new Vector(0, 0, 1), new Vector(l, w, 0),
 				getValue(floorCoeficient)));
-		result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h),
+		result.add(new NormalSector(new Vector(0, 1, 0), new Vector(l, 0, h),
 				getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h),
+		result.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, w, h),
 				getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h),
+		result.add(new NormalSector(new Vector(0, 0, -1), new Vector(l, w, h),
 				getValue(ceilCoeficient)));
-		result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h),
+		result.add(new NormalSector(new Vector(0, -1, 0), new Vector(l, w, h),
 				getValue(wallsCoeficients)));
-		result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h),
+		result.add(new NormalSector(new Vector(-1, 0, 0), new Vector(l, w, h),
 				getValue(wallsCoeficients)));
 		return result;
 	}
 
-	private Triade newTriadeFor(Spinner sourceX, Spinner sourceY,
+	private Vector newTriadeFor(Spinner sourceX, Spinner sourceY,
 			Spinner sourceZ) {
-		return new Triade(getValue(sourceX), getValue(sourceY),
+		return new Vector(getValue(sourceX), getValue(sourceY),
 				getValue(sourceZ));
 	}
 
-	private double getValue(Spinner sourceX) {
-		double ret;
+	private float getValue(Spinner sourceX) {
+		float ret;
 
 		if (sourceX != null) {
-			double base = Math.pow(10, sourceX.getDigits());
+			float base = (float) Math.pow(10, sourceX.getDigits());
 			ret = sourceX.getSelection() / base;
 		} else
-			ret = 0.0;
+			ret = 0.0f;
 
 		return ret;
 	}

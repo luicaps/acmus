@@ -2,7 +2,7 @@ package acmus.tools.rtt;
 
 import java.util.List;
 
-import acmus.tools.structures.Triade;
+import acmus.tools.structures.Vector;
 
 /**
  * This interface is used to provide a uniform way to RayTracing use the
@@ -12,7 +12,7 @@ import acmus.tools.structures.Triade;
  * 
  */
 public interface AcousticSource {
-	public List<Triade> generate();
+	public List<Vector> generate();
 
-	public List<Triade> generate(int n);
+	public List<Vector> generate(int n);
 }
