@@ -37,11 +37,11 @@ public class Vector {
 		return new Vector(x+end.x, y+end.y, z+end.z);
 	}
 
-	public Vector dotProduct(Vector w) {
+	public Vector crossProduct(Vector w) {
 		return new Vector(y * w.z - z * w.y, z * w.x - x * w.z, x * w.y - y * w.x);
 	}
 
-	public float crossProduct(Vector w) {
+	public float dotProduct(Vector w) {
 		return this.x * w.x + this.y * w.y + this.z * w.z;
 	}
 

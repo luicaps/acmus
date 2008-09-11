@@ -95,11 +95,11 @@ public class RayTracingSimulation {
 				for (NormalSector s : sectors) {
 					// System.out.println("k#");
 
-					if (v.crossProduct(s.normalVector) >= 0) {
+					if (v.dotProduct(s.normalVector) >= 0) {
 						continue;
 					} else {
-						float d = s.normalVector.crossProduct(g.sub(s.iPoint));
-						float l = -1 * d / (v.crossProduct(s.normalVector));
+						float d = s.normalVector.dotProduct(g.sub(s.iPoint));
+						float l = -1 * d / (v.dotProduct(s.normalVector));
 
 						// testa distancia minima da fonte a parede e ve
 						// se eh
@@ -131,8 +131,8 @@ public class RayTracingSimulation {
 				// delta = 2 e na verdade o raio nao intercepta a esfera
 				{
 					Vector oc = sphericalReceptorCenter.sub(g);
-					double l2oc = oc.crossProduct(oc);
-					double tca = oc.crossProduct(v);
+					double l2oc = oc.dotProduct(oc);
+					double tca = oc.dotProduct(v);
 
 					// o raio intercepta o receptor esferico
 					if (tca >= 0) {
