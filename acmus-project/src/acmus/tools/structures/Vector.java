@@ -10,7 +10,7 @@ public class Vector {
 		y = b;
 		z = c;
 	}
-
+	
 	public double getX() {
 		return x;
 	}

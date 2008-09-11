@@ -21,13 +21,15 @@ public class RandomAcousticSource implements AcousticSource {
 
 	public List<Vector> generate(int n) {
 		List<Vector> sphericalPoints = new ArrayList<Vector>();
-		for(int i=0; i<n; i++) {
+		int i = 0;
+		while(i < n) {
 			float x = 2 * (float) Math.random() - 1; 
 			float y = 2 * (float) Math.random() - 1;
 			float z = 2 * (float) Math.random() - 1;
 			
 			if(x*x + y*y + z*z <= 1) {
-				sphericalPoints.add(new Vector(x, y, z));
+				sphericalPoints.add(new Vector(x, y, z).normalize());
+				i++;
 			}
 		}
 		

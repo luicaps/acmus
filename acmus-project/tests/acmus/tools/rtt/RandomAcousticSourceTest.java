@@ -13,12 +13,12 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import acmus.tools.structures.Triade;
+import acmus.tools.structures.Vector;
 
 public class RandomAcousticSourceTest {
 
-	private static final int POINTS_SIZE = 10000;
-	private static List<Triade> randomPoints;
+	private static final int POINTS_SIZE = 1000;
+	private static List<Vector> randomPoints;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -52,8 +52,8 @@ public class RandomAcousticSourceTest {
 	public void testPointsAreGeneratedInTheSurfaceOfAUnitSphere()
 			throws IOException {
 
-		for (Triade triade : randomPoints) {
-			assertEquals(1.0, triade.modulo(), Triade.EPS);
+		for (Vector triade : randomPoints) {
+			assertEquals(1.0, triade.length(), 0.00001);
 		}
 
 	}
@@ -69,7 +69,7 @@ public class RandomAcousticSourceTest {
 
 		int octs[] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-		for (Triade triade : randomPoints) {
+		for (Vector triade : randomPoints) {
 			int i = 0;
 			if (triade.getX() < 0)
 				i += 1;
