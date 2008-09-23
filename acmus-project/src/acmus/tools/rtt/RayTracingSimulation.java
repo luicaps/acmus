@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
 
-public class RayTracingSimulation {
+public class RayTracingSimulation implements GeometricAcousticSimulation {
 
 	private List<Vector> vectors;
 	private List<NormalSector> sectors;
@@ -41,21 +41,6 @@ public class RayTracingSimulation {
 		this.k = k;
 
 		sphericalReceptorHistogram = new HashMap<Double, Double>();
-	}
-
-	//XXX it will be erased! Move it!
-	private void saveVectors() throws IOException {
-		FileWriter fw = new FileWriter("/tmp/fonte3d.txt");
-
-		for (int i = 0; i < vectors.size(); i++) {
-			fw.write(vectors.get(i).toDat() + "\n");
-		}
-
-		// Para desenhar o grafico com o gnuplot
-		// set size square
-		// splot '/tmp/fonte3d.txt'
-		fw.flush();
-		fw.close();
 	}
 
 	public void simulate(final ProgressBar progressBar) {
@@ -205,37 +190,4 @@ public class RayTracingSimulation {
 		fw.write(ss.toString());
 		fw.close();
 	}
-
-	public void histogram() {
-		double tMax = 0.0;
-		double h1 = 0.0, h2 = 0.0, h3 = 0.0, h4 = 0.0, h5 = 0.0, h6 = 0.0;
-		Iterator<Double> itr = sphericalReceptorHistogram.keySet().iterator();
-		// controi histograma
-		while (itr.hasNext()) {
-			Double key = itr.next();
-			if (key <= 0.01)
-				h1 += sphericalReceptorHistogram.get(key);
-			if (key >= 0.01 && key <= 0.02)
-				h2 += sphericalReceptorHistogram.get(key);
-			if (key >= 0.02 && key <= 0.03)
-				h3 += sphericalReceptorHistogram.get(key);
-			if (key >= 0.03 && key <= 0.04)
-				h4 += sphericalReceptorHistogram.get(key);
-			if (key >= 0.04 && key <= 0.05)
-				h5 += sphericalReceptorHistogram.get(key);
-			if (key >= 0.05)
-				h6 += sphericalReceptorHistogram.get(key);
-
-			tMax = sphericalReceptorHistogram.get(key);
-		}
-
-		System.out.println("0,01 : " + h1 / tMax);
-		System.out.println("0,02 : " + h2 / tMax);
-		System.out.println("0,03 : " + h3 / tMax);
-		System.out.println("0,04 : " + h4 / tMax);
-		System.out.println("0,05 : " + h5 / tMax);
-		System.out.println("0,06 : " + h6 / tMax);
-
-	}
-
 }

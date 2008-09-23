@@ -34,15 +34,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.glu.GLU;
 
 import acmus.tools.structures.NormalSector;
-import acmus.tools.structures.Triade;
+import acmus.tools.structures.Vector;
 
 public class RayTracingSimulationLWJGL implements Runnable{
 
 	
-	List<Triade> vectors;
+	List<Vector> vectors;
 	List<NormalSector> sectors;
-	Triade soundSource;
-	Triade sphericalReceptorCenter;
+	Vector soundSource;
+	Vector sphericalReceptorCenter;
 	HashMap<Double, Double> sphericalReceptorHistogram;
 	
 	double sphericalReceptorRadius;
@@ -53,7 +53,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 	
 	
 	//lista de pontos para serem tracados com o opengl
-	static List<Triade> lista = new ArrayList<Triade>();
+	static List<Vector> lista = new ArrayList<Vector>();
 	
 	public RayTracingSimulationLWJGL() {
 		
@@ -76,15 +76,15 @@ public class RayTracingSimulationLWJGL implements Runnable{
 //		vectors.add(new Triade(0.912870, 0.1825741, 0)); //vetor (0.5,1,0) normalizado
 //		vectors.add(new Triade(0.7071, 0.7071, 0)); //vetor (1,1,0) normalizado
 		sectors = new ArrayList<NormalSector>();
-		sectors.add(new NormalSector(new Triade(0, 0, 1), new Triade(1,1,0), 0.5)); //base
-		sectors.add(new NormalSector(new Triade(0, 0, -1), new Triade(1, 1, 10), 0.5)); //topo
-		sectors.add(new NormalSector(new Triade(0, 1, 0), new Triade(1, 0, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, 1, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(0, -1, 0), new Triade(1, 10, 1), 0.5));
-		sectors.add(new NormalSector(new Triade(-1, 0, 0), new Triade(10, 1, 1), 0.5));
+		sectors.add(new NormalSector(new Vector(0, 0, 1), new Vector(1,1,0), 0.5)); //base
+		sectors.add(new NormalSector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.5)); //topo
+		sectors.add(new NormalSector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.5));
+		sectors.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.5));
+		sectors.add(new NormalSector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.5));
+		sectors.add(new NormalSector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.5));
 		
-		soundSource = new Triade(4, 5, 5);
-		sphericalReceptorCenter = new Triade(2.5, 2.5, 5);
+		soundSource = new Vector(4, 5, 5);
+		sphericalReceptorCenter = new Vector(2.5f, 2.5f, 5.0f);
 //		soundSource = new Triade(2, 2, 5);
 //		sphericalReceptorCenter = new Triade(8, 8, 6);
 		sphericalReceptorHistogram = new HashMap<Double, Double>();
@@ -112,13 +112,13 @@ public class RayTracingSimulationLWJGL implements Runnable{
 	}
 	
 	public void run(){
-		Triade q = null;
-		Triade g = null;
-		Triade v;
-		Triade nR = null;
+		Vector q = null;
+		Vector g = null;
+		Vector v;
+		Vector nR = null;
 		double e;
-		double lMin = 0.0;
-		double dMin = 0.0;
+		float lMin = 0.0f;
+		float dMin = 0.0f;
 		double alpha = 0.0;
 		double lReflection;
 
@@ -126,7 +126,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 //		lista.add(q);
 		
 		//reflection
-		for(Triade vTemp: vectors){
+		for(Vector vTemp: vectors){
 			doCirclefill(sphericalReceptorCenter.getX(), sphericalReceptorCenter.getY(), sphericalReceptorRadius);
 			//
 			//comeca a fazer coisas para o opengln 
@@ -151,20 +151,20 @@ public class RayTracingSimulationLWJGL implements Runnable{
 				//notar que V jah estah normalizado
 				g = q;
 				//correcao no raio...
-				lMin = 1.7E300; // this number is our MAX constant
+				lMin = 1.7E10f; // this number is our MAX constant
 				
 				//verificacao de qual setor(parede) o raio incide
 				for(NormalSector s: sectors){
 //					System.out.println("k#");
 					
-					if( v.produtoEscalar(s.normalVector ) >= 0)
+					if( v.dotProduct(s.normalVector ) >= 0)
 					{
 						continue;
 					}
 					else
 					{
-						double d = s.normalVector.produtoEscalar(s.iPoint.sub(g));
-						double l = -1* d/(v.produtoEscalar(s.normalVector));
+						float d = s.normalVector.dotProduct(s.iPoint.sub(g));
+						float l = -1* d/(v.dotProduct(s.normalVector));
 						
 						//testa distancia minima da fonte a parede e ve se eh minima, dentre outras
 						//paredes
@@ -177,7 +177,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 						}
 					}
 				}//fim setores
-				q = g.sum(v.multiplicaVetorEscalar(lMin));
+				q = g.sum(v.times(lMin));
 				double eTemp = e*(1-alpha)*Math.pow(Math.E, -1*mCoeficient*lMin);
 				
 				//opengl
@@ -187,9 +187,9 @@ public class RayTracingSimulationLWJGL implements Runnable{
 				//
 				//verifica se este raio intercepta o receptor esferico
 				{
-					Triade oc = g.sub(sphericalReceptorCenter);
-					double l2oc = oc.produtoEscalar(oc);
-					double tca = oc.produtoEscalar(v);
+					Vector oc = g.sub(sphericalReceptorCenter);
+					double l2oc = oc.dotProduct(oc);
+					double tca = oc.dotProduct(v);
 					
 					//o raio intercepta o receptor esferico
 					if(tca >= 0){
@@ -221,8 +221,8 @@ public class RayTracingSimulationLWJGL implements Runnable{
 				}
 				lReflection += lMin;
 				e = eTemp;
-				v = nR.multiplicaVetorEscalar(2*dMin).sum(g.sub(q));
-				v = v.multiplicaVetorEscalar(1/v.modulo());//AGORA TENHO QUE NORMALIZAR o vetor V
+				v = nR.times(2*dMin).sum(g.sub(q));
+				v = v.times(1/v.length());//AGORA TENHO QUE NORMALIZAR o vetor V
 				
 			}while( e>(1/k*initialEnergy) ); //vai para a proxima reflexao, caso 
 											// a energia seja maior do que o criterio de parada

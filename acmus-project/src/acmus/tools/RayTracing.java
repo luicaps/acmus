@@ -58,6 +58,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
+import acmus.tools.rtt.GeometricAcousticSimulation;
 import acmus.tools.rtt.RandomAcousticSource;
 import acmus.tools.rtt.RayTracingSimulation;
 import acmus.tools.structures.NormalSector;
@@ -417,7 +418,7 @@ public class RayTracing extends Composite {
 				double sphericalReceptorRadius = getValue(radius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
-				RayTracingSimulation simulation = new RayTracingSimulation(
+				GeometricAcousticSimulation simulation = new RayTracingSimulation(
 						sectors, vectors, soundSourceCenter,
 						sphericalReceptorCenter, sphericalReceptorRadius,
 						speedOfSound, INITIAL_ENERGY, mCoeficient, K);
