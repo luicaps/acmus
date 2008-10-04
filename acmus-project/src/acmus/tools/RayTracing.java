@@ -59,7 +59,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.GeometricAcousticSimulation;
-import acmus.tools.rtt.RandomAcousticSource;
+import acmus.tools.rtt.MonteCarloRandomAcousticSource;
 import acmus.tools.rtt.RayTracingSimulation;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
@@ -409,7 +409,7 @@ public class RayTracing extends Composite {
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Vector> vectors = new RandomAcousticSource().generate(rays
+				List<Vector> vectors = new MonteCarloRandomAcousticSource().generate(rays
 						.getSelection());
 				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
