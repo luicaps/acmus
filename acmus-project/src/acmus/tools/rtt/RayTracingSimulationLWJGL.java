@@ -59,7 +59,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 		
 		
 		//le dados do arquivo de entrada
-		RandomAcousticSource ras = new RandomAcousticSource();
+		MonteCarloRandomAcousticSource ras = new MonteCarloRandomAcousticSource();
 		vectors = ras.generate(40000);
 //		try {
 //			saveVectors();
@@ -172,12 +172,12 @@ public class RayTracingSimulationLWJGL implements Runnable{
 						if( l<=lMin ){
 							lMin = l;
 							dMin = d;
-							alpha = s.absorventCoeficient;
+							alpha = s.absorptionCoeficient;
 							nR = s.normalVector;
 						}
 					}
 				}//fim setores
-				q = g.sum(v.times(lMin));
+				q = g.add(v.times(lMin));
 				double eTemp = e*(1-alpha)*Math.pow(Math.E, -1*mCoeficient*lMin);
 				
 				//opengl
@@ -221,7 +221,7 @@ public class RayTracingSimulationLWJGL implements Runnable{
 				}
 				lReflection += lMin;
 				e = eTemp;
-				v = nR.times(2*dMin).sum(g.sub(q));
+				v = nR.times(2*dMin).add(g.sub(q));
 				v = v.times(1/v.length());//AGORA TENHO QUE NORMALIZAR o vetor V
 				
 			}while( e>(1/k*initialEnergy) ); //vai para a proxima reflexao, caso 

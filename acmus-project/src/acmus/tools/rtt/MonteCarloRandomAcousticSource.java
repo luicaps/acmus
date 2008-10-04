@@ -13,11 +13,7 @@ import acmus.tools.structures.Vector;
  * @author mhct
  * 
  */
-public class RandomAcousticSource implements AcousticSource {
-
-	public List<Vector> generate() {
-		return this.generate(20000);
-	}
+public class MonteCarloRandomAcousticSource implements AcousticSource {
 
 	public List<Vector> generate(int n) {
 		List<Vector> sphericalPoints = new ArrayList<Vector>();

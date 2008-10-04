@@ -12,7 +12,5 @@ import acmus.tools.structures.Vector;
  * 
  */
 public interface AcousticSource {
-	public List<Vector> generate();
-
 	public List<Vector> generate(int n);
 }

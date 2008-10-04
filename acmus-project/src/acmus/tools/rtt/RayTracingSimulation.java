@@ -95,12 +95,12 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 						if (l <= lMin) {
 							lMin = l;
 							dMin = d;
-							alpha = s.absorbentCoeficient;
+							alpha = s.absorptionCoeficient;
 							nR = s.normalVector;
 						}
 					}
 				}// fim setores
-				q = g.sum(v.times(lMin));
+				q = g.add(v.times(lMin));
 				double eTemp = e * (1 - alpha)
 						* Math.pow(Math.E, -1 * mCoeficient * lMin);
 
@@ -132,7 +132,9 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 							double eSphere = e
 									* (1 - alpha)
 									* Math.pow(Math.E, -1 * mCoeficient
-											* lThisReflection);
+											* lThisReflection)
+									* 1/(lThisReflection * lThisReflection); //essa linha eh a correcao da energia. devido
+																			// a distancia percorrida pelo raio
 							if (sphericalReceptorHistogram.containsKey(time)) {
 								double temp = sphericalReceptorHistogram
 										.get(time);
@@ -152,7 +154,7 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 				}
 				lReflection += lMin;
 				e = eTemp;
-				v = nR.times(2 * dMin).sum(q.sub(g));
+				v = nR.times(2 * dMin).add(q.sub(g));
 				v = v.normalize();
 			} while (e > (1 / k * initialEnergy)); // vai para a
 			// proxima
