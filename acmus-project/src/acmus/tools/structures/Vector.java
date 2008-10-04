@@ -33,7 +33,7 @@ public class Vector {
 		return new Vector(x-end.x, y-end.y, z-end.z);
 	}
 
-	public Vector sum(Vector end) {
+	public Vector add(Vector end) {
 		return new Vector(x+end.x, y+end.y, z+end.z);
 	}
 
