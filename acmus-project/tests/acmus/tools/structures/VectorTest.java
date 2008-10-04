@@ -49,7 +49,7 @@ public class VectorTest {
 		Vector v = new Vector(2.1f, 1.23f, 3.22f);
 
 		Vector expected = new Vector(3.3f, 3.53f, 7.7799997f);
-		assertEquals(expected, w.sum(v));
+		assertEquals(expected, w.add(v));
 	}
 
 	@Test
