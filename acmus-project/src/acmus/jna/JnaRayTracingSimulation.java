@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import acmus.tools.rtt.RandomAcousticSource;
+import acmus.tools.rtt.MonteCarloRandomAcousticSource;
 import acmus.tools.structures.NormalSector;
-import acmus.tools.structures.Triade;
+import acmus.tools.structures.Vector;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -30,20 +30,20 @@ public class JnaRayTracingSimulation {
     private static List<NormalSector> generateSectorsFor() {
 
         ArrayList<NormalSector> result = new ArrayList<NormalSector>();
-        double w = 10;
-        double h = 10;
-        double l = 10;
-        result.add(new NormalSector(new Triade(0, 0, 1), new Triade(l, w, 0),
+        float w = 10;
+        float h = 10;
+        float l = 10;
+        result.add(new NormalSector(new Vector(0, 0, 1), new Vector(l, w, 0),
                 0.02));
-        result.add(new NormalSector(new Triade(0, 1, 0), new Triade(l, 0, h),
+        result.add(new NormalSector(new Vector(0, 1, 0), new Vector(l, 0, h),
                 0.02));
-        result.add(new NormalSector(new Triade(1, 0, 0), new Triade(0, w, h),
+        result.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, w, h),
                 0.02));
-        result.add(new NormalSector(new Triade(0, 0, -1), new Triade(l, w, h),
+        result.add(new NormalSector(new Vector(0, 0, -1), new Vector(l, w, h),
                 0.02));
-        result.add(new NormalSector(new Triade(0, -1, 0), new Triade(l, w, h),
+        result.add(new NormalSector(new Vector(0, -1, 0), new Vector(l, w, h),
                 0.02));
-        result.add(new NormalSector(new Triade(-1, 0, 0), new Triade(l, w, h),
+        result.add(new NormalSector(new Vector(-1, 0, 0), new Vector(l, w, h),
                 0.02));
         return result;
     }
@@ -55,9 +55,10 @@ public class JnaRayTracingSimulation {
         final double INITIAL_ENERGY = 100000;
 
         List<NormalSector> sectors = generateSectorsFor();
-        List<Triade> vectors = new RandomAcousticSource().generate(100000);
-        Triade soundSourceCenter = new Triade(2.0, 2.0, 2.0);
-        Triade sphericalReceptorCenter = new Triade(8, 8, 8);
+        List<Vector> vectors = new MonteCarloRandomAcousticSource()
+                .generate(300000);
+        Vector soundSourceCenter = new Vector(2.0f, 2.0f, 2.0f);
+        Vector sphericalReceptorCenter = new Vector(8, 8, 8);
         double sphericalReceptorRadius = .1;
         double speedOfSound = 344;
         double mCoeficient = 0.01;
@@ -71,6 +72,11 @@ public class JnaRayTracingSimulation {
         MySharedLibrary lib = (MySharedLibrary) Native.loadLibrary(
                 "simulation", MySharedLibrary.class);
 
+        double tempo_parcial = System.currentTimeMillis();
+
+        System.out.println("tempo gasto para carregar: "
+                + (tempo_parcial - tempo_inicial) + "milisegundos");
+
         lib.simulate(simulation.soundSpeed, simulation.jnaSoundSource,
                 simulation.jnaVectors, simulation.initialEnergy,
                 simulation.jnaSectors, simulation.mCoeficient,
@@ -83,8 +89,8 @@ public class JnaRayTracingSimulation {
 
         double tempo_final = System.currentTimeMillis();
 
-        System.out.println("tempo gasto: " + (tempo_final - tempo_inicial)
-                + "milisegundos");
+        System.out.println("tempo gasto total: "
+                + (tempo_final - tempo_inicial) + "milisegundos\n");
     }
 
     private List<JnaNormalSector> normalSectorConverter(
@@ -93,7 +99,7 @@ public class JnaRayTracingSimulation {
 
         for (NormalSector ns : normalSectors) {
             JnaNormalSector t = new JnaNormalSector();
-            t.absorventCoeficient = ns.absorventCoeficient;
+            t.absorventCoeficient = ns.absorptionCoeficient;
             t.iPoint = new JnaTriade(ns.iPoint.getX(), ns.iPoint.getY(),
                     ns.iPoint.getZ());
             t.normalVector = new JnaTriade(ns.normalVector.getX(),
@@ -105,10 +111,10 @@ public class JnaRayTracingSimulation {
         return jnaNs;
     }
 
-    private List<JnaTriade> triadeConverter(List<Triade> triades) {
+    private List<JnaTriade> triadeConverter(List<Vector> triades) {
         List<JnaTriade> jnaT = new ArrayList<JnaTriade>();
 
-        for (Triade t : triades) {
+        for (Vector t : triades) {
             JnaTriade triade = new JnaTriade(t.getX(), t.getY(), t.getZ());
             jnaT.add(triade);
         }
@@ -117,8 +123,8 @@ public class JnaRayTracingSimulation {
     }
 
     public JnaRayTracingSimulation(List<NormalSector> sectorsList,
-            List<Triade> vectorsList, Triade soundSourceCenter,
-            Triade sphericalReceptorCenter, double sphericalReceptorRadius,
+            List<Vector> vectorsList, Vector soundSourceCenter,
+            Vector sphericalReceptorCenter, double sphericalReceptorRadius,
             double soundSpeed, double initialEnergy, double mCoeficient, int k) {
 
         List<JnaNormalSector> jnaSectorsList = normalSectorConverter(sectorsList);
