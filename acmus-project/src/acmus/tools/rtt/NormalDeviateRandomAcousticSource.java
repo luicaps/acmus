@@ -3,6 +3,7 @@ package acmus.tools.rtt;
 import java.util.ArrayList;
 import java.util.List;
 
+import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.Vector;
 
 public class NormalDeviateRandomAcousticSource implements AcousticSource {
