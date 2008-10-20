@@ -59,8 +59,8 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.GeometricAcousticSimulation;
-import acmus.tools.rtt.MonteCarloRandomAcousticSource;
-import acmus.tools.rtt.RayTracingSimulation;
+import acmus.tools.rtt.RayTracingGeometricAcousticSimulationImpl;
+import acmus.tools.structures.MonteCarloAcousticSourceImpl;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
 import acmus.util.ArrayUtils;
@@ -194,7 +194,7 @@ public class RayTracing extends Composite {
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		soundSpeed = new Text(this, SWT.NONE);
-		soundSpeed.setText("344.00"); // velocidade padrao do som
+		soundSpeed.setText("344.00"); // standard speed of sound
 		setGridData(soundSpeed, SWT.LEAD, SWT.CENTER, 1, 60);
 
 		// spherical receiver position
@@ -409,7 +409,7 @@ public class RayTracing extends Composite {
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Vector> vectors = new MonteCarloRandomAcousticSource().generate(rays
+				List<Vector> vectors = new MonteCarloAcousticSourceImpl().generate(rays
 						.getSelection());
 				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
@@ -418,7 +418,7 @@ public class RayTracing extends Composite {
 				double sphericalReceptorRadius = getValue(radius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
-				GeometricAcousticSimulation simulation = new RayTracingSimulation(
+				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(
 						sectors, vectors, soundSourceCenter,
 						sphericalReceptorCenter, sphericalReceptorRadius,
 						speedOfSound, INITIAL_ENERGY, mCoeficient, K);
@@ -426,7 +426,7 @@ public class RayTracing extends Composite {
 				simulation.simulate(progressBar);
 				progressBar.setSelection(100);
 				
-				histogram = simulation.getSphericalReceptorHistogram();
+				histogram = simulation.getReceptorHistogram();
 				plotChart();
 				saveIr.setEnabled(true);
 			}
