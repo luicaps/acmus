@@ -29,12 +29,12 @@ public class Vector {
 		return new Vector(x*m, y*m, z*m);
 	}
 
-	public Vector sub(Vector end) {
-		return new Vector(x-end.x, y-end.y, z-end.z);
+	public Vector sub(Vector otherVector) {
+		return new Vector(x-otherVector.x, y-otherVector.y, z-otherVector.z);
 	}
 
-	public Vector add(Vector end) {
-		return new Vector(x+end.x, y+end.y, z+end.z);
+	public Vector add(Vector otherVector) {
+		return new Vector(x+otherVector.x, y+otherVector.y, z+otherVector.z);
 	}
 
 	public Vector crossProduct(Vector w) {

@@ -6,5 +6,5 @@ import org.eclipse.swt.widgets.ProgressBar;
 
 public interface GeometricAcousticSimulation {
 	public void simulate(final ProgressBar progressBar);
-	public Map<Double, Double> getSphericalReceptorHistogram();
+	public Map<Double, Double> getReceptorHistogram();
 }
