@@ -13,6 +13,8 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import acmus.tools.structures.AcousticSource;
+import acmus.tools.structures.MonteCarloAcousticSource;
 import acmus.tools.structures.Vector;
 
 public class MonteCarloRandomAcousticSourceTest {
@@ -22,7 +24,7 @@ public class MonteCarloRandomAcousticSourceTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		AcousticSource ras = new MonteCarloRandomAcousticSource();
+		AcousticSource ras = new MonteCarloAcousticSource();
 
 		Date d1, d2;
 		d1 = new Date();

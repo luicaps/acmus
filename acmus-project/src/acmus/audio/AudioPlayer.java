@@ -45,6 +45,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
 import javax.sound.sampled.SourceDataLine;
 
 import org.eclipse.swt.SWT;
@@ -70,6 +71,8 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
+import acmus.preferences.AcmusPreferencePage;
+import acmus.preferences.PreferenceConstants;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 
@@ -165,6 +168,7 @@ public class AudioPlayer {
 
 	@SuppressWarnings("deprecation")
 	public void open(String filename) {
+		System.out.println(this + " " + filename);
 		try {
 			File f = new File(filename);
 			if (_player != null) {
@@ -210,7 +214,10 @@ public class AudioPlayer {
 				info = new DataLine.Info(SourceDataLine.class, format);
 
 			try {
-				_sdl = (SourceDataLine) AudioSystem.getLine(info);
+				// Leandro - 23/05/2009 - Begin
+				_sdl = (SourceDataLine) AudioSystem.getSourceDataLine(format, AcmusPlugin.getDefault().out);
+//				_sdl = (SourceDataLine) AudioSystem.getLine(info);
+				// Leandro - 23/05/2009 - End
 				// _sdl.open(_audioStream.getFormat());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -242,7 +249,9 @@ public class AudioPlayer {
 
 	int _off;
 	int nBytesRead;
-	static byte[] _audioBytes;
+	// Leandro - 27/04
+	//static byte[] _audioBytes;
+	byte[] _audioBytes;
 
 	public void play() {
 		System.out.println("Playing... " + this);
@@ -762,7 +771,9 @@ public class AudioPlayer {
 		shell.open();
 	}
 
-	public static int[] readData(AudioInputStream ais) {
+	// Leandro - 27/04/2009
+	//public static int[] readData(AudioInputStream ais) {
+	public int[] readData(AudioInputStream ais) {
 
 		AudioFormat format = ais.getFormat();
 		_audioBytes = new byte[(int) (ais.getFrameLength() * format

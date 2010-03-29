@@ -267,7 +267,7 @@ public class CompareWaveforms extends Composite {
 	try {
 	    AudioInputStream audioStream = AudioSystem
 		    .getAudioInputStream(new FileInputStream(filename));
-	    int[] audioData = AudioPlayer.readData(audioStream);
+	    int[] audioData = new AudioPlayer().readData(audioStream);
 	    if (_waveform.numberOfArrays() < 1) {
 		_waveform
 			.setData(audioData, audioStream.getFormat()

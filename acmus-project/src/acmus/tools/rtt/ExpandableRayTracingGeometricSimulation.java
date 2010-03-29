@@ -10,9 +10,10 @@ import java.util.Map;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.SimulatedImpulseResponse;
 import acmus.tools.structures.Vector;
 
-public class RayTracingSimulation implements GeometricAcousticSimulation {
+public class ExpandableRayTracingGeometricSimulation implements GeometricAcousticSimulation {
 
 	private List<Vector> vectors;
 	private List<NormalSector> sectors;
@@ -26,7 +27,7 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 	double mCoeficient;
 	double k;
 
-	public RayTracingSimulation(List<NormalSector> sectors,
+	public ExpandableRayTracingGeometricSimulation(List<NormalSector> sectors,
 			List<Vector> vectors, Vector soundSourceCenter,
 			Vector sphericalReceptorCenter, double sphericalReceptorRadius,
 			double soundSpeed, double initialEnergy, double mCoeficient, int k) {
@@ -104,54 +105,8 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 				double eTemp = e * (1 - alpha)
 						* Math.pow(Math.E, -1 * mCoeficient * lMin);
 
-				//
-				// desenha o raio
-				//
-
-				//
-				// verifica se este raio intercepta o receptor esferico
-				// TODO corrigir estes calculos que estao errados, pois
-				// ocorre
-				// um caso em que
-				// delta = 2 e na verdade o raio nao intercepta a esfera
-				{
-					Vector oc = sphericalReceptorCenter.sub(g);
-					double l2oc = oc.dotProduct(oc);
-					double tca = oc.dotProduct(v);
-
-					// o raio intercepta o receptor esferico
-					if (tca >= 0) {
-						double t2hc = Math.pow(sphericalReceptorRadius, 2)
-								- l2oc + Math.pow(tca, 2);
-						if (t2hc > 0) {
-							// System.out.println("INTERCEPTA");
-							double lThisReflection = tca - Math.sqrt(t2hc);
-
-							double distance = lReflection + lThisReflection;
-							double time = distance / soundSpeed;
-							double eSphere = e
-									* (1 - alpha)
-									* Math.pow(Math.E, -1 * mCoeficient
-											* lThisReflection)
-									* 1/(lThisReflection * lThisReflection); //essa linha eh a correcao da energia. devido
-																			// a distancia percorrida pelo raio
-							if (sphericalReceptorHistogram.containsKey(time)) {
-								double temp = sphericalReceptorHistogram
-										.get(time);
-								sphericalReceptorHistogram.put(time, temp
-										+ eSphere);
-								// System.out.println("t: " + time + "e:
-								// " + temp
-								// + eSphere);
-							} else {
-								sphericalReceptorHistogram.put(time, eSphere);
-								// System.out.println("t: " + time + "e:
-								// "
-								// + eSphere);
-							}
-						}
-					}
-				}
+				// verifica se raio bate no receptor COLOCAR O CODIGO AQUI
+				
 				lReflection += lMin;
 				e = eTemp;
 				v = nR.times(2 * dMin).add(q.sub(g));
@@ -165,8 +120,9 @@ public class RayTracingSimulation implements GeometricAcousticSimulation {
 		System.out.println("UHU: " + uhu);
 	}
 
-	public Map<Double, Double> getSphericalReceptorHistogram() {
-		return sphericalReceptorHistogram;
+	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
+//		return sphericalReceptorHistogram;
+		return null;
 	}
 
 	public void lista() throws IOException {

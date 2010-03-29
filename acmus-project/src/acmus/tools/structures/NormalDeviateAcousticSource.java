@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class NormalDeviateAcousticSourceImpl implements AcousticSource {
+public class NormalDeviateAcousticSource implements AcousticSource {
 
 	public List<Vector> generate(int n) {
 		List<Vector> sphericalPoints = new ArrayList<Vector>(n);

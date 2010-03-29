@@ -9,7 +9,10 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.ProgressBar;
 
+import acmus.tools.structures.EnergeticSimulatedImpulseResponse;
+import acmus.tools.structures.EnergeticSimulatedImpulseResponseArray;
 import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.SimulatedImpulseResponse;
 import acmus.tools.structures.Vector;
 
 public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcousticSimulation {
@@ -18,35 +21,34 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 	private List<NormalSector> sectors;
 	private Vector soundSource;
 	private Vector sphericalReceptorCenter;
-	private HashMap<Double, Double> sphericalReceptorHistogram;
 
 	double sphericalReceptorRadius;
 	double soundSpeed;
-	double initialEnergy;
 	double mCoeficient;
 	double k;
-	
-	private final static float EPS = 0.0000001f; 
+	private SimulatedImpulseResponse sir;
+	private float histogramInterval;
 
 	public RayTracingGeometricAcousticSimulationImpl(List<NormalSector> sectors,
 			List<Vector> vectors, Vector soundSourceCenter,
 			Vector sphericalReceptorCenter, double sphericalReceptorRadius,
-			double soundSpeed, double initialEnergy, double mCoeficient, int k) {
+			double soundSpeed, double mCoeficient, int k) {
 		this.sectors = sectors;
 		this.vectors = vectors;
 		this.soundSource = soundSourceCenter;
 		this.sphericalReceptorCenter = sphericalReceptorCenter;
 		this.sphericalReceptorRadius = sphericalReceptorRadius;
 		this.soundSpeed = soundSpeed;
-		this.initialEnergy = initialEnergy;
 		this.mCoeficient = mCoeficient;
 		this.k = k;
-
-		sphericalReceptorHistogram = new HashMap<Double, Double>();
+		histogramInterval = 0.00001f;
+		
+		//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
+		sir = new EnergeticSimulatedImpulseResponse(histogramInterval);
 	}
 
 	public void simulate(final ProgressBar progressBar) {
-
+		
 		Vector q = soundSource;
 		Vector g = null;
 		Vector v;
@@ -67,7 +69,7 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 			}
 			q = soundSource;
 			v = vTemp;
-			e = initialEnergy;
+			e = 1.0;
 			lReflection = 0; //ray length
 			
 			do {
@@ -112,15 +114,11 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 							double lThisReflection = tca - Math.sqrt(t2hc);
 							double distance = lReflection + lThisReflection;
 							double time = distance / soundSpeed;
-							double eSphere = e * Math.pow(Math.E, -1 * mCoeficient * lThisReflection);
+							double eSphere = e * Math.pow(Math.E, -1 * mCoeficient * lThisReflection) * tca / sphericalReceptorRadius;
 
-							if (sphericalReceptorHistogram.containsKey(time)) {
-								double temp = sphericalReceptorHistogram.get(time);
-								sphericalReceptorHistogram.put(time, temp + eSphere);
-							} else {
-								sphericalReceptorHistogram.put(time, eSphere);
-							}
-						continue nextRay;
+							sir.addValue((float)time, (float)eSphere);
+							
+							continue nextRay;
 						}
 					}
 				}
@@ -130,12 +128,12 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 				v = nR.times(2 * dMin).add(q.sub(g));
 				v = v.normalize(); //new ray direction
 				
-			} while (e > (1 / k * initialEnergy)); //ray energy threshold
+			} while (e > (1 / k )); //ray energy threshold
 		}// ends tracing of rays
 	}
 
-	public Map<Double, Double> getReceptorHistogram() {
-		return sphericalReceptorHistogram;
+	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
+		return sir;
 	}
 
 	public void lista() throws IOException {
@@ -144,8 +142,7 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 		StringBuilder sy = new StringBuilder(2000);
 		StringBuilder ss = new StringBuilder(2000);
 
-		for (Map.Entry<Double, Double> e : sphericalReceptorHistogram
-				.entrySet()) {
+		for (Map.Entry<Float, Float> e : getSimulatedImpulseResponse().getEnergeticImpulseResponse().entrySet()) {
 			sx.append(e.getKey());
 			sx.append(" ");
 			sy.append(e.getValue());

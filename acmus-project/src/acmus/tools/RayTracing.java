@@ -60,7 +60,7 @@ import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.GeometricAcousticSimulation;
 import acmus.tools.rtt.RayTracingGeometricAcousticSimulationImpl;
-import acmus.tools.structures.MonteCarloAcousticSourceImpl;
+import acmus.tools.structures.MonteCarloAcousticSource;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
 import acmus.util.ArrayUtils;
@@ -73,7 +73,6 @@ import acmus.util.WaveUtils;
 public class RayTracing extends Composite {
 
 	static final int K = 1000;
-	private static final double INITIAL_ENERGY = 100000;
 
 	// GUI variables
 	private Label label;
@@ -105,7 +104,7 @@ public class RayTracing extends Composite {
 	private ChartComposite chart;
 	private Button saveIr;
 	private FileDialog fileDialog;
-	private Map<Double, Double> histogram;
+	private Map<Float, Float> histogram;
 	private ProgressBar progressBar;
 	private Combo impulseResponse;
 
@@ -309,7 +308,6 @@ public class RayTracing extends Composite {
 					saveIr();
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("DEu Algu Error");
 				}
 			}
 		});
@@ -323,7 +321,7 @@ public class RayTracing extends Composite {
 
 		chart = new ChartComposite(this, SWT.NONE);
 		setGridData(chart, SWT.LEAD, SWT.BOTTOM, 10, 800, 400);
-		histogram = new HashMap<Double, Double>();
+		histogram = new HashMap<Float, Float>();
 //		histogram.put(0.0, 0);
 		plotChart();
 		this.pack();
@@ -334,13 +332,13 @@ public class RayTracing extends Composite {
 		if (filename == null)
 			return;
 
-		TreeSet<Double> orderedKeySet = new TreeSet<Double>(histogram.keySet());
+		TreeSet<Float> orderedKeySet = new TreeSet<Float>(histogram.keySet());
 
 		int waveLength = (int) Math.ceil(orderedKeySet.last()
 				* AcmusApplication.SAMPLE_RATE);
 
 		double[] wave = new double[waveLength];
-		for (Double key : orderedKeySet) {
+		for (Float key : orderedKeySet) {
 			int i = (int) Math.floor(key * AcmusApplication.SAMPLE_RATE);
 			wave[i] = histogram.get(key);
 		}
@@ -409,7 +407,7 @@ public class RayTracing extends Composite {
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Vector> vectors = new MonteCarloAcousticSourceImpl().generate(rays
+				List<Vector> vectors = new MonteCarloAcousticSource().generate(rays
 						.getSelection());
 				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
@@ -421,12 +419,12 @@ public class RayTracing extends Composite {
 				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(
 						sectors, vectors, soundSourceCenter,
 						sphericalReceptorCenter, sphericalReceptorRadius,
-						speedOfSound, INITIAL_ENERGY, mCoeficient, K);
+						speedOfSound, mCoeficient, K);
 				progressBar.setSelection(0);
 				simulation.simulate(progressBar);
 				progressBar.setSelection(100);
 				
-				histogram = simulation.getReceptorHistogram();
+				histogram = simulation.getSimulatedImpulseResponse().getEnergeticImpulseResponse();
 				plotChart();
 				saveIr.setEnabled(true);
 			}
@@ -476,12 +474,19 @@ public class RayTracing extends Composite {
 	private void plotChart() {
 		ChartBuilder builder = new ChartBuilder();
 		Map<Double, Double> miliHistogram = new HashMap<Double, Double>();
-		
-		for (Map.Entry<Double, Double> map : histogram.entrySet()) {
-			miliHistogram.put(map.getKey(), map.getValue()/1000);
-			
+
+		double max = 0.0;
+		for (Map.Entry<Float, Float> map : histogram.entrySet()) {
+			if(map.getValue() > max)
+				max = map.getValue();
 		}
-		chart.setChart(builder.getChart(miliHistogram, "Time (s)", "Energy (Thousands)",
+		
+		//normalize histogram
+		for (Map.Entry<Float, Float> map : histogram.entrySet()) {
+			miliHistogram.put((double)map.getKey(), map.getValue()/max);
+		}
+		
+		chart.setChart(builder.getChart(miliHistogram, "Time (s)", "Energy",
 				"Simulated Impulse Response for "
 						+ impulseResponse.getText() + " Hz"));
 		chart.forceRedraw();
@@ -528,7 +533,7 @@ public class RayTracing extends Composite {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		shell.setText("Acoustic Simulation Tool");
+		shell.setText("Geometric Acoustic Simulation Tool");
 		shell.setBounds(0, 0, 1000, 700);
 
 		shell.open();

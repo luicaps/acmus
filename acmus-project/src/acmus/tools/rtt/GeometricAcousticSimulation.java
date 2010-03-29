@@ -1,10 +1,11 @@
 package acmus.tools.rtt;
 
-import java.util.Map;
 
 import org.eclipse.swt.widgets.ProgressBar;
 
+import acmus.tools.structures.SimulatedImpulseResponse;
+
 public interface GeometricAcousticSimulation {
 	public void simulate(final ProgressBar progressBar);
-	public Map<Double, Double> getReceptorHistogram();
+	public SimulatedImpulseResponse getSimulatedImpulseResponse();
 }

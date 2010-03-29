@@ -1,10 +1,8 @@
-package acmus.tools.rtt;
+package acmus.tools.structures;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import acmus.tools.structures.AcousticSource;
-import acmus.tools.structures.Vector;
 
 /**
  * Random Acoustic Source, generated using uniform random sample
@@ -14,7 +12,7 @@ import acmus.tools.structures.Vector;
  * @author mhct
  * 
  */
-public class MonteCarloRandomAcousticSource implements AcousticSource {
+public class MonteCarloAcousticSource implements AcousticSource {
 
 	public List<Vector> generate(int n) {
 		List<Vector> sphericalPoints = new ArrayList<Vector>();
