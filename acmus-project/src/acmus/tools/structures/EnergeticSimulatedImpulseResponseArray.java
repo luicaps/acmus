@@ -1,12 +1,13 @@
 package acmus.tools.structures;
 
 import java.security.InvalidParameterException;
-import java.util.HashMap;
+// import java.util.HashMap;
 import java.util.Map;
-
+// TODO integrate funcionality with the EnergeticSimulatedImpulseResponse class
 public final class EnergeticSimulatedImpulseResponseArray implements SimulatedImpulseResponse {
 
 	private float[] impulseResposeHistogram;
+	@SuppressWarnings("unused")
 	private float interval;
 	
 	public EnergeticSimulatedImpulseResponseArray(float interval) {
@@ -17,7 +18,7 @@ public final class EnergeticSimulatedImpulseResponseArray implements SimulatedIm
 		impulseResposeHistogram = new float[188200]; //para 44100 hz;
 	}
 	
-	public Map<Float, Float> getEnergeticImpulseResponse() {
+	public Map<Float, Float> getEnergeticImpulseResponse() {	
 //		Map<Float, Float> ir = new HashMap<Float, Float>();
 //		for(Map.Entry<Integer, Float> e: impulseResposeHistogram.entrySet()){
 //			ir.put(e.getKey() * interval, e.getValue());
@@ -34,7 +35,7 @@ public final class EnergeticSimulatedImpulseResponseArray implements SimulatedIm
 
 	public void addValue(float time, float energy) {
 		if(time < 0.0f || energy < 0.0f)
-			throw new InvalidParameterException("time or energy less than ZERO");
+			throw new InvalidParameterException("time and energy CAN'T be less than ZERO");
 		
 		impulseResposeHistogram[(int) Math.ceil(time * 44100)] += energy; 
 	}

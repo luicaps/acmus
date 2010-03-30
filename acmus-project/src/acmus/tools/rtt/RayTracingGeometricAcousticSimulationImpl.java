@@ -2,18 +2,24 @@ package acmus.tools.rtt;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+/*
+ * unused imports ...
+ * import java.util.HashMap;
+ * import java.util.Iterator;
+ */
 
 import org.eclipse.swt.widgets.ProgressBar;
 
 import acmus.tools.structures.EnergeticSimulatedImpulseResponse;
-import acmus.tools.structures.EnergeticSimulatedImpulseResponseArray;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.SimulatedImpulseResponse;
 import acmus.tools.structures.Vector;
+/* 
+ * unused imports ...
+ * import acmus.tools.structures.EnergeticSimulatedImpulseResponseArray;
+ */
 
 public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcousticSimulation {
 
@@ -24,34 +30,34 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 
 	double sphericalReceptorRadius;
 	double soundSpeed;
-	double mCoeficient;
+	double airAbsorptionCoeficient;
 	double k;
-	private SimulatedImpulseResponse sir;
+	private SimulatedImpulseResponse simulatedImpulseResponse;
 	private float histogramInterval;
 
 	public RayTracingGeometricAcousticSimulationImpl(List<NormalSector> sectors,
 			List<Vector> vectors, Vector soundSourceCenter,
 			Vector sphericalReceptorCenter, double sphericalReceptorRadius,
-			double soundSpeed, double mCoeficient, int k) {
+			double soundSpeed, double airAbsortionCoeficient, int k) {
 		this.sectors = sectors;
 		this.vectors = vectors;
 		this.soundSource = soundSourceCenter;
 		this.sphericalReceptorCenter = sphericalReceptorCenter;
 		this.sphericalReceptorRadius = sphericalReceptorRadius;
 		this.soundSpeed = soundSpeed;
-		this.mCoeficient = mCoeficient;
+		this.airAbsorptionCoeficient = airAbsortionCoeficient;
 		this.k = k;
 		histogramInterval = 0.00001f;
 		
 		//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
-		sir = new EnergeticSimulatedImpulseResponse(histogramInterval);
+		simulatedImpulseResponse = new EnergeticSimulatedImpulseResponse(histogramInterval);
 	}
 
 	public void simulate(final ProgressBar progressBar) {
 		
-		Vector q = soundSource;
-		Vector g = null;
-		Vector v;
+		Vector tempRayPosition = soundSource;
+		Vector rayPosition = null;
+		Vector rayDirection;
 		Vector nR = null;
 		double e;
 		float lMin = 0.0f;
@@ -63,28 +69,28 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 		int i = 0;
 		nextRay:
 		for (; i < vectors.size(); i++) {
-			Vector vTemp = vectors.get(i);
+			Vector tempRayDirection = vectors.get(i);
 			if (i % Math.max(1,(vectors.size()/100)) == 0) {
 				progressBar.setSelection((int) (100.0*i/vectors.size()));
 			}
-			q = soundSource;
-			v = vTemp;
+			tempRayPosition = soundSource;
+			rayDirection = tempRayDirection;
 			e = 1.0;
 			lReflection = 0; //ray length
 			
 			do {
-				g = q;
+				rayPosition = tempRayPosition;
 				lMin = Float.MAX_VALUE;
 
 				/**
 				 *  verify the interception section
 				 */
 				for (NormalSector s : sectors) {
-					if (v.dotProduct(s.normalVector) >= 0) {
+					if (rayDirection.dotProduct(s.normalVector) >= 0) {
 						continue;
 					} else {
-						float d = s.normalVector.dotProduct(g.sub(s.iPoint));
-						float l = -1 * d / (v.dotProduct(s.normalVector));
+						float d = s.normalVector.dotProduct(rayPosition.sub(s.iPoint));
+						float l = -1 * d / (rayDirection.dotProduct(s.normalVector));
 
 						// put the point in polygon test
 						if (l <= lMin) {
@@ -96,16 +102,16 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 					}
 				}// end sectors
 				
-				q = g.add(v.times(lMin)); //interception point 
-				double eTemp = e * (1 - alpha) * Math.pow(Math.E, -1 * mCoeficient * lMin);
+				tempRayPosition = rayPosition.add(rayDirection.times(lMin)); //interception point 
+				double eTemp = e * (1 - alpha) * Math.pow(Math.E, -1 * airAbsorptionCoeficient * lMin);
 
 				/*
 				 * ray receptor interception test
 				 */
 				{
-					Vector oc = sphericalReceptorCenter.sub(g);
+					Vector oc = sphericalReceptorCenter.sub(rayPosition);
 					double l2oc = oc.dotProduct(oc);
-					double tca = oc.dotProduct(v);
+					double tca = oc.dotProduct(rayDirection);
 
 					if (tca >= 0) { 
 						double t2hc = sphericalReceptorRadius * sphericalReceptorRadius - l2oc + tca * tca;
@@ -114,9 +120,9 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 							double lThisReflection = tca - Math.sqrt(t2hc);
 							double distance = lReflection + lThisReflection;
 							double time = distance / soundSpeed;
-							double eSphere = e * Math.pow(Math.E, -1 * mCoeficient * lThisReflection) * tca / sphericalReceptorRadius;
+							double eSphere = e * Math.pow(Math.E, -1 * airAbsorptionCoeficient * lThisReflection) * tca / sphericalReceptorRadius;
 
-							sir.addValue((float)time, (float)eSphere);
+							simulatedImpulseResponse.addValue((float)time, (float)eSphere);
 							
 							continue nextRay;
 						}
@@ -125,15 +131,15 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 				
 				lReflection += lMin;
 				e = eTemp;
-				v = nR.times(2 * dMin).add(q.sub(g));
-				v = v.normalize(); //new ray direction
+				rayDirection = nR.times(2 * dMin).add(tempRayPosition.sub(rayPosition));
+				rayDirection = rayDirection.normalize(); //new ray direction
 				
 			} while (e > (1 / k )); //ray energy threshold
 		}// ends tracing of rays
 	}
 
 	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
-		return sir;
+		return simulatedImpulseResponse;
 	}
 
 	public void lista() throws IOException {

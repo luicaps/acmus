@@ -3,7 +3,7 @@ package acmus.tools.structures;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
-
+//TODO integrate funcionality with the EnergeticSimulatedImpulseResponseArray class
 public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulseResponse {
 
 	private Map<Integer, Float> impulseResposeHistogram;
