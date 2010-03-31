@@ -3,9 +3,12 @@ package acmus.tools.rtt;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+/*
+ * unused imports ...
+ * import java.util.Iterator;
+ */
 
 import org.eclipse.swt.widgets.ProgressBar;
 
@@ -18,8 +21,11 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 	private List<Vector> vectors;
 	private List<NormalSector> sectors;
 	private Vector soundSource;
-	private Vector sphericalReceptorCenter;
 	private HashMap<Double, Double> sphericalReceptorHistogram;
+	/*
+	 * unused variables ...
+	 * private Vector sphericalReceptorCenter;
+	 */
 
 	double sphericalReceptorRadius;
 	double soundSpeed;
@@ -34,7 +40,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 		this.sectors = sectors;
 		this.vectors = vectors;
 		this.soundSource = soundSourceCenter;
-		this.sphericalReceptorCenter = sphericalReceptorCenter;
+		// this.sphericalReceptorCenter = sphericalReceptorCenter;
 		this.sphericalReceptorRadius = sphericalReceptorRadius;
 		this.soundSpeed = soundSpeed;
 		this.initialEnergy = initialEnergy;
