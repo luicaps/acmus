@@ -60,6 +60,7 @@ import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
 import acmus.tools.rtt.GeometricAcousticSimulation;
 import acmus.tools.rtt.RayTracingGeometricAcousticSimulationImpl;
+import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.MonteCarloAcousticSource;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
@@ -407,17 +408,17 @@ public class RayTracing extends Composite {
 			public void run() {
 
 				List<NormalSector> sectors = generateSectorsFor();
-				List<Vector> vectors = new MonteCarloAcousticSource().generate(rays
-						.getSelection());
 				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
+				AcousticSource soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 				Vector sphericalReceptorCenter = newTriadeFor(receiverX,
 						receiverY, receiverZ);
 				double sphericalReceptorRadius = getValue(radius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
 				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(
-						sectors, vectors, soundSourceCenter,
+						sectors, soundSource, rays
+						.getSelection(),
 						sphericalReceptorCenter, sphericalReceptorRadius,
 						speedOfSound, mCoeficient, K);
 				progressBar.setSelection(0);

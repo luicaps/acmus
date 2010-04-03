@@ -24,7 +24,7 @@ public class MonteCarloRandomAcousticSourceTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		AcousticSource ras = new MonteCarloAcousticSource();
+		AcousticSource ras = new MonteCarloAcousticSource(new Vector(0, 0, 0));
 
 		Date d1, d2;
 		d1 = new Date();

@@ -11,5 +11,11 @@ import java.util.List;
  * 
  */
 public interface AcousticSource {
+	
+	public Vector getCenter();
+	
+	public Vector generate();
+	
 	public List<Vector> generate(int n);
+	
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import acmus.tools.structures.AcousticSource;
+import acmus.tools.structures.MonteCarloAcousticSource;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.SimulatedImpulseResponse;
 import acmus.tools.structures.Vector;
@@ -11,7 +13,7 @@ import acmus.tools.structures.Vector;
 public class RR3fase1 extends RR3Infrasctructure {
 
 	private List<NormalSector> sectors;
-	private Vector soundSourceCenter;
+	private AcousticSource soundSource;
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 	private int k;
@@ -26,26 +28,26 @@ public class RR3fase1 extends RR3Infrasctructure {
 		sectors.add(new NormalSector(new Vector(-1, 0, 0), new Vector(4.22f, 0, 0), 0.1)); //(6)
 		sectors.add(new NormalSector(new Vector(0.15102537f, -0.9885298f, 0), new Vector(-4.22f, 8.86f, 0), 0.1)); //(4)
 		
-		soundSourceCenter = source;
+		soundSource = new MonteCarloAcousticSource(source);
 		sphericalReceptorCenter = receptor;
 		sphericalReceptorRadius = radius;
 	}
 
 	
 	public RR3fase1(int numberOfRays, Vector source, Vector receptor, double mCoefficient, double radius, String filename, int k) {
-		super(numberOfRays, filename);
+		super(numberOfRays, source, filename);
 		
 		setUp(source, receptor, radius);
-		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, getRays(), soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoefficient, k);
+		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoefficient, k);
 
 		long ti = System.currentTimeMillis();
 		rts.simulate(getBar());
 		SimulatedImpulseResponse sir =  rts.getSimulatedImpulseResponse();
 		
-		System.out.println("tempo: " + (System.currentTimeMillis() - ti) + " ms");
-		System.out.println("raios: " + numberOfRays);
+		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");
+		System.out.println("rays: " + numberOfRays);
 		System.out.println("ri: " + filename);
-		System.out.println("fonte: " + source);
+		System.out.println("source: " + source);
 		System.out.println("receptor: " + receptor);
 		
 		salvaIR(sir);
@@ -53,7 +55,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 	
 	public static void main(String[] args){
 		if(args.length < 7){
-			System.out.println("use RoudRobin3phase1Test numero_de_raios [S1 S2] [R01 R02 R03] absorcao_do_ar raio_do_receptor nome_arquivo");
+			System.out.println("use RoudRobin3phase1Test number_of_rays [S1 S2] [R01 R02 R03] air_absorption receptor_ray file_name");
 			System.exit(0);
 		}
 		
@@ -64,7 +66,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 		Double radius = Double.valueOf(args[4]);
 		String filename = args[5];
 		Integer k = Integer.valueOf(args[6]);
-		System.out.println("Inicio");
+		System.out.println("Begin");
 		//para teste no eclipse
 		/*
 		Integer numberOfRays = 1000;
@@ -75,6 +77,6 @@ public class RR3fase1 extends RR3Infrasctructure {
 		*/
 		RR3fase1 rt = new RR3fase1(numberOfRays, source, receptor, mCoefficient, radius, filename, k);
 		
-		System.out.println("=======\nFIM");
+		System.out.println("=======\nEND");
 	}
 }

@@ -33,11 +33,11 @@ public abstract class RR3Infrasctructure {
 	private ProgressBar bar;
 	public final double soundSpeed = 343.21; //meters per second 
 	
-	public RR3Infrasctructure(int numberOfRays, String filename) {
+	public RR3Infrasctructure(int numberOfRays, Vector source, String filename) {
 		this.filename = filename;
 		
 //		MonteCarloAcousticSource ras = new MonteCarloAcousticSource();
-		AcousticSource ras = new NormalDeviateAcousticSource();
+		AcousticSource ras = new NormalDeviateAcousticSource(source);
 		rays = ras.generate(numberOfRays);
 
 		Mockery mockery = new Mockery() {

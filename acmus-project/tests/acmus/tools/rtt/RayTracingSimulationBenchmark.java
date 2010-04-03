@@ -12,15 +12,16 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
+import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.MonteCarloAcousticSource;
 import acmus.tools.structures.NormalSector;
 import acmus.tools.structures.Vector;
 
 public class RayTracingSimulationBenchmark {
 
-	private List<Vector> vectors;
+	private int numberOfRays;
+	private AcousticSource soundSource;
 	private ArrayList<NormalSector> sectors;
-	private Vector soundSourceCenter;
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 	private double soundSpeed;
@@ -31,9 +32,12 @@ public class RayTracingSimulationBenchmark {
 
 	@Before
 	public void setUp() throws Exception {
-		vectors = new ArrayList<Vector>();
-
-		vectors = new MonteCarloAcousticSource().generate(100000);
+		
+		numberOfRays = 100000;
+		
+		Vector soundSourceCenter = new Vector(2, 2, 5);
+		
+		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		
 		sectors = new ArrayList<NormalSector>();
 		sectors.add(new NormalSector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
@@ -43,7 +47,6 @@ public class RayTracingSimulationBenchmark {
 		sectors.add(new NormalSector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
 		sectors.add(new NormalSector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
-		soundSourceCenter = new Vector(2, 2, 5);
 		sphericalReceptorCenter = new Vector(8, 8, 6);
 		sphericalReceptorRadius = 1.0;
 		
@@ -69,15 +72,19 @@ public class RayTracingSimulationBenchmark {
 
 	@Test
 	public void testSimulate() {
-		GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+
+		GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
+				sectors, soundSource, numberOfRays, sphericalReceptorCenter,
+				sphericalReceptorRadius, soundSpeed, mCoeficient, k);
 		long ti = System.currentTimeMillis();
 		gas.simulate(bar);
-		long tempo = System.currentTimeMillis() - ti;
-		
-		System.out.println("Simulação Acústica por Traçado de Raios");
-		System.out.println("otimizada");
-		System.out.println("raios: " + vectors.size());
-		System.out.println("tempo (ms): " + tempo);
+		long time = System.currentTimeMillis() - ti;
+
+		System.out.println("Ray tracing acoustic simulation");
+		System.out.println("optimized");
+		System.out.println("rays: " + numberOfRays);
+		System.out.println("time (ms): " + time);
+
 	}
 
 	@Test
