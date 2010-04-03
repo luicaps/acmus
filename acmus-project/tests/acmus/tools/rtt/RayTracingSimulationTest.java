@@ -1,12 +1,12 @@
 package acmus.tools.rtt;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+// import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+// import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.ProgressBar;
@@ -27,13 +27,13 @@ public class RayTracingSimulationTest {
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 	private double soundSpeed;
-	private int initialEnergy;
+//	private int initialEnergy;
 	private double mCoeficient;
 	private int k;
 	private List<NormalSector> sectors;
 	private ProgressBar bar;
 
-	private static float EPS = 0.00001f; 
+//	private static float EPS = 0.00001f; 
 	
 	@Before
 	public void setUp(){
@@ -54,7 +54,7 @@ public class RayTracingSimulationTest {
 		sphericalReceptorRadius = 3.0;
 		
 		soundSpeed = 344.0; // em metros por segundo (m/s)
-		initialEnergy = 10000000;
+//		initialEnergy = 10000000;
 		mCoeficient = 0.0001;
 		k = 500;
 
@@ -83,6 +83,7 @@ public class RayTracingSimulationTest {
 
 	@Test
 	public void testSimulate() throws FileNotFoundException, IOException {
+		// FIXME this test is not testing anything
 		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, vectors, soundSourceCenter, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
 
 		rts.simulate(bar);
@@ -99,6 +100,7 @@ public class RayTracingSimulationTest {
 
 	@Test
 	public void testSimulateWallShocking() {
+		// FIXME this test is not testing anything
 		vectors = new ArrayList<Vector>();
 		vectors.add(new Vector(0.457495710997814f, 0.457495710997814f, 0.7624928516630234f));
 
@@ -115,7 +117,7 @@ public class RayTracingSimulationTest {
 	
 	@Test
 	public void variosPontos() throws FileNotFoundException, IOException{
-		//FIXME this test isnt testing anything
+		// FIXME this test is not testing anything
 		MonteCarloAcousticSource ras = new MonteCarloAcousticSource();
 		List<Vector> meusVetores = ras.generate(500000);
 		sphericalReceptorCenter = new Vector(6, 6, 6);
@@ -136,11 +138,11 @@ public class RayTracingSimulationTest {
 //		g.salvar(new FileOutputStream("histograma.jpg"));
 	}
 
-	public RayTracingSimulationTest(int raios) {
+	public RayTracingSimulationTest() {
 		setUp();
 		MonteCarloAcousticSource ras = new MonteCarloAcousticSource();
 		long ti = System.currentTimeMillis();
-		List<Vector> meusVetores = ras.generate(raios);
+		List<Vector> meusVetores = ras.generate(10000);
 		sphericalReceptorCenter = new Vector(6, 6, 6);
 		sphericalReceptorRadius = 0.5;
 
@@ -148,11 +150,6 @@ public class RayTracingSimulationTest {
 		
 		rts.simulate(bar);
 		System.out.println("tempo: " + (System.currentTimeMillis() - ti) + " ms");
+	}
 
-	}
-	
-	public static void main(String[] args){
-		RayTracingSimulationTest rt = new RayTracingSimulationTest(Integer.valueOf(args[0]));
-		
-	}
 }
