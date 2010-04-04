@@ -26,9 +26,13 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 	}
 
 	public void addValue(float time, float energy) {
-		if(time < 0.0f || energy < 0.0f)
-			throw new InvalidParameterException("time or energy less than ZERO");
-		
+		if(time < 0.0f || energy < 0.0f){
+			if(time < 0.0f){
+				throw new InvalidParameterException("time less than ZERO");
+			} else {	
+				throw new InvalidParameterException("energy less than ZERO");
+			}
+		}
 		int position = (int) Math.ceil(time/interval);
 
 		Float storedEnergy = 0.0f;

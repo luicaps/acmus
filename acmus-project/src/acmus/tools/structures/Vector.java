@@ -11,6 +11,16 @@ public class Vector {
 		z = c;
 	}
 	
+	public Vector(Vector otherVector) {
+		this.set(otherVector);
+	}
+	
+	public void set(Vector otherVector) {
+		this.x = otherVector.getX();
+		this.y = otherVector.getY();
+		this.z = otherVector.getZ();
+	}
+	
 	public float getX() {
 		return x;
 	}

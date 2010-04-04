@@ -1,5 +1,6 @@
 package acmus.tools.structures;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -14,8 +15,14 @@ public interface AcousticSource {
 	
 	public Vector getCenter();
 	
-	public Vector generate();
+	public Ray generate();
 	
-	public List<Vector> generate(int n);
+	public List<Ray> generate(int n);
+
+	public double getEnergy();
+	
+	public Vector newDirection();
+	
+	public List<Vector> manyDirections(int i);
 	
 }

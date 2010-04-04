@@ -14,16 +14,35 @@ import java.util.List;
  */
 public class MonteCarloAcousticSource implements AcousticSource {
 private Vector center;
+private double energy;
 	
 	public MonteCarloAcousticSource(Vector center){
 		this.center = center;
+		this.energy = 1.0;
 	}
 
 	public Vector getCenter() {
 		return this.center;
 	}
 	
-	public Vector generate() {
+	public double getEnergy() {
+		return this.energy;
+	}
+	
+	public Ray generate(){
+		return new Ray(energy, center, newDirection());
+	}
+	
+	public List<Ray> generate(int n){
+		List<Vector> directions = manyDirections(n);
+		List<Ray> rays = new ArrayList<Ray>(n);
+		for(int i = 0; i < n; i++){
+			rays.add(new Ray(energy, center, directions.get(i)));
+		}
+		return rays;
+	}
+	
+	public Vector newDirection() {
 		float x, y, z;
 		do {
 			x = 2 * (float) Math.random() - 1; 
@@ -33,7 +52,7 @@ private Vector center;
 		return new Vector(x, y, z).normalize();
 	}
 	
-	public List<Vector> generate(int n) {
+	public List<Vector> manyDirections(int n) {
 		List<Vector> sphericalPoints = new ArrayList<Vector>();
 		int i = 0;
 		while(i < n) {

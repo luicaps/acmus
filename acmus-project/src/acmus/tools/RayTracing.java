@@ -400,9 +400,9 @@ public class RayTracing extends Composite {
 		_input.setBackground(new Color(null, 245, 245, 220));
 	}
 
-	public void compute() {
-		if (rays.getSelection() == 0)
-			return;
+	public void compute() throws IOException {
+		if (rays.getSelection() < 0)
+			throw new IOException("Number of rays must be >= 0");
 
 		getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -413,12 +413,11 @@ public class RayTracing extends Composite {
 				AcousticSource soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 				Vector sphericalReceptorCenter = newTriadeFor(receiverX,
 						receiverY, receiverZ);
-				double sphericalReceptorRadius = getValue(radius);
+				double sphericalReceptorRadius = getFloatValue(radius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
 				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(
-						sectors, soundSource, rays
-						.getSelection(),
+						sectors, soundSource, rays.getSelection(),
 						sphericalReceptorCenter, sphericalReceptorRadius,
 						speedOfSound, mCoeficient, K);
 				progressBar.setSelection(0);
@@ -436,31 +435,43 @@ public class RayTracing extends Composite {
 	private List<NormalSector> generateSectorsFor() {
 
 		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
-		float w = getValue(width);
-		float h = getValue(height);
-		float l = getValue(length);
+		float w = getFloatValue(width);
+		float h = getFloatValue(height);
+		float l = getFloatValue(length);
 		result.add(new NormalSector(new Vector(0, 0, 1), new Vector(l, w, 0),
-				getValue(floorCoeficient)));
+				getFloatValue(floorCoeficient)));
 		result.add(new NormalSector(new Vector(0, 1, 0), new Vector(l, 0, h),
-				getValue(wallsCoeficients)));
+				getFloatValue(wallsCoeficients)));
 		result.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, w, h),
-				getValue(wallsCoeficients)));
+				getFloatValue(wallsCoeficients)));
 		result.add(new NormalSector(new Vector(0, 0, -1), new Vector(l, w, h),
-				getValue(ceilCoeficient)));
+				getFloatValue(ceilCoeficient)));
 		result.add(new NormalSector(new Vector(0, -1, 0), new Vector(l, w, h),
-				getValue(wallsCoeficients)));
+				getFloatValue(wallsCoeficients)));
 		result.add(new NormalSector(new Vector(-1, 0, 0), new Vector(l, w, h),
-				getValue(wallsCoeficients)));
+				getFloatValue(wallsCoeficients)));
 		return result;
 	}
 
 	private Vector newTriadeFor(Spinner sourceX, Spinner sourceY,
 			Spinner sourceZ) {
-		return new Vector(getValue(sourceX), getValue(sourceY),
-				getValue(sourceZ));
+		return new Vector(getFloatValue(sourceX), getFloatValue(sourceY),
+				getFloatValue(sourceZ));
 	}
+	
+	private int getIntValue(Spinner source) {
+		int ret;
 
-	private float getValue(Spinner sourceX) {
+		if (source != null) {
+			int base = (int) Math.pow(10, source.getDigits());
+			ret = source.getSelection() / base;
+		} else
+			ret = 1;
+
+		return ret;
+	}
+	
+	private float getFloatValue(Spinner sourceX) {
 		float ret;
 
 		if (sourceX != null) {

@@ -38,7 +38,7 @@ public abstract class RR3Infrasctructure {
 		
 //		MonteCarloAcousticSource ras = new MonteCarloAcousticSource();
 		AcousticSource ras = new NormalDeviateAcousticSource(source);
-		rays = ras.generate(numberOfRays);
+		rays = ras.manyDirections(numberOfRays);
 
 		Mockery mockery = new Mockery() {
 			{

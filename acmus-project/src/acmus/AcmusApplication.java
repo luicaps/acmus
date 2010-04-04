@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 
-// FIXME remover a interface deprecada
+// FIXME remove deprecated interface
 @SuppressWarnings("deprecation")
 public class AcmusApplication implements IPlatformRunnable,
 		IExecutableExtension {

@@ -11,4 +11,18 @@ public class NormalSector {
 		this.iPoint = iPoint;
 		this.absorptionCoeficient = absorbentCoeficient;
 	}
+
+	public Vector getNormalVector() {
+		return this.normalVector;
+	}
+
+	public double getAbsorptionCoeficient() {
+		return this.absorptionCoeficient;
+	}
+
+	public Vector getiPoint() {
+		return this.iPoint;
+	}
+	
+	
 }

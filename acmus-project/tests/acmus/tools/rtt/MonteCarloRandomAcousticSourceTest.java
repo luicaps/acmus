@@ -28,7 +28,7 @@ public class MonteCarloRandomAcousticSourceTest {
 
 		Date d1, d2;
 		d1 = new Date();
-		randomPoints = ras.generate(POINTS_SIZE);
+		randomPoints = ras.manyDirections(POINTS_SIZE);
 		d2 = new Date();
 
 		long temp = d2.getTime() - d1.getTime();
