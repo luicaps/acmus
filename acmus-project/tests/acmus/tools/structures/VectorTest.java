@@ -53,7 +53,7 @@ public class VectorTest {
 	}
 
 	@Test
-	public void testDotProduct() {
+	public void testCrossProduct() {
 		Vector w = new Vector(1.2f, 2.3f, 4.56f);
 		Vector v = new Vector(2.1f, 1.23f, 3.22f);
 
@@ -63,13 +63,15 @@ public class VectorTest {
 	}
 
 	@Test
-	public void testCrossProduct() {
+	public void testDotProduct() {
 		Vector w = new Vector(1.2f, 2.3f, 4.56f);
 		Vector v = new Vector(2.1f, 1.23f, 3.22f);
 		
 		float expected = 20.0322f;
+		
+		float delta = 0.0001f;
 
-		assertEquals(expected, v.dotProduct(w));
+		assertEquals(expected, v.dotProduct(w), delta);
 	}
 
 	@Test
@@ -77,7 +79,10 @@ public class VectorTest {
 		Vector w = new Vector(1.2f, 2.3f, 4.56f);
 		
 		float expected = 5.246294f;
-		assertEquals(expected, w.length());
+		
+		float delta = 0.0001f;
+		
+		assertEquals(expected, w.length(), delta);
 	}
 
 	@Test

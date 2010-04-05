@@ -459,18 +459,6 @@ public class RayTracing extends Composite {
 				getFloatValue(sourceZ));
 	}
 	
-	private int getIntValue(Spinner source) {
-		int ret;
-
-		if (source != null) {
-			int base = (int) Math.pow(10, source.getDigits());
-			ret = source.getSelection() / base;
-		} else
-			ret = 1;
-
-		return ret;
-	}
-	
 	private float getFloatValue(Spinner sourceX) {
 		float ret;
 

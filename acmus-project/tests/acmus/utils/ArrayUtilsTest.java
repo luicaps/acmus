@@ -167,19 +167,20 @@ public class ArrayUtilsTest {
 	
 	@Test
 	public void testCalcScaleToUnitProperly() throws Exception {
+		double delta = 0.000001;
 		int[] lessThanOne = { 0, 1, -1};
 		double[] result = ArrayUtils.scaleToUnit(lessThanOne, 1);
-		Assert.assertEquals(1, ArrayUtils.maxAbs(result));
+		Assert.assertEquals(1, ArrayUtils.maxAbs(result), delta);
 		
 		for (int i = 0; i < result.length; i++) {
-			Assert.assertEquals(lessThanOne[i], result[i]);
+			Assert.assertEquals(lessThanOne[i], result[i], delta);
 		}
 		
 		int[] multiplesOfFive = { 0, -5, 10, -25 };
 		double[] expected = {0, -0.2, 0.4, -1};
 		
 		double[] actual = ArrayUtils.scaleToUnit(multiplesOfFive, 25);
-		Assert.assertEquals(1, ArrayUtils.maxAbs(actual));
+		Assert.assertEquals(1, ArrayUtils.maxAbs(actual), delta);
 		for (int i = 0; i < actual.length; i++) {
 			Assert.assertEquals(expected[i], actual[i], 0.01);
 		}

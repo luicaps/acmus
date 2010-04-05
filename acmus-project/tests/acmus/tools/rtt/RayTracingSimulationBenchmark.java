@@ -3,7 +3,6 @@ package acmus.tools.rtt;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.jmock.Expectations;
@@ -25,7 +24,6 @@ public class RayTracingSimulationBenchmark {
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 	private double soundSpeed;
-	private int initialEnergy;
 	private double mCoeficient;
 	private int k;
 	private ProgressBar bar;
@@ -51,7 +49,6 @@ public class RayTracingSimulationBenchmark {
 		sphericalReceptorRadius = 1.0;
 		
 		soundSpeed = 344.0; // em metros por segundo (m/s)
-		initialEnergy = 10000000;
 		mCoeficient = 0.01;
 		k = 500;
 
@@ -72,7 +69,7 @@ public class RayTracingSimulationBenchmark {
 
 	@Test
 	public void testSimulate() {
-
+for(int i = 0; i < 30; i++){
 		GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
 				sectors, soundSource, numberOfRays, sphericalReceptorCenter,
 				sphericalReceptorRadius, soundSpeed, mCoeficient, k);
@@ -80,11 +77,12 @@ public class RayTracingSimulationBenchmark {
 		gas.simulate(bar);
 		long time = System.currentTimeMillis() - ti;
 
-		System.out.println("Ray tracing acoustic simulation");
-		System.out.println("optimized");
-		System.out.println("rays: " + numberOfRays);
-		System.out.println("time (ms): " + time);
-
+		// System.out.println("Ray tracing acoustic simulation");
+		// System.out.println("optimized");
+		// System.out.println("rays: " + numberOfRays);
+		// System.out.println("time (ms): " + time);
+		System.out.println(time);
+	}	
 	}
 
 	@Test

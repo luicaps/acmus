@@ -1,7 +1,6 @@
 package acmus.tools.rtt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import acmus.tools.structures.AcousticSource;
@@ -16,7 +15,6 @@ public class RR3fase1 extends RR3Infrasctructure {
 	private AcousticSource soundSource;
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
-	private int k;
 		
 	public void setUp(Vector source, Vector receptor, double radius){
 		sectors = new ArrayList<NormalSector>();
@@ -75,6 +73,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 		double radius = 0.1;
 		String filename = "/tmp/ri";
 		*/
+		@SuppressWarnings("unused")
 		RR3fase1 rt = new RR3fase1(numberOfRays, source, receptor, mCoefficient, radius, filename, k);
 		
 		System.out.println("=======\nEND");
