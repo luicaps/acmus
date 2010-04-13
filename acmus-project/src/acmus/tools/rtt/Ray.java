@@ -124,16 +124,15 @@ public class Ray {
 				float localStepDuration = 
 					(i.sub(position).dotProduct(n)) / (velocity.dotProduct(n));
 				// TODO localStepDuration is NOT always > 0
+				if (localStepDuration < 0){
+					localStepDuration = - localStepDuration;
+				}
 				
 				/*
 				 * if the sector is closer than the last closest one updates
 				 * stepSize to the nearest sector
 				 */
 				if (localStepDuration < this.stepDuration) {
-					// localStepDuration is NOT always > 0
-					if (localStepDuration < 0){
-						localStepDuration = - localStepDuration;
-					}
 					this.stepDuration = localStepDuration;
 					this.reflectionSector = s;
 				}
