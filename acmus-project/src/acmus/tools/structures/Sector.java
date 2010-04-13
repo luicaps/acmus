@@ -1,11 +1,11 @@
 package acmus.tools.structures;
 
-public class NormalSector {
+public class Sector {
 	public Vector normalVector;
 	public double absorptionCoeficient;
 	public Vector iPoint;
 
-	public NormalSector(Vector normalVector, Vector iPoint,
+	public Sector(Vector normalVector, Vector iPoint,
 			double absorbentCoeficient) {
 		this.normalVector = normalVector;
 		this.iPoint = iPoint;

@@ -13,14 +13,14 @@ import org.junit.Test;
 
 import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.MonteCarloAcousticSource;
-import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.Sector;
 import acmus.tools.structures.Vector;
 
 public class RayTracingSimulationBenchmark {
 
 	private int numberOfRays;
 	private AcousticSource soundSource;
-	private ArrayList<NormalSector> sectors;
+	private ArrayList<Sector> sectors;
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 	private double soundSpeed;
@@ -37,13 +37,13 @@ public class RayTracingSimulationBenchmark {
 		
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		
-		sectors = new ArrayList<NormalSector>();
-		sectors.add(new NormalSector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
-		sectors.add(new NormalSector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // topo
-		sectors.add(new NormalSector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.02)); 
-		sectors.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.02));
-		sectors.add(new NormalSector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
-		sectors.add(new NormalSector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
+		sectors = new ArrayList<Sector>();
+		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
+		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // topo
+		sectors.add(new Sector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.02)); 
+		sectors.add(new Sector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.02));
+		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
+		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
 		sphericalReceptorCenter = new Vector(8, 8, 6);
 		sphericalReceptorRadius = 1.0;

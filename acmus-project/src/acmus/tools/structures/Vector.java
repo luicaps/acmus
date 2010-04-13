@@ -10,17 +10,17 @@ public class Vector {
 		y = b;
 		z = c;
 	}
-	
+
 	public Vector(Vector otherVector) {
 		this.set(otherVector);
 	}
-	
+
 	public void set(Vector otherVector) {
 		this.x = otherVector.getX();
 		this.y = otherVector.getY();
 		this.z = otherVector.getZ();
 	}
-	
+
 	public float getX() {
 		return x;
 	}
@@ -33,34 +33,71 @@ public class Vector {
 		return z;
 	}
 
-	public Vector normalize(){
-		float m = 1.0f/(float) Math.sqrt(x*x + y*y + z*z);
-		
-		return new Vector(x*m, y*m, z*m);
+	public Vector normalized() {
+		float m = 1.0f / this.length();
+
+		return new Vector(x * m, y * m, z * m);
+	}
+
+	public Vector normalized(float norm) {
+		float m = norm / this.length();
+
+		return new Vector(x * m, y * m, z * m);
+	}
+
+	public void normalize() {
+		this.normalize(1.0f);
+	}
+
+	public void normalize(float norm) {
+		float m = norm / this.length();
+
+		this.x *= m;
+		this.y *= m;
+		this.z *= m;
 	}
 
 	public Vector sub(Vector otherVector) {
-		return new Vector(x-otherVector.x, y-otherVector.y, z-otherVector.z);
+		return new Vector(x - otherVector.x, y - otherVector.y, z
+				- otherVector.z);
+	}
+
+	public void subFromSelf(Vector otherVector) {
+		x -= otherVector.getX();
+		y -= otherVector.getY();
+		z -= otherVector.getZ();
 	}
 
 	public Vector add(Vector otherVector) {
-		return new Vector(x+otherVector.x, y+otherVector.y, z+otherVector.z);
+		return new Vector(x + otherVector.x, y + otherVector.y, z
+				+ otherVector.z);
+	}
+
+	public void addToSelf(Vector otherVector) {
+		x += otherVector.getX();
+		y += otherVector.getY();
+		z += otherVector.getZ();
 	}
 
 	public Vector crossProduct(Vector w) {
-		return new Vector(y * w.z - z * w.y, z * w.x - x * w.z, x * w.y - y * w.x);
+		return new Vector(y * w.z - z * w.y, z * w.x - x * w.z, x * w.y - y
+				* w.x);
 	}
 
 	public float dotProduct(Vector w) {
 		return this.x * w.x + this.y * w.y + this.z * w.z;
 	}
 
+	public float squared() {
+		return x * x + y * y + z * z;
+	}
+	
 	public float length() {
-		return (float) Math.sqrt(x*x + y*y + z*z);
+		return (float) Math.sqrt(this.squared());
 	}
 
 	public Vector times(float esc) {
-		return new Vector(x*esc, y*esc, z*esc);
+		return new Vector(x * esc, y * esc, z * esc);
 	}
 
 	public String toDat() {
@@ -83,10 +120,14 @@ public class Vector {
 
 	@Override
 	public boolean equals(Object obj) {
+		// TODO Does that make any sense?
+		// == isn't the same as .equals()?
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
+		// TODO What about (!( obj instanceof Vector)) ?
+		// What if obj is under Object runtime class?
 		if (getClass() != obj.getClass())
 			return false;
 		final Vector other = (Vector) obj;
@@ -98,5 +139,11 @@ public class Vector {
 			return false;
 		return true;
 	}
-	
+
+	public void scale(float esc) {
+		this.x *= esc;
+		this.y *= esc;
+		this.z *= esc;
+	}
+
 }

@@ -24,7 +24,7 @@ public class VectorTest {
 		Vector test = new Vector(1, 1, 0);
 		Vector expected = new Vector(0.70710677f, 0.70710677f, 0.0f);
 		
-		assertEquals(expected, test.normalize());
+		assertEquals(expected, test.normalized());
 	}
 
 	@Test

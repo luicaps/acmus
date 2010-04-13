@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulseResponse {
 
 	private Map<Integer, Float> impulseResposeHistogram;
-	private float[] impulseResposeHistogramArray;
+	// private float[] impulseResposeHistogramArray;
 	private float interval;
 	
 	public EnergeticSimulatedImpulseResponse(float interval) {
@@ -17,7 +17,8 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 		
 		this.interval = interval;
 		impulseResposeHistogram = new ConcurrentHashMap<Integer, Float>();
-		impulseResposeHistogramArray = new float[188200]; // to 44100 hz;
+		
+		// impulseResposeHistogramArray = new float[188200]; // to 44100 hz;
 	}
 	
 	public Map<Float, Float> getEnergeticImpulseResponse() {
@@ -28,7 +29,7 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 		return ir;
 	}
 
-	public void addValue(float time, float energy) {
+	public synchronized void addValue(float time, float energy) {
 		if (time < 0.0f || energy < 0.0f) {
 			if (time < 0.0f) {
 				throw new InvalidParameterException("time less than ZERO");
@@ -46,11 +47,13 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 			impulseResposeHistogram.put(position, storedEnergy + energy);
 		}
 		
-		impulseResposeHistogramArray[(int) Math.ceil(time * 44100)] += energy;
+		// TODO Check: ArrayIndexOutOfBoundsException
+		// impulseResposeHistogramArray[(int) Math.ceil(time * 44100)] += energy;
 	}
 
 	public float[] getEIR() {
-		return impulseResposeHistogramArray;
+		// return impulseResposeHistogramArray;
+		return null;
 	}
 
 }

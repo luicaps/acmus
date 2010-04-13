@@ -3,6 +3,8 @@ package acmus.tools.structures;
 import java.util.ArrayList;
 import java.util.List;
 
+import acmus.tools.rtt.Ray;
+
 public class ArbitraryAcousticSource implements AcousticSource {
 	private Vector center;
 	private AcousticSource auxiliarAcousticSource;

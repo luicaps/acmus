@@ -62,7 +62,7 @@ import acmus.tools.rtt.GeometricAcousticSimulation;
 import acmus.tools.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.MonteCarloAcousticSource;
-import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.Sector;
 import acmus.tools.structures.Vector;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
@@ -407,7 +407,7 @@ public class RayTracing extends Composite {
 		getDisplay().asyncExec(new Runnable() {
 			public void run() {
 
-				List<NormalSector> sectors = generateSectorsFor();
+				List<Sector> sectors = generateSectorsFor();
 				Vector soundSourceCenter = newTriadeFor(sourceX, sourceY,
 						sourceZ);
 				AcousticSource soundSource = new MonteCarloAcousticSource(soundSourceCenter);
@@ -432,23 +432,23 @@ public class RayTracing extends Composite {
 
 	}
 
-	private List<NormalSector> generateSectorsFor() {
+	private List<Sector> generateSectorsFor() {
 
-		ArrayList<NormalSector> result = new ArrayList<NormalSector>();
+		ArrayList<Sector> result = new ArrayList<Sector>();
 		float w = getFloatValue(width);
 		float h = getFloatValue(height);
 		float l = getFloatValue(length);
-		result.add(new NormalSector(new Vector(0, 0, 1), new Vector(l, w, 0),
+		result.add(new Sector(new Vector(0, 0, 1), new Vector(l, w, 0),
 				getFloatValue(floorCoeficient)));
-		result.add(new NormalSector(new Vector(0, 1, 0), new Vector(l, 0, h),
+		result.add(new Sector(new Vector(0, 1, 0), new Vector(l, 0, h),
 				getFloatValue(wallsCoeficients)));
-		result.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, w, h),
+		result.add(new Sector(new Vector(1, 0, 0), new Vector(0, w, h),
 				getFloatValue(wallsCoeficients)));
-		result.add(new NormalSector(new Vector(0, 0, -1), new Vector(l, w, h),
+		result.add(new Sector(new Vector(0, 0, -1), new Vector(l, w, h),
 				getFloatValue(ceilCoeficient)));
-		result.add(new NormalSector(new Vector(0, -1, 0), new Vector(l, w, h),
+		result.add(new Sector(new Vector(0, -1, 0), new Vector(l, w, h),
 				getFloatValue(wallsCoeficients)));
-		result.add(new NormalSector(new Vector(-1, 0, 0), new Vector(l, w, h),
+		result.add(new Sector(new Vector(-1, 0, 0), new Vector(l, w, h),
 				getFloatValue(wallsCoeficients)));
 		return result;
 	}

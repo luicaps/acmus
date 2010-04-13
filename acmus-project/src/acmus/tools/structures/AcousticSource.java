@@ -2,6 +2,8 @@ package acmus.tools.structures;
 
 import java.util.List;
 
+import acmus.tools.rtt.Ray;
+
 
 /**
  * This interface is used to provide a uniform way to RayTracing use the

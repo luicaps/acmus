@@ -19,7 +19,7 @@ import org.junit.Test;
 import acmus.tools.structures.AcousticSource;
 import acmus.tools.structures.ArbitraryAcousticSource;
 import acmus.tools.structures.MonteCarloAcousticSource;
-import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.Sector;
 import acmus.tools.structures.Vector;
 
 public class RayTracingSimulationTest {
@@ -34,7 +34,7 @@ public class RayTracingSimulationTest {
 //	private int initialEnergy;
 	private double mCoeficient;
 	private int k;
-	private List<NormalSector> sectors;
+	private List<Sector> sectors;
 	private ProgressBar bar;
 
 //	private static float EPS = 0.00001f; 
@@ -47,13 +47,13 @@ public class RayTracingSimulationTest {
 		arbitarySoundSource.add(new Vector(0.7071f, 0.7071f, 0f)); //vetor (1,1,0)
 		arbitarySoundSource.add(new Vector(0.7022468831767834f, 0.7022468831767834f, 0.11704114719613057f));
 		
-		sectors = new ArrayList<NormalSector>();
-		sectors.add(new NormalSector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
-		sectors.add(new NormalSector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // topo
-		sectors.add(new NormalSector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.02)); 
-		sectors.add(new NormalSector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.02));
-		sectors.add(new NormalSector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
-		sectors.add(new NormalSector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
+		sectors = new ArrayList<Sector>();
+		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
+		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // topo
+		sectors.add(new Sector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.02)); 
+		sectors.add(new Sector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.02));
+		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
+		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
 		sphericalReceptorCenter = new Vector(8, 8, 6);
 		sphericalReceptorRadius = 3.0;

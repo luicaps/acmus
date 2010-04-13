@@ -12,14 +12,14 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.ProgressBar;
 
-import acmus.tools.structures.NormalSector;
+import acmus.tools.structures.Sector;
 import acmus.tools.structures.SimulatedImpulseResponse;
 import acmus.tools.structures.Vector;
 
 public class ExpandableRayTracingGeometricSimulation implements GeometricAcousticSimulation {
 
 	private List<Vector> vectors;
-	private List<NormalSector> sectors;
+	private List<Sector> sectors;
 	private Vector soundSource;
 	private HashMap<Double, Double> sphericalReceptorHistogram;
 	/*
@@ -33,7 +33,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 	double mCoeficient;
 	double k;
 
-	public ExpandableRayTracingGeometricSimulation(List<NormalSector> sectors,
+	public ExpandableRayTracingGeometricSimulation(List<Sector> sectors,
 			List<Vector> vectors, Vector soundSourceCenter,
 			Vector sphericalReceptorCenter, double sphericalReceptorRadius,
 			double soundSpeed, double initialEnergy, double mCoeficient, int k) {
@@ -84,7 +84,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 				lMin = Float.MAX_VALUE;
 
 				// verificacao de qual setor(parede) o raio incide
-				for (NormalSector s : sectors) {
+				for (Sector s : sectors) {
 					// System.out.println("k#");
 
 					if (v.dotProduct(s.normalVector) >= 0) {
@@ -116,7 +116,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 				lReflection += lMin;
 				e = eTemp;
 				v = nR.times(2 * dMin).add(q.sub(g));
-				v = v.normalize();
+				v = v.normalized();
 			} while (e > (1 / k * initialEnergy)); // vai para a
 			// proxima
 			// reflexao, caso
