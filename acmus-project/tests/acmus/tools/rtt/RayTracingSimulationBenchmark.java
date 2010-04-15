@@ -69,20 +69,26 @@ public class RayTracingSimulationBenchmark {
 
 	@Test
 	public void testSimulate() {
-for(int i = 0; i < 30; i++){
-		GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
-				sectors, soundSource, numberOfRays, sphericalReceptorCenter,
-				sphericalReceptorRadius, soundSpeed, mCoeficient, k);
-		long ti = System.currentTimeMillis();
-		gas.simulate(bar);
-		long time = System.currentTimeMillis() - ti;
+		System.out.println("\n" + "Ray tracing acoustic simulation");
+		System.out.println("optimized");
+		System.out.println("rays: " + numberOfRays);
+		System.out.println("number of processors: "
+				+ Runtime.getRuntime().availableProcessors());
+		System.out.println("os.arch: " + System.getProperty("os.arch"));
+		System.out.println("java.vm.name: "
+				+ System.getProperty("java.vm.name"));
+		System.out.println(System.getProperties() + "\n");
+		for (int i = 0; i < 100; i++) {
+			GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
+					sectors, soundSource, numberOfRays,
+					sphericalReceptorCenter, sphericalReceptorRadius,
+					soundSpeed, mCoeficient, k);
+			long ti = System.currentTimeMillis();
+			gas.simulate(bar);
+			long time = System.currentTimeMillis() - ti;
 
-		// System.out.println("Ray tracing acoustic simulation");
-		// System.out.println("optimized");
-		// System.out.println("rays: " + numberOfRays);
-		// System.out.println("time (ms): " + time);
-		System.out.println(time);
-	}	
+			System.out.println("time_" + ( i + 1 ) + " (ms): " + time);
+		}
 	}
 
 	@Test
