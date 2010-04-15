@@ -51,7 +51,7 @@ private double energy;
 			y = 2 * (float) Math.random() - 1;
 			z = 2 * (float) Math.random() - 1;
 		} while (x*x + y*y + z*z > 1);
-		return new Vector(x, y, z).normalized();
+		return (new Vector(x, y, z)).normalized();
 	}
 	
 	public List<Vector> manyDirections(int n) {

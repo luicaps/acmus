@@ -81,6 +81,7 @@ public class Ray {
 			 *  position goes to intercept point
 			 */
 			position.addToSelf(direction.times(stepSize));
+			// TODO Error handling: position is NOT always inside the limited region
 			
 			/*
 			 * ray receptor intercept test
@@ -122,16 +123,17 @@ public class Ray {
 				 */
 				float localStepSize = 
 					(i.sub(position).dotProduct(n)) / (direction.dotProduct(n));
-				// TODO localStepSize is NOT always > 0
-				if (localStepSize < 0){
-					localStepSize = - localStepSize;
-				}
+				/*
+				 * TODO localStepSize is NOT always > 0
+				 * as i.sub(position).dotProduct(n) is not always < 0
+				 * because position is NOT always inside the limited region
+				 */
 				
 				/*
 				 * if the sector is closer than the last closest one updates
 				 * stepSize to the smallest and the sector to the nearest
 				 */
-				if (localStepSize < this.stepSize) {
+				if (localStepSize > 0 && localStepSize < this.stepSize) {
 					this.stepSize = localStepSize;
 					this.reflectionSector = s;
 				}
@@ -151,7 +153,7 @@ public class Ray {
 		/*
 		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
 		 * oldPositionToCenter direction
-		 * TODO: Check Gomes says tca >= 0
+		 * TODO Check: Gomes says tca >= 0
 		 */
 		if (tca > 0) {
 
@@ -181,7 +183,7 @@ public class Ray {
 				 */
 				double meanStepSizeOnThisReflection = 2*tca;
 				
-				// TODO check if there are sectors inside the receptor's volume
+				// TODO Check if there are sectors inside the receptor's volume
 				
 				double distance = size + meanStepSizeOnThisReflection;
 				double time = distance / soundSpeed;
