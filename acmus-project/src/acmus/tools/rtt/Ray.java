@@ -46,9 +46,9 @@ public class Ray {
 	}
 
 	public Ray(double energy, float positionX, float positionY,
-			float positionZ, float velocityX, float velocityY, float velocityZ) {
+			float positionZ, float directionX, float directionY, float directionZ) {
 		this(energy, new Vector(positionX, positionY,
-				positionZ), new Vector(velocityX, velocityY, velocityZ));
+				positionZ), new Vector(directionX, directionY, directionZ));
 	}
 	
 	public double getEnergy() {
@@ -100,9 +100,10 @@ public class Ray {
 				
 				/*
 				 * calculates and normalizes the new ray direction
+				 * supposes nv with norm 1
 				 */
 				direction.subFromSelf(nv.times(2 * 
-						(direction.dotProduct(nv)) / nv.squared()));
+						(direction.dotProduct(nv))));
 				direction.normalize();
 			}
 			
@@ -133,7 +134,7 @@ public class Ray {
 				 * if the sector is closer than the last closest one updates
 				 * stepSize to the smallest and the sector to the nearest
 				 */
-				if (localStepSize > 0 && localStepSize < this.stepSize) {
+				if (localStepSize < this.stepSize) {
 					this.stepSize = localStepSize;
 					this.reflectionSector = s;
 				}

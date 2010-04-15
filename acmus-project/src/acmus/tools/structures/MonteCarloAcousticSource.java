@@ -15,8 +15,8 @@ import acmus.tools.rtt.Ray;
  * 
  */
 public class MonteCarloAcousticSource implements AcousticSource {
-private Vector center;
-private double energy;
+private final Vector center;
+private final double energy;
 	
 	public MonteCarloAcousticSource(Vector center){
 		this.center = center;
@@ -24,7 +24,7 @@ private double energy;
 	}
 
 	public Vector getCenter() {
-		return this.center;
+		return new Vector(this.center);
 	}
 	
 	public double getEnergy() {
@@ -32,7 +32,7 @@ private double energy;
 	}
 	
 	public Ray generate(){
-		return new Ray(energy, center, newDirection());
+		return new Ray(getEnergy(), getCenter(), newDirection());
 	}
 	
 	public List<Ray> generate(int n){
@@ -63,7 +63,7 @@ private double energy;
 			float z = 2 * (float) Math.random() - 1;
 			
 			if(x*x + y*y + z*z <= 1) {
-				sphericalPoints.add(new Vector(x, y, z).normalized());
+				sphericalPoints.add((new Vector(x, y, z)).normalized());
 				i++;
 			}
 		}
