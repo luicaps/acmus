@@ -1,66 +1,156 @@
 /*
  *  Complex.java
- *  This file is part of AcMus.
- *  
- *  AcMus: Tools for Measurement, Analysis, and Simulation of Room Acoustics
- *  
- *  Copyright (C) 2006 Leo Ueda, Bruno Masiero
- *  
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *  
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
+ *  From: http://www.cs.princeton.edu/introcs/97data/Complex.java.html
+ *  Copyright (C) 2007, Robert Sedgewick and Kevin Wayne
+ *  
  */
+
 package acmus.dsp;
 
-public final class Complex {
-	double _r;
-	double _i;
+public class Complex {
+	
+    private double re;   // the real part
+    private double im;   // the imaginary part
 
-	public Complex(double r, double i) {
-		_r = r;
-		_i = i;
-	}
+    // create a new object with the given real and imaginary parts
+    public Complex(double real, double imag) {
+        re = real;
+        im = imag;
+    }
 
-	public final double real() {
-		return _r;
-	}
+    // return a string representation of the invoking Complex object
+    public String toString() {
+        if (im == 0) return re + "";
+        if (re == 0) return im + "i";
+        if (im <  0) return re + " - " + (-im) + "i";
+        return re + " + " + im + "i";
+    }
+    
+    public void setRe(double a) {
+    	this.re = a;
+    }
+    
+    public void setIm(double a) {
+    	this.im = a;
+    }
+    
+    public void setComplex(double a, double b) {
+    	this.re = a;
+    	this.im = b;
+    }
 
-	public final double imag() {
-		return _i;
-	}
+    // return abs/modulus/magnitude and angle/phase/argument
+    public double abs() {
+    	return Math.hypot(re, im); // Math.sqrt(re*re + im*im)
+    }
+    
+    public double phase() {
+    	return Math.atan2(im, re); // between -pi and pi
+    }
 
-	public final void real(double r) {
-		_r = r;
-	}
+    // return a new Complex object whose value is (this + b)
+    public Complex plus(Complex b) {
+        Complex a = this;             // invoking object
+        double real = a.re + b.re;
+        double imag = a.im + b.im;
+        return new Complex(real, imag);
+    }
 
-	public final void imag(double i) {
-		_i = i;
-	}
+    // return a new Complex object whose value is (this - b)
+    public Complex minus(Complex b) {
+        Complex a = this;
+        double real = a.re - b.re;
+        double imag = a.im - b.im;
+        return new Complex(real, imag);
+    }
 
-	public final void mult(double re, double im) {
-		double x = (_r * re) - (_i * im);
-		double y = (_r * im) + (_i * re);
-		_r = x;
-		_i = y;
-	}
+    // return a new Complex object whose value is (this * b)
+    public Complex times(Complex b) {
+        Complex a = this;
+        double real = a.re * b.re - a.im * b.im;
+        double imag = a.re * b.im + a.im * b.re;
+        return new Complex(real, imag);
+    }
 
-	public final void div(double re, double im) {
-		double x = (_r * re) + (_i * im);
-		double y = (-_r * im) + (_i * re);
-		double s = re * re + im * im;
-		_r = x / s;
-		_i = y / s;
-	}
+    // scalar multiplication
+    // return a new object whose value is (this * alpha)
+    public Complex times(double alpha) {
+        return new Complex(alpha * re, alpha * im);
+    }
+
+    // return a new Complex object whose value is the conjugate of this
+    public Complex conjugate() {  return new Complex(re, -im); }
+
+    // return a new Complex object whose value is the reciprocal of this
+    public Complex reciprocal() {
+        double scale = re*re + im*im;
+        return new Complex(re / scale, -im / scale);
+    }
+
+    // return the real or imaginary part
+    public double re() {
+    	return re;
+    }
+    
+    public double im() {
+    	return im;
+    }
+
+    // return a / b
+    public Complex divides(Complex b) {
+        Complex a = this;
+        return a.times(b.reciprocal());
+    }
+
+    // return a new Complex object whose value is the complex exponential of this
+    public Complex exp() {
+        return new Complex(Math.exp(re) * Math.cos(im), Math.exp(re) * Math.sin(im));
+    }
+
+    // return a new Complex object whose value is the complex sine of this
+    public Complex sin() {
+        return new Complex(Math.sin(re) * Math.cosh(im), Math.cos(re) * Math.sinh(im));
+    }
+
+    // return a new Complex object whose value is the complex cosine of this
+    public Complex cos() {
+        return new Complex(Math.cos(re) * Math.cosh(im), -Math.sin(re) * Math.sinh(im));
+    }
+
+    // return a new Complex object whose value is the complex tangent of this
+    public Complex tan() {
+        return sin().divides(cos());
+    }
+
+    // a static version of plus
+    public static Complex plus(Complex a, Complex b) {
+        double real = a.re + b.re;
+        double imag = a.im + b.im;
+        Complex sum = new Complex(real, imag);
+        return sum;
+    }
+
+    // sample client for testing
+    /*
+    public static void main(String[] args) {
+        Complex a = new Complex(5.0, 6.0);
+        Complex b = new Complex(-3.0, 4.0);
+
+        System.out.println("a            = " + a);
+        System.out.println("b            = " + b);
+        System.out.println("Re(a)        = " + a.re());
+        System.out.println("Im(a)        = " + a.im());
+        System.out.println("b + a        = " + b.plus(a));
+        System.out.println("a - b        = " + a.minus(b));
+        System.out.println("a * b        = " + a.times(b));
+        System.out.println("b * a        = " + b.times(a));
+        System.out.println("a / b        = " + a.divides(b));
+        System.out.println("(a / b) * b  = " + a.divides(b).times(b));
+        System.out.println("conj(a)      = " + a.conjugate());
+        System.out.println("|a|          = " + a.abs());
+        System.out.println("tan(a)       = " + a.tan());
+    }
+    */
 
 }

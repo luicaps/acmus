@@ -48,11 +48,17 @@ public class MathUtils {
 		Complex c = new Complex(0, 0);
 	
 		for (int i = 0; i < aRe.length; i++) {
+			/*
 			c.real(aRe[i]);
 			c.imag(aIm[i]);
 			c.div(bRe[i], bIm[i]);
 			aRe[i] = c.real();
 			aIm[i] = c.imag();
+			*/
+			c.setComplex(aRe[i], aIm[i]);
+			c = c.divides(new Complex(bRe[i], bIm[i]));
+			aRe[i] = c.re();
+			aIm[i] = c.im();
 		}
 	}
 

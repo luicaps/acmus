@@ -35,9 +35,25 @@ public class Algorithms {
 	}
 
 	public static final double[] conv(double a[], double b[], double output[],
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) {  
 		monitor = SWTUtils.monitorFor(monitor);
 		monitor.beginTask("Convolving...", a.length + b.length - 1);
+		
+		
+		// New convolution
+		/*
+		Signal f = new Signal(a);
+		Signal g = new Signal(b);
+		Signal out = new Signal(output);
+		
+		out = f.convolve(g, monitor);
+		for (int i = 0; i < out.size(); i++) {
+			output[i] = out.get(i).re();			
+		}
+		*/
+		
+		// Old convolution
+		
 		double f[], g[];
 		if (a.length > b.length) {
 			f = a;
@@ -65,6 +81,8 @@ public class Algorithms {
 			}
 			monitor.worked(1);
 		}
+		
+		
 		monitor.done();
 		return output;
 	}
@@ -123,7 +141,7 @@ public class Algorithms {
 					conv[k] = new double[x.length + y.length - 1];
 					monitor.subTask("ch " + (i + 1) + " x " + " ch " + (j + 1));
 					IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor,
-							10);
+							10);					
 					conv(x, y, conv[k++], subMonitor);
 				}
 			}

@@ -49,7 +49,7 @@ public class Signal {
 
 		try {
 			u = AcmusPlugin.getDefault().getBundle().getEntry(
-					"data/mlstaps.txt");
+			"data/mlstaps.txt");
 			br = new BufferedReader(new InputStreamReader(u.openStream()));
 			readMlsTaps(br);
 		} catch (Exception e) {

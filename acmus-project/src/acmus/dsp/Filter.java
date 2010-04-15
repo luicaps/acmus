@@ -549,10 +549,13 @@ public class Filter {
 		// k = real(prod(-p));
 		Complex x = new Complex(1, 0);
 		for (int i = 0; i < pRe.length; i++) {
-			x.mult(-pRe[i], -pIm[i]);
+			//x.mult(-pRe[i], -pIm[i]);
+			Complex y = new Complex(-pRe[i], -pIm[i]);
+			x.times(y);
 		}
 
-		return x.real();
+		//return x.real();
+		return x.re();
 	}
 
 	public static void WindowFunc(int whichFunction, int NumSamples, double[] in) {

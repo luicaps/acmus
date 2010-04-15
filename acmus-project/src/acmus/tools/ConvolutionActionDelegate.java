@@ -43,17 +43,15 @@ import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
 
 public class ConvolutionActionDelegate implements
-		IWorkbenchWindowActionDelegate {
+	IWorkbenchWindowActionDelegate {
 
 	private IStructuredSelection _sel;
 
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
-	public void init(IWorkbenchWindow window) {
-		// TODO Auto-generated method stub
+	public void init(IWorkbenchWindow window) {	
 
 	}
 
