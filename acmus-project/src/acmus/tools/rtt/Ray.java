@@ -81,7 +81,6 @@ public class Ray {
 			 *  position goes to intercept point
 			 */
 			position.addToSelf(direction.times(stepSize));
-			// TODO Error handling: position is NOT always inside the limited region
 			
 			/*
 			 * ray receptor intercept test
@@ -124,11 +123,7 @@ public class Ray {
 				 */
 				float localStepSize = 
 					(i.sub(position).dotProduct(n)) / (direction.dotProduct(n));
-				/*
-				 * TODO localStepSize is NOT always > 0
-				 * as i.sub(position).dotProduct(n) is not always < 0
-				 * because position is NOT always inside the limited region
-				 */
+				
 				
 				/*
 				 * if the sector is closer than the last closest one updates
@@ -154,7 +149,7 @@ public class Ray {
 		/*
 		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
 		 * oldPositionToCenter direction
-		 * TODO Check: Gomes says tca >= 0
+		 * TODO Check inequality Gomes says tca >= 0
 		 */
 		if (tca > 0) {
 
