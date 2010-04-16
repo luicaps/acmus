@@ -3,4 +3,4 @@ acmus-project/bin/acmus
 acmus-project/bin/how-to.txt
 acmus-project/bin/simulation.c
 acmus-project/bin/simulation.h
-acmus-project/bin/RTSimBenchmark.sh
+acmus-project/bin/test.sh

@@ -133,7 +133,7 @@ public class RayTracingSimulationTest {
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
 		long ti = System.currentTimeMillis();
 		rts.simulate(bar);
-		System.out.println("tempo: " + (System.currentTimeMillis() - ti) + " ms");
+		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");
 //		try{
 //			rts.lista();
 //		}
@@ -156,7 +156,7 @@ public class RayTracingSimulationTest {
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
 		
 		rts.simulate(bar);
-		System.out.println("tempo: " + (System.currentTimeMillis() - ti) + " ms");
+		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");
 	}
 
 }

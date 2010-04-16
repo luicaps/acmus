@@ -23,7 +23,7 @@ public class MonteCarloRandomAcousticSourceTest {
 	private static List<Vector> randomPoints;
 
 	@BeforeClass
-	public static void setUp() throws Exception {
+	public static void setUp() {
 		AcousticSource ras = new MonteCarloAcousticSource(new Vector(0, 0, 0));
 
 		Date d1, d2;
@@ -31,47 +31,48 @@ public class MonteCarloRandomAcousticSourceTest {
 		randomPoints = ras.manyDirections(POINTS_SIZE);
 		d2 = new Date();
 
-		long temp = d2.getTime() - d1.getTime();
-		System.out.println("Tempo para construir os "+ POINTS_SIZE + " pontos: " + temp + " ms");
+		long time = d2.getTime() - d1.getTime();
+		System.out.println("Direction generation time for "+ POINTS_SIZE + " points: " + time + " ms");
 	}
 
 	@Test
-	public void visualTest() throws Exception {
-		FileWriter fw = new FileWriter("/tmp/fonte3d.txt");
+	public void visualTest() throws IOException {
+		String dataFile = System.getProperty("java.io.tmpdir")
+				+ System.getProperty("file.separator") + "fonte3d.txt";
+		FileWriter fw = new FileWriter(dataFile);
 
-		for (int i = 0; i < randomPoints.size(); i++) {
-			fw.write(randomPoints.get(i).toDat() + "\n");
+		for (Vector vecVisual : randomPoints) {
+			fw.write(vecVisual.toDat() + "\n");
 		}
-
-		// Para desenhar o grafico com o gnuplot
-		// set size square
-		// splot '/tmp/fonte3d.txt'gnuplot> set multiplot
-//		multiplot> splot '/tmp/fe.txt' with point 2;
-//		multiplot> splot '/tmp/fq.txt' with point 1;
-//		multiplot>         
 		
 		fw.flush();
 		fw.close();
+		
+		System.out.println();
+		System.out.println("Graphing with gnuplot:");
+		System.out.println("\t $ gnuplot");
+		System.out.println("\t gnuplot> set size square");
+		System.out.println("\t gnuplot> splot '" + dataFile + "'");
+		
 	}
 
-	//FIXME this that fails doesn't detect the vector (1,1,1) which does not belongs to the
-	// unit sphere
-	public void testPointsAreGeneratedInTheSurfaceOfAUnitSphere() throws IOException {
+	@Test
+	public void testPointsAreGeneratedInTheSurfaceOfAUnitSphere() {
 
 		for (Vector v : randomPoints) {
-			assertEquals(1.0, v.length(), 0.00001);
+			assertEquals(1.0f , v.length(), 0.000001f);
 		}
 
 	}
 
 	@Test
-	public void testAllPointsAreGenerated() throws Exception {
+	public void testAllPointsAreGenerated() {
 		Assert.assertEquals(POINTS_SIZE, randomPoints.size());
 
 	}
 
 	@Test
-	public void testPointsAreUniformelyDistributed() throws Exception {
+	public void testPointsAreUniformelyDistributed() {
 
 		int octs[] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 

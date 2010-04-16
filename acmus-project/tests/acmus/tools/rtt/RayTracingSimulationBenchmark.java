@@ -69,8 +69,9 @@ public class RayTracingSimulationBenchmark {
 
 	@Test
 	public void testSimulate() {
-		System.out.println("\n" + "Ray tracing acoustic simulation");
-		System.out.println("optimized");
+		
+		System.out.println("\n" + "Ray tracing acoustic simulation" + "\n"
+				+ "optimized");
 		System.out.println("rays: " + numberOfRays);
 		System.out.println("number of processors: "
 				+ Runtime.getRuntime().availableProcessors());
@@ -78,6 +79,8 @@ public class RayTracingSimulationBenchmark {
 		System.out.println("java.vm.name: "
 				+ System.getProperty("java.vm.name"));
 		System.out.println(System.getProperties() + "\n");
+		System.out.println("time (ms): " + "\n"); 
+		
 		for (int i = 0; i < 100; i++) {
 			GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
 					sectors, soundSource, numberOfRays,
@@ -87,7 +90,7 @@ public class RayTracingSimulationBenchmark {
 			gas.simulate(bar);
 			long time = System.currentTimeMillis() - ti;
 
-			System.out.println("time_" + ( i + 1 ) + " (ms): " + time);
+			System.out.println(time);
 		}
 	}
 

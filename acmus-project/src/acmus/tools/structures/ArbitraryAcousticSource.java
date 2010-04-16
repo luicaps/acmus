@@ -24,7 +24,7 @@ public class ArbitraryAcousticSource implements AcousticSource {
 	}
 	
 	public Vector getCenter() {
-		return this.center;
+		return new Vector(this.center);
 	}
 	
 	public double getEnergy() {

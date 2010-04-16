@@ -16,7 +16,7 @@ private double energy;
 	}
 
 	public Vector getCenter() {
-		return this.center;
+		return new Vector(this.center);
 	}
 	
 	public double getEnergy() {

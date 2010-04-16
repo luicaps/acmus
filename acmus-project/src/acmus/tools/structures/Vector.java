@@ -1,14 +1,14 @@
 package acmus.tools.structures;
 
 public class Vector {
-	float x;
-	float y;
-	float z;
+	private float x;
+	private float y;
+	private float z;
 
 	public Vector(float a, float b, float c) {
-		x = a;
-		y = b;
-		z = c;
+		this.x = a;
+		this.y = b;
+		this.z = c;
 	}
 
 	public Vector(Vector otherVector) {
@@ -122,8 +122,8 @@ public class Vector {
 	public boolean equals(Object obj) {
 		// TODO Does that make any sense?
 		// == isn't the same as .equals()?
-		if (this == obj)
-			return true;
+		// if (this == obj)
+		//	return true;
 		if (obj == null)
 			return false;
 		// TODO What about (!( obj instanceof Vector)) ?
