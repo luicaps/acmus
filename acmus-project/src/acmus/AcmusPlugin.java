@@ -115,9 +115,9 @@ public class AcmusPlugin extends AbstractUIPlugin {
 		super.start(context);
 		
 		// Leandro - 23/05/2009 - Begin
-		// Carrega o canal de entrada/saída
-		// TODO Descobrir em qual lugar padrão do Eclipse se deve fazer essa inicialização
-		// TODO Quando você liga/desliga a interface de áudio durante a execução, a lista não se atualiza!
+		// Carrega o canal de entrada/saÃ­da
+		// TODO Descobrir em qual lugar padrÃ£o do Eclipse se deve fazer essa inicializaÃ§Ã£o
+		// TODO Quando vocÃª liga/desliga a interface de Ã¡udio durante a execuÃ§Ã£o, a lista nÃ£o se atualiza!
 		Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 		for (int i = 0; i < mixerInfo.length; i++) {
 			String name = mixerInfo[i].getName();

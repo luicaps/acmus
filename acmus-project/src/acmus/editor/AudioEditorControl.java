@@ -366,18 +366,14 @@ public class AudioEditorControl extends Composite {
 	}
 
 	/**
-	 * Returns the highest integer that may be represented by this kind of file
-	 * 
-	 * @return
+	 * @return the highest integer that may be represented by this kind of file
 	 */
 	public int getLimit() {
 		return acmus.util.WaveUtils.getLimit(_ap.getBitsPerSample());
 	}
 
 	/**
-	 * Returns the highest sample currently held on this file
-	 * 
-	 * @return
+	 * @return the highest sample currently held on this file
 	 */
 	public int getMaxSample() {
 		return _ap.getMaxSample();

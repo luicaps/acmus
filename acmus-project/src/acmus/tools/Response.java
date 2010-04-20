@@ -6,16 +6,16 @@ public class Response {
 	int numraios;
 	Response prox;
 
+	public Response() {
+
+	}
+	
 	/**
 	 * @param energia
 	 * @param indice
 	 * @param numraios
 	 * @param prox
 	 */
-	public Response() {
-
-	}
-
 	public Response(double energia, int indice, int numraios, Response prox) {
 		super();
 		// TODO Auto-generated constructor stub

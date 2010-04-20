@@ -9,6 +9,8 @@ import java.util.ArrayList;
 // import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.eclipse.swt.widgets.ProgressBar;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -145,6 +147,16 @@ public class RayTracingSimulationTest {
 //		g.salvar(new FileOutputStream("histograma.jpg"));
 	}
 
+	/**
+	 * Tests if the center of the MonteCarloRandomAcousticSource is fixed as
+	 * expected or if it's moving after some simulation.
+	 */
+	@Test
+	public void testCenterIsFixed() {
+		Assert.assertEquals(soundSourceCenter, soundSource.getCenter());
+		Assert.assertEquals(soundSourceCenter, arbitarySoundSource.getCenter());
+	}
+	
 	public RayTracingSimulationTest() {
 		setUp();
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);

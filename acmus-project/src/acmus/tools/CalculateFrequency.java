@@ -58,8 +58,6 @@ public class CalculateFrequency {
 
 	/**
 	 * Computes axial, tangential and oblique frequencies.
-	 * 
-	 * @return false if input is invalid
 	 */
 	public void calculateFrequencies() {
 		if (!isInputValid())

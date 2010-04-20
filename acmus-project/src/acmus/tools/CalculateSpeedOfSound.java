@@ -54,8 +54,6 @@ public class CalculateSpeedOfSound {
 	/**
 	 * Computes speed of sound
 	 * 
-	 * @param no
-	 *            parameter
 	 * @return speed speed of sound
 	 */
 	public double calculateSpeedOfSound() {

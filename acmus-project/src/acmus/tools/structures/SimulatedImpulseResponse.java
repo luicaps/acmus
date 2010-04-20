@@ -12,8 +12,7 @@ public interface SimulatedImpulseResponse {
 	public void addValue(float time, float value);
 	
 	/**
-	 * returns a normalized Impulse Response
-	 * @return
+	 * @return a normalized Impulse Response
 	 */
 	public Map<Float, Float> getEnergeticImpulseResponse();
 	

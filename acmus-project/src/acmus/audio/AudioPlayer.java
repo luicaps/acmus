@@ -806,10 +806,8 @@ public class AudioPlayer {
 	}
 
 	/**
-	 * Returns the maximum absolute value that is actually stored inside this
-	 * file
-	 * 
-	 * @return
+	 * @return the maximum absolute value that is actually stored inside this
+	 *         file
 	 */
 	public int getMaxSample() {
 		return ArrayUtils.maxAbs(_audioData);

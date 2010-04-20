@@ -14,38 +14,38 @@ public final class DoubleFloatBenchmark {
 	}
 	
 	private static long iteraFloat(int iteracoes) {
-		VectorFloat meuVector = new VectorFloat((float) Math.random(), (float) Math.random(), (float) Math.random());
+		VectorFloat myVector = new VectorFloat((float) Math.random(), (float) Math.random(), (float) Math.random());
 		
 		long ti = System.currentTimeMillis();
 		for( int i=0; i<iteracoes; i++)
 		{
-			meuVector.normalize();
+			myVector.normalize();
 		}
 
 		return System.currentTimeMillis() - ti;
 	}
 	
 	public static void main(String[] args) {
-		Integer iteracoes = 0;
+		Integer iteractions = 0;
 		
 		if( args.length > 0)
-			iteracoes = Integer.valueOf(args[0]);
+			iteractions = Integer.valueOf(args[0]);
 
 		System.out.println("****************************************");
-		System.out.println("Tempo de execucao Double x Float");
-		System.out.println("Iterações: " + iteracoes );
+		System.out.println("Double x Float time of execution");
+		System.out.println("Iteractions: " + iteractions );
 		
-		long tempoAcumulado = 0;
+		long acumulatedTime = 0;
 		for(int i=0; i<5; i++) {
-			tempoAcumulado += DoubleFloatBenchmark.iteraDouble(iteracoes); 
+			acumulatedTime += DoubleFloatBenchmark.iteraDouble(iteractions); 
 		}
-		System.out.println("iteraDouble(): " + (double) tempoAcumulado/5 + " ms");
+		System.out.println("iteraDouble(): " + (double) acumulatedTime/5 + " ms");
 
-		tempoAcumulado = 0;
+		acumulatedTime = 0;
 		for(int i=0; i<5; i++) {
-			tempoAcumulado += DoubleFloatBenchmark.iteraFloat(iteracoes); 
+			acumulatedTime += DoubleFloatBenchmark.iteraFloat(iteractions); 
 		}
-		System.out.println("iteraFloat(): " + (double) tempoAcumulado/5 + " ms");
+		System.out.println("iteraFloat(): " + (double) acumulatedTime/5 + " ms");
 	}
 }
 
