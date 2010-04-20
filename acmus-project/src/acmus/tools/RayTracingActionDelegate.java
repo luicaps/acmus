@@ -28,43 +28,52 @@ package acmus.tools;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+import acmus.AcmusGraphics;
+
 public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate {
 
+	@SuppressWarnings("unused")
+	private IStructuredSelection _sel;
+	private Display _display;
+	
 	public void dispose() {
 
 	}
 
 	public void init(IWorkbenchWindow window) {
-
+		_display = window.getWorkbench().getDisplay();
 	}
 
 	public void run(IAction action) {
-																			// tela
-		Shell shell = new Shell();
+		
+		Shell shell = new Shell(_display);
+		shell.setLayout(new GridLayout(2, false));
 
-		GridLayout gd = new GridLayout();
-		gd.numColumns = 2;
-		shell.setLayout(gd);
-
-		new RayTracing(shell, SWT.NONE);
+		RayTracing rt = new RayTracing(shell, SWT.NONE);
+		
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 700;
+		gridData.widthHint = 930;
+		rt.setLayoutData(gridData);
 
 		shell.setText("Ray Tracing");
-		
+		shell.setImage(AcmusGraphics.IMG_APP_ICON);
 		shell.pack();
-		
-		shell.setSize(950, 700);
 		
 		shell.open();
 
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-
+		_sel = (IStructuredSelection) selection;
 	}
 }

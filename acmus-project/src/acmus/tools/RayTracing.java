@@ -534,7 +534,7 @@ public class RayTracing extends Composite {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setText("Geometric Acoustic Simulation Tool");
-		shell.setBounds(0, 0, 1000, 700);
+		shell.setBounds(0, 0, 930, 700);
 
 		shell.open();
 		new RayTracing(shell, SWT.NONE);
