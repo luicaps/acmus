@@ -30,7 +30,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +45,7 @@ public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate 
 	private Display _display;
 	
 	public void dispose() {
-
+		_display.dispose();
 	}
 
 	public void init(IWorkbenchWindow window) {
@@ -58,19 +57,13 @@ public class RayTracingActionDelegate implements IWorkbenchWindowActionDelegate 
 		Shell shell = new Shell(_display);
 		shell.setLayout(new GridLayout(2, false));
 
-		RayTracing rt = new RayTracing(shell, SWT.NONE);
-		
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 700;
-		gridData.widthHint = 930;
-		rt.setLayoutData(gridData);
-
 		shell.setText("Ray Tracing");
 		shell.setImage(AcmusGraphics.IMG_APP_ICON);
 		shell.pack();
-		
+		shell.setSize(930, 700);
 		shell.open();
-
+		
+		new RayTracing(shell, SWT.NONE);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

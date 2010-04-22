@@ -10,50 +10,20 @@
    <runtime>
       <library name="acmus.jar"/>
       <library name="lib/jmf.jar"/>
-      <library name="lib/jcommon-1.0.13.jar"/>
-      <library name="lib/jfreechart-1.0.10.jar"/>
-      <library name="lib/jfreechart-1.0.10-experimental.jar"/>
-      <library name="lib/jfreechart-1.0.10-swt.jar"/>
       <library name="lib/swtgraphics2d.jar"/>
-      <library name="lib/Jama-1.0.2.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/cglib-2.1_3-src.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/cglib-nodep-2.1_3.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/hamcrest-core-1.1.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/hamcrest-library-1.1.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/jmock-2.4.0.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/jna.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/objenesis-1.0.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="."/>
+      <library name="lib/Jama-1.0.2.jar" />
+      <library name="lib/cglib-2.1_3-src.jar" />
+      <library name="lib/cglib-nodep-2.1_3.jar" />
+      <library name="lib/hamcrest-core-1.1.jar" />
+      <library name="lib/hamcrest-library-1.1.jar" />
+      <library name="lib/jmock-2.4.0.jar" />
+      <library name="lib/jna.jar" />
+      <library name="lib/objenesis-1.0.jar" />
+      <library name="lib/jcommon-1.0.16.jar" />
+      <library name="lib/jfreechart-1.0.13.jar" />
+      <library name="lib/jfreechart-1.0.13-swt.jar" />
+      <library name="lib/jfreechart-1.0.13-experimental.jar" />
+      <library name="." />
    </runtime>
 
    <requires>
@@ -64,6 +34,7 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.jface" export="true"/>
+      <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.ide.application"/>
@@ -615,13 +586,13 @@
             name="AcMus">
          <property
                name="aboutImage"
-               value="/acmus/images/logo3.gif"/>
+               value="images/logo3.gif"/>
          <property
                name="aboutText"
                value="AcMus ver 1.0.2, Copyright (C) 2008 AcMus Group.&#x0A;&#x0A;This program is free software; you can redistribute it&#x0A;and/or modify it under the terms of the GNU General&#x0A;Public License as published by the Free Software&#x0A;Foundation; either version 2 of the License, or (at&#x0A;your option) any later version.&#x0A;&#x0A;This program is distributed in the hope that it will be&#x0A;useful, but WITHOUT ANY WARRANTY; without even&#x0A;the implied warranty of MERCHANTABILITY or&#x0A;FITNESS FOR A PARTICULAR PURPOSE.  See the&#x0A;GNU General Public License for more details.&#x0A;&#x0A;http://gsd.ime.usp.br/acmus&#x0A;&#x0A;AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,&#x0A;Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,&#x0A;Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,&#x0A;Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,&#x0A;Thiago C. de Souza., Mario H.C. Torres&#x0A;&#x0A;eXtreme Programming Team:&#x0A;2008&#x0A;Cauê H.P.Guerra&#x0A;Leandro de Moraes&#x0A;Lucas Cavalcanti&#x0A;Nelson Lago&#x0A;Mario H.C. Torres&#x0A;Thiago Coraini"/>
          <property
                name="windowImages"
-               value="/acmus/icons/appIcon16x16.gif,/acmus/icons/appIcon32x32.gif"/>
+               value="icons/appIcon16x16.gif,icons/appIcon32x32.gif"/>
          <property
                name="appName"
                value="AcMus">

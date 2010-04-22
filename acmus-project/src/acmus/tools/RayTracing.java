@@ -58,12 +58,12 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 
 import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
-import acmus.tools.rtt.GeometricAcousticSimulation;
-import acmus.tools.rtt.RayTracingGeometricAcousticSimulationImpl;
-import acmus.tools.structures.AcousticSource;
-import acmus.tools.structures.MonteCarloAcousticSource;
-import acmus.tools.structures.Sector;
-import acmus.tools.structures.Vector;
+import acmus.simulation.AcousticSource;
+import acmus.simulation.GeometricAcousticSimulation;
+import acmus.simulation.math.Vector;
+import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
+import acmus.simulation.rtt.Sector;
+import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 

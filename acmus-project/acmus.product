@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.1"?>
+<?pde version="3.5"?>
 
-<product name="AcMus" id="acmus.acmus" application="acmus.acmus" useFeatures="false">
+<product name="AcMus" id="acmus.acmus" application="acmus.acmus" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/acmus/images/logo3.gif"/>
+      <image path="images/logo3.gif"/>
       <text>
          AcMus ver 1.0.2, Copyright (C) 2008 AcMus Group.
 
@@ -39,22 +39,23 @@ Thiago Coraini
       </text>
    </aboutInfo>
 
-   <configIni use="default"/>
+   <configIni use="default">
+   </configIni>
 
    <launcherArgs>
       <vmArgs>-Xmx256m</vmArgs>
    </launcherArgs>
 
-   <windowImages i16="/acmus/icons/appIcon16x16.gif" i32="/acmus/icons/appIcon32x32.gif"/>
+   <windowImages i16="icons/appIcon16x16.gif" i32="icons/appIcon32x32.gif"/>
 
    <splash
       location="acmus" />
    <launcher name="acmus">
-      <linux icon="/acmus/icons/appIcon.xpm"/>
-      <macosx icon="/acmus/icons/appIcon.icns"/>
+      <linux icon="icons/appIcon.xpm"/>
+      <macosx icon="icons/appIcon.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/acmus/icons/appIcon.ico"/>
+         <ico path="icons/appIcon.ico"/>
          <bmp/>
       </win>
    </launcher>
@@ -125,7 +126,7 @@ Thiago Coraini
       <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.wpf.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.text"/>
-      <plugin id="org.eclipse.tomcat"/>
+      <plugin id="org.eclipse.tomcat" fragment=""/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.carbon" fragment="true"/>
       <plugin id="org.eclipse.ui.editors"/>
@@ -144,7 +145,8 @@ Thiago Coraini
       <plugin id="org.eclipse.update.core.linux" fragment="true"/>
       <plugin id="org.eclipse.update.core.win32" fragment="true"/>
       <plugin id="org.eclipse.update.ui"/>
-      <plugin id="org.mortbay.jetty"/>
+      <plugin id="org.mortbay.jetty" fragment=""/>
    </plugins>
+
 
 </product>
