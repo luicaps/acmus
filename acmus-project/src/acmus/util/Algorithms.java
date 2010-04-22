@@ -7,6 +7,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
+import acmus.dsp.NewSignal;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class Algorithms {
@@ -41,19 +43,23 @@ public class Algorithms {
 		
 		
 		// New convolution
-		/*
-		Signal f = new Signal(a);
-		Signal g = new Signal(b);
-		Signal out = new Signal(output);
+		
+		NewSignal f = new NewSignal(a);
+		NewSignal g = new NewSignal(b);
+		NewSignal out = new NewSignal(output);
 		
 		out = f.convolve(g, monitor);
+		output = new double[out.size()];
+		System.out.println("out size = " + out.size());
+		System.out.println("output length = " + output.length);
 		for (int i = 0; i < out.size(); i++) {
-			output[i] = out.get(i).re();			
+			output[i] = out.get(i).re();
+			monitor.worked(1);
 		}
-		*/
+		
 		
 		// Old convolution
-		
+		/*
 		double f[], g[];
 		if (a.length > b.length) {
 			f = a;
@@ -81,7 +87,7 @@ public class Algorithms {
 			}
 			monitor.worked(1);
 		}
-		
+		*/
 		
 		monitor.done();
 		return output;
@@ -133,19 +139,21 @@ public class Algorithms {
 	
 			monitor.beginTask("Convolving", 10 * aa.length * bb.length);
 	
-			int k = 0;
+			int k = 0;			
 			for (int i = 0; i < aa.length; i++) {
 				for (int j = 0; j < bb.length; j++) {
+					//System.out.println("Conv (" + i + ", " + j + ")");
 					double x[] = ArrayUtils.scaleToUnit(aa[i], max1);
 					double y[] = ArrayUtils.scaleToUnit(bb[j], max2);
 					conv[k] = new double[x.length + y.length - 1];
 					monitor.subTask("ch " + (i + 1) + " x " + " ch " + (j + 1));
 					IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor,
 							10);					
-					conv(x, y, conv[k++], subMonitor);
+					conv[k] = conv(x, y, conv[k], subMonitor);
 				}
 			}
 	
+			//System.out.println("Writing start! - " + output);
 			monitor.beginTask("Writing output", 2);
 			double[] scaled = ArrayUtils.scaleToMax(WaveUtils.joinAudioStream(conv),
 					(double) WaveUtils.getLimit(16));
@@ -153,6 +161,7 @@ public class Algorithms {
 			monitor.worked(2);
 	
 			monitor.done();
+			//System.out.println("Writing done!");
 	
 		} catch (Exception e) {
 			e.printStackTrace();
