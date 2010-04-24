@@ -46,7 +46,7 @@ public class ArbitraryAcousticSource implements AcousticSource {
 		return rays;
 	}
 	
-	public Vector newDirection() {
+	public Vector direction() {
 		return manyDirections(1).get(0);
 	}
 	

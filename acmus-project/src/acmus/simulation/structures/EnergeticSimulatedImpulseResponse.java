@@ -3,7 +3,6 @@ package acmus.simulation.structures;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import acmus.simulation.SimulatedImpulseResponse;
 
@@ -18,7 +17,7 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 			throw new InvalidParameterException("interval CAN'T be less than 0.0000001");
 		
 		this.interval = interval;
-		impulseResposeHistogram = new ConcurrentHashMap<Integer, Float>();
+		impulseResposeHistogram = new HashMap<Integer, Float>();
 		
 		// impulseResposeHistogramArray = new float[188200]; // to 44100 hz;
 	}
@@ -30,7 +29,7 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 		}
 		return ir;
 	}
-
+	
 	public synchronized void addValue(float time, float energy) {
 		if (time < 0.0f || energy < 0.0f) {
 			if (time < 0.0f) {
@@ -49,13 +48,12 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 			impulseResposeHistogram.put(position, storedEnergy + energy);
 		}
 		
-		// TODO Check: ArrayIndexOutOfBoundsException
+		// Check before re-implement: ArrayIndexOutOfBoundsException
 		// impulseResposeHistogramArray[(int) Math.ceil(time * 44100)] += energy;
 	}
 
-	public float[] getEIR() {
-		// return impulseResposeHistogramArray;
-		return null;
-	}
+//	public float[] getEIR() {
+//		return impulseResposeHistogramArray;
+//	}
 
 }

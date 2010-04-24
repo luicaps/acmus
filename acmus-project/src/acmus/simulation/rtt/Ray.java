@@ -2,9 +2,16 @@ package acmus.simulation.rtt;
 
 import java.util.List;
 
-import acmus.simulation.SimulatedImpulseResponse;
+import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 
+/**
+ * Class representing a ray and encapsulates all the ray interactions while
+ * tracing it.
+ * 
+ * @author migmruiz
+ * 
+ */
 public class Ray {
 	private double energy;
 	private Vector position;
@@ -29,7 +36,11 @@ public class Ray {
 	private Vector oldPosition;
 	private boolean interceptsReceptor;
 	
-
+	/**
+	 * @param energy the initial ray energy
+	 * @param position the initial ray position
+	 * @param direction the initial ray direction
+	 */
 	public Ray(double energy, Vector position, Vector direction) {
 
 		this.energy = energy;
@@ -62,10 +73,17 @@ public class Ray {
 		return new Vector(direction);
 	}
 	
-	public void trace(Vector sphericalReceptorCenter,
-			double sphericalReceptorRadius, List<Sector> sectors,
-			double soundSpeed, double airAbsorptionCoeficient, double k,
-			SimulatedImpulseResponse simulatedImpulseResponse) {
+	/**
+	 * Trace the Ray instance
+	 * 
+	 * @param receptor the sound receptor
+	 * @param sectors a List of {@link Sector}s defining the room geometry
+	 * @param soundSpeed the sound speed
+	 * @param airAbsorptionCoefficient the air absorption coefficient
+	 * @param k the minimum limit for the ray's energy
+	 */
+	public void trace(Receptor receptor, List<Sector> sectors,
+			double soundSpeed, double airAbsorptionCoefficient, double k) {
 		
 		do {
 			oldPosition.set(position);
@@ -84,14 +102,17 @@ public class Ray {
 			/*
 			 * ray receptor intercept test
 			 */
-			interceptsReceptor(sphericalReceptorCenter,
-					sphericalReceptorRadius, airAbsorptionCoeficient,
-					soundSpeed, simulatedImpulseResponse);
+			interceptsReceptor = receptor.intercept(airAbsorptionCoefficient,
+					soundSpeed, oldPosition, direction, (float) this.energy,
+					(float) this.size);
 			
+// 			// Option without using Receptor's intercept, but a waste of time
+//			interceptsReceptor(receptor, airAbsorptionCoefficient, soundSpeed);
+
 			if(!interceptsReceptor){
 				size += stepSize;
 				energy = energy * (1 - reflectionSector.getAbsorptionCoeficient())
-				* Math.pow(Math.E, -1 * airAbsorptionCoeficient * stepSize);
+				* Math.pow(Math.E, -1 * airAbsorptionCoefficient * stepSize);
 				
 				// Local variable for better legibility
 				Vector nv = reflectionSector.getNormalVector();
@@ -105,7 +126,8 @@ public class Ray {
 				direction.normalize();
 			}
 			
-		} while (energy > (1 / k ) && !interceptsReceptor); //ray energy threshold
+		} while (energy > (1 / k) /* ray energy threshold */
+				&& !interceptsReceptor);
 	}
 	
 	void interceptsSector(List<Sector> sectors) {
@@ -136,63 +158,65 @@ public class Ray {
 		}
 	}
 	
-	void interceptsReceptor(Vector sphericalReceptorCenter,
-			double sphericalReceptorRadius, double airAbsorptionCoeficient,
-			double soundSpeed,
-			SimulatedImpulseResponse simulatedImpulseResponse) {
-		
-		// Local variables for better legibility and better performance
-		Vector oldPositionToCenter = sphericalReceptorCenter.sub(oldPosition);
-		double tca = oldPositionToCenter.dotProduct(direction);
-
-		/*
-		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
-		 * oldPositionToCenter direction
-		 * TODO Check inequality Gomes says tca >= 0
-		 */
-		if (tca > 0) {
-
-			/*
-			 * Discriminant for solving in terms of stepSizeOnThisReflection 
-			 * (or s)
-			 * 
-			 * oldPosition.add(direction.times(stepSizeOnThisReflection)).sub(
-			 * sphericalReceptorCenter).squared() <= sphericalReceptorRadius
-			 * 
-			 * or
-			 * 
-			 * || P + s*D - C ||^2 <= R^2
-			 * 
-			 * direction (or D) is supposed with norm 1
-			 */
-			double discriminant = sphericalReceptorRadius*sphericalReceptorRadius 
-								- oldPositionToCenter.squared() + tca*tca;
-
-			if (discriminant > 0) { // ray V intercepts spherical receptor
-				
-				/*
-				 * meanStepSizeOnThisReflection =  (
-				 * (2*tca + Math.sqrt(discriminant)) + (2*tca Math.sqrt(discriminant))
-				 *									 ) /2
-				 * = mean of the two solutions for stepSizeOnThisReflection
-				 */
-				double meanStepSizeOnThisReflection = 2*tca;
-				
-				// TODO Check if there are sectors inside the receptor's volume
-				
-				double distance = size + meanStepSizeOnThisReflection;
-				double time = distance / soundSpeed;
-				
-				double receptedEnergy = energy
-						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
-								* meanStepSizeOnThisReflection) * tca
-						/ sphericalReceptorRadius;
-				
-				simulatedImpulseResponse.addValue((float)time, (float)receptedEnergy);
-				
-				this.interceptsReceptor = true;
-			}
-		}
-		
-	}
+//	// Option without using Receptor's intercept
+//	void interceptsReceptor(Receptor receptor, double airAbsorptionCoeficient,
+//			double soundSpeed) {
+//		
+//		// Local variables for better legibility and better performance
+//		Vector sphericalReceptorCenter = receptor.getCenter();
+//		double sphericalReceptorRadius = receptor.getRadius();
+//		Vector oldPositionToCenter = sphericalReceptorCenter.sub(oldPosition);
+//		double tca = oldPositionToCenter.dotProduct(direction);
+//
+//		/*
+//		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
+//		 * oldPositionToCenter direction
+//		 * Check inequality Gomes says tca >= 0
+//		 */
+//		if (tca > 0) {
+//
+//			/*
+//			 * Discriminant for solving in terms of stepSizeOnThisReflection 
+//			 * (or s)
+//			 * 
+//			 * oldPosition.add(direction.times(stepSizeOnThisReflection)).sub(
+//			 * sphericalReceptorCenter).squared() <= sphericalReceptorRadius
+//			 * 
+//			 * or
+//			 * 
+//			 * || P + s*D - C ||^2 <= R^2
+//			 * 
+//			 * direction (or D) is supposed with norm 1
+//			 */
+//			double discriminant = sphericalReceptorRadius*sphericalReceptorRadius 
+//								- oldPositionToCenter.squared() + tca*tca;
+//
+//			if (discriminant > 0) { // ray V intercepts spherical receptor
+//				
+//				/*
+//				 * meanStepSizeOnThisReflection =  (
+//				 * (2*tca + Math.sqrt(discriminant)) + (2*tca Math.sqrt(discriminant))
+//				 *									 ) /2
+//				 * = mean of the two solutions for stepSizeOnThisReflection
+//				 */
+//				double meanStepSizeOnThisReflection = 2*tca;
+//				
+//				// Check if there are sectors inside the receptor's volume
+//				
+//				double distance = size + meanStepSizeOnThisReflection;
+//				double time = distance / soundSpeed;
+//				
+//				double receptedEnergy = energy
+//						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
+//								* meanStepSizeOnThisReflection) * tca
+//						/ sphericalReceptorRadius;
+//				
+//				receptor.getSimulatedImpulseResponse().addValue((float) time,
+//						(float) receptedEnergy);
+//
+//				this.interceptsReceptor = true;
+//			}
+//		}
+//		
+//	}
 }

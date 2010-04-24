@@ -1,53 +1,34 @@
 package acmus.simulation.rtt;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-/*
- * unused imports ...
- * import java.util.HashMap;
- * import java.util.Iterator;
- */
 
 import org.eclipse.swt.widgets.ProgressBar;
 
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
-import acmus.simulation.SimulatedImpulseResponse;
-import acmus.simulation.math.Vector;
-import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
+import acmus.simulation.Receptor;
 
 public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcousticSimulation {
 
 	private List<Sector> sectors;
 	private int numberOfRays;
 	private AcousticSource soundSource;
-	private Vector sphericalReceptorCenter;
-	double sphericalReceptorRadius;
 	double soundSpeed;
 	double airAbsorptionCoeficient;
 	double k;
-	private SimulatedImpulseResponse simulatedImpulseResponse;
-	private float histogramInterval;
+	private Receptor receptor;
 	
 
 	public RayTracingGeometricAcousticSimulationImpl(List<Sector> sectors,
-			AcousticSource soundSource, int numberOfRays, Vector sphericalReceptorCenter,
-			double sphericalReceptorRadius, double soundSpeed,
+			AcousticSource soundSource, int numberOfRays, Receptor receptor, double soundSpeed,
 			double airAbsortionCoeficient, int k) {
 		this.sectors = sectors;
 		this.numberOfRays = numberOfRays;
 		this.soundSource = soundSource;
-		this.sphericalReceptorCenter = sphericalReceptorCenter;
-		this.sphericalReceptorRadius = sphericalReceptorRadius;
+		this.receptor = receptor;
 		this.soundSpeed = soundSpeed;
 		this.airAbsorptionCoeficient = airAbsortionCoeficient;
 		this.k = k;
-		histogramInterval = 0.00001f;
-		
-		//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
-		simulatedImpulseResponse = new EnergeticSimulatedImpulseResponse(histogramInterval);
 	}
 
 	public void simulate(final ProgressBar progressBar) {
@@ -78,9 +59,8 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 				progressBar.setSelection((int) (100.0*i/actualNumberOfRays));
 			}
 			Ray ray = soundSource.generate();
-			ray.trace(sphericalReceptorCenter, sphericalReceptorRadius,
-					sectors, soundSpeed, airAbsorptionCoeficient, k,
-					simulatedImpulseResponse);
+			ray.trace(receptor, sectors, soundSpeed,
+						airAbsorptionCoeficient, k);
 		}
 		
 		/*
@@ -103,41 +83,13 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 				for (; i < raysDivided ; i++) {
 					// TODO make progressBar update thread-safe
 					Ray ray = soundSource.generate();
-					ray.trace(sphericalReceptorCenter, sphericalReceptorRadius,
-							sectors, soundSpeed, airAbsorptionCoeficient, k,
-							simulatedImpulseResponse);
+					ray.trace(receptor, sectors, soundSpeed,
+								airAbsorptionCoeficient, k);
 				}
 			}
 		});
 		t.start();
 		return t;
 		
-	}
-
-	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
-		return simulatedImpulseResponse;
-	}
-
-	public void lista() throws IOException {
-		FileWriter fw = new FileWriter("/tmp/hist.txt");
-		StringBuilder sx = new StringBuilder(2000);
-		StringBuilder sy = new StringBuilder(2000);
-		StringBuilder ss = new StringBuilder(2000);
-
-		for (Map.Entry<Float, Float> e : getSimulatedImpulseResponse().getEnergeticImpulseResponse().entrySet()) {
-			sx.append(e.getKey());
-			sx.append(" ");
-			sy.append(e.getValue());
-			sy.append(" ");
-
-			ss.append(e.getKey());
-			ss.append("\t");
-			ss.append(e.getValue());
-			ss.append("\n");
-
-		}
-		// fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
-		fw.write(ss.toString());
-		fw.close();
 	}
 }

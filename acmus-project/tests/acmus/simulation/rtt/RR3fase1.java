@@ -5,11 +5,15 @@ import java.util.List;
 
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
+import acmus.simulation.Receptor;
 import acmus.simulation.SimulatedImpulseResponse;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
+import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
+import acmus.simulation.structures.SphericalReceptor;
+import acmus.tools.RayTracing;
 
 public class RR3fase1 extends RR3Infrasctructure {
 
@@ -38,11 +42,12 @@ public class RR3fase1 extends RR3Infrasctructure {
 		super(numberOfRays, source, filename);
 		
 		setUp(source, receptor, radius);
-		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoefficient, k);
+		Receptor rec = new SphericalReceptor(sphericalReceptorCenter, (float) sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
+		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, rec , soundSpeed, mCoefficient, k);
 
 		long ti = System.currentTimeMillis();
 		rts.simulate(getBar());
-		SimulatedImpulseResponse sir =  rts.getSimulatedImpulseResponse();
+		SimulatedImpulseResponse sir =  rec.getSimulatedImpulseResponse();
 		
 		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");
 		System.out.println("rays: " + numberOfRays);

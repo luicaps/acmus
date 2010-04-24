@@ -60,10 +60,13 @@ import acmus.AcmusApplication;
 import acmus.graphics.ChartBuilder;
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
+import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
+import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
+import acmus.simulation.structures.SphericalReceptor;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 
@@ -74,6 +77,8 @@ import acmus.util.WaveUtils;
 public class RayTracing extends Composite {
 
 	static final int K = 1000;
+	//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
+	public static final float histogramInterval = 0.00001f;;
 
 	// GUI variables
 	private Label label;
@@ -293,7 +298,7 @@ public class RayTracing extends Composite {
 					compute();
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("Deu Algum Error");
+					System.out.println("Some Error");
 				}
 			}
 		});
@@ -345,7 +350,9 @@ public class RayTracing extends Composite {
 		}
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter("/tmp/wave.txt");
+			String tempFile = System.getProperty("java.io.tmpdir", "/tmp/")
+					+ "wave.txt";
+			fw = new FileWriter(tempFile);
 
 			for (int i = 0; i < wave.length; i++)
 				fw.write(wave[i] + "\n");
@@ -413,18 +420,18 @@ public class RayTracing extends Composite {
 				AcousticSource soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 				Vector sphericalReceptorCenter = newTriadeFor(receiverX,
 						receiverY, receiverZ);
-				double sphericalReceptorRadius = getFloatValue(radius);
+				float sphericalReceptorRadius = getFloatValue(radius);
+				Receptor receptor = new SphericalReceptor(sphericalReceptorCenter, sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(histogramInterval));
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
 				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(
-						sectors, soundSource, rays.getSelection(),
-						sphericalReceptorCenter, sphericalReceptorRadius,
+						sectors, soundSource, rays.getSelection(), receptor,
 						speedOfSound, mCoeficient, K);
 				progressBar.setSelection(0);
 				simulation.simulate(progressBar);
 				progressBar.setSelection(100);
 				
-				histogram = simulation.getSimulatedImpulseResponse().getEnergeticImpulseResponse();
+				histogram = receptor.getSimulatedImpulseResponse().getEnergeticImpulseResponse();
 				plotChart();
 				saveIr.setEnabled(true);
 			}

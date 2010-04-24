@@ -34,7 +34,7 @@ private final double energy;
 	}
 	
 	public Ray generate(){
-		return new Ray(getEnergy(), getCenter(), newDirection());
+		return new Ray(getEnergy(), getCenter(), direction());
 	}
 	
 	public List<Ray> generate(int n){
@@ -46,7 +46,7 @@ private final double energy;
 		return rays;
 	}
 	
-	public Vector newDirection() {
+	public Vector direction() {
 		float x, y, z;
 		do {
 			x = 2 * (float) Math.random() - 1; 

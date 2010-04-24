@@ -13,18 +13,21 @@ import org.junit.Test;
 
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
+import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
+import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
+import acmus.simulation.structures.SphericalReceptor;
+import acmus.tools.RayTracing;
 
 public class RayTracingSimulationBenchmark {
 
 	private int numberOfRays;
 	private AcousticSource soundSource;
 	private ArrayList<Sector> sectors;
-	private Vector sphericalReceptorCenter;
-	private double sphericalReceptorRadius;
+	private Receptor receptor;
 	private double soundSpeed;
 	private double mCoeficient;
 	private int k;
@@ -47,9 +50,12 @@ public class RayTracingSimulationBenchmark {
 		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
 		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
-		sphericalReceptorCenter = new Vector(8, 8, 6);
-		sphericalReceptorRadius = 1.0;
-		
+		Vector sphericalReceptorCenter = new Vector(8, 8, 6);
+		float sphericalReceptorRadius = 1.0f;
+		receptor = new SphericalReceptor(sphericalReceptorCenter,
+				sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(
+						RayTracing.histogramInterval));
+
 		soundSpeed = 344.0; // em metros por segundo (m/s)
 		mCoeficient = 0.01;
 		k = 500;
@@ -85,9 +91,8 @@ public class RayTracingSimulationBenchmark {
 		
 		for (int i = 0; i < 100; i++) {
 			GeometricAcousticSimulation gas = new RayTracingGeometricAcousticSimulationImpl(
-					sectors, soundSource, numberOfRays,
-					sphericalReceptorCenter, sphericalReceptorRadius,
-					soundSpeed, mCoeficient, k);
+					sectors, soundSource, numberOfRays, receptor, soundSpeed,
+					mCoeficient, k);
 			long ti = System.currentTimeMillis();
 			gas.simulate(bar);
 			long time = System.currentTimeMillis() - ti;

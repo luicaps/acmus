@@ -26,7 +26,7 @@ private double energy;
 	}
 	
 	public Ray generate() {
-		return new Ray(energy, center, newDirection());
+		return new Ray(energy, center, direction());
 	}
 
 	public List<Ray> generate(int n) {
@@ -38,7 +38,7 @@ private double energy;
 		return rays;
 	}
 	
-	public Vector newDirection() {
+	public Vector direction() {
 		double u1 = Math.random();
 		double u2 = Math.random();
 		float x = (float) (Math.sqrt(-2*Math.log(u1)) * Math.cos(2*Math.PI * u2));
@@ -54,7 +54,7 @@ private double energy;
 		List<Vector> directions = new ArrayList<Vector>(n);
 
 		for(int i=0; i<n; i++) {
-			directions.add(newDirection());
+			directions.add(direction());
 		}
 		
 		return directions;

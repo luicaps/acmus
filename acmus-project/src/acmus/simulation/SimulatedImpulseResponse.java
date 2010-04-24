@@ -2,6 +2,14 @@ package acmus.simulation;
 
 import java.util.Map;
 
+/**
+ * This interface is used to provide a uniform way to the
+ * GeometricAcousticSimulation use the Strategy method, to put partial results
+ * in an impulse response
+ * 
+ * @author mahtorres
+ * 
+ */
 public interface SimulatedImpulseResponse {
 	
 	/**
@@ -16,5 +24,5 @@ public interface SimulatedImpulseResponse {
 	 */
 	public Map<Float, Float> getEnergeticImpulseResponse();
 	
-	public float[] getEIR();
+	// public float[] getEIR();
 }

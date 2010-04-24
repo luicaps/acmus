@@ -20,11 +20,15 @@ import org.junit.Test;
 
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
+import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
 import acmus.simulation.structures.ArbitraryAcousticSource;
+import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
+import acmus.simulation.structures.SphericalReceptor;
+import acmus.tools.RayTracing;
 
 public class RayTracingSimulationTest {
 
@@ -32,10 +36,8 @@ public class RayTracingSimulationTest {
 	private int numberOfRays;
 	private Vector soundSourceCenter;
 	ArbitraryAcousticSource arbitarySoundSource;
-	private Vector sphericalReceptorCenter;
-	private double sphericalReceptorRadius;
+	private Receptor receptor;
 	private double soundSpeed;
-//	private int initialEnergy;
 	private double mCoeficient;
 	private int k;
 	private List<Sector> sectors;
@@ -48,22 +50,24 @@ public class RayTracingSimulationTest {
 		soundSourceCenter = new Vector(2, 2, 5);
 		arbitarySoundSource = new ArbitraryAcousticSource(soundSourceCenter);
 		numberOfRays = 2;
-		arbitarySoundSource.add(new Vector(0.7071f, 0.7071f, 0f)); //vetor (1,1,0)
+		arbitarySoundSource.add(new Vector(0.7071f, 0.7071f, 0f)); //vector (1,1,0)
 		arbitarySoundSource.add(new Vector(0.7022468831767834f, 0.7022468831767834f, 0.11704114719613057f));
 		
 		sectors = new ArrayList<Sector>();
-		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // base
-		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // topo
+		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), 0.02)); // bottom
+		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 10), 0.02)); // top
 		sectors.add(new Sector(new Vector(0, 1, 0), new Vector(1, 0, 1), 0.02)); 
 		sectors.add(new Sector(new Vector(1, 0, 0), new Vector(0, 1, 1), 0.02));
 		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
 		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
-		sphericalReceptorCenter = new Vector(8, 8, 6);
-		sphericalReceptorRadius = 3.0;
-		
-		soundSpeed = 344.0; // em metros por segundo (m/s)
-//		initialEnergy = 10000000;
+		Vector sphericalReceptorCenter = new Vector(8, 8, 6);
+		float sphericalReceptorRadius = 3.0f;
+		receptor = new SphericalReceptor(sphericalReceptorCenter,
+				sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(
+						RayTracing.histogramInterval));
+
+		soundSpeed = 344.0; // in meters per second (m/s)
 		mCoeficient = 0.0001;
 		k = 500;
 
@@ -84,7 +88,7 @@ public class RayTracingSimulationTest {
 	
 	@Test
 	public void testRayTracingSimulation() {
-		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		
 		assertNotNull(rts);
 	}
@@ -93,7 +97,7 @@ public class RayTracingSimulationTest {
 	@Test
 	public void testSimulate() throws FileNotFoundException, IOException {
 		// FIXME this test is not testing anything
-		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 
 		rts.simulate(bar);
 		
@@ -115,7 +119,7 @@ public class RayTracingSimulationTest {
 		arbitrarySoundSource.add(new Vector(0.457495710997814f, 0.457495710997814f, 0.7624928516630234f));
 		numberOfRays = 1;
 
-		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, arbitrarySoundSource, numberOfRays , sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, arbitrarySoundSource, numberOfRays , receptor, soundSpeed, mCoeficient, k);
 		
 		rts.simulate(bar);
 		
@@ -131,10 +135,9 @@ public class RayTracingSimulationTest {
 		// FIXME this test is not testing anything
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		numberOfRays = 500000;
-		sphericalReceptorCenter = new Vector(6, 6, 6);
-		sphericalReceptorRadius = 0.5;
+		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
 
-		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		long ti = System.currentTimeMillis();
 		rts.simulate(bar);
 		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");
@@ -164,10 +167,9 @@ public class RayTracingSimulationTest {
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		long ti = System.currentTimeMillis();
 		int numberOfRays = 10000;
-		sphericalReceptorCenter = new Vector(6, 6, 6);
-		sphericalReceptorRadius = 0.5;
+		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
 
-		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, sphericalReceptorCenter, sphericalReceptorRadius, soundSpeed, mCoeficient, k);
+		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		
 		rts.simulate(bar);
 		System.out.println("time: " + (System.currentTimeMillis() - ti) + " ms");

@@ -1,5 +1,9 @@
 package acmus.simulation.structures;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+
 import acmus.simulation.Receptor;
 import acmus.simulation.SimulatedImpulseResponse;
 import acmus.simulation.math.Vector;
@@ -7,10 +11,13 @@ import acmus.simulation.math.Vector;
 public class SphericalReceptor implements Receptor{
 	private Vector center;
 	protected float radius;
+	private SimulatedImpulseResponse simulatedImpulseResponse;
 	
-	public SphericalReceptor(Vector center, float radius) {
+	public SphericalReceptor(Vector center, float radius,
+			SimulatedImpulseResponse simulatedImpulseResponse) {
 		this.center = center;
 		this.radius = radius;
+		this.simulatedImpulseResponse = simulatedImpulseResponse;
 	}
 	
 	public Vector getCenter() {
@@ -23,8 +30,7 @@ public class SphericalReceptor implements Receptor{
 
 	public boolean intercept(double airAbsorptionCoeficient,
 			double soundSpeed, Vector rayOrigin, Vector rayDirection,
-			float rayEnergy, float rayLength,
-			SimulatedImpulseResponse simulatedImpulseResponse) {
+			float rayEnergy, float rayLength) {
 		
 		// Local variables for better legibility and better performance
 		Vector oldPositionToCenter = center.sub(rayOrigin);
@@ -65,14 +71,14 @@ public class SphericalReceptor implements Receptor{
 				// TODO Check if there are sectors inside the receptor's volume
 				
 				double distance = rayLength + meanStepSizeOnThisReflection;
-				double time = distance / soundSpeed;
+				float time = (float) (distance / soundSpeed);
 				
-				double receptedEnergy = rayEnergy
+				float receptedEnergy = (float) (rayEnergy
 						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
 								* meanStepSizeOnThisReflection) * tca
-						/ radius;
+						/ radius);
 				
-				simulatedImpulseResponse.addValue((float)time, (float)receptedEnergy);
+				simulatedImpulseResponse.addValue(time, receptedEnergy);
 				
 				return true;
 			}
@@ -80,5 +86,32 @@ public class SphericalReceptor implements Receptor{
 		
 		return false;
 		
+	}
+
+	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
+		return this.simulatedImpulseResponse;
+	}
+	
+	public void lista() throws IOException {
+		FileWriter fw = new FileWriter(System.getProperty("java.io.tmpdir", "/tmp/") + "hist.txt");
+		StringBuilder sx = new StringBuilder(2000);
+		StringBuilder sy = new StringBuilder(2000);
+		StringBuilder ss = new StringBuilder(2000);
+
+		for (Map.Entry<Float, Float> e : getSimulatedImpulseResponse().getEnergeticImpulseResponse().entrySet()) {
+			sx.append(e.getKey());
+			sx.append(" ");
+			sy.append(e.getValue());
+			sy.append(" ");
+
+			ss.append(e.getKey());
+			ss.append("\t");
+			ss.append(e.getValue());
+			ss.append("\n");
+
+		}
+		// fw.write("x=[" + sx.toString() + "0]; y=[" + sy.toString() + "0]");
+		fw.write(ss.toString());
+		fw.close();
 	}
 }
