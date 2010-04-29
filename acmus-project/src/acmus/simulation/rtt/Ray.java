@@ -56,9 +56,10 @@ public class Ray {
 	}
 
 	public Ray(double energy, float positionX, float positionY,
-			float positionZ, float directionX, float directionY, float directionZ) {
-		this(energy, new Vector(positionX, positionY,
-				positionZ), new Vector(directionX, directionY, directionZ));
+			float positionZ, float directionX, float directionY,
+			float directionZ) {
+		this(energy, new Vector(positionX, positionY, positionZ),
+				new Vector(directionX, directionY, directionZ));
 	}
 	
 	public double getEnergy() {
@@ -106,13 +107,13 @@ public class Ray {
 					soundSpeed, oldPosition, direction, (float) this.energy,
 					(float) this.size);
 			
-// 			// Option without using Receptor's intercept, but a waste of time
-//			interceptsReceptor(receptor, airAbsorptionCoefficient, soundSpeed);
 
 			if(!interceptsReceptor){
-				size += stepSize;
-				energy = energy * (1 - reflectionSector.getAbsorptionCoeficient())
-				* Math.pow(Math.E, -1 * airAbsorptionCoefficient * stepSize);
+				this.size += stepSize;
+				this.energy = this.energy
+						* (1 - reflectionSector.getAbsorptionCoeficient())
+						* Math.pow(Math.E, -1 * airAbsorptionCoefficient
+								* stepSize);
 				
 				// Local variable for better legibility
 				Vector nv = reflectionSector.getNormalVector();
@@ -122,7 +123,7 @@ public class Ray {
 				 * supposes nv with norm 1
 				 */
 				direction.subFromSelf(nv.times(2 * 
-						(direction.dotProduct(nv))));
+						direction.dotProduct(nv)));
 				direction.normalize();
 			}
 			
@@ -143,7 +144,7 @@ public class Ray {
 				 * actual position and the tested sector's position
 				 */
 				float localStepSize = 
-					(i.sub(position).dotProduct(n)) / (direction.dotProduct(n));
+					((i.sub(position)).dotProduct(n)) / (direction.dotProduct(n));
 				
 				
 				/*
@@ -157,66 +158,4 @@ public class Ray {
 			}
 		}
 	}
-	
-//	// Option without using Receptor's intercept
-//	void interceptsReceptor(Receptor receptor, double airAbsorptionCoeficient,
-//			double soundSpeed) {
-//		
-//		// Local variables for better legibility and better performance
-//		Vector sphericalReceptorCenter = receptor.getCenter();
-//		double sphericalReceptorRadius = receptor.getRadius();
-//		Vector oldPositionToCenter = sphericalReceptorCenter.sub(oldPosition);
-//		double tca = oldPositionToCenter.dotProduct(direction);
-//
-//		/*
-//		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
-//		 * oldPositionToCenter direction
-//		 * Check inequality Gomes says tca >= 0
-//		 */
-//		if (tca > 0) {
-//
-//			/*
-//			 * Discriminant for solving in terms of stepSizeOnThisReflection 
-//			 * (or s)
-//			 * 
-//			 * oldPosition.add(direction.times(stepSizeOnThisReflection)).sub(
-//			 * sphericalReceptorCenter).squared() <= sphericalReceptorRadius
-//			 * 
-//			 * or
-//			 * 
-//			 * || P + s*D - C ||^2 <= R^2
-//			 * 
-//			 * direction (or D) is supposed with norm 1
-//			 */
-//			double discriminant = sphericalReceptorRadius*sphericalReceptorRadius 
-//								- oldPositionToCenter.squared() + tca*tca;
-//
-//			if (discriminant > 0) { // ray V intercepts spherical receptor
-//				
-//				/*
-//				 * meanStepSizeOnThisReflection =  (
-//				 * (2*tca + Math.sqrt(discriminant)) + (2*tca Math.sqrt(discriminant))
-//				 *									 ) /2
-//				 * = mean of the two solutions for stepSizeOnThisReflection
-//				 */
-//				double meanStepSizeOnThisReflection = 2*tca;
-//				
-//				// Check if there are sectors inside the receptor's volume
-//				
-//				double distance = size + meanStepSizeOnThisReflection;
-//				double time = distance / soundSpeed;
-//				
-//				double receptedEnergy = energy
-//						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
-//								* meanStepSizeOnThisReflection) * tca
-//						/ sphericalReceptorRadius;
-//				
-//				receptor.getSimulatedImpulseResponse().addValue((float) time,
-//						(float) receptedEnergy);
-//
-//				this.interceptsReceptor = true;
-//			}
-//		}
-//		
-//	}
 }

@@ -25,10 +25,8 @@ import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
 import acmus.simulation.structures.ArbitraryAcousticSource;
-import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
-import acmus.tools.RayTracing;
 
 public class RayTracingSimulationTest {
 
@@ -64,8 +62,7 @@ public class RayTracingSimulationTest {
 		Vector sphericalReceptorCenter = new Vector(8, 8, 6);
 		float sphericalReceptorRadius = 3.0f;
 		receptor = new SphericalReceptor(sphericalReceptorCenter,
-				sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(
-						RayTracing.histogramInterval));
+				sphericalReceptorRadius);
 
 		soundSpeed = 344.0; // in meters per second (m/s)
 		mCoeficient = 0.0001;
@@ -97,7 +94,7 @@ public class RayTracingSimulationTest {
 	@Test
 	public void testSimulate() throws FileNotFoundException, IOException {
 		// FIXME this test is not testing anything
-		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
+		RayTracingGeometricAcousticSimulationImpl rts = new RayTracingGeometricAcousticSimulationImpl(sectors, arbitarySoundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 
 		rts.simulate(bar);
 		
@@ -135,7 +132,7 @@ public class RayTracingSimulationTest {
 		// FIXME this test is not testing anything
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		numberOfRays = 500000;
-		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
+		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f);
 
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		long ti = System.currentTimeMillis();
@@ -167,7 +164,7 @@ public class RayTracingSimulationTest {
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		long ti = System.currentTimeMillis();
 		int numberOfRays = 10000;
-		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
+		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f);
 
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		

@@ -10,10 +10,8 @@ import acmus.simulation.SimulatedImpulseResponse;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
-import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
-import acmus.tools.RayTracing;
 
 public class RR3fase1 extends RR3Infrasctructure {
 
@@ -22,7 +20,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 	private Vector sphericalReceptorCenter;
 	private double sphericalReceptorRadius;
 		
-	public void setUp(Vector source, Vector receptor, double radius){
+	public void setUp(Vector source, Vector receptorCenter, double receptorRadius){
 		sectors = new ArrayList<Sector>();
 		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(4.22f, 0, 0), 0.1)); // floor (1)
 		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(4.22f, 0, 5.23f), 0.1)); // ceil (7)
@@ -33,8 +31,8 @@ public class RR3fase1 extends RR3Infrasctructure {
 		sectors.add(new Sector(new Vector(0.15102537f, -0.9885298f, 0), new Vector(-4.22f, 8.86f, 0), 0.1)); //(4)
 		
 		soundSource = new MonteCarloAcousticSource(source);
-		sphericalReceptorCenter = receptor;
-		sphericalReceptorRadius = radius;
+		sphericalReceptorCenter = receptorCenter;
+		sphericalReceptorRadius = receptorRadius;
 	}
 
 	
@@ -42,7 +40,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 		super(numberOfRays, source, filename);
 		
 		setUp(source, receptor, radius);
-		Receptor rec = new SphericalReceptor(sphericalReceptorCenter, (float) sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(RayTracing.histogramInterval));
+		Receptor rec = new SphericalReceptor(sphericalReceptorCenter, (float) sphericalReceptorRadius);
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, rec , soundSpeed, mCoefficient, k);
 
 		long ti = System.currentTimeMillis();
@@ -60,7 +58,7 @@ public class RR3fase1 extends RR3Infrasctructure {
 	
 	public static void main(String[] args){
 		if(args.length < 7){
-			System.out.println("use RoudRobin3phase1Test number_of_rays [S1 S2] [R01 R02 R03] air_absorption receptor_ray file_name");
+			System.out.println("use RoudRobin3phase1Test number_of_rays [S1 S2] [R01 R02 R03] air_absorption receptor_radius k file_name");
 			System.exit(0);
 		}
 		
@@ -69,8 +67,8 @@ public class RR3fase1 extends RR3Infrasctructure {
 		Vector receptor = RR3Infrasctructure.getReceptor(args[2]);
 		Double mCoefficient = Double.valueOf(args[3]);
 		Double radius = Double.valueOf(args[4]);
-		String filename = args[5];
-		Integer k = Integer.valueOf(args[6]);
+		Integer k = Integer.valueOf(args[5]);
+		String filename = args[6];
 		System.out.println("Begin");
 		//para teste no eclipse
 		/*

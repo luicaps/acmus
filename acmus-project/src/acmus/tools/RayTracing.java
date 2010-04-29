@@ -64,7 +64,6 @@ import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
-import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
 import acmus.util.ArrayUtils;
@@ -77,8 +76,6 @@ import acmus.util.WaveUtils;
 public class RayTracing extends Composite {
 
 	static final int K = 1000;
-	//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
-	public static final float histogramInterval = 0.00001f;;
 
 	// GUI variables
 	private Label label;
@@ -421,7 +418,7 @@ public class RayTracing extends Composite {
 				Vector sphericalReceptorCenter = newTriadeFor(receiverX,
 						receiverY, receiverZ);
 				float sphericalReceptorRadius = getFloatValue(radius);
-				Receptor receptor = new SphericalReceptor(sphericalReceptorCenter, sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(histogramInterval));
+				Receptor receptor = new SphericalReceptor(sphericalReceptorCenter, sphericalReceptorRadius);
 				double speedOfSound = Double.valueOf(soundSpeed.getText());
 				double mCoeficient = Double.valueOf(soundAtenuation.getText());
 				GeometricAcousticSimulation simulation = new RayTracingGeometricAcousticSimulationImpl(

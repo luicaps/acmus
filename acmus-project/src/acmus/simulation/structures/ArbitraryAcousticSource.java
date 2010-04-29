@@ -12,6 +12,7 @@ public class ArbitraryAcousticSource implements AcousticSource {
 	private AcousticSource auxiliarAcousticSource;
 	private List<Vector> directions;
 	private double energy;
+	private int cont;
 	
 	public ArbitraryAcousticSource(Vector center,
 			AcousticSource auxiliarAcousticSource) {
@@ -19,6 +20,7 @@ public class ArbitraryAcousticSource implements AcousticSource {
 		this.auxiliarAcousticSource = auxiliarAcousticSource;
 		this.directions = new ArrayList<Vector>();
 		this.energy = 1.0;
+		this.cont = 0;
 	}
 	
 	public ArbitraryAcousticSource(Vector center){
@@ -34,20 +36,20 @@ public class ArbitraryAcousticSource implements AcousticSource {
 	}
 	
 	public Ray generate() {
-		return generate(1).get(0);
+		return new Ray(energy, getCenter(), direction());
 	}
 
 	public List<Ray> generate(int n) {
 		List<Vector> directions = manyDirections(n);
 		List<Ray> rays = new ArrayList<Ray>(n);
 		for(int i = 0; i < n; i++){
-			rays.add(new Ray(energy, center, directions.get(i)));
+			rays.add(new Ray(energy, getCenter(), directions.get(i)));
 		}
 		return rays;
 	}
 	
 	public Vector direction() {
-		return manyDirections(1).get(0);
+		return directions.get(cont++);
 	}
 	
 	public List<Vector> manyDirections(int n) {
@@ -58,7 +60,7 @@ public class ArbitraryAcousticSource implements AcousticSource {
 				directions.remove(directions.size() - 1);
 			}
 		}
-		return directions;
+		return new ArrayList<Vector>(directions);
 	}
 
 	public void add(Vector ray){

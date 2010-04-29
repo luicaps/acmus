@@ -20,6 +20,23 @@ public class SphericalReceptor implements Receptor{
 		this.simulatedImpulseResponse = simulatedImpulseResponse;
 	}
 	
+	public SphericalReceptor(Vector center, float radius, float interval) {
+		this(center, radius, new EnergeticSimulatedImpulseResponse(
+				interval));
+	}
+	
+	/**
+	 * The default constructor
+	 * uses 0.00001f as the interval for the impulse response
+	 * 
+	 * @param center the center of the spherical receptor's location
+	 * @param radius the spherical receptor's radius of audition
+	 */
+	public SphericalReceptor(Vector center, float radius) {
+		this(center, radius, 0.00001f);
+		//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
+	}
+	
 	public Vector getCenter() {
 		return new Vector(center);
 	}
@@ -43,7 +60,7 @@ public class SphericalReceptor implements Receptor{
 		 */
 		if (tca > 0) {
 
-			/*
+			/**
 			 * Discriminant for solving in terms of stepSizeOnThisReflection 
 			 * (or s) the equation below
 			 * 
@@ -62,11 +79,15 @@ public class SphericalReceptor implements Receptor{
 				
 				/*
 				 * meanStepSizeOnThisReflection =  (
-				 * (2*tca + Math.sqrt(discriminant)) + (2*tca Math.sqrt(discriminant))
+				 * (2*tca + Math.sqrt(discriminant)) + (2*tca - Math.sqrt(discriminant))
 				 *									 ) /2
 				 * = mean of the two solutions for stepSizeOnThisReflection
 				 */
-				double meanStepSizeOnThisReflection = 2*tca;
+				// double meanStepSizeOnThisReflection = 2*tca;
+				//
+				// TODO Understand below
+				// Gomes says and it seams to work better, I don't know why...
+				double meanStepSizeOnThisReflection = tca - Math.sqrt(discriminant);
 				
 				// TODO Check if there are sectors inside the receptor's volume
 				
@@ -93,12 +114,15 @@ public class SphericalReceptor implements Receptor{
 	}
 	
 	public void lista() throws IOException {
-		FileWriter fw = new FileWriter(System.getProperty("java.io.tmpdir", "/tmp/") + "hist.txt");
+		FileWriter fw = new FileWriter(System.getProperty("java.io.tmpdir",
+				"/tmp/")
+				+ "hist.txt");
 		StringBuilder sx = new StringBuilder(2000);
 		StringBuilder sy = new StringBuilder(2000);
 		StringBuilder ss = new StringBuilder(2000);
 
-		for (Map.Entry<Float, Float> e : getSimulatedImpulseResponse().getEnergeticImpulseResponse().entrySet()) {
+		for (Map.Entry<Float, Float> e : getSimulatedImpulseResponse()
+				.getEnergeticImpulseResponse().entrySet()) {
 			sx.append(e.getKey());
 			sx.append(" ");
 			sy.append(e.getValue());

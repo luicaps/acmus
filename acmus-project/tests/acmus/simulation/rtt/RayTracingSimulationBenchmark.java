@@ -17,10 +17,8 @@ import acmus.simulation.Receptor;
 import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
-import acmus.simulation.structures.EnergeticSimulatedImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
-import acmus.tools.RayTracing;
 
 public class RayTracingSimulationBenchmark {
 
@@ -53,8 +51,7 @@ public class RayTracingSimulationBenchmark {
 		Vector sphericalReceptorCenter = new Vector(8, 8, 6);
 		float sphericalReceptorRadius = 1.0f;
 		receptor = new SphericalReceptor(sphericalReceptorCenter,
-				sphericalReceptorRadius, new EnergeticSimulatedImpulseResponse(
-						RayTracing.histogramInterval));
+				sphericalReceptorRadius);
 
 		soundSpeed = 344.0; // em metros por segundo (m/s)
 		mCoeficient = 0.01;

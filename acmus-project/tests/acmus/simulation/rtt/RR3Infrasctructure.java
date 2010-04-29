@@ -68,7 +68,7 @@ public abstract class RR3Infrasctructure {
 		
 		salvaTXT(wave, max);
 
-//		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)), filename + ".wav");
+		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)), filename + ".wav");
 	}
 
 	public static void converteRIParaWave(String filename) {

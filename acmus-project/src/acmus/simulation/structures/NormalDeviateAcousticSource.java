@@ -26,14 +26,14 @@ private double energy;
 	}
 	
 	public Ray generate() {
-		return new Ray(energy, center, direction());
+		return new Ray(energy, getCenter(), direction());
 	}
 
 	public List<Ray> generate(int n) {
 		List<Vector> directions = manyDirections(n);
 		List<Ray> rays = new ArrayList<Ray>(n);
 		for(int i = 0; i < n; i++){
-			rays.add(new Ray(energy, center, directions.get(i)));
+			rays.add(new Ray(energy, getCenter(), directions.get(i)));
 		}
 		return rays;
 	}
