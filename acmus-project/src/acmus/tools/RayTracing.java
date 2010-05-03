@@ -347,8 +347,8 @@ public class RayTracing extends Composite {
 		}
 		FileWriter fw = null;
 		try {
-			String tempFile = System.getProperty("java.io.tmpdir", "/tmp/")
-					+ "wave.txt";
+			String tempFile = System.getProperty("java.io.tmpdir", "/tmp") +
+					System.getProperty("file.separator") + "wave.txt";
 			fw = new FileWriter(tempFile);
 
 			for (int i = 0; i < wave.length; i++)

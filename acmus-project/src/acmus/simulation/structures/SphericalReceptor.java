@@ -82,21 +82,26 @@ public class SphericalReceptor implements Receptor{
 				 * (2*tca + Math.sqrt(discriminant)) + (2*tca - Math.sqrt(discriminant))
 				 *									 ) /2
 				 * = mean of the two solutions for stepSizeOnThisReflection
+				 * 
+				 * but as it already have passed per one stepSize
+				 * meanStepSizeOnThisReflection = 2*tca - tca = tca
 				 */
-				// double meanStepSizeOnThisReflection = 2*tca;
-				//
-				// TODO Understand below
-				// Gomes says and it seams to work better, I don't know why...
-				double meanStepSizeOnThisReflection = tca - Math.sqrt(discriminant);
+				//double meanStepSizeOnThisReflection = tca;
+				
+				/*
+				 * stepSizeOnThisReflection is the nearest solution, the one that
+				 * minimizes the distance passed by the ray
+				 */
+				double stepSizeOnThisReflection = tca - Math.sqrt(discriminant);
 				
 				// TODO Check if there are sectors inside the receptor's volume
 				
-				double distance = rayLength + meanStepSizeOnThisReflection;
+				double distance = rayLength + stepSizeOnThisReflection;
 				float time = (float) (distance / soundSpeed);
 				
 				float receptedEnergy = (float) (rayEnergy
 						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
-								* meanStepSizeOnThisReflection) * tca
+								* stepSizeOnThisReflection) * tca
 						/ radius);
 				
 				simulatedImpulseResponse.addValue(time, receptedEnergy);

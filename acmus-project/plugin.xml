@@ -43,6 +43,8 @@
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.webapp"/>
       <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.core.databinding.property" version="1.2.0"/>
+      <import plugin="org.eclipse.core.databinding.observable" version="1.2.0"/>
    </requires>
    
    <extension-point
