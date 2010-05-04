@@ -50,8 +50,8 @@ public class SphericalReceptor implements Receptor{
 			float rayEnergy, float rayLength) {
 		
 		// Local variables for better legibility and better performance
-		Vector oldPositionToCenter = center.sub(rayOrigin);
-		double tca = oldPositionToCenter.dotProduct(rayDirection);
+		Vector originToCenter = center.sub(rayOrigin);
+		double tca = originToCenter.dotProduct(rayDirection);
 
 		/*
 		 * As seen in Kulowski, tca > 0 says that the ray is not opposed to the
@@ -64,7 +64,7 @@ public class SphericalReceptor implements Receptor{
 			 * Discriminant for solving in terms of stepSizeOnThisReflection 
 			 * (or s) the equation below
 			 * 
-			 * oldPosition.add(direction.times(stepSizeOnThisReflection)).sub(
+			 * rayOrgin.add(rayDirection.times(stepSizeOnThisReflection)).sub(
 			 * sphericalReceptorCenter).squared() <= sphericalReceptorRadius
 			 * 
 			 * or, in terms of P, s, D, C and R:
@@ -73,7 +73,7 @@ public class SphericalReceptor implements Receptor{
 			 * 
 			 * direction (or D) is supposed with norm 1
 			 */
-			double discriminant = radius*radius - oldPositionToCenter.squared() + tca*tca;
+			double discriminant = radius*radius - originToCenter.squared() + tca*tca;
 
 			if (discriminant > 0) { // ray V intercepts spherical receptor
 				
@@ -82,17 +82,14 @@ public class SphericalReceptor implements Receptor{
 				 * (2*tca + Math.sqrt(discriminant)) + (2*tca - Math.sqrt(discriminant))
 				 *									 ) /2
 				 * = mean of the two solutions for stepSizeOnThisReflection
-				 * 
-				 * but as it already have passed per one stepSize
-				 * meanStepSizeOnThisReflection = 2*tca - tca = tca
 				 */
-				//double meanStepSizeOnThisReflection = tca;
+				//double meanStepSizeOnThisReflection = 2*tca;
 				
 				/*
 				 * stepSizeOnThisReflection is the nearest solution, the one that
 				 * minimizes the distance passed by the ray
 				 */
-				double stepSizeOnThisReflection = tca - Math.sqrt(discriminant);
+				double stepSizeOnThisReflection = 2*tca - Math.sqrt(discriminant);
 				
 				// TODO Check if there are sectors inside the receptor's volume
 				
