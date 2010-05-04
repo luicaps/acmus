@@ -9,6 +9,7 @@ import acmus.simulation.math.Vector;
  * Class representing a ray and encapsulates all the ray interactions while
  * tracing it.
  * 
+ * @author mahtorres
  * @author migmruiz
  * 
  */
@@ -27,9 +28,9 @@ public class Ray {
 	 */
 	private float stepSize;
 	/**
-	 * raySize stores the length of the path that the ray is tracing
+	 * length stores the length of the path that the ray is tracing
 	 */
-	private double size;
+	private double length;
 	/**
 	 * oldPosition stores the position in begin of each reflection
 	 */
@@ -50,7 +51,7 @@ public class Ray {
 		this.interceptsReceptor = false;
 		this.reflectionSector = null;
 		this.stepSize = 0.0f;
-		this.size = 0;
+		this.length = 0;
 		this.oldPosition = new Vector(position);
 		
 	}
@@ -96,20 +97,20 @@ public class Ray {
 			interceptsSector(sectors);
 			
 			/*
-			 *  position goes to intercept point
-			 */
-			position.addToSelf(direction.times(stepSize));
-			
-			/*
 			 * ray receptor intercept test
 			 */
 			interceptsReceptor = receptor.intercept(airAbsorptionCoefficient,
 					soundSpeed, oldPosition, direction, (float) this.energy,
-					(float) this.size);
+					(float) this.length);
 			
 
 			if(!interceptsReceptor){
-				this.size += stepSize;
+				/*
+				 *  position goes to intercept point
+				 */
+				position.addToSelf(direction.times(stepSize));
+				
+				this.length += stepSize;
 				this.energy = this.energy
 						* (1 - reflectionSector.getAbsorptionCoeficient())
 						* Math.pow(Math.E, -1 * airAbsorptionCoefficient
@@ -124,6 +125,12 @@ public class Ray {
 				 */
 				direction.subFromSelf(nv.times(2 * 
 						direction.dotProduct(nv)));
+				
+				// Should I normalize it?
+//				if(Math.abs(direction.normSquared() - 1) > 0.001){
+//					System.out.println("Errors in direction updating," + 
+//						" you should still normalize it");
+//				}
 				direction.normalize();
 			}
 			
@@ -145,7 +152,6 @@ public class Ray {
 				 */
 				float localStepSize = 
 					((i.sub(position)).dotProduct(n)) / (direction.dotProduct(n));
-				
 				
 				/*
 				 * if the sector is closer than the last closest one updates

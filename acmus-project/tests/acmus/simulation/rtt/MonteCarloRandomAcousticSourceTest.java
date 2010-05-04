@@ -60,7 +60,7 @@ public class MonteCarloRandomAcousticSourceTest {
 	public void testPointsAreGeneratedInTheSurfaceOfAUnitSphere() {
 
 		for (Vector v : randomPoints) {
-			assertEquals(1.0f , v.length(), 0.000001f);
+			assertEquals(1.0f , v.norm(), 0.000001f);
 		}
 
 	}

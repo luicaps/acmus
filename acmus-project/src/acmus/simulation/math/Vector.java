@@ -34,13 +34,13 @@ public class Vector {
 	}
 
 	public Vector normalized() {
-		float m = 1.0f / this.length();
+		float m = 1.0f / this.norm();
 
 		return new Vector(x * m, y * m, z * m);
 	}
 
 	public Vector normalized(float norm) {
-		float m = norm / this.length();
+		float m = norm / this.norm();
 
 		return new Vector(x * m, y * m, z * m);
 	}
@@ -50,7 +50,7 @@ public class Vector {
 	}
 
 	public void normalize(float norm) {
-		float m = norm / this.length();
+		float m = norm / this.norm();
 
 		this.x *= m;
 		this.y *= m;
@@ -88,12 +88,12 @@ public class Vector {
 		return this.x * w.x + this.y * w.y + this.z * w.z;
 	}
 
-	public float squared() {
+	public float normSquared() {
 		return x * x + y * y + z * z;
 	}
 	
-	public float length() {
-		return (float) Math.sqrt(this.squared());
+	public float norm() {
+		return (float) Math.sqrt(this.normSquared());
 	}
 
 	public Vector times(float esc) {

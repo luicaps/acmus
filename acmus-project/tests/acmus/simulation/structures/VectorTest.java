@@ -84,7 +84,7 @@ public class VectorTest {
 		
 		float delta = 0.0001f;
 		
-		assertEquals(expected, w.length(), delta);
+		assertEquals(expected, w.norm(), delta);
 	}
 
 	@Test

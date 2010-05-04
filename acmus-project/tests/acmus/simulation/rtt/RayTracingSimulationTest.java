@@ -34,6 +34,7 @@ public class RayTracingSimulationTest {
 	private int numberOfRays;
 	private Vector soundSourceCenter;
 	ArbitraryAcousticSource arbitarySoundSource;
+	Vector sphericalReceptorCenter;
 	private Receptor receptor;
 	private double soundSpeed;
 	private double mCoeficient;
@@ -59,7 +60,7 @@ public class RayTracingSimulationTest {
 		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), 0.02));
 		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), 0.02));
 		
-		Vector sphericalReceptorCenter = new Vector(8, 8, 6);
+		sphericalReceptorCenter = new Vector(8, 8, 6);
 		float sphericalReceptorRadius = 3.0f;
 		receptor = new SphericalReceptor(sphericalReceptorCenter,
 				sphericalReceptorRadius);
@@ -127,12 +128,24 @@ public class RayTracingSimulationTest {
 
 	}
 	
+	/**
+	 * Tests if the center of the MonteCarloRandomAcousticSource is fixed as
+	 * expected or if it's moving after some simulation.
+	 */
+	@Test
+	public void testCenterIsFixed() {
+		Assert.assertEquals(soundSourceCenter, soundSource.getCenter());
+		Assert.assertEquals(soundSourceCenter, arbitarySoundSource.getCenter());
+		Assert.assertEquals(sphericalReceptorCenter, receptor.getCenter());
+	}
+	
 	@Test
 	public void variosPontos() throws FileNotFoundException, IOException{
 		// FIXME this test is not testing anything
 		soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 		numberOfRays = 500000;
-		receptor = new SphericalReceptor(new Vector(6, 6, 6), 0.5f);
+		sphericalReceptorCenter = new Vector(6, 6, 6);
+		receptor = new SphericalReceptor(sphericalReceptorCenter, 0.5f);
 
 		GeometricAcousticSimulation rts = new RayTracingGeometricAcousticSimulationImpl(sectors, soundSource, numberOfRays, receptor, soundSpeed, mCoeficient, k);
 		long ti = System.currentTimeMillis();
@@ -147,16 +160,6 @@ public class RayTracingSimulationTest {
 //		ChartBuilder g = new ChartBuilder(rts.getSphericalReceptorHistogram());
 //		g.criaGrafico("");
 //		g.salvar(new FileOutputStream("histograma.jpg"));
-	}
-
-	/**
-	 * Tests if the center of the MonteCarloRandomAcousticSource is fixed as
-	 * expected or if it's moving after some simulation.
-	 */
-	@Test
-	public void testCenterIsFixed() {
-		Assert.assertEquals(soundSourceCenter, soundSource.getCenter());
-		Assert.assertEquals(soundSourceCenter, arbitarySoundSource.getCenter());
 	}
 	
 	public RayTracingSimulationTest() {

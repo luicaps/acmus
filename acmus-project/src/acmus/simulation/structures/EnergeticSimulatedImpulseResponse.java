@@ -42,9 +42,8 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 		
 		int position = (int) Math.ceil(time/interval);
 
-		Float storedEnergy;
-		if ((storedEnergy = impulseResposeHistogram.putIfAbsent(position,
-				energy)) != null) {
+		Float storedEnergy = impulseResposeHistogram.putIfAbsent(position, energy);
+		if (storedEnergy != null) {
 			while (!impulseResposeHistogram.replace(position, storedEnergy,
 					storedEnergy + energy)){
 				storedEnergy = impulseResposeHistogram.get(position);
