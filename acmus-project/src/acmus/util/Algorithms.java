@@ -50,8 +50,6 @@ public class Algorithms {
 		
 		out = f.convolve(g, monitor);
 		output = new double[out.size()];
-		System.out.println("out size = " + out.size());
-		System.out.println("output length = " + output.length);
 		for (int i = 0; i < out.size(); i++) {
 			output[i] = out.get(i).re();
 			monitor.worked(1);

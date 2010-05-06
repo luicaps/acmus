@@ -110,6 +110,7 @@ public class NewSignal {
 		g = g.fft();
 		f = f.pointwiseMultiply(g);
 		f = f.ifft();
+		f = f.unpad(0.01);
 		return f;    	
 	}
 
@@ -143,16 +144,18 @@ public class NewSignal {
 	}
 
 	public NewSignal pointwiseMultiply(NewSignal g) {
-		//TODO Pad com o maior?
-		if (this.size() != g.size()) {
-			throw new RuntimeException("f and g are not compatible");
-		}
 		NewSignal a = this;
+		if (this.size() > g.size()) {
+			g = g.pad(a.size());			
+		}
+		else {
+			a = a.pad(g.size());
+		}
 		NewSignal b = new NewSignal(a.size());
 		for (int i = 0; i < b.size(); i++) {
 			b.value[i] = a.value[i].times(g.value[i]);
 		}
-		return b;    	
+		return b;
 	}
 
 	private NewSignal pad() {
@@ -168,6 +171,40 @@ public class NewSignal {
 		}
 		return padded;
 	}
+	
+	private NewSignal pad(int size) {
+		Complex ZERO = new Complex(0.0, 0.0);
+		NewSignal padded = new NewSignal(size);
+
+		for (int i = 0; i < this.size(); i++) {
+			padded.value[i] = this.value[i];
+		}
+		for (int i = this.size(); i < size; i++) {
+			padded.value[i] = ZERO;
+		}
+		return padded;
+	}
+	
+	private NewSignal unpad(double delta) {
+		int i;
+		int space = 11025;
+		NewSignal unpadded;
+		for (i = (this.size()) - 1; i >= 0; i--) {
+			if (this.value[i].re() > delta) break;
+		}
+		i += space;
+		if (i < this.size()) {
+			unpadded = new NewSignal(i);
+		}
+		else {
+			return this;
+		}
+		
+		for (int j = 0; j < i; j++) {
+			unpadded.value[j] = this.value[j];
+		}
+		return unpadded;
+	}
 
 	private int nextPowerOf2(int n) {
 		int BITSPACE = 32;
@@ -178,7 +215,7 @@ public class NewSignal {
 		}
 		n++;
 		return n;
-	}
+	}	
 
 	public static void show(NewSignal x, String title) {
 		System.out.println(title);
@@ -223,7 +260,7 @@ public class NewSignal {
 
 		// linear convolution of x with itself
 		long t0 = System.currentTimeMillis();
-		//Signal d = x.convolve(x);
+		//NewSignal d = x.convolve(x);
 		long t1 = System.currentTimeMillis();
 		System.out.println("Time = " + ((t1 - t0) / 1000.0) + "s");
 //		show(d, "d = convolve(x, x)");
