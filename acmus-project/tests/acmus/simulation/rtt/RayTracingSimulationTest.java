@@ -129,8 +129,8 @@ public class RayTracingSimulationTest {
 	}
 	
 	/**
-	 * Tests if the center of the MonteCarloRandomAcousticSource is fixed as
-	 * expected or if it's moving after some simulation.
+	 * Tests if the center of the MonteCarloRandomAcousticSource and of the SphericalReceptor
+	 * are fixed as expected or if they are moving after some simulation.
 	 */
 	@Test
 	public void testCenterIsFixed() {

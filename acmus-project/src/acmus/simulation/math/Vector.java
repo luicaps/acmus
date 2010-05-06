@@ -1,9 +1,9 @@
 package acmus.simulation.math;
 
 public class Vector {
-	private float x;
-	private float y;
-	private float z;
+	public float x;
+	public float y;
+	public float z;
 
 	public Vector(float a, float b, float c) {
 		this.x = a;
@@ -12,37 +12,112 @@ public class Vector {
 	}
 
 	public Vector(Vector otherVector) {
-		this.set(otherVector);
+		this(otherVector.x, otherVector.y, otherVector.z);
 	}
 
-	public void set(Vector otherVector) {
-		this.x = otherVector.getX();
-		this.y = otherVector.getY();
-		this.z = otherVector.getZ();
+	/**
+	 * 
+	 * @param otherVector
+	 * @return a new vector witch is the instance - otherVector
+	 */
+	public Vector sub(Vector otherVector) {
+		return new Vector(this.x - otherVector.x, this.y - otherVector.y,
+									this.z - otherVector.z);
+	}
+	
+	/**
+	 * Does the subtraction instance - otherVector and stores the result
+	 * in the instance
+	 * 
+	 * @param otherVector
+	 */
+	public void subFromSelf(Vector otherVector) {
+		this.x -= otherVector.x;
+		this.y -= otherVector.y;
+		this.z -= otherVector.z;
+	}
+	
+	/**
+	 * 
+	 * @param otherVector
+	 * @return a new vector witch is the instance + otherVector
+	 */
+	public Vector add(Vector otherVector) {
+		return new Vector(this.x + otherVector.x, this.y + otherVector.y,
+									this.z + otherVector.z);
+	}
+	
+	/**
+	 * Does the addition instance + otherVector and stores the result
+	 * in the instance
+	 * 
+	 * @param otherVector
+	 */
+	public void addToSelf(Vector otherVector) {
+		this.x += otherVector.x;
+		this.y += otherVector.y;
+		this.z += otherVector.z;
 	}
 
-	public float getX() {
-		return x;
+	public Vector crossProduct(Vector otherVector) {
+		return new Vector(this.y * otherVector.z - this.z * otherVector.y,
+						  this.z * otherVector.x - this.x * otherVector.z, 
+						  this.x * otherVector.y - this.y * otherVector.x);
+	}
+	
+	public float dotProduct(Vector otherVector) {
+		return this.x * otherVector.x + this.y * otherVector.y +
+						this.z * otherVector.z ;
+	}
+	
+	/**
+	 * Creates a Vector witch is the original vector 
+	 * scaled with factor {@param esc}.
+	 * 
+	 * @param esc a float scalar
+	 * @return a new Vector with the new value of the original times {@param esc}.
+	 */
+	public Vector scale(float esc) {
+		return new Vector(this.x * esc, this.y * esc, this.z * esc);
 	}
 
-	public float getY() {
-		return y;
+	/**
+	 * Scale the vector with factor {@param esc}.
+	 * 
+	 * @param esc a float scalar
+	 */
+	public void scaleSelf(float esc) {
+		this.x *= esc;
+		this.y *= esc;
+		this.z *= esc;
 	}
-
-	public float getZ() {
-		return z;
+	
+	/**
+	 * 
+	 * @return the norm of the Vector, squared
+	 */
+	public float normSquared() {
+		return this.x * this.x + this.y * this.y + this.z * this.z;
 	}
-
+	
+	/**
+	 * 
+	 * @return the norm of the Vector
+	 */
+	public float norm() {
+		return (float) Math.sqrt(this.normSquared());
+	}
+	
 	public Vector normalized() {
 		float m = 1.0f / this.norm();
 
-		return new Vector(x * m, y * m, z * m);
+		return new Vector(this.x * m, this.y * m, this.z * m);
 	}
 
 	public Vector normalized(float norm) {
 		float m = norm / this.norm();
 
-		return new Vector(x * m, y * m, z * m);
+		return new Vector(this.x * m, this.y * m, this.z * m);
 	}
 
 	public void normalize() {
@@ -55,49 +130,6 @@ public class Vector {
 		this.x *= m;
 		this.y *= m;
 		this.z *= m;
-	}
-
-	public Vector sub(Vector otherVector) {
-		return new Vector(x - otherVector.x, y - otherVector.y, z
-				- otherVector.z);
-	}
-
-	public void subFromSelf(Vector otherVector) {
-		x -= otherVector.getX();
-		y -= otherVector.getY();
-		z -= otherVector.getZ();
-	}
-
-	public Vector add(Vector otherVector) {
-		return new Vector(x + otherVector.x, y + otherVector.y, z
-				+ otherVector.z);
-	}
-
-	public void addToSelf(Vector otherVector) {
-		x += otherVector.getX();
-		y += otherVector.getY();
-		z += otherVector.getZ();
-	}
-
-	public Vector crossProduct(Vector w) {
-		return new Vector(y * w.z - z * w.y, z * w.x - x * w.z, x * w.y - y
-				* w.x);
-	}
-
-	public float dotProduct(Vector w) {
-		return this.x * w.x + this.y * w.y + this.z * w.z;
-	}
-
-	public float normSquared() {
-		return x * x + y * y + z * z;
-	}
-	
-	public float norm() {
-		return (float) Math.sqrt(this.normSquared());
-	}
-
-	public Vector times(float esc) {
-		return new Vector(x * esc, y * esc, z * esc);
 	}
 
 	public String toDat() {
@@ -138,12 +170,6 @@ public class Vector {
 		if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z))
 			return false;
 		return true;
-	}
-
-	public void scale(float esc) {
-		this.x *= esc;
-		this.y *= esc;
-		this.z *= esc;
 	}
 
 }

@@ -93,7 +93,7 @@ public class VectorTest {
 		float scalar = 2.0f;
 		
 		Vector expected = new Vector(5f, 6.8f, 9.0f);
-		assertEquals(expected, v.times(scalar));
+		assertEquals(expected, v.scale(scalar));
 	}
 
 	@Test

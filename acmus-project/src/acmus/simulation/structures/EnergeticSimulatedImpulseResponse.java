@@ -57,5 +57,9 @@ public final class EnergeticSimulatedImpulseResponse implements SimulatedImpulse
 //	public float[] getEIR() {
 //		return impulseResposeHistogramArray;
 //	}
-
+	
+	public float getInterval() {
+		return this.interval;
+	}
+	
 }

@@ -78,11 +78,11 @@ public class MonteCarloRandomAcousticSourceTest {
 
 		for (Vector triade : randomPoints) {
 			int i = 0;
-			if (triade.getX() < 0)
+			if (triade.x < 0)
 				i += 1;
-			if (triade.getY() < 0)
+			if (triade.y < 0)
 				i += 2;
-			if (triade.getZ() < 0)
+			if (triade.z < 0)
 				i += 4;
 			octs[i]++;
 		}

@@ -32,9 +32,9 @@ public class Ray {
 	 */
 	private double length;
 	/**
-	 * oldPosition stores the position in begin of each reflection
+	 * interceptReceptor is a flag which says if the Ray has been 
+	 * intercepted in this reflection
 	 */
-	private Vector oldPosition;
 	private boolean interceptsReceptor;
 	
 	/**
@@ -51,8 +51,7 @@ public class Ray {
 		this.interceptsReceptor = false;
 		this.reflectionSector = null;
 		this.stepSize = 0.0f;
-		this.length = 0;
-		this.oldPosition = new Vector(position);
+		this.length = 0.0;
 		
 	}
 
@@ -88,7 +87,6 @@ public class Ray {
 			double soundSpeed, double airAbsorptionCoefficient, double k) {
 		
 		do {
-			oldPosition.set(position);
 			stepSize = Float.MAX_VALUE;
 			
 			/**
@@ -100,16 +98,18 @@ public class Ray {
 			 * ray receptor intercept test
 			 */
 			interceptsReceptor = receptor.intercept(airAbsorptionCoefficient,
-					soundSpeed, oldPosition, direction, (float) this.energy,
+					soundSpeed, position, direction, (float) this.energy,
 					(float) this.length);
 			
 
 			if(!interceptsReceptor){
 				/*
-				 *  position goes to intercept point
+				 *  position goes to the reflection sector's intercept point
 				 */
-				position.addToSelf(direction.times(stepSize));
+				position.addToSelf(direction.scale(stepSize));
 				
+				
+				// Updates global ray variables
 				this.length += stepSize;
 				this.energy = this.energy
 						* (1 - reflectionSector.getAbsorptionCoeficient())
@@ -123,14 +123,10 @@ public class Ray {
 				 * calculates and normalizes the new ray direction
 				 * supposes nv with norm 1
 				 */
-				direction.subFromSelf(nv.times(2 * 
+				direction.subFromSelf(nv.scale(2 * 
 						direction.dotProduct(nv)));
 				
-				// Should I normalize it?
-//				if(Math.abs(direction.normSquared() - 1) > 0.001){
-//					System.out.println("Errors in direction updating," + 
-//						" you should still normalize it");
-//				}
+				// avoid errors in order 0.0000001
 				direction.normalize();
 			}
 			

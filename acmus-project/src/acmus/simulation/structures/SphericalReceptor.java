@@ -64,8 +64,8 @@ public class SphericalReceptor implements Receptor{
 			 * Discriminant for solving in terms of stepSizeOnThisReflection 
 			 * (or s) the equation below
 			 * 
-			 * rayOrgin.add(rayDirection.times(stepSizeOnThisReflection)).sub(
-			 * sphericalReceptorCenter).squared() <= sphericalReceptorRadius
+			 * rayOrigin.add(rayDirection.times(stepSizeOnThisReflection)).sub(
+			 * sphericalReceptorCenter).normSquared() <= sphericalReceptorRadius
 			 * 
 			 * or, in terms of P, s, D, C and R:
 			 * 
@@ -92,17 +92,20 @@ public class SphericalReceptor implements Receptor{
 						.sub(originToCenter)).length();
 				
 				if(distanceFromListener > radius){
-					System.out.println("distancia do ouvinte maior que o raio");
+					System.out.println("distance from listener grater then" +
+					 						"the receptor's radius");
 				}*/
 				
-//				coherency test
-//				if(time < 0.006){
+				// Coherence test
+//				if(time < 0.005){
 //					System.out.println("stepSizeOnThisReflection : " + stepSizeOnThisReflection);
 //					System.out.println("rayLength : " + rayLength);
 //				}
 				
-				// Adjusts the energy to correspond the distance between the
-				// intercepted ray position and the receptor's center
+				/*
+				 * Adjusts the energy to correspond the distance between the
+				 * intercepted ray position and the receptor's center
+				 */
 				float receptedEnergy = (float) (rayEnergy
 						* Math.pow(Math.E, -1 * airAbsorptionCoeficient
 								* stepSizeOnThisReflection)       );

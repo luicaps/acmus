@@ -25,4 +25,9 @@ public interface SimulatedImpulseResponse {
 	public Map<Float, Float> getEnergeticImpulseResponse();
 	
 	// public float[] getEIR();
+	
+	/**
+	 * @return the interval of the histogram
+	 */
+	public float getInterval();
 }

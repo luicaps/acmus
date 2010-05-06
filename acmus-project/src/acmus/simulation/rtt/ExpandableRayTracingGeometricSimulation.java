@@ -107,7 +107,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 						}
 					}
 				}// fim setores
-				q = g.add(v.times(lMin));
+				q = g.add(v.scale(lMin));
 				double eTemp = e * (1 - alpha)
 						* Math.pow(Math.E, -1 * mCoeficient * lMin);
 
@@ -115,7 +115,7 @@ public class ExpandableRayTracingGeometricSimulation implements GeometricAcousti
 				
 				lReflection += lMin;
 				e = eTemp;
-				v = nR.times(2 * dMin).add(q.sub(g));
+				v = nR.scale(2 * dMin).add(q.sub(g));
 				v = v.normalized();
 			} while (e > (1 / k * initialEnergy)); // vai para a
 			// proxima
