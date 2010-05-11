@@ -89,9 +89,9 @@ public class RayTracingSimulationCoherenceTest {
 		float interval = receptor.getSimulatedImpulseResponse().getInterval();
 		
 		for (Map.Entry<Float, Float> e : ir.entrySet()) {
-			if (e.getKey() < 0.0472) {
+			if (e.getKey() < 0.0470) {
 				if (e.getValue() != 0) {
-					Assert.assertEquals(0.045848404f, e.getKey(), interval);
+					Assert.assertEquals(0.04531528796f, e.getKey(), interval);
 				}
 			}
 		}

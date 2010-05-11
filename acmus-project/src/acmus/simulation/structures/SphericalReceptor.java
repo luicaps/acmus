@@ -96,8 +96,9 @@ public class SphericalReceptor implements Receptor{
 					 						"the receptor's radius");
 				}*/
 				
-				// Coherence test
-//				if(time < 0.005){
+				// Coherence debugging
+//				if(time < 0.0470){
+//					System.out.println("time : " + time);
 //					System.out.println("stepSizeOnThisReflection : " + stepSizeOnThisReflection);
 //					System.out.println("rayLength : " + rayLength);
 //				}
