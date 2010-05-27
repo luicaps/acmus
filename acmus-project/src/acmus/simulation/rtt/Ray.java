@@ -81,10 +81,13 @@ public class Ray {
 	 * @param sectors a List of {@link Sector}s defining the room geometry
 	 * @param soundSpeed the sound speed
 	 * @param airAbsorptionCoefficient the air absorption coefficient
-	 * @param k the minimum limit for the ray's energy
+	 * @param k the inverse of the minimum limit for the ray's energy in 
+	 * 			a linear scale where 1 is the maximum value for the energy
 	 */
 	public void trace(Receptor receptor, List<Sector> sectors,
 			double soundSpeed, double airAbsorptionCoefficient, double k) {
+		
+		double rayEnergyThreshold = 1 / k;
 		
 		do {
 			stepSize = Float.MAX_VALUE;
@@ -130,8 +133,7 @@ public class Ray {
 				direction.normalize();
 			}
 			
-		} while (energy > (1 / k) /* ray energy threshold */
-				&& !interceptsReceptor);
+		} while (energy > rayEnergyThreshold && !interceptsReceptor);
 	}
 	
 	void interceptsSector(List<Sector> sectors) {

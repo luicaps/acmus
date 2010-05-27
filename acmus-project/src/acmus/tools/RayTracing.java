@@ -129,7 +129,7 @@ public class RayTracing extends Composite {
 		walls.setLayoutData(wallsGrid);
 
 		label = new Label(walls, SWT.None);
-		label.setText("Room Width: ");
+		label.setText("Room Width (m): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		width = new Spinner(walls, SWT.None);
@@ -137,7 +137,7 @@ public class RayTracing extends Composite {
 		setGridData(width, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		label = new Label(walls, SWT.NONE);
-		label.setText("Room Length: ");
+		label.setText("Room Length (m): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		length = new Spinner(walls, SWT.None);
@@ -145,7 +145,7 @@ public class RayTracing extends Composite {
 		setGridData(length, SWT.LEAD, SWT.CENTER, 1, 40);
 
 		label = new Label(walls, SWT.NONE);
-		label.setText("Room Height: ");
+		label.setText("Room Height (m): ");
 		setGridData(label, SWT.LEAD, SWT.CENTER, 1);
 
 		height = new Spinner(walls, SWT.None);
@@ -180,6 +180,7 @@ public class RayTracing extends Composite {
 		setGridData(sourceZ, SWT.LEAD, SWT.CENTER, 1);
 
 		// Empty space to fit layout...
+		// TODO there must be a better way to do this
 
 		label = new Label(this, SWT.NONE);
 		label.setText("         ");
