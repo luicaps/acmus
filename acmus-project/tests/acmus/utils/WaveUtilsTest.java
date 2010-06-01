@@ -12,14 +12,14 @@ public class WaveUtilsTest {
 	@Test
 	public void testReadWriteWaves() throws Exception {
 		int[] wave = new int[] {0, 1, -1, 10000};
-		WaveUtils.wavWrite(wave, 1, 16, "temp.wav");
+		WaveUtils.wavWrite(wave, 1, 16, (float)44100, "temp.wav");
 		Assert.assertArrayEquals(wave, WaveUtils.wavRead("temp.wav"));
 		
 		double[] waved = new double[] {0, 1, -1, 10000};
 		
 		Assert.assertTrue(new File("temp.wav").delete());
 		
-		WaveUtils.wavWrite(waved, "temp.wav");
+		WaveUtils.wavWrite(waved, (float)44100, "temp.wav");
 		Assert.assertArrayEquals(wave, WaveUtils.wavRead("temp.wav"));
 		
 		Assert.assertTrue(new File("temp.wav").delete());
@@ -33,7 +33,7 @@ public class WaveUtilsTest {
 		Assert.assertArrayEquals(wave, WaveUtils.joinAudioStream(split));
 		
 		int[] wave2 = new int[] {0, 1, -1};
-		WaveUtils.wavWrite(wave2, 1, 32, "temp.wav");
+		WaveUtils.wavWrite(wave2, 1, 32, (float)44100, "temp.wav");
 		double[][] splitd = WaveUtils.wavReadSplitDouble("temp.wav");
 		MathUtilsTest.assertArrayEquals(new double[] {0, 1, -1}, WaveUtils.joinAudioStream(splitd), 0.000001);
 		Assert.assertTrue(new File("temp.wav").delete());

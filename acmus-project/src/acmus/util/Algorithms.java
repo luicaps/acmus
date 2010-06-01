@@ -37,7 +37,7 @@ public class Algorithms {
 	}
 
 	public static final double[] conv(double a[], double b[], double output[],
-			IProgressMonitor monitor) {  
+			float SR1, float SR2, IProgressMonitor monitor) {  
 		monitor = SWTUtils.monitorFor(monitor);
 		monitor.beginTask("Convolving...", a.length + b.length - 1);
 		
@@ -48,13 +48,25 @@ public class Algorithms {
 		NewSignal g = new NewSignal(b);
 		NewSignal out = new NewSignal(output);
 		
+		if (SR1 != SR2) {
+			if ((SR1 < SR2) && ((int)SR2 % (int)SR1 == 0)) {
+				f = f.upsample((int)(SR2 / SR1));
+			}
+			else if ((SR1 > SR2) && ((int)SR1 % (int)SR2 == 0)){
+				g = g.upsample((int)(SR1 / SR2));
+			}
+			else {
+				System.out.println("Ainda não sei resolver este caso!");
+			}
+			// FILTRO PASSA BAIXA com freq. PI/Factor
+		}
+
 		out = f.convolve(g, monitor);
 		output = new double[out.size()];
 		for (int i = 0; i < out.size(); i++) {
 			output[i] = out.get(i).re();
 			monitor.worked(1);
 		}
-		
 		
 		// Old convolution
 		/*
@@ -134,6 +146,8 @@ public class Algorithms {
 			int bb[][] = WaveUtils.splitAudioStream(format2.getChannels(), b);
 			int max1 = WaveUtils.getLimit(format1.getSampleSizeInBits());
 			int max2 = WaveUtils.getLimit(format2.getSampleSizeInBits());
+			float SR1 = format1.getSampleRate();
+			float SR2 = format2.getSampleRate();
 	
 			monitor.beginTask("Convolving", 10 * aa.length * bb.length);
 	
@@ -146,8 +160,8 @@ public class Algorithms {
 					conv[k] = new double[x.length + y.length - 1];
 					monitor.subTask("ch " + (i + 1) + " x " + " ch " + (j + 1));
 					IProgressMonitor subMonitor = SWTUtils.subMonitorFor(monitor,
-							10);					
-					conv[k] = conv(x, y, conv[k], subMonitor);
+							10);			
+					conv[k] = conv(x, y, conv[k], SR1, SR2, subMonitor);
 				}
 			}
 	
@@ -155,7 +169,13 @@ public class Algorithms {
 			monitor.beginTask("Writing output", 2);
 			double[] scaled = ArrayUtils.scaleToMax(WaveUtils.joinAudioStream(conv),
 					(double) WaveUtils.getLimit(16));
-			WaveUtils.wavWrite(scaled, conv.length, output);
+			
+			if (SR1 > SR2) {
+				WaveUtils.wavWrite(scaled, conv.length, SR1, output);
+			}
+			else {
+				WaveUtils.wavWrite(scaled, conv.length, SR2, output);
+			}
 			monitor.worked(2);
 	
 			monitor.done();

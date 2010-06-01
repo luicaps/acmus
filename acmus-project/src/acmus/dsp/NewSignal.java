@@ -7,6 +7,7 @@ public class NewSignal {
 	
 	// Attributes
 	private Complex[] value;
+	//private int SR;
 
 	// Constructors
 	public NewSignal(double[] a){
@@ -35,6 +36,15 @@ public class NewSignal {
 
 	public void set(int index, Complex c) {
 		value[index] = c;
+	}
+	
+	public NewSignal upsample(int factor) {
+		int size = this.size();
+		NewSignal g = new NewSignal(factor * size);
+		for (int i = 0; i < size; i++) {
+			g.value[4 * i] = this.value[i / factor];
+		}
+		return g;
 	}
 
 	// Compute the FFT of this signal, assuming its length is a power of 2

@@ -244,7 +244,8 @@ public class Ir {
 			// FIXME This is one of the places to set 16 or 32 bits
 			// if we want to change the IR resolution
 			ir = ArrayUtils.scaleToMax(ir, (double) WaveUtils.getLimit(32));
-			WaveUtils.wavWrite(ir, 1, 32, irFile.getLocation().toOSString(), false);
+			WaveUtils.wavWrite(ir, 1, 32, /*HARD CODED*/(float)44100,
+					irFile.getLocation().toOSString(), false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

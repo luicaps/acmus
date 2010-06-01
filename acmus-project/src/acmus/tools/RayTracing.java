@@ -366,7 +366,8 @@ public class RayTracing extends Composite {
 			}
 		}
 
-		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)), filename);
+		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)),
+				(float)AcmusApplication.SAMPLE_RATE, filename);
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,

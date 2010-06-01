@@ -89,7 +89,8 @@ public class MlsWizard extends Wizard implements INewWizard {
 				y[i] = y[i] * 0.5;
 			}
 			double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
-			WaveUtils.wavWrite(scaled, audioFile.getLocation().toOSString());
+			WaveUtils.wavWrite(scaled, /*HARD CODED*/(float)44100,
+					audioFile.getLocation().toOSString());
 
 			props.put("Type", "mls");
 			props.put("Row", PrintUtils.toString(row));

@@ -281,8 +281,8 @@ public class ImpulseResponsePage extends Composite {
 			// FIXME This is one of the places to set 16 or 32 bits
 			// if we want to change the IR resolution
 			ir = ArrayUtils.scaleToMax(ir, (double) WaveUtils.getLimit(32));
-			WaveUtils.wavWrite(ir, 1, 32, parent.getIrFile().getLocation()
-					.toOSString(), false);
+			WaveUtils.wavWrite(ir, 1, 32, /*HARD CODED*/(float)44100,
+					parent.getIrFile().getLocation().toOSString(), false);
 			try {
 				parent.getOutFolder().refreshLocal(IFolder.DEPTH_ONE,
 						null);

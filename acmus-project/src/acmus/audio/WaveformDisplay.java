@@ -659,7 +659,8 @@ public class WaveformDisplay extends Composite {
 	public void save(String filename) {
 		// save only the first samplearray
 		WaveUtils.wavWrite(_sampleArrays.get(0).data,
-				_sampleArrays.get(0).channels, _bitsPerSample, filename);
+				_sampleArrays.get(0).channels, _bitsPerSample,
+				/*HARD CODED*/(float)44100, filename);
 	}
 
 	/* ======================================================================= */

@@ -110,7 +110,8 @@ public class AcmusInputSignalWizard extends Wizard implements INewWizard {
 					y[i] = y[i] * 0.8;
 				}
 				double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
-				WaveUtils.wavWrite(scaled, file.getLocation().toOSString());
+				WaveUtils.wavWrite(scaled, /*HARD CODED*/(float)44100,
+						file.getLocation().toOSString());
 			} else if (type.equals("MLS")) {
 
 			} else if (type.equals("File")) {

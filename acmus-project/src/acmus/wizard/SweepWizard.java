@@ -103,7 +103,8 @@ public class SweepWizard extends Wizard implements INewWizard {
 				y[i] = y[i] * 0.8;
 			}
 			double[] scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
-			WaveUtils.wavWrite(scaled, audioFile.getLocation().toOSString());
+			WaveUtils.wavWrite(scaled, /*HARD CODED*/(float)44100,
+					audioFile.getLocation().toOSString());
 
 			Filter f = FilterBank.getSweepButter(startFreq, endFreq, 44100); // FIXME
 			props.put("ButterB", f.bToString());

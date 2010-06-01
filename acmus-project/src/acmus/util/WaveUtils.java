@@ -14,22 +14,22 @@ import javax.sound.sampled.AudioSystem;
 
 public class WaveUtils {
 
-	public static void wavWrite(double t[], String filename) {
-		WaveUtils.wavWrite(t, 1, filename);
+	public static void wavWrite(double t[], float SR, String filename) {
+		WaveUtils.wavWrite(t, 1, SR, filename);
 	}
 
-	public static void wavWrite(double t[], int channels, String filename) {
-		WaveUtils.wavWrite(t, channels, 16, filename, false);
+	public static void wavWrite(double t[], int channels, float SR, String filename) {
+		WaveUtils.wavWrite(t, channels, 16, SR, filename, false);
 	}
 
 	public static void wavWrite(double t[], int channels, int bitsPerSample,
-			String filename, boolean dither) {
+			float SR, String filename, boolean dither) {
 		int[] samples = Algorithms.doubleToInt(t, dither);
-		WaveUtils.wavWrite(samples, channels, bitsPerSample, filename);
+		WaveUtils.wavWrite(samples, channels, bitsPerSample, SR, filename);
 	}
 
 	public static void wavWrite(int t[], int channels, int bitsPerSample,
-			String filename) {
+			float SR, String filename) {
 		byte[] samples;
 		if (bitsPerSample == 32) {
 			samples = WaveUtils.intTo32bitsLittleEndian(t);
@@ -39,7 +39,7 @@ public class WaveUtils {
 			throw new RuntimeException(
 					"Oops! Only know how to handle 16 or 32 bits audio");
 		}
-		WaveUtils.wavWrite(samples, (double) 44100, bitsPerSample, channels, false,
+		WaveUtils.wavWrite(samples, SR, bitsPerSample, channels, false,
 				filename);
 	}
 
@@ -270,7 +270,8 @@ public class WaveUtils {
 		}
 		double[] scaled = ArrayUtils.scaleToMax(ArrayUtils.average(arrays),
 				(double) getLimit(bitsPerSample));
-		wavWrite(scaled, 1, bitsPerSample, outFile, false);
+		wavWrite(scaled, 1, bitsPerSample, /* HARD CODED*/(float)44100,
+				outFile, false);
 	}
 
 	public static int[] parseData(byte[] audioBytes, AudioFormat format) {

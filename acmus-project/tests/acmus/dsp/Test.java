@@ -156,7 +156,7 @@ public class Test {
 		double mls[] = Signal.mls(15, 15, 1, 3);
 		ArrayUtils.multLLL(mls, 0.5);
 		double[] scaled = ArrayUtils.scaleToMax (mls, (double) WaveUtils.getLimit(16));
-		WaveUtils.wavWrite(scaled, "/tmp/acmus-mls.wav");
+		WaveUtils.wavWrite(scaled, (float)44100, "/tmp/acmus-mls.wav");
 	}
 
 	public static void testMls() {
@@ -529,7 +529,7 @@ public class Test {
 		}
 		// double y[] = sweepLog(10, 1, 20, 40);
 		double[] scaled = ArrayUtils.scaleToMax (y, (double) WaveUtils.getLimit(16));
-		WaveUtils.wavWrite(scaled, "/tmp/foo.wav");
+		WaveUtils.wavWrite(scaled, (float)44100, "/tmp/foo.wav");
 		// for (int i = 0; i < y.length; i++) { System.out.println(y[i] + " ");
 		// }
 	}
@@ -602,12 +602,12 @@ public class Test {
 
 				z = new double[x.length + y.length - 1];
 				long t = System.currentTimeMillis();
-				Algorithms.conv(x, y, z, null);
+				Algorithms.conv(x, y, z, (float)44100, (float)44100, null);
 				System.out.println("t: " + (System.currentTimeMillis() - t));
 				System.out.println(z.length);
 			}
 			double[] scaled = ArrayUtils.scaleToMax(z, (double) WaveUtils.getLimit(16));
-			WaveUtils.wavWrite(scaled, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
+			WaveUtils.wavWrite(scaled, (float)44100, "/home/lku/Workspace/acmus/data/tone1conv4.wav");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -634,18 +634,18 @@ public class Test {
 			y[2 * i + 30001] = -1;
 		}
 		double[] scaled = ArrayUtils.scaleToMax(x, (double) WaveUtils.getLimit(16));
-		WaveUtils.wavWrite(scaled, 1, 16, "/tmp/clip16.wav", true);
+		WaveUtils.wavWrite(scaled, 1, 16, (float)44100, "/tmp/clip16.wav", true);
 		scaled = ArrayUtils.scaleToMax(x, (double) WaveUtils.getLimit(32));
-		WaveUtils.wavWrite(x, 1, 32, "/tmp/clip32.wav", true);
+		WaveUtils.wavWrite(x, 1, 32, (float)44100, "/tmp/clip32.wav", true);
 		scaled = ArrayUtils.scaleToMax(y, (double) WaveUtils.getLimit(16));
-		WaveUtils.wavWrite(y, 1, 16, "/tmp/clip.wav", true);
+		WaveUtils.wavWrite(y, 1, 16, (float)44100, "/tmp/clip.wav", true);
 	}
 
 	public static void testSplit() {
 		int[] d = WaveUtils.wavRead("/tmp/stereo.wav");
 		int[][] dd = WaveUtils.splitAudioStream(2, d);
-		WaveUtils.wavWrite(dd[0], 1, 16, "/tmp/split1.wav");
-		WaveUtils.wavWrite(dd[1], 1, 16, "/tmp/split2.wav");
+		WaveUtils.wavWrite(dd[0], 1, 16, (float)44100, "/tmp/split1.wav");
+		WaveUtils.wavWrite(dd[1], 1, 16, (float)44100, "/tmp/split2.wav");
 	}
 
 	public static void testWavAverage() {
@@ -653,10 +653,10 @@ public class Test {
 		int x2[] = { 0, 1, 2 };
 		int x3[] = { 0, 1, 2, 3, 4, 5 };
 		int x4[] = { 0, 1, 2, 3, 4, 5, -1, -2, -3 };
-		WaveUtils.wavWrite(x1, 1, 32, "/tmp/1.wav");
-		WaveUtils.wavWrite(x2, 1, 32, "/tmp/2.wav");
-		WaveUtils.wavWrite(x3, 1, 32, "/tmp/3.wav");
-		WaveUtils.wavWrite(x4, 1, 32, "/tmp/4.wav");
+		WaveUtils.wavWrite(x1, 1, 32, (float)44100, "/tmp/1.wav");
+		WaveUtils.wavWrite(x2, 1, 32, (float)44100, "/tmp/2.wav");
+		WaveUtils.wavWrite(x3, 1, 32, (float)44100, "/tmp/3.wav");
+		WaveUtils.wavWrite(x4, 1, 32, (float)44100, "/tmp/4.wav");
 
 		WaveUtils.wavAverage("/tmp/avg.wav", 32, "/tmp/1.wav", "/tmp/2.wav",
 				"/tmp/3.wav", "/tmp/4.wav");
