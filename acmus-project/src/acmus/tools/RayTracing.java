@@ -82,11 +82,10 @@ public class RayTracing extends Composite {
 	private Text _input;
 	private Button compute;
 	// Algorithm variables
-	private static double v_som;
-	private static int taxa;
+	private static double sound_v;
+	private static int tax;
 
-	// Todos os campos devem ficar aqui para serem usados no calculo realizado
-	// por compute()
+	// All fields must be here to be used by the compute() calculations
 	private Text soundSpeed;
 
 	private Spinner sourceX;
@@ -502,7 +501,7 @@ public class RayTracing extends Composite {
 		int indice;
 		Response aux, aux2;
 
-		indice = (int) (dist * taxa / v_som);
+		indice = (int) (dist * tax / sound_v);
 
 		aux = resp;
 		aux2 = aux;
