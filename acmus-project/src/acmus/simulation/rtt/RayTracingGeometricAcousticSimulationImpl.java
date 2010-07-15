@@ -44,7 +44,7 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 		 */
 		Thread[] threads = new Thread[numberOfThreads - 1];
 		for (int j = 1; j < numberOfThreads; j++) {
-			threads[j -1] = simulateInNewThread(numberOfRaysDivided);
+			threads[j - 1] = simulateInNewThread(numberOfRaysDivided);
 		}
 		
 		/*
@@ -54,7 +54,7 @@ public class RayTracingGeometricAcousticSimulationImpl implements GeometricAcous
 								numberOfRays % numberOfThreads;
 		int i = 0;
 		for (; i < actualNumberOfRays; i++) {
-			// Updates the progressBar
+			// Updates the progressBar // TODO realistic progressBar updating
 			if (i % Math.max(1,(actualNumberOfRays/100)) == 0) {
 				progressBar.setSelection((int) (100.0*i/actualNumberOfRays));
 			}

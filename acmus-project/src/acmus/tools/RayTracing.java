@@ -233,7 +233,7 @@ public class RayTracing extends Composite {
 		soundAtenuation.setText("0.01"); // default value
 		setGridData(soundAtenuation, SWT.LEAD, SWT.CENTER, 1, 60);
 
-		// Espherical receiver's radius
+		// Spherical receiver's radius
 
 		label = new Label(this, SWT.NONE);
 		label.setText("Esferic receiver's radius: ");
@@ -252,7 +252,7 @@ public class RayTracing extends Composite {
 		setSpinner(rays, 0, Integer.MAX_VALUE, 0);
 		setGridData(rays, SWT.LEAD, SWT.CENTER, 9, 40);
 
-		// Coeficients
+		// Coefficients
 		Group coefficients = new Group(this, SWT.None);
 		coefficients.setText("Acoustic Coefficients");
 		coefficients.setLayout(new GridLayout(6, false));
