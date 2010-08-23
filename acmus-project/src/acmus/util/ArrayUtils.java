@@ -331,7 +331,7 @@ public class ArrayUtils {
 		return avg;
 	}
 
-	public static int[] average(List<int[]> arrays) {
+	public static int[] averageInt(List<int[]> arrays) {
 		int maxLen = 0;
 		for (int[] v : arrays) {
 			if (v.length > maxLen)

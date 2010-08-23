@@ -133,7 +133,7 @@ public class ArrayUtilsTest {
 		assertArrayEquals(new double[] {2, 3.5, 1.5}, ArrayUtils.average(a), DELTA);
 		
 		List<int[]> b = Arrays.asList(new int[] {1, 2}, new int[] {3, 5, 3});
-		Assert.assertArrayEquals(new int[] {2, 3, 1}, ArrayUtils.average(b));
+		Assert.assertArrayEquals(new int[] {2, 3, 1}, ArrayUtils.averageInt(b));
 	}
 	@Test
 	public void testGetAbsoluteMax() throws Exception {

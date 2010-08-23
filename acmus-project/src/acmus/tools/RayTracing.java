@@ -332,41 +332,41 @@ public class RayTracing extends Composite {
 
 	private void saveIr() {
 		String filename = fileDialog.open();
-		if (filename == null)
-			return;
+		if (filename != null){
+			TreeSet<Float> orderedKeySet = new TreeSet<Float>(histogram.keySet());
 
-		TreeSet<Float> orderedKeySet = new TreeSet<Float>(histogram.keySet());
+			int waveLength = (int) Math.ceil(orderedKeySet.last()
+					* AcmusApplication.SAMPLE_RATE);
 
-		int waveLength = (int) Math.ceil(orderedKeySet.last()
-				* AcmusApplication.SAMPLE_RATE);
-
-		double[] wave = new double[waveLength];
-		for (Float key : orderedKeySet) {
-			int i = (int) Math.floor(key * AcmusApplication.SAMPLE_RATE);
-			wave[i] = histogram.get(key);
-		}
-		FileWriter fw = null;
-		try {
-			String tempFile = System.getProperty("java.io.tmpdir", "/tmp") +
-					System.getProperty("file.separator") + "wave.txt";
-			fw = new FileWriter(tempFile);
-
-			for (int i = 0; i < wave.length; i++)
-				fw.write(wave[i] + "\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+			double[] wave = new double[waveLength];
+			for (Float key : orderedKeySet) {
+				int i = (int) Math.floor(key * AcmusApplication.SAMPLE_RATE);
+				wave[i] = histogram.get(key);
+			}
+			FileWriter fw = null;
 			try {
-				fw.close();
+				String tempFile = System.getProperty("java.io.tmpdir", "/tmp") +
+						System.getProperty("file.separator") + "wave.txt";
+				fw = new FileWriter(tempFile);
+
+				for (int i = 0; i < wave.length; i++) {
+					fw.write(wave[i] + "\n");
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				try {
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}
 
-		WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)),
-				(float)AcmusApplication.SAMPLE_RATE, filename);
+			WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)),
+					(float)AcmusApplication.SAMPLE_RATE, filename);
+		}
 	}
 
 	public void setSpinner(Spinner component, int digits, int maximum,

@@ -11,6 +11,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
+import acmus.AcmusApplication;
+
 
 public class WaveUtils {
 
@@ -270,8 +272,8 @@ public class WaveUtils {
 		}
 		double[] scaled = ArrayUtils.scaleToMax(ArrayUtils.average(arrays),
 				(double) getLimit(bitsPerSample));
-		wavWrite(scaled, 1, bitsPerSample, /* HARD CODED*/(float)44100,
-				outFile, false);
+		wavWrite(scaled, 1, bitsPerSample,
+				(float) AcmusApplication.SAMPLE_RATE, outFile, false);
 	}
 
 	public static int[] parseData(byte[] audioBytes, AudioFormat format) {
