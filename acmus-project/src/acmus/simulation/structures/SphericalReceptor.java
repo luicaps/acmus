@@ -35,7 +35,8 @@ public class SphericalReceptor implements Receptor{
 	public SphericalReceptor(Vector center, float radius) {
 		
 		this(center, radius, (float) 1/44100 /*was 0.00001f*/);
-		//interval calculated according to Gomes2008, see Mario h.c.t. Masters dissertation
+		// 0.00001f was the interval calculated according to
+		// Gomes2008, see Mario h.c.t. Masters dissertation
 	}
 	
 	public Vector getCenter() {
@@ -113,6 +114,8 @@ public class SphericalReceptor implements Receptor{
 //						* (radius - distanceFromListener) / radius);
 				
 				simulatedImpulseResponse.addValue(time, receptedEnergy);
+				
+				// TODO include directional information
 				
 				return true;
 			}
