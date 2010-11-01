@@ -1,18 +1,18 @@
 package acmus.preferences;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
+//import java.util.ArrayList;
+//import java.util.Enumeration;
+//import java.util.HashMap;
+//import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.Line.Info;
+//import javax.sound.sampled.AudioSystem;
+//import javax.sound.sampled.Line;
+//import javax.sound.sampled.Mixer;
+//import javax.sound.sampled.SourceDataLine;
+//import javax.sound.sampled.TargetDataLine;
+//import javax.sound.sampled.Line.Info;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -54,8 +54,8 @@ public class AcmusPreferencePage
 		Set<String> set = AcmusPlugin.getDefault().outputs.keySet();
 		String[][] aux = new String[set.size()][2];
 		int i = 0;
-		for (Iterator iterator = set.iterator(); iterator.hasNext();i++) {
-			String str = (String) iterator.next();
+		for (Iterator<String> iterator = set.iterator(); iterator.hasNext();i++) {
+			String str = iterator.next();
 			aux[i][0] = str;
 			aux[i][1] = str;
 		}
@@ -69,8 +69,8 @@ public class AcmusPreferencePage
 		set = AcmusPlugin.getDefault().inputs.keySet();
 		aux = new String[set.size()][2];
 		i = 0;
-		for (Iterator iterator = set.iterator(); iterator.hasNext();i++) {
-			String str = (String) iterator.next();
+		for (Iterator<String> iterator = set.iterator(); iterator.hasNext();i++) {
+			String str = iterator.next();
 			aux[i][0] = str;
 			aux[i][1] = str;
 		}

@@ -28,7 +28,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Line;
+//import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
@@ -45,7 +45,7 @@ import org.osgi.framework.BundleContext;
 
 import acmus.audio.AudioDevice;
 import acmus.audio.DefaultAudioDevice;
-import acmus.preferences.AcmusPreferencePage;
+//import acmus.preferences.AcmusPreferencePage;
 import acmus.preferences.PreferenceConstants;
 
 /**

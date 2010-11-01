@@ -45,7 +45,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
+//import javax.sound.sampled.Line;
 import javax.sound.sampled.SourceDataLine;
 
 import org.eclipse.swt.SWT;
@@ -71,8 +71,8 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import acmus.AcmusGraphics;
 import acmus.AcmusPlugin;
-import acmus.preferences.AcmusPreferencePage;
-import acmus.preferences.PreferenceConstants;
+//import acmus.preferences.AcmusPreferencePage;
+//import acmus.preferences.PreferenceConstants;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 
@@ -199,6 +199,7 @@ public class AudioPlayer {
 			_jso.initialize(JavaSoundOutput.convertFormat(_audioStream
 					.getFormat()), BUFFERLENGTH);
 
+			@SuppressWarnings("unused")
 			DataLine.Info info = null;
 			AudioFormat format = _audioStream.getFormat();
 			if (format.getSampleSizeInBits() == 32) {

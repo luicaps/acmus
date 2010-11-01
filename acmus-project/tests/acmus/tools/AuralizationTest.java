@@ -1,5 +1,9 @@
 package acmus.tools;
 
+import java.awt.BorderLayout;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +12,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.JFrame;
+
 import org.eclipse.swt.widgets.ProgressBar;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDotRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -16,7 +31,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import acmus.AcmusApplication;
 import acmus.dsp.NewSignal;
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
@@ -137,7 +151,7 @@ public class AuralizationTest {
 				histogram[0].size(),
 				Math.max(histogram[1].size(),
 						Math.max(histogram[2].size(), histogram[3].size())));
-
+		
 		double[][] spectralResponseArray = new double[lengthMax][arbitraryPowerOf2];
 		NewSignal[] spectralResponseSignal = new NewSignal[lengthMax];
 
@@ -188,6 +202,13 @@ public class AuralizationTest {
 			Assert.fail("Couldn't print");
 		}
 		
+		try {
+			plot(impulseResponseArray);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assert.fail("Couldn't plot");
+		}
+		
 //		extends Composite
 //		
 //		FileDialog fileDialog;
@@ -197,9 +218,14 @@ public class AuralizationTest {
 //		fileDialog.setText("Save simulated Impulse Response as WAV");
 //		
 //		String filename = fileDialog.open();
-//		
-		WaveUtils.wavWrite(ArrayUtils.scaleToMax(impulseResponseArray, WaveUtils.getLimit(16)),
-				(float)AcmusApplication.SAMPLE_RATE, "/tmp/wave.wav");
+		
+		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
+				+ System.getProperty("file.separator") + "wave.wav";
+		// TODO find out what is the sample rate
+		float sampleRate = (float) arbitraryPowerOf2 * lengthMin;
+		WaveUtils.wavWrite(
+				ArrayUtils.scaleToMax(impulseResponseArray,
+						WaveUtils.getLimit(16)), sampleRate, tempFile);
 	}
 
 //	@Test
@@ -207,8 +233,10 @@ public class AuralizationTest {
 //		Assert.fail("Not yet implemented");
 //	}
 
-	void print(double[] array) throws IOException {
-		FileWriter fw = new FileWriter("/tmp/wavelet.csv");
+	private void print(double[] array) throws IOException {
+		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
+				+ System.getProperty("file.separator") + "wavelet.csv";
+		FileWriter fw = new FileWriter(tempFile);
 		StringBuilder sb = new StringBuilder(2000);
 
 		for (int i = 0; i < array.length; i++) {
@@ -222,4 +250,46 @@ public class AuralizationTest {
 		fw.write(sb.toString());
 		fw.close();
 	}
+	
+	private void plot(double[] array) throws InterruptedException {
+        
+        // data set...
+        final XYSeries series = new XYSeries("Impulse Response");
+        for (int i = 0; i < array.length; i++) {
+        	series.add(i / (double) arbitraryPowerOf2, array[i]);
+		}
+        final XYDataset data = new XYSeriesCollection(series);
+
+        // create a scatter chart...
+        final boolean noLegend = false;
+        final JFreeChart chart = ChartFactory.createScatterPlot(
+                "Impulse Response", "X", "Y",
+                data,
+                PlotOrientation.VERTICAL,
+                noLegend,
+                false,
+                false
+        );
+
+        final XYPlot plot = chart.getXYPlot();
+        plot.setRenderer(new XYDotRenderer());
+
+        final BufferedImage image = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g2 = image.createGraphics();
+        final Rectangle2D chartArea = new Rectangle2D.Double(0, 0, 400, 300);
+        chart.draw(g2, chartArea, null, null);
+ 
+        
+        // show chart...
+        JFrame frame = new JFrame( "Auralization Test" );
+        frame.getContentPane().add( new ChartPanel(chart), BorderLayout.CENTER );
+        frame.setSize( 640, 480 );
+        frame.setVisible( true );
+        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        
+        // waits 15 seconds...
+        Thread.sleep(15000l);
+		
+    }
+	
 }
