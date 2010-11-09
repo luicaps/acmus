@@ -333,6 +333,9 @@ public class RayTracing extends Composite {
 	private void saveIr() {
 		String filename = fileDialog.open();
 		if (filename != null){
+			if (!filename.endsWith(".wav")) {
+				filename = filename + ".wav";
+			}
 			TreeSet<Float> orderedKeySet = new TreeSet<Float>(histogram.keySet());
 
 			int waveLength = (int) Math.ceil(orderedKeySet.last()
@@ -363,7 +366,7 @@ public class RayTracing extends Composite {
 					e.printStackTrace();
 				}
 			}
-
+			
 			WaveUtils.wavWrite(ArrayUtils.scaleToMax(wave, WaveUtils.getLimit(16)),
 					(float)AcmusApplication.SAMPLE_RATE, filename);
 		}
