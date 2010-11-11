@@ -1,9 +1,6 @@
 package acmus.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.JFrame;
-
 import org.eclipse.swt.widgets.ProgressBar;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -199,25 +195,17 @@ public class AuralizationTest {
 			print(impulseResponseArray);
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(e.getMessage());
 			Assert.fail("Couldn't print");
 		}
 		
 		try {
 			plot(impulseResponseArray);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(e.getMessage());
 			Assert.fail("Couldn't plot");
 		}
-		
-//		extends Composite
-//		
-//		FileDialog fileDialog;
-//		fileDialog = new FileDialog(getShell(), SWT.SAVE);
-//		fileDialog.setFilterExtensions(new String[] { ".wav" });
-//		fileDialog.setFilterNames(new String[] { "WAV file" });
-//		fileDialog.setText("Save simulated Impulse Response as WAV");
-//		
-//		String filename = fileDialog.open();
 		
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
 				+ System.getProperty("file.separator") + "wave.wav";
@@ -251,8 +239,9 @@ public class AuralizationTest {
 		fw.close();
 	}
 	
-	private void plot(double[] array) throws InterruptedException {
-        
+	private void plot(double[] array) throws InterruptedException, IOException {
+        int width = 400, height = 300;
+		
         // data set...
         final XYSeries series = new XYSeries("Impulse Response");
         for (int i = 0; i < array.length; i++) {
@@ -270,26 +259,23 @@ public class AuralizationTest {
                 false,
                 false
         );
-
+        
         final XYPlot plot = chart.getXYPlot();
         plot.setRenderer(new XYDotRenderer());
-
-        final BufferedImage image = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);
-        final Graphics2D g2 = image.createGraphics();
-        final Rectangle2D chartArea = new Rectangle2D.Double(0, 0, 400, 300);
-        chart.draw(g2, chartArea, null, null);
- 
+        
+        // save it to png file
+        String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
+		+ System.getProperty("file.separator") + "wavelet.png";
+        File file = new File(tempFile);
+        
+        ChartUtilities.saveChartAsPNG(file, chart, width, height);
         
         // show chart...
-        JFrame frame = new JFrame( "Auralization Test" );
-        frame.getContentPane().add( new ChartPanel(chart), BorderLayout.CENTER );
-        frame.setSize( 640, 480 );
-        frame.setVisible( true );
-        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        ChartFrame frame = new ChartFrame("Auralization Test", chart);
+        frame.pack();
+        frame.setVisible(true);
         
         // waits 15 seconds...
         Thread.sleep(15000l);
-		
     }
-	
 }
