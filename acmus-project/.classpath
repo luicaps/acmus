@@ -24,5 +24,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.13-swt.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.13-experimental.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
