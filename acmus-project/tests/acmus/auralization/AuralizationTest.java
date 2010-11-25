@@ -8,25 +8,32 @@ public class AuralizationTest {
 	private AuralizationHandler aur;
 	private BandRangeSeq range;
 	private Float[][] content;
+	private Simulator sim;
+	AurViewer viewer;
 	
 	@Before
 	public void setUp() {
+		sim = new Simulator();
+		
 		aur = new AuralizationHandler();
 
-		aur.setUp();
+		sim.setUp();
 		
 		range = new BandRangeEqSeq(20.0, 20000.0, 4);
 		
 		content = new Float[range.howMany()][];
 
-		content[0] = aur.simulateCoeff(0.2, 0.2, 0.1, 0.1, 0.1, 0.1);
-		content[1] = aur.simulateCoeff(0.2, 0.2, 0.25, 0.25, 0.3, 0.3);
-		content[2] = aur.simulateCoeff(0.17, 0.17, 0.13, 0.13, 0.34, 0.34);
-		content[3] = aur.simulateCoeff(0.4, 0.4, 0.2, 0.2, 0.1, 0.1);
+		content[0] = sim.simulateCoeff(0.2, 0.2, 0.1, 0.1, 0.1, 0.1);
+		content[1] = sim.simulateCoeff(0.2, 0.2, 0.25, 0.25, 0.3, 0.3);
+		content[2] = sim.simulateCoeff(0.17, 0.17, 0.13, 0.13, 0.34, 0.34);
+		content[3] = sim.simulateCoeff(0.4, 0.4, 0.2, 0.2, 0.1, 0.1);
 		
+		double[] ir;
 		// 4 band ranges in human limits
-		aur.signalSample(range, content);
-
+		ir = aur.signalSample(range, content);
+		viewer = new AurViewer();
+		
+		viewer.view(ir);
 	}
 	
 	@Test
