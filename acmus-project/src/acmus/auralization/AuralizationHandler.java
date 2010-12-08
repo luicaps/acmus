@@ -1,11 +1,11 @@
 package acmus.auralization;
 
-import acmus.AcmusApplication;
 import acmus.dsp.NewSignal;
 
 public class AuralizationHandler {
 
-	public double[] signalSample(BandRangeSeq range, Float[][] content) {
+	public double[] signalSample(BandRangeSeq range, float[][] content,
+			float sampleRate) {
 		if (content.length != range.howMany()) {
 			throw new IllegalArgumentException(
 					"the content's length must be the number of values in range");
@@ -18,9 +18,9 @@ public class AuralizationHandler {
 
 		for (int i = 0; i < range.howMany(); i++) {
 			if (content[i].length < lengthMax) {
-				Float[] temp = new Float[lengthMax];
+				float[] temp = new float[lengthMax];
 				for (int j = 0; j < content[i].length; j++) {
-					temp[j] = content[0][j];
+					temp[j] = content[i][j];
 				}
 				for (int j = content[i].length; j < lengthMax; j++) {
 					temp[j] = 0f;
@@ -28,44 +28,35 @@ public class AuralizationHandler {
 				content[i] = temp;
 			}
 		}
-
+		int arbitraryPowerOf2 = (int) Math.pow(2, 12);
 		double[] impulseResponseArray = new double[lengthMax
-				+ (int) AcmusApplication.SAMPLE_RATE];
+				+ arbitraryPowerOf2];
 
-		for (int i = 0; i < lengthMax; i++) {
+		for (int j = 0; j < lengthMax; j++) {
 			double[] freqT = new double[range.howMany()];
-			for (int j = 0; j < range.howMany(); j++) {
-				freqT[j] = content[j][i];
+			for (int i = 0; i < range.howMany(); i++) {
+				freqT[i] = content[i][j];
 			}
-			int arbitraryPowerOf2 = 32768;
-			double factor = arbitraryPowerOf2 / AcmusApplication.SAMPLE_RATE;
+			double factor = Math.floor(arbitraryPowerOf2) / sampleRate;
 			double[] arrFreq = new double[arbitraryPowerOf2];
-			for (int n = 1; n <= range.howMany(); n++) {
-				for (int j = (int) (range.getMin() * factor); j < n * factor
-						* range.getMax() / range.howMany(); j++) {
-					arrFreq[j] = freqT[n - 1];
+			for (int i = 1; i <= range.howMany(); i++) {
+				for (int k = (int) (range.getMin() * factor); k < i * factor
+						* range.getMax() / range.howMany(); k++) {
+					arrFreq[k] = freqT[i - 1];
 				}
 			}
 			NewSignal sigTemp = (new NewSignal(arrFreq)).fft();
-			double[] arrTemp = new double[(int) AcmusApplication.SAMPLE_RATE];
-			for (int j = 0; j < arbitraryPowerOf2; j++) {
-				arrTemp[Math.round((float) (j / factor))] = sigTemp.get(j).re();
+			double[] arrTemp = new double[(int) sampleRate];
+			for (int i = 0; i < arbitraryPowerOf2; i++) {
+				arrTemp[Math.round((float) (i / factor))] = sigTemp.get(i).re();
 			}
 			// shift circular
-			for (int j = 0; j < AcmusApplication.SAMPLE_RATE / 2; j++) {
-				impulseResponseArray[i + (int) AcmusApplication.SAMPLE_RATE / 2
-						+ j] += arrTemp[j];
-				impulseResponseArray[i + j] += arrTemp[j
-						+ (int) AcmusApplication.SAMPLE_RATE / 2];
+			for (int i = 0; i < arbitraryPowerOf2 / 2; i++) {
+				impulseResponseArray[j + arbitraryPowerOf2 / 2 + i] += arrTemp[i];
+				impulseResponseArray[j + i] += arrTemp[i + arbitraryPowerOf2
+						/ 2];
 			}
 		}
-
-		// double[] impulseResponseArrayTemp = new double[lengthMax];
-		// for (int i = 0; i < lengthMax; i++) {
-		// impulseResponseArrayTemp[i] = impulseResponseArray[i
-		// + (int) AcmusApplication.SAMPLE_RATE / 2];
-		// }
-		// impulseResponseArray = impulseResponseArrayTemp;
 
 		return impulseResponseArray;
 
@@ -73,27 +64,36 @@ public class AuralizationHandler {
 
 	public static void main(String[] args) {
 
+		float sampleRate = 44100f;
+		int numberOfRays = 250;
+
 		Simulator sim = new Simulator();
 
-		sim.setUp();
+		sim.setUp(numberOfRays, sampleRate);
 
 		// 4 band ranges in human limits
-		BandRangeSeq range = new BandRangeEqSeq(20.0, 20000.0, 4);
+		BandRangeSeq range = new BandRangeEqSeq(20.0, 2000.0, 4);
 
-		Float[][] content = new Float[range.howMany()][];
-
-		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.22, 0.1, 0.1);
-		content[1] = sim.simulateCoeff(0.01, 0.02, 0.04, 0.13, 0.3, 0.25);
-		content[2] = sim.simulateCoeff(0.02, 0.03, 0.001, 0.09, 0.34, 0.2);
-		content[3] = sim.simulateCoeff(0.02, 0.04, 0.07, 0.2, 0.05, 0.06);
-
-		double[] ir;
-
-		AuralizationHandler aur = new AuralizationHandler();
-		ir = aur.signalSample(range, content);
+		float[][] content = new float[range.howMany()][];
 
 		AurViewer viewer = new AurViewer();
 
-		viewer.view(ir);
+		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.22, 0.1, 0.1);
+		viewer.view(content[0], 1.f, "coeffs 0.01, 0.01, 0.001, 0.22, 0.1, 0.1");
+		content[1] = sim.simulateCoeff(0.01, 0.02, 0.04, 0.13, 0.3, 0.25);
+		viewer.view(content[1], 1.f, "coeffs 0.01, 0.02, 0.04, 0.13, 0.3, 0.25");
+		content[2] = sim.simulateCoeff(0.02, 0.03, 0.001, 0.09, 0.34, 0.2);
+		viewer.view(content[2], 1.f,
+				"coeffs 0.02, 0.03, 0.001, 0.09, 0.34, 0.2");
+		content[3] = sim.simulateCoeff(0.02, 0.04, 0.07, 0.2, 0.05, 0.06);
+		viewer.view(content[3], 1.f, "coeffs 0.02, 0.04, 0.07, 0.2, 0.05, 0.06");
+
+		AuralizationHandler aur = new AuralizationHandler();
+
+		double[] ir;
+
+		ir = aur.signalSample(range, content, sampleRate);
+
+		viewer.view(ir, "Impulse Response");
 	}
 }

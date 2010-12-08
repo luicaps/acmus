@@ -7,7 +7,7 @@ import org.junit.Test;
 public class AuralizationTest {
 	private AuralizationHandler aur;
 	private BandRangeSeq range;
-	private Float[][] content;
+	private float[][] content;
 	private Simulator sim;
 	AurViewer viewer;
 	
@@ -17,11 +17,11 @@ public class AuralizationTest {
 		
 		aur = new AuralizationHandler();
 
-		sim.setUp();
+		sim.setUp(200, 11050);
 		
 		range = new BandRangeEqSeq(20.0, 20000.0, 4);
 		
-		content = new Float[range.howMany()][];
+		content = new float[range.howMany()][];
 
 		content[0] = sim.simulateCoeff(0.2, 0.2, 0.1, 0.1, 0.1, 0.1);
 		content[1] = sim.simulateCoeff(0.2, 0.2, 0.25, 0.25, 0.3, 0.3);
@@ -30,10 +30,10 @@ public class AuralizationTest {
 		
 		double[] ir;
 		// 4 band ranges in human limits
-		ir = aur.signalSample(range, content);
+		ir = aur.signalSample(range, content, 11050);
 		viewer = new AurViewer();
 		
-		viewer.view(ir);
+		viewer.view(ir, "Impulse Response");
 	}
 	
 	@Test
