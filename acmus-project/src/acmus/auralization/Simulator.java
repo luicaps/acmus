@@ -38,12 +38,12 @@ public class Simulator {
 		this.numberOfRays = numberOfRays;
 		this.sampleRate = sampleRate;
 		
-		this.soundSourceCenter = new Vector(2, 2, 5);
+		this.soundSourceCenter = new Vector(2, 2, 2);
 		this.soundSource = new MonteCarloAcousticSource(soundSourceCenter);
 
 		this.sectors = new ArrayList<Sector>();
 
-		this.sphericalReceptorCenter = new Vector(8, 8, 6);
+		this.sphericalReceptorCenter = new Vector(8, 8, 1);
 		float sphericalReceptorRadius = 3.0f;
 		this.receptor = new SphericalReceptor(sphericalReceptorCenter,
 				sphericalReceptorRadius, 0.00001f);
@@ -70,12 +70,11 @@ public class Simulator {
 	public float[] simulateCoeff(double bottom, double top, double east,
 			double west, double north, double south) {
 		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), bottom));
-		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 10), top));
+		sectors.add(new Sector(new Vector(0, 0, -1), new Vector(1, 1, 4), top));
 		sectors.add(new Sector(new Vector(0, 1, 0), new Vector(1, 0, 1), east));
 		sectors.add(new Sector(new Vector(1, 0, 0), new Vector(0, 1, 1), south));
 		sectors.add(new Sector(new Vector(0, -1, 0), new Vector(1, 10, 1), west));
-		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1),
-				north));
+		sectors.add(new Sector(new Vector(-1, 0, 0), new Vector(10, 1, 1), north));
 
 		Map<Float, Float> histogram;
 

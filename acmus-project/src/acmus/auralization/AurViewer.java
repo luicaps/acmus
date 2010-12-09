@@ -99,7 +99,7 @@ public class AurViewer {
 	
 	public void view(double[] array, double rate, String title, XYItemRenderer renderer) {
 		try {
-			print(array, rate);
+			print(array, rate, title);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
@@ -113,15 +113,15 @@ public class AurViewer {
 		}
 
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wave.wav";
+				+ System.getProperty("file.separator") + "wave" + title + ".wav";
 		WaveUtils.wavWrite(
 				ArrayUtils.scaleToMax(array, WaveUtils.getLimit(16)),
 				(float) AcmusApplication.SAMPLE_RATE, tempFile);
 	}
 
-	public void print(double[] array, double rate) throws IOException {
+	public void print(double[] array, double rate, String title) throws IOException {
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wavelet.csv";
+				+ System.getProperty("file.separator") + "wave"+ title +".csv";
 		FileWriter fw = new FileWriter(tempFile);
 		StringBuilder sb = new StringBuilder(2000);
 
@@ -159,7 +159,7 @@ public class AurViewer {
 
 		// save it to png file
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wavelet.png";
+				+ System.getProperty("file.separator") + "wave" + title + ".png";
 		File file = new File(tempFile);
 
 		ChartUtilities.saveChartAsPNG(file, chart, width, height);
