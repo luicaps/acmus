@@ -46,7 +46,7 @@ public class Simulator {
 		this.sphericalReceptorCenter = new Vector(8, 8, 1);
 		float sphericalReceptorRadius = 3.0f;
 		this.receptor = new SphericalReceptor(sphericalReceptorCenter,
-				sphericalReceptorRadius, 0.001f);
+				sphericalReceptorRadius);
 
 		this.soundSpeed = 344.0; // in meters per second (m/s)
 		this.mCoeficient = 0.0001;
@@ -89,7 +89,7 @@ public class Simulator {
 		TreeSet<Float> orderedKeySet = new TreeSet<Float>(histogram.keySet());
 
 		int waveLength = (int) Math.ceil(orderedKeySet.last() *
-				sampleRate);
+				sampleRate) + 1;
 
 		float[] wave = new float[waveLength];
 		for (Float key : orderedKeySet) {

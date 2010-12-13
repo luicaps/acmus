@@ -33,8 +33,7 @@ public class SphericalReceptor implements Receptor{
 	 * @param radius the spherical receptor's radius of audition
 	 */
 	public SphericalReceptor(Vector center, float radius) {
-		
-		this(center, radius, (float) 1/44100 /*was 0.00001f*/);
+		this(center, radius, (float) (1.0/44100.0) /*was 0.00001f*/);
 		// 0.00001f was the interval calculated according to
 		// Gomes2008, see Mario h.c.t. Masters dissertation
 	}

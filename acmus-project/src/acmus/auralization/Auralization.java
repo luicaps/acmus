@@ -7,7 +7,6 @@ public class Auralization {
 	private double[] signal;
 	private BandRangeSeq range;
 	private int arbitraryPowerOf2;
-	private double factor;
 	private float sampleRate;
 
 	public Auralization(BandRangeSeq range, float[][] content, float sampleRate) {
@@ -35,7 +34,6 @@ public class Auralization {
 				+ arbitraryPowerOf2];
 
 		for (int j = 0; j < lengthMax; j++) {
-			this.factor = Math.floor(arbitraryPowerOf2) * 2 / sampleRate;
 			double[] arrFreq = fillFrequencyDomain(j, content);
 			double[] arrTemp = fillTimeDomain(arrFreq);
 			// shift circular
@@ -54,19 +52,10 @@ public class Auralization {
 		}
 	}
 
-	private double[] fillTimeDomain(double[] arrFreq) {
-		NewSignal sigTemp = (new NewSignal(arrFreq)).ifft();
-		double[] arrTemp = new double[(int) sampleRate];
-		for (int i = 0; i < arbitraryPowerOf2; i++) {
-			arrTemp[Math.round((float) (i / factor))] = sigTemp.get(i).re();
-		}
-		return arrTemp;
-	}
-
 	private int maxi(float[][] matrix, float maxTime) {
 		int maxSample;
 		if (maxTime < Float.MAX_VALUE){
-			maxSample = (int) Math.floor(maxTime * sampleRate);
+			maxSample = (int) Math.ceil(maxTime * sampleRate);
 		} else {
 			maxSample = Integer.MAX_VALUE;
 		}
@@ -77,21 +66,7 @@ public class Auralization {
 		}
 		return Math.min(max, maxSample);
 	}
-
-	private double[] fillFrequencyDomain(int timeIndex, float[][] content) {
-		double freqT;
-		double[] arrFreq = new double[arbitraryPowerOf2];
-		for (int i = 0; i < range.howMany(); i++) {
-			freqT = content[i][timeIndex]; // TODO check here |
-			for (int k = (int) (range.getMin() * factor); k < (i + 1) * factor
-					* range.getMax() / range.howMany(); k++) {
-				arrFreq[k] = freqT;
-				arrFreq[arbitraryPowerOf2 - k - 1] = freqT;
-			}
-		}
-		return arrFreq;
-	}
-
+	
 	private float[] fillWithZeros(float[] array, int length) {
 		if (array.length < length) {
 			float[] temp = new float[length];
@@ -107,6 +82,31 @@ public class Auralization {
 		}
 	}
 
+	private double[] fillFrequencyDomain(int timeIndex, float[][] content) {
+		double freqT;
+		double factor = Math.floor(arbitraryPowerOf2) * 2 / sampleRate;
+		double[] arrFreq = new double[arbitraryPowerOf2];
+		for (int i = 0; i < range.howMany(); i++) {
+			freqT = content[i][timeIndex];
+			for (int k = (int) (range.getMin() * factor); k < (i + 1) * factor
+					* range.getMax() / range.howMany(); k++) {
+				arrFreq[k] = freqT;
+				arrFreq[arbitraryPowerOf2 - k - 1] = freqT;
+			}
+		}
+		return arrFreq;
+	}
+	
+	private double[] fillTimeDomain(double[] arrFreq) {
+		NewSignal sigTemp = (new NewSignal(arrFreq)).ifft();
+		double[] arrTemp = new double[(int) (2 * range.getMax())];
+		double factor = Math.floor(arbitraryPowerOf2) / (2 * range.getMax());
+		for (int i = 0; i < arbitraryPowerOf2; i++) {
+			arrTemp[Math.round((float) (i / factor))] = sigTemp.get(i).re();
+		}
+		return arrTemp;
+	}
+
 	public double[] getSignal() {
 		return signal;
 	}
@@ -115,14 +115,14 @@ public class Auralization {
 
 		float sampleRate = 44100f;
 		int numberOfRays = 1000;
-		float maxTime = 0.9f;
+		float maxTime = 1.3f;
 
 		Simulator sim = new Simulator();
 
 		sim.setUp(numberOfRays, sampleRate);
 
 		// 4 band ranges in human limits
-		BandRangeSeq range = new BandRangeEqSeq(20.0, 2000.0, 4);
+		BandRangeSeq range = new BandRangeEqSeq(20.0, 20000.0, 4);
 
 		float[][] content = new float[range.howMany()][];
 
