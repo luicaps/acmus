@@ -46,7 +46,7 @@ public class Simulator {
 		this.sphericalReceptorCenter = new Vector(8, 8, 1);
 		float sphericalReceptorRadius = 3.0f;
 		this.receptor = new SphericalReceptor(sphericalReceptorCenter,
-				sphericalReceptorRadius, 0.00001f);
+				sphericalReceptorRadius, 0.001f);
 
 		this.soundSpeed = 344.0; // in meters per second (m/s)
 		this.mCoeficient = 0.0001;
