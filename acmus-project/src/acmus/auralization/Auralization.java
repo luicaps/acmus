@@ -2,6 +2,12 @@ package acmus.auralization;
 
 import acmus.dsp.NewSignal;
 
+/**
+ * A class to deal with an auralization
+ * 
+ * @author migmruiz
+ *
+ */
 public class Auralization {
 
 	private double[] signal;
@@ -51,7 +57,15 @@ public class Auralization {
 			signal[i] = impulseResponseArray[arbitraryPowerOf2/2 + i];
 		}
 	}
-
+	
+	/**
+	 * Chooses the max sample value of the impulse response 
+	 * 
+	 * @param matrix
+	 * @param maxTime
+	 * @return the max of matrix[i].length if it is less then Math.ceil(maxTime * sampleRate),
+	 * 			otherwise that is the returned value
+	 */
 	private int maxi(float[][] matrix, float maxTime) {
 		int maxSample;
 		if (maxTime < Float.MAX_VALUE){
@@ -67,6 +81,13 @@ public class Auralization {
 		return Math.min(max, maxSample);
 	}
 	
+	/**
+	 * Grown the array to length and fill it with zeros
+	 * 
+	 * @param array
+	 * @param length
+	 * @return the growth array
+	 */
 	private float[] fillWithZeros(float[] array, int length) {
 		if (array.length < length) {
 			float[] temp = new float[length];

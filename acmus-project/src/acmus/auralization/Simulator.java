@@ -19,6 +19,13 @@ import acmus.simulation.rtt.Sector;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
 
+/**
+ * Class for dealing with the geometric aspects of a
+ * multi-band simulation
+ * 
+ * @author migmruiz
+ *
+ */
 public class Simulator {
 	private AcousticSource soundSource;
 	private int numberOfRays;
@@ -33,6 +40,12 @@ public class Simulator {
 
 	private ProgressBar bar;
 	
+	/**
+	 * set up the general aspects
+	 * 
+	 * @param numberOfRays the number of rays in each simulation
+	 * @param sampleRate the sample rate of the simulation 
+	 */
 	public void setUp(int numberOfRays, float sampleRate) {
 		
 		this.numberOfRays = numberOfRays;
@@ -66,7 +79,18 @@ public class Simulator {
 		});
 
 	}
-
+	
+	/**
+	 * Perform the simulation for custom absorption coefficients
+	 * 
+	 * @param bottom
+	 * @param top
+	 * @param east
+	 * @param west
+	 * @param north
+	 * @param south
+	 * @return a energetic simulated impulse response array
+	 */
 	public float[] simulateCoeff(double bottom, double top, double east,
 			double west, double north, double south) {
 		sectors.add(new Sector(new Vector(0, 0, 1), new Vector(1, 1, 0), bottom));
