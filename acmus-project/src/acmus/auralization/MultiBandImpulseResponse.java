@@ -1,5 +1,8 @@
 package acmus.auralization;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -164,22 +167,42 @@ public class MultiBandImpulseResponse {
 
 	public static void main(String[] args) {
 
-		int numberOfRays = 3000;
+		System.out.println("Setting up...");
+
+		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
+		String revPath = "r177.17_12_10/";
+		String runNum = "1";
+
+		String fileName = mainPath + revPath + runNum + "/info.txt";
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		StringBuilder sb = new StringBuilder(2000);
+
+		int numberOfRays = 5000;
 		float maxTime = 1.f;
 
 		// 4 band ranges in human limits
 		BandRangeSeq range = new BandRangeHarmSeq(20.0, 20000.0, 4);
 		float sampleRate = (float) range.getSR();
+		sb.append("Sample rate: " + sampleRate + "\n");
+		sb.append("Central frequencies:" + "\n");
+		for (Double d : range.getList()) {
+			sb.append("\t" + d + "\n");
+		}
+
+		System.out.println("Obtaining energetic impulse responses...");
+
+		long time = System.currentTimeMillis();
 
 		Simulator sim = new Simulator();
 
 		sim.setUp(numberOfRays, sampleRate);
 
 		float[][] content = new float[range.howMany()][];
-
-		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r175.17_12_10/";
-		String runNum = "4";
 
 		MultiBandSimulationViewer viewer = new MultiBandSimulationViewer(
 				mainPath + revPath + runNum + "/");
@@ -193,16 +216,23 @@ public class MultiBandImpulseResponse {
 		content[3] = sim.simulateCoeff(0.02, 0.04, 0.07, 0.1, 0.02, 0.03);
 		viewer.view(content[3], 1.f, "sim4");
 
-		long time = System.currentTimeMillis();
-		MultiBandImpulseResponse aur = new MultiBandImpulseResponse(range,
+		time = System.currentTimeMillis() - time;
+		sb.append("Simulating expended time:" + ((double) time) / 1000.0 + " s");
+
+		System.out
+				.println("Processing to get a multi-band impulse response...");
+
+		time = System.currentTimeMillis();
+		MultiBandImpulseResponse mbir = new MultiBandImpulseResponse(range,
 				content, maxTime);
 
 		double[] ir;
 
-		ir = aur.getSignal();
-		time = System.currentTimeMillis() - time;
+		ir = mbir.getSignal();
 
-		System.out.println("Expended time:" + ((double) time) / 1000.0 + " s");
+		time = System.currentTimeMillis() - time;
+		sb.append("Post processing expended time:" + ((double) time) / 1000.0
+				+ " s");
 
 		viewer.view(ir, 1.f, "ImpulseResponse");
 
@@ -224,5 +254,12 @@ public class MultiBandImpulseResponse {
 		String outStr = mainPath + revPath + "conv_" + runNum + ".wav";
 
 		Algorithms.convolve(irStr, archStr, outStr, bar);
+
+		try {
+			fw.write(sb.toString());
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

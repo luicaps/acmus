@@ -29,7 +29,7 @@ public class BandRangeHarmSeq implements BandRangeSeq {
 	private int nextSR(double end) {
 		int base = 0;
 		while (2 * end > base) {
-			base += 2205;
+			base += 4410;
 		}
 		return base;
 	}
