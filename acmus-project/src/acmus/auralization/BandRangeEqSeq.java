@@ -41,10 +41,6 @@ public class BandRangeEqSeq implements BandRangeSeq {
 		return new LinkedList<Double>(rangeSeq);
 	}
 
-	public void add() {
-		create(++howMany);
-	}
-
 	public int howMany() {
 		return howMany;
 	}
@@ -66,5 +62,14 @@ public class BandRangeEqSeq implements BandRangeSeq {
 			array[i] = rangeSeq.get(i);
 		}
 		return array;
+	}
+
+	@Override
+	public double getSR() {
+		int base = 0;
+		while (2 * overallEnd > base) {
+			base += 2205;
+		}
+		return base;
 	}
 }

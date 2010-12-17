@@ -21,7 +21,7 @@ public class MultiBandImpulseResponse {
 	private BandRangeSeq range;
 	private int arbitraryPowerOf2;
 	private float sampleRate;
-	private double rangeMax;
+	private double rangeSR;
 
 	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content) {
 		this(range, content, Float.MAX_VALUE);
@@ -29,7 +29,7 @@ public class MultiBandImpulseResponse {
 
 	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
 			float maxTime) {
-		this(range, content, 2.f * (float) range.getMax(), maxTime);
+		this(range, content, (float) range.getSR(), maxTime);
 	}
 
 	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
@@ -39,7 +39,7 @@ public class MultiBandImpulseResponse {
 					"the content's length must be the number of values in range");
 		}
 		this.range = range;
-		this.rangeMax = range.getMax();
+		this.rangeSR = range.getSR();
 		this.sampleRate = sampleRate;
 
 		int lengthMax = maxi(content, maxTime);
@@ -51,16 +51,16 @@ public class MultiBandImpulseResponse {
 		}
 		this.arbitraryPowerOf2 = (int) Math.pow(2, 8);
 		double[] impulseResponseArray = new double[lengthMax
-				+ (int) Math.ceil(2 * rangeMax)];
+				+ (int) Math.ceil(rangeSR)];
 
 		for (int j = 0; j < lengthMax; j++) {
 			double[] arrFreq = fillFrequencyDomain(j, content);
 			double[] arrTemp = fillTimeDomain(arrFreq);
 			// shift circular
-			for (int i = 0; i < rangeMax; i++) {
-				impulseResponseArray[j + (int) Math.floor(rangeMax) + i] += arrTemp[i];
+			for (int i = 0; i < rangeSR / 2; i++) {
+				impulseResponseArray[j + (int) Math.floor(rangeSR / 2) + i] += arrTemp[i];
 				impulseResponseArray[j + i] += arrTemp[i
-						+ (int) Math.floor(rangeMax)];
+						+ (int) Math.floor(rangeSR / 2)];
 			}
 			// if (j % 1000.0 == 0) {
 			// System.out.println(100.0*j/lengthMax + " %");
@@ -68,7 +68,7 @@ public class MultiBandImpulseResponse {
 		}
 		this.signal = new double[lengthMax];
 		for (int i = 0; i < lengthMax; i++) {
-			signal[i] = impulseResponseArray[(int) Math.floor(rangeMax) + i];
+			signal[i] = impulseResponseArray[(int) Math.floor(rangeSR / 2) + i];
 		}
 	}
 
@@ -132,11 +132,11 @@ public class MultiBandImpulseResponse {
 		Matrix e = new Matrix(energy, energy.length);
 		Matrix p = m.solve(e);
 
-		double factor = (double) arbitraryPowerOf2 / (2 * range.getMax());
+		double factor = (double) arbitraryPowerOf2 / rangeSR;
 		double[] arrFreq = new double[arbitraryPowerOf2];
 
 		double freqT;
-		for (int fq = 0; fq < rangeMax; fq++) {
+		for (int fq = 0; fq < rangeSR / 2; fq++) {
 			freqT = 0;
 			for (int j = 0; j < range.howMany(); j++) {
 				freqT += p.get(j, 0) * fq;
@@ -149,8 +149,8 @@ public class MultiBandImpulseResponse {
 
 	private double[] fillTimeDomain(double[] arrFreq) {
 		NewSignal sigTemp = (new NewSignal(arrFreq)).ifft();
-		double[] arrTemp = new double[(int) Math.ceil(2 * rangeMax)];
-		double factor = Math.floor(arbitraryPowerOf2) / (2 * rangeMax);
+		double[] arrTemp = new double[(int) Math.ceil(rangeSR)];
+		double factor = Math.floor(arbitraryPowerOf2) / rangeSR;
 		for (int i = 0; i < arbitraryPowerOf2; i++) {
 			arrTemp[Math.round((float) ((double) (i) / factor))] = sigTemp.get(
 					i).re();
@@ -169,7 +169,7 @@ public class MultiBandImpulseResponse {
 
 		// 4 band ranges in human limits
 		BandRangeSeq range = new BandRangeHarmSeq(20.0, 20000.0, 4);
-		float sampleRate = 2.f * (float) range.getMax();
+		float sampleRate = (float) range.getSR();
 
 		Simulator sim = new Simulator();
 

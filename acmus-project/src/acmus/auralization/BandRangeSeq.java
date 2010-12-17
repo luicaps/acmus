@@ -24,11 +24,6 @@ public interface BandRangeSeq {
 	public double[] getArray();
 
 	/**
-	 * adds a frequency value to the Band Range Sequence
-	 */
-	public void add();
-
-	/**
 	 * 
 	 * @return the number of frequency value in the Band Range Sequence
 	 */
@@ -42,8 +37,14 @@ public interface BandRangeSeq {
 
 	/**
 	 * 
+	 * @return the maximum frequency value in the Band Range Sequence
+	 */
+	public double getMax();
+
+	/**
+	 * 
 	 * @return the maximum frequency value represented by the Band Range
 	 *         Sequence
 	 */
-	public double getMax();
+	public double getSR();
 }
