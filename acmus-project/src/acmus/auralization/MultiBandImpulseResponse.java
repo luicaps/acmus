@@ -1,7 +1,13 @@
 package acmus.auralization;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+
 import Jama.Matrix;
 import acmus.dsp.NewSignal;
+import acmus.util.Algorithms;
 
 /**
  * A class to deal with an multi-band impulse response
@@ -159,7 +165,7 @@ public class MultiBandImpulseResponse {
 	public static void main(String[] args) {
 
 		int numberOfRays = 3000;
-		float maxTime = 0.7f;
+		float maxTime = 1.f;
 
 		// 4 band ranges in human limits
 		BandRangeSeq range = new BandRangeHarmSeq(20.0, 20000.0, 4);
@@ -171,7 +177,12 @@ public class MultiBandImpulseResponse {
 
 		float[][] content = new float[range.howMany()][];
 
-		MultiBandSimulationViewer viewer = new MultiBandSimulationViewer();
+		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
+		String revPath = "r175.17_12_10/";
+		String runNum = "4";
+
+		MultiBandSimulationViewer viewer = new MultiBandSimulationViewer(
+				mainPath + revPath + runNum + "/");
 
 		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.12, 0.05, 0.05);
 		viewer.view(content[0], 1.f, "sim1");
@@ -194,5 +205,24 @@ public class MultiBandImpulseResponse {
 		System.out.println("Expended time:" + ((double) time) / 1000.0 + " s");
 
 		viewer.view(ir, 1.f, "ImpulseResponse");
+
+		Mockery mockery = new Mockery() {
+			{
+				setImposteriser(ClassImposteriser.INSTANCE);
+			}
+		};
+
+		final IProgressMonitor bar = mockery.mock(IProgressMonitor.class);
+		mockery.checking(new Expectations() {
+			{
+				ignoring(bar);
+			}
+		});
+
+		String irStr = mainPath + revPath + runNum + "/waveImpulseResponse.wav";
+		String archStr = mainPath + "44k.wav";
+		String outStr = mainPath + revPath + "conv_" + runNum + ".wav";
+
+		Algorithms.convolve(irStr, archStr, outStr, bar);
 	}
 }

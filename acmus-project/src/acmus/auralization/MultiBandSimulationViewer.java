@@ -29,6 +29,17 @@ import acmus.util.WaveUtils;
  */
 public class MultiBandSimulationViewer {
 	
+	private String path;
+
+	public MultiBandSimulationViewer() {
+		this(System.getProperty("java.io.tmpdir", "/tmp")
+				+ System.getProperty("file.separator"));
+	}
+	
+	public MultiBandSimulationViewer(String path) {
+		this.path = path;
+	}
+
 	public void view(float[] floats, String title) {
 		double[] doubles = new double[floats.length];
 		for(int i = 0; i < floats.length; i++){
@@ -117,19 +128,15 @@ public class MultiBandSimulationViewer {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
-//		String fileName = "wave" + title + ".wav";
-		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wave" + title + ".wav";
+		String fileName = path + "wave" + title + ".wav";
 		WaveUtils.wavWrite(
 				ArrayUtils.scaleToMax(array, WaveUtils.getLimit(16)),
-				(float) AcmusApplication.SAMPLE_RATE, tempFile);
+				(float) AcmusApplication.SAMPLE_RATE, fileName);
 	}
 
 	public void print(double[] array, double rate, String title) throws IOException {
-//		String fileName = "wave"+ title +".csv";
-		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wave"+ title +".csv";
-		FileWriter fw = new FileWriter(tempFile);
+		String fileName = path + "wave"+ title +".csv";
+		FileWriter fw = new FileWriter(fileName);
 		StringBuilder sb = new StringBuilder(2000);
 
 		for (int i = 0; i < array.length; i++) {
@@ -165,10 +172,8 @@ public class MultiBandSimulationViewer {
 		plot.setRenderer(renderer);
 
 		// save it to png file
-//		String fileName = "wave" + title + ".png";
-		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
-				+ System.getProperty("file.separator") + "wave" + title + ".png";
-		File file = new File(tempFile);
+		String fileName = path + "wave" + title + ".png";
+		File file = new File(fileName);
 
 		ChartUtilities.saveChartAsPNG(file, chart, width, height);
 
