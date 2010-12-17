@@ -54,4 +54,13 @@ public class BandRangeEqSeq implements BandRangeSeq {
 	public double getMax() {
 		return overallEnd;
 	}
+
+	@Override
+	public double[] getArray() {
+		double[] array = new double[rangeSeq.size()];
+		for (int i = 0; i < rangeSeq.size() ; i++) {
+			array[i] = rangeSeq.get(i);
+		}
+		return array;
+	}
 }

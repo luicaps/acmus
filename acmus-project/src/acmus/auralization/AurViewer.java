@@ -111,7 +111,7 @@ public class AurViewer {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
-
+//		String fileName = "wave" + title + ".wav";
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
 				+ System.getProperty("file.separator") + "wave" + title + ".wav";
 		WaveUtils.wavWrite(
@@ -120,6 +120,7 @@ public class AurViewer {
 	}
 
 	public void print(double[] array, double rate, String title) throws IOException {
+//		String fileName = "wave"+ title +".csv";
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
 				+ System.getProperty("file.separator") + "wave"+ title +".csv";
 		FileWriter fw = new FileWriter(tempFile);
@@ -158,6 +159,7 @@ public class AurViewer {
 		plot.setRenderer(renderer);
 
 		// save it to png file
+//		String fileName = "wave" + title + ".png";
 		String tempFile = System.getProperty("java.io.tmpdir", "/tmp")
 				+ System.getProperty("file.separator") + "wave" + title + ".png";
 		File file = new File(tempFile);
