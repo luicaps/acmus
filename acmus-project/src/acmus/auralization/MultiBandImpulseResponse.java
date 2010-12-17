@@ -3,14 +3,8 @@ package acmus.auralization;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-
 import Jama.Matrix;
 import acmus.dsp.NewSignal;
-import acmus.util.Algorithms;
 
 /**
  * A class to deal with an multi-band impulse response
@@ -170,7 +164,7 @@ public class MultiBandImpulseResponse {
 		System.out.println("Setting up...");
 
 		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r177.17_12_10/";
+		String revPath = "r179.17_12_10/";
 		String runNum = "1";
 
 		String fileName = mainPath + revPath + runNum + "/info.txt";
@@ -195,7 +189,6 @@ public class MultiBandImpulseResponse {
 		}
 
 		System.out.println("Obtaining energetic impulse responses...");
-
 		long time = System.currentTimeMillis();
 
 		Simulator sim = new Simulator();
@@ -217,12 +210,13 @@ public class MultiBandImpulseResponse {
 		viewer.view(content[3], 1.f, "sim4");
 
 		time = System.currentTimeMillis() - time;
-		sb.append("Simulating expended time:" + ((double) time) / 1000.0 + " s");
+		sb.append("Simulation expended time:" + ((double) time) / 1000.0
+				+ " s\n");
 
 		System.out
 				.println("Processing to get a multi-band impulse response...");
-
 		time = System.currentTimeMillis();
+
 		MultiBandImpulseResponse mbir = new MultiBandImpulseResponse(range,
 				content, maxTime);
 
@@ -232,10 +226,11 @@ public class MultiBandImpulseResponse {
 
 		time = System.currentTimeMillis() - time;
 		sb.append("Post processing expended time:" + ((double) time) / 1000.0
-				+ " s");
+				+ " s\n");
 
 		viewer.view(ir, 1.f, "ImpulseResponse");
-
+		
+		/* TODO Convolution not working as espected, NEED TO FIX
 		Mockery mockery = new Mockery() {
 			{
 				setImposteriser(ClassImposteriser.INSTANCE);
@@ -252,14 +247,23 @@ public class MultiBandImpulseResponse {
 		String irStr = mainPath + revPath + runNum + "/waveImpulseResponse.wav";
 		String archStr = mainPath + "44k.wav";
 		String outStr = mainPath + revPath + "conv_" + runNum + ".wav";
-
+		
+		System.out.println("Convolving...");
+		time = System.currentTimeMillis();
+		
 		Algorithms.convolve(irStr, archStr, outStr, bar);
 
+		time = System.currentTimeMillis() - time;
+		sb.append("Convolve expended time:" + ((double) time) / 1000.0 + " s\n");
+		*/
+		
 		try {
 			fw.write(sb.toString());
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	
+		System.out.println("DONE");
 	}
 }
