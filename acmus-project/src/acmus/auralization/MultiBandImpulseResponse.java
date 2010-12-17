@@ -4,12 +4,12 @@ import Jama.Matrix;
 import acmus.dsp.NewSignal;
 
 /**
- * A class to deal with an auralization
+ * A class to deal with an multi-band impulse response
  * 
  * @author migmruiz
  * 
  */
-public class Auralization {
+public class MultiBandImpulseResponse {
 
 	private double[] signal;
 	private BandRangeSeq range;
@@ -17,15 +17,16 @@ public class Auralization {
 	private float sampleRate;
 	private double rangeMax;
 
-	public Auralization(BandRangeSeq range, float[][] content) {
+	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content) {
 		this(range, content, Float.MAX_VALUE);
 	}
 
-	public Auralization(BandRangeSeq range, float[][] content, float maxTime) {
+	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
+			float maxTime) {
 		this(range, content, 2.f * (float) range.getMax(), maxTime);
 	}
 
-	public Auralization(BandRangeSeq range, float[][] content,
+	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
 			float sampleRate, float maxTime) {
 		if (content.length != range.howMany()) {
 			throw new IllegalArgumentException(
@@ -61,8 +62,7 @@ public class Auralization {
 		}
 		this.signal = new double[lengthMax];
 		for (int i = 0; i < lengthMax; i++) {
-			signal[i] = impulseResponseArray[(int) Math.floor(rangeMax)
-					+ i];
+			signal[i] = impulseResponseArray[(int) Math.floor(rangeMax) + i];
 		}
 	}
 
@@ -109,21 +109,6 @@ public class Auralization {
 		} else {
 			return array;
 		}
-	}
-
-	private double[] fillFrequencyDomainOld(int timeIndex, float[][] content) {
-		double freqT;
-		double factor = (double) arbitraryPowerOf2 / range.getMax();
-		double[] arrFreq = new double[arbitraryPowerOf2];
-		for (int i = 0; i < range.howMany(); i++) {
-			freqT = content[i][timeIndex];
-			for (int k = (int) (range.getMin() * factor); k < (i + 1) * factor
-					* range.getMax() / range.howMany(); k++) {
-				arrFreq[k] = freqT;
-				arrFreq[arbitraryPowerOf2 - k - 1] = freqT;
-			}
-		}
-		return arrFreq;
 	}
 
 	private double[] fillFrequencyDomain(int timeIndex, float[][] content) {
@@ -186,7 +171,7 @@ public class Auralization {
 
 		float[][] content = new float[range.howMany()][];
 
-		AurViewer viewer = new AurViewer();
+		MultiBandSimulationViewer viewer = new MultiBandSimulationViewer();
 
 		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.12, 0.05, 0.05);
 		viewer.view(content[0], 1.f, "sim1");
@@ -198,7 +183,8 @@ public class Auralization {
 		viewer.view(content[3], 1.f, "sim4");
 
 		long time = System.currentTimeMillis();
-		Auralization aur = new Auralization(range, content, maxTime);
+		MultiBandImpulseResponse aur = new MultiBandImpulseResponse(range,
+				content, maxTime);
 
 		double[] ir;
 
@@ -207,6 +193,6 @@ public class Auralization {
 
 		System.out.println("Expended time:" + ((double) time) / 1000.0 + " s");
 
-		viewer.view(ir, "ImpulseResponse");
+		viewer.view(ir, 1.f, "ImpulseResponse");
 	}
 }

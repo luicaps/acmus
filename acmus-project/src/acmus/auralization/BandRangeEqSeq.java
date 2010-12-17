@@ -9,12 +9,16 @@ public class BandRangeEqSeq implements BandRangeSeq {
 	private double overallEnd;
 	private int howMany;
 	private List<Double> rangeSeq;
-	
+
 	/**
 	 * Equally separated Band Range Sequence
-	 * @param init first frequency value 
-	 * @param end last frequency value
-	 * @param many how many values are
+	 * 
+	 * @param init
+	 *            first frequency value
+	 * @param end
+	 *            last frequency value
+	 * @param many
+	 *            how many values are
 	 */
 	public BandRangeEqSeq(double init, double end, int many) {
 		overallInit = init;
@@ -29,18 +33,18 @@ public class BandRangeEqSeq implements BandRangeSeq {
 		double content = overallInit;
 		for (int i = 1; i < many; i++) {
 			rangeSeq.add(content);
-			content =+ rate;
+			content = +rate;
 		}
 	}
-	
+
 	public List<Double> getList() {
 		return new LinkedList<Double>(rangeSeq);
 	}
-	
+
 	public void add() {
 		create(++howMany);
 	}
-	
+
 	public int howMany() {
 		return howMany;
 	}
@@ -58,7 +62,7 @@ public class BandRangeEqSeq implements BandRangeSeq {
 	@Override
 	public double[] getArray() {
 		double[] array = new double[rangeSeq.size()];
-		for (int i = 0; i < rangeSeq.size() ; i++) {
+		for (int i = 0; i < rangeSeq.size(); i++) {
 			array[i] = rangeSeq.get(i);
 		}
 		return array;

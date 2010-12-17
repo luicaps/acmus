@@ -21,7 +21,13 @@ import acmus.AcmusApplication;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
 
-public class AurViewer {
+/**
+ * Class to plot charts and create archives of a multi-band simulation
+ * 
+ * @author migmruiz
+ *
+ */
+public class MultiBandSimulationViewer {
 	
 	public void view(float[] floats, String title) {
 		double[] doubles = new double[floats.length];
