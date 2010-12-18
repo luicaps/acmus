@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import Jama.Matrix;
 import acmus.dsp.NewSignal;
+import acmus.util.ArrayUtils;
 
 /**
  * A class to deal with an multi-band impulse response
@@ -40,8 +41,6 @@ public class MultiBandImpulseResponse {
 		this.sampleRate = sampleRate;
 
 		int lengthMax = maxi(content, maxTime);
-
-		System.out.println("lengthMax = " + lengthMax);
 
 		for (int i = 0; i < range.howMany(); i++) {
 			content[i] = fillWithZeros(content[i], lengthMax);
@@ -164,8 +163,8 @@ public class MultiBandImpulseResponse {
 		System.out.println("Setting up...");
 
 		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r179.17_12_10/";
-		String runNum = "1";
+		String revPath = "r180.18_12_10/";
+		String runNum = "2";
 
 		String fileName = mainPath + revPath + runNum + "/info.txt";
 		FileWriter fw = null;
@@ -183,7 +182,7 @@ public class MultiBandImpulseResponse {
 		BandRangeSeq range = new BandRangeHarmSeq(20.0, 20000.0, 4);
 		float sampleRate = (float) range.getSR();
 		sb.append("Sample rate: " + sampleRate + "\n");
-		sb.append("Central frequencies:" + "\n");
+		sb.append(range.howMany() + " central frequencies:" + "\n");
 		for (Double d : range.getList()) {
 			sb.append("\t" + d + "\n");
 		}
@@ -201,13 +200,13 @@ public class MultiBandImpulseResponse {
 				mainPath + revPath + runNum + "/");
 
 		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.12, 0.05, 0.05);
-		viewer.view(content[0], 1.f, "sim1");
+		viewer.view(content[0], "sim1");
 		content[1] = sim.simulateCoeff(0.01, 0.02, 0.04, 0.06, 0.14, 0.12);
-		viewer.view(content[1], 1.f, "sim2");
+		viewer.view(content[1],"sim2");
 		content[2] = sim.simulateCoeff(0.02, 0.03, 0.001, 0.04, 0.16, 0.1);
-		viewer.view(content[2], 1.f, "sim3");
+		viewer.view(content[2], "sim3");
 		content[3] = sim.simulateCoeff(0.02, 0.04, 0.07, 0.1, 0.02, 0.03);
-		viewer.view(content[3], 1.f, "sim4");
+		viewer.view(content[3], "sim4");
 
 		time = System.currentTimeMillis() - time;
 		sb.append("Simulation expended time:" + ((double) time) / 1000.0
@@ -223,39 +222,49 @@ public class MultiBandImpulseResponse {
 		double[] ir;
 
 		ir = mbir.getSignal();
+		ir = ArrayUtils.scaleToUnit(ir);
 
 		time = System.currentTimeMillis() - time;
 		sb.append("Post processing expended time:" + ((double) time) / 1000.0
 				+ " s\n");
 
-		viewer.view(ir, 1.f, "ImpulseResponse");
-		
-		/* TODO Convolution not working as espected, NEED TO FIX
-		Mockery mockery = new Mockery() {
-			{
-				setImposteriser(ClassImposteriser.INSTANCE);
-			}
-		};
+		viewer.view(ir, 1.0, "ImpulseResponse");
 
-		final IProgressMonitor bar = mockery.mock(IProgressMonitor.class);
-		mockery.checking(new Expectations() {
-			{
-				ignoring(bar);
-			}
-		});
-
-		String irStr = mainPath + revPath + runNum + "/waveImpulseResponse.wav";
-		String archStr = mainPath + "44k.wav";
-		String outStr = mainPath + revPath + "conv_" + runNum + ".wav";
-		
-		System.out.println("Convolving...");
-		time = System.currentTimeMillis();
-		
-		Algorithms.convolve(irStr, archStr, outStr, bar);
-
-		time = System.currentTimeMillis() - time;
-		sb.append("Convolve expended time:" + ((double) time) / 1000.0 + " s\n");
-		*/
+		/*
+		 * System.out.println("Convolving...");
+		 * 
+		 * TODO Convolution algorithm not working, Algorithms.convolve(...) and
+		 * this, based on Algorithms.convolve(...) time =
+		 * System.currentTimeMillis();
+		 * 
+		 * String archStr = mainPath + "44k.wav"; String outStr = mainPath +
+		 * revPath + "conv_" + runNum + ".wav";
+		 * 
+		 * int arch[] = WaveUtils.wavRead(archStr); double a[] =
+		 * ArrayUtils.scaleToUnit(arch);
+		 * 
+		 * double[] conv = new double[a.length + ir.length - 1];
+		 * 
+		 * NewSignal irSig = new NewSignal(ir); NewSignal aSig = new
+		 * NewSignal(a); NewSignal out = new NewSignal(conv);
+		 * 
+		 * Mockery mockery = new Mockery() { {
+		 * setImposteriser(ClassImposteriser.INSTANCE); } };
+		 * 
+		 * final IProgressMonitor bar = mockery.mock(IProgressMonitor.class);
+		 * mockery.checking(new Expectations() { { ignoring(bar); } });
+		 * 
+		 * out = aSig.convolve(irSig, bar); conv = new double[out.size()]; for
+		 * (int i = 0; i < out.size(); i++) { conv[i] = out.get(i).re(); }
+		 * 
+		 * double[] scaled = ArrayUtils.scaleToMax(conv, (double)
+		 * WaveUtils.getLimit(16)); WaveUtils.wavWrite(scaled, 1, sampleRate,
+		 * outStr);
+		 * 
+		 * time = System.currentTimeMillis() - time;
+		 * sb.append("Convolve expended time:" + ((double) time) / 1000.0 +
+		 * " s\n");
+		 */
 		
 		try {
 			fw.write(sb.toString());
@@ -263,7 +272,7 @@ public class MultiBandImpulseResponse {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
+
 		System.out.println("DONE");
 	}
 }

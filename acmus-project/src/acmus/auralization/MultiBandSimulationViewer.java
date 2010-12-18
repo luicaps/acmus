@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -25,96 +24,94 @@ import acmus.util.WaveUtils;
  * Class to plot charts and create archives of a multi-band simulation
  * 
  * @author migmruiz
- *
+ * 
  */
 public class MultiBandSimulationViewer {
-	
+
 	private String path;
 
 	public MultiBandSimulationViewer() {
 		this(System.getProperty("java.io.tmpdir", "/tmp")
 				+ System.getProperty("file.separator"));
 	}
-	
+
 	public MultiBandSimulationViewer(String path) {
 		this.path = path;
 	}
 
 	public void view(float[] floats, String title) {
-		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
-			doubles[i] = floats[i];
-		}
-		view(doubles, title);
+		view(floats, 1.f, title);
 	}
-	
+
 	public void view(float[] floats, float rate, String title) {
 		XYBarRenderer renderer = new XYBarRenderer();
-		renderer.setDrawBarOutline(false);
 		view(floats, rate, title, renderer);
 	}
-	
-	public void view(float[] floats, float rate, String title, XYItemRenderer renderer) {
+
+	public void view(float[] floats, float rate, String title,
+			XYItemRenderer renderer) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, rate, title, renderer);
 	}
-	
+
 	public void view(float[] floats, String title, XYItemRenderer renderer) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, title, renderer);
 	}
-	
-	public void view(Float[] floats, Float rate, String title, XYItemRenderer renderer) {
+
+	public void view(Float[] floats, Float rate, String title,
+			XYItemRenderer renderer) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, rate.doubleValue(), title, renderer);
 	}
-	
+
 	public void view(Float[] floats, Float rate, String title) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, rate.doubleValue(), title);
 	}
-	
+
 	public void view(Float[] floats, String title, XYItemRenderer renderer) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, title, renderer);
 	}
-	
+
 	public void view(Float[] floats, String title) {
 		double[] doubles = new double[floats.length];
-		for(int i = 0; i < floats.length; i++){
+		for (int i = 0; i < floats.length; i++) {
 			doubles[i] = floats[i];
 		}
 		view(doubles, title);
 	}
-	
+
 	public void view(double[] array, String title) {
 		view(array, 1 / AcmusApplication.SAMPLE_RATE, title);
 	}
-	
+
 	public void view(double[] array, String title, XYItemRenderer renderer) {
 		view(array, 1 / AcmusApplication.SAMPLE_RATE, title, renderer);
 	}
-	
-	public void view(double[] array, double rate, String title){
+
+	public void view(double[] array, double rate, String title) {
 		view(array, rate, title, new XYDotRenderer());
 	}
-	
-	public void view(double[] array, double rate, String title, XYItemRenderer renderer) {
+
+	public void view(double[] array, double rate, String title,
+			XYItemRenderer renderer) {
 		try {
 			print(array, rate, title);
 		} catch (IOException e) {
@@ -134,8 +131,9 @@ public class MultiBandSimulationViewer {
 				(float) AcmusApplication.SAMPLE_RATE, fileName);
 	}
 
-	public void print(double[] array, double rate, String title) throws IOException {
-		String fileName = path + "wave"+ title +".csv";
+	public void print(double[] array, double rate, String title)
+			throws IOException {
+		String fileName = path + "wave" + title + ".csv";
 		FileWriter fw = new FileWriter(fileName);
 		StringBuilder sb = new StringBuilder(2000);
 
@@ -151,8 +149,9 @@ public class MultiBandSimulationViewer {
 		fw.close();
 	}
 
-	public void plot(double[] array, double rate, String title, XYItemRenderer renderer) throws InterruptedException, IOException {
-		int width = 400, height = 300;
+	public void plot(double[] array, double rate, String title,
+			XYItemRenderer renderer) throws InterruptedException, IOException {
+		int width = 800, height = 600;
 
 		// data set...
 		final XYSeries series = new XYSeries(title);
@@ -163,12 +162,11 @@ public class MultiBandSimulationViewer {
 
 		// create a scatter chart...
 		final boolean noLegend = false;
-		final JFreeChart chart = ChartFactory.createScatterPlot(
-				title, "X", "Y", data, PlotOrientation.VERTICAL,
-				noLegend, false, false);
+		final JFreeChart chart = ChartFactory.createScatterPlot(title, "X",
+				"Y", data, PlotOrientation.VERTICAL, noLegend, false, false);
 
 		final XYPlot plot = chart.getXYPlot();
-	
+
 		plot.setRenderer(renderer);
 
 		// save it to png file
@@ -178,9 +176,9 @@ public class MultiBandSimulationViewer {
 		ChartUtilities.saveChartAsPNG(file, chart, width, height);
 
 		// show chart...
-		ChartFrame frame = new ChartFrame(title, chart);
-		frame.pack();
-		frame.setVisible(true);
+		// ChartFrame frame = new ChartFrame(title, chart);
+		// frame.pack();
+		// frame.setVisible(true);
 
 		// waits 15 seconds...
 		// Thread.sleep(15000l);

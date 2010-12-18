@@ -35,10 +35,9 @@ public class BandRangeHarmSeq implements BandRangeSeq {
 	}
 
 	private void create(int many) {
-		many--;
 		this.rangeSeq = new LinkedList<Double>();
 		double rate = Math.log(overrallEnd / overallInit) / Math.log(2);
-		for (float i = 0; i < 1.001f; i += 1.f / (float) many) {
+		for (float i = 0; i < 1.001f; i += 1.f / (float) (many - 1)) {
 			this.rangeSeq.add(overallInit * Math.pow(2, rate * i));
 		}
 	}
@@ -66,7 +65,7 @@ public class BandRangeHarmSeq implements BandRangeSeq {
 	public double getMin() {
 		return overallInit;
 	}
-	
+
 	@Override
 	public double getMax() {
 		return overrallEnd;
@@ -76,5 +75,5 @@ public class BandRangeHarmSeq implements BandRangeSeq {
 	public double getSR() {
 		return sr;
 	}
-
+	
 }
