@@ -3,9 +3,15 @@ package acmus.auralization;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+
 import Jama.Matrix;
 import acmus.dsp.NewSignal;
 import acmus.util.ArrayUtils;
+import acmus.util.WaveUtils;
 
 /**
  * A class to deal with an multi-band impulse response
@@ -163,8 +169,8 @@ public class MultiBandImpulseResponse {
 		System.out.println("Setting up...");
 
 		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r180.18_12_10/";
-		String runNum = "2";
+		String revPath = "r181.23_12_10/";
+		String runNum = "1";
 
 		String fileName = mainPath + revPath + runNum + "/info.txt";
 		FileWriter fw = null;
@@ -202,7 +208,7 @@ public class MultiBandImpulseResponse {
 		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.12, 0.05, 0.05);
 		viewer.view(content[0], "sim1");
 		content[1] = sim.simulateCoeff(0.01, 0.02, 0.04, 0.06, 0.14, 0.12);
-		viewer.view(content[1],"sim2");
+		viewer.view(content[1], "sim2");
 		content[2] = sim.simulateCoeff(0.02, 0.03, 0.001, 0.04, 0.16, 0.1);
 		viewer.view(content[2], "sim3");
 		content[3] = sim.simulateCoeff(0.02, 0.04, 0.07, 0.1, 0.02, 0.03);
@@ -230,42 +236,52 @@ public class MultiBandImpulseResponse {
 
 		viewer.view(ir, 1.0, "ImpulseResponse");
 
-		/*
-		 * System.out.println("Convolving...");
-		 * 
-		 * TODO Convolution algorithm not working, Algorithms.convolve(...) and
-		 * this, based on Algorithms.convolve(...) time =
-		 * System.currentTimeMillis();
-		 * 
-		 * String archStr = mainPath + "44k.wav"; String outStr = mainPath +
-		 * revPath + "conv_" + runNum + ".wav";
-		 * 
-		 * int arch[] = WaveUtils.wavRead(archStr); double a[] =
-		 * ArrayUtils.scaleToUnit(arch);
-		 * 
-		 * double[] conv = new double[a.length + ir.length - 1];
-		 * 
-		 * NewSignal irSig = new NewSignal(ir); NewSignal aSig = new
-		 * NewSignal(a); NewSignal out = new NewSignal(conv);
-		 * 
-		 * Mockery mockery = new Mockery() { {
-		 * setImposteriser(ClassImposteriser.INSTANCE); } };
-		 * 
-		 * final IProgressMonitor bar = mockery.mock(IProgressMonitor.class);
-		 * mockery.checking(new Expectations() { { ignoring(bar); } });
-		 * 
-		 * out = aSig.convolve(irSig, bar); conv = new double[out.size()]; for
-		 * (int i = 0; i < out.size(); i++) { conv[i] = out.get(i).re(); }
-		 * 
-		 * double[] scaled = ArrayUtils.scaleToMax(conv, (double)
-		 * WaveUtils.getLimit(16)); WaveUtils.wavWrite(scaled, 1, sampleRate,
-		 * outStr);
-		 * 
-		 * time = System.currentTimeMillis() - time;
-		 * sb.append("Convolve expended time:" + ((double) time) / 1000.0 +
-		 * " s\n");
-		 */
+		System.out.println("Convolving...");
+
+		time = System.currentTimeMillis();
+
+		String archStr = mainPath + "44k.wav";
+		String outStr = mainPath + revPath + runNum + "/conv.wav";
+
+		int arch[] = WaveUtils.wavRead(archStr);
+		double a[] = ArrayUtils.scaleToUnit(arch);
+
+		double[] conv = new double[a.length + ir.length - 1];
+
+		NewSignal irSig = new NewSignal(ir);
+		NewSignal aSig = new NewSignal(a);
+		NewSignal out = new NewSignal(conv);
+
+		Mockery mockery = new Mockery() {
+			{
+				setImposteriser(ClassImposteriser.INSTANCE);
+			}
+		};
+
+		final IProgressMonitor bar = mockery.mock(IProgressMonitor.class);
+		mockery.checking(new Expectations() {
+			{
+				ignoring(bar);
+			}
+		});
+
+		out = aSig.convolve(irSig, bar);
 		
+		if (conv.length != out.size()) {
+			System.out.println("Tamanhos diferentes");
+		}
+		
+		for (int i = 0; i < out.size(); i++) {
+			conv[i] = out.get(i).re();
+		}
+
+		double[] scaled = ArrayUtils.scaleToMax(conv,
+				(double) WaveUtils.getLimit(16));
+		WaveUtils.wavWrite(scaled, 1, sampleRate, outStr);
+
+		time = System.currentTimeMillis() - time;
+		sb.append("Convolve expended time:" + ((double) time) / 1000.0 + " s\n");
+
 		try {
 			fw.write(sb.toString());
 			fw.close();
@@ -273,6 +289,6 @@ public class MultiBandImpulseResponse {
 			e.printStackTrace();
 		}
 
-		System.out.println("DONE");
+		System.out.println("Done.");
 	}
 }

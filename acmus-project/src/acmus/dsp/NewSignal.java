@@ -120,37 +120,30 @@ public class NewSignal {
 		g = g.fft();
 		f = f.pointwiseMultiply(g);
 		f = f.ifft();
-		f = f.unpad(0.01);
+		//f = f.unpad(0.01);
 		return f;    	
 	}
 
 	// Compute the linear convolution of this signal and g
 	public NewSignal convolve(NewSignal g, IProgressMonitor monitor) {
-		Complex ZERO = new Complex(0.0, 0.0);
 		NewSignal f = this;
-
-		f = f.pad();
-		g = g.pad();
-
-		NewSignal a = new NewSignal(2 * f.size());
-		for (int i = 0; i < f.size(); i++) {
-			a.value[i] = f.value[i];
+		
+		int size = nextPowerOf2(Math.max(g.size(), f.size()));
+		
+		NewSignal a = f.pad(size);
+		NewSignal b = g.pad(size);
+		
+		NewSignal conv = a.cconvolve(b, monitor);
+		
+		int lengthPar = g.size() + f.size() - 1;
+		
+		NewSignal result = new NewSignal(lengthPar);
+		
+		for (int i = 0; i < lengthPar; i++) {
+			result.value[i] = conv.value[i];
 		}
 		
-		for (int i = f.size(); i < 2 * f.size(); i++) {
-			a.value[i] = ZERO;
-		}
-		
-		NewSignal b = new NewSignal(2 * g.size());
-		for (int i = 0; i < g.size(); i++) {
-			b.value[i] = g.value[i];
-		}
-		
-		for (int i = g.size(); i < 2 * g.size(); i++) {
-			b.value[i] = ZERO;
-		}
-		
-		return a.cconvolve(b, monitor);
+		return result;
 	}
 
 	public NewSignal pointwiseMultiply(NewSignal g) {
@@ -168,19 +161,10 @@ public class NewSignal {
 		return b;
 	}
 
-	private NewSignal pad() {
-		int padSize = this.nextPowerOf2(this.size());
-		Complex ZERO = new Complex(0.0, 0.0);
-		NewSignal padded = new NewSignal(padSize);
-
-		for (int i = 0; i < this.size(); i++) {
-			padded.value[i] = this.value[i];
-		}
-		for (int i = this.size(); i < padSize; i++) {
-			padded.value[i] = ZERO;
-		}
-		return padded;
-	}
+//	private NewSignal pad() {
+//		int padSize = this.nextPowerOf2(this.size());
+//		return pad(padSize);
+//	}
 	
 	private NewSignal pad(int size) {
 		Complex ZERO = new Complex(0.0, 0.0);
@@ -195,26 +179,26 @@ public class NewSignal {
 		return padded;
 	}
 	
-	private NewSignal unpad(double delta) {
-		int i;
-		int space = 11025;
-		NewSignal unpadded;
-		for (i = (this.size()) - 1; i >= 0; i--) {
-			if (this.value[i].re() > delta) break;
-		}
-		i += space;
-		if (i < this.size()) {
-			unpadded = new NewSignal(i);
-		}
-		else {
-			return this;
-		}
-		
-		for (int j = 0; j < i; j++) {
-			unpadded.value[j] = this.value[j];
-		}
-		return unpadded;
-	}
+//	private NewSignal unpad(double delta) {
+//		int i;
+//		int space = 11025;
+//		NewSignal unpadded;
+//		for (i = (this.size()) - 1; i >= 0; i--) {
+//			if (this.value[i].re() > delta) break;
+//		}
+//		i += space;
+//		if (i < this.size()) {
+//			unpadded = new NewSignal(i);
+//		}
+//		else {
+//			return this;
+//		}
+//		
+//		for (int j = 0; j < i; j++) {
+//			unpadded.value[j] = this.value[j];
+//		}
+//		return unpadded;
+//	}
 
 	private int nextPowerOf2(int n) {
 		int BITSPACE = 32;
