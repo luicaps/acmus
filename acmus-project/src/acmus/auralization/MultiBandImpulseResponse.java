@@ -23,9 +23,9 @@ public class MultiBandImpulseResponse {
 
 	private double[] signal;
 	private BandRangeSeq range;
+	private int howMany;
 	private int arbitraryPowerOf2;
 	private float sampleRate;
-	private double rangeSR;
 
 	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content) {
 		this(range, content, Float.MAX_VALUE);
@@ -43,26 +43,25 @@ public class MultiBandImpulseResponse {
 					"the content's length must be the number of values in range");
 		}
 		this.range = range;
-		this.rangeSR = range.getSR();
+		this.howMany = range.howMany();
 		this.sampleRate = sampleRate;
 
 		int lengthMax = maxi(content, maxTime);
 
-		for (int i = 0; i < range.howMany(); i++) {
+		for (int i = 0; i < howMany; i++) {
 			content[i] = fillWithZeros(content[i], lengthMax);
 		}
 		this.arbitraryPowerOf2 = (int) Math.pow(2, 8);
 		double[] impulseResponseArray = new double[lengthMax
-				+ (int) Math.ceil(rangeSR)];
+				+ arbitraryPowerOf2];
 
 		for (int j = 0; j < lengthMax; j++) {
 			double[] arrFreq = fillFrequencyDomain(j, content);
 			double[] arrTemp = fillTimeDomain(arrFreq);
 			// shift circular
-			for (int i = 0; i < rangeSR / 2; i++) {
-				impulseResponseArray[j + (int) Math.floor(rangeSR / 2) + i] += arrTemp[i];
-				impulseResponseArray[j + i] += arrTemp[i
-						+ (int) Math.floor(rangeSR / 2)];
+			for (int i = 0; i < arbitraryPowerOf2 / 2; i++) {
+				impulseResponseArray[j + i + arbitraryPowerOf2 / 2] += arrTemp[i];
+				impulseResponseArray[j + i] += arrTemp[i + arbitraryPowerOf2 / 2];
 			}
 			// if (j % 1000.0 == 0) {
 			// System.out.println(100.0*j/lengthMax + " %");
@@ -70,7 +69,7 @@ public class MultiBandImpulseResponse {
 		}
 		this.signal = new double[lengthMax];
 		for (int i = 0; i < lengthMax; i++) {
-			signal[i] = impulseResponseArray[(int) Math.floor(rangeSR / 2) + i];
+			signal[i] = impulseResponseArray[arbitraryPowerOf2 / 2 + i];
 		}
 	}
 
@@ -120,13 +119,13 @@ public class MultiBandImpulseResponse {
 	}
 
 	private double[] fillFrequencyDomain(int timeIndex, float[][] content) {
-		double[] energy = new double[range.howMany()];
+		double[] energy = new double[howMany];
 		double[] freq = range.getArray();
-		double[][] sistFreq = new double[range.howMany()][];
-		for (int i = 0; i < range.howMany(); i++) {
+		double[][] sistFreq = new double[howMany][];
+		for (int i = 0; i < howMany; i++) {
 			energy[i] = content[i][timeIndex];
-			sistFreq[i] = new double[range.howMany()];
-			for (int j = 0; j < range.howMany(); j++) {
+			sistFreq[i] = new double[howMany];
+			for (int j = 0; j < howMany; j++) {
 				sistFreq[i][j] = Math.pow(freq[i], j);
 			}
 		}
@@ -134,28 +133,28 @@ public class MultiBandImpulseResponse {
 		Matrix e = new Matrix(energy, energy.length);
 		Matrix p = m.solve(e);
 
-		double factor = (double) arbitraryPowerOf2 / rangeSR;
+		double factor = sampleRate / (double) arbitraryPowerOf2;
 		double[] arrFreq = new double[arbitraryPowerOf2];
 
-		double freqT;
-		for (int fq = 0; fq < rangeSR / 2; fq++) {
-			freqT = 0;
-			for (int j = 0; j < range.howMany(); j++) {
-				freqT += p.get(j, 0) * fq;
+		double fqVal;
+		for (int i = 0; i < arbitraryPowerOf2 / 2; i++) {
+			fqVal = p.get(howMany - 1, 0);
+			for (int j = howMany - 2; j >= 0; j--) {
+				fqVal = p.get(j, 0) + i * factor * fqVal;
 			}
-			arrFreq[Math.round((float) (fq * factor))] = freqT;
-			arrFreq[arbitraryPowerOf2 - (int) Math.ceil(fq * factor) - 1] = freqT;
+			arrFreq[i] = fqVal;
+			if (i != 0) {
+				arrFreq[arbitraryPowerOf2 - i] = fqVal;
+			}
 		}
 		return arrFreq;
 	}
 
 	private double[] fillTimeDomain(double[] arrFreq) {
 		NewSignal sigTemp = (new NewSignal(arrFreq)).ifft();
-		double[] arrTemp = new double[(int) Math.ceil(rangeSR)];
-		double factor = Math.floor(arbitraryPowerOf2) / rangeSR;
+		double[] arrTemp = new double[arbitraryPowerOf2];
 		for (int i = 0; i < arbitraryPowerOf2; i++) {
-			arrTemp[Math.round((float) ((double) (i) / factor))] = sigTemp.get(
-					i).re();
+			arrTemp[i] = sigTemp.get(i).re();
 		}
 		return arrTemp;
 	}
@@ -169,7 +168,7 @@ public class MultiBandImpulseResponse {
 		System.out.println("Setting up...");
 
 		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r181.23_12_10/";
+		String revPath = "r182.23_12_10/";
 		String runNum = "1";
 
 		String fileName = mainPath + revPath + runNum + "/info.txt";
@@ -266,11 +265,11 @@ public class MultiBandImpulseResponse {
 		});
 
 		out = aSig.convolve(irSig, bar);
-		
+
 		if (conv.length != out.size()) {
 			System.out.println("Tamanhos diferentes");
 		}
-		
+
 		for (int i = 0; i < out.size(); i++) {
 			conv[i] = out.get(i).re();
 		}
