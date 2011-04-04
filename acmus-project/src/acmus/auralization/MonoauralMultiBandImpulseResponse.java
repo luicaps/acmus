@@ -19,7 +19,7 @@ import acmus.util.WaveUtils;
  * @author migmruiz
  * 
  */
-public class MultiBandImpulseResponse {
+public class MonoauralMultiBandImpulseResponse {
 
 	private double[] signal;
 	private BandRangeSeq range;
@@ -27,16 +27,16 @@ public class MultiBandImpulseResponse {
 	private int arbitraryPowerOf2;
 	private float sampleRate;
 
-	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content) {
+	public MonoauralMultiBandImpulseResponse(BandRangeSeq range, float[][] content) {
 		this(range, content, Float.MAX_VALUE);
 	}
 
-	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
+	public MonoauralMultiBandImpulseResponse(BandRangeSeq range, float[][] content,
 			float maxTime) {
 		this(range, content, (float) range.getSR(), maxTime);
 	}
 
-	public MultiBandImpulseResponse(BandRangeSeq range, float[][] content,
+	public MonoauralMultiBandImpulseResponse(BandRangeSeq range, float[][] content,
 			float sampleRate, float maxTime) {
 		if (content.length != range.howMany()) {
 			throw new IllegalArgumentException(
@@ -168,8 +168,8 @@ public class MultiBandImpulseResponse {
 		System.out.println("Setting up...");
 
 		String mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		String revPath = "r182.23_12_10/";
-		String runNum = "1";
+		String revPath = "r182.04_04_11/";
+		String runNum = "2";
 
 		String fileName = mainPath + revPath + runNum + "/info.txt";
 		FileWriter fw = null;
@@ -221,7 +221,7 @@ public class MultiBandImpulseResponse {
 				.println("Processing to get a multi-band impulse response...");
 		time = System.currentTimeMillis();
 
-		MultiBandImpulseResponse mbir = new MultiBandImpulseResponse(range,
+		MonoauralMultiBandImpulseResponse mbir = new MonoauralMultiBandImpulseResponse(range,
 				content, maxTime);
 
 		double[] ir;

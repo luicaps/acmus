@@ -12,19 +12,22 @@ public class SphericalReceptor implements Receptor{
 	private Vector center;
 	protected float radius;
 	private SimulatedImpulseResponse simulatedImpulseResponse;
+	private DirectionImpulseResponse directionImpulseResponse;
 	
 	public SphericalReceptor(Vector center, float radius,
-			SimulatedImpulseResponse simulatedImpulseResponse) {
+			SimulatedImpulseResponse simulatedImpulseResponse,
+			DirectionImpulseResponse directionImpulseResponse) {
 		this.center = center;
 		this.radius = radius;
 		this.simulatedImpulseResponse = simulatedImpulseResponse;
+		this.directionImpulseResponse = directionImpulseResponse;
 	}
 	
 	public SphericalReceptor(Vector center, float radius, float interval) {
-		this(center, radius, new EnergeticSimulatedImpulseResponse(
-				interval));
+		this(center, radius, new EnergeticSimulatedImpulseResponse(interval),
+				new DirectionImpulseResponse(interval));
 	}
-	
+
 	/**
 	 * The default constructor
 	 * uses 1/44100 as the interval for the impulse response
@@ -113,8 +116,7 @@ public class SphericalReceptor implements Receptor{
 //						* (radius - distanceFromListener) / radius);
 				
 				simulatedImpulseResponse.addValue(time, receptedEnergy);
-				
-				// TODO include directional information
+				directionImpulseResponse.addValue(time, rayDirection);
 				
 				return true;
 			}
@@ -126,6 +128,10 @@ public class SphericalReceptor implements Receptor{
 
 	public SimulatedImpulseResponse getSimulatedImpulseResponse() {
 		return this.simulatedImpulseResponse;
+	}
+	
+	public DirectionImpulseResponse getDirectionImpulseResponse() {
+		return this.directionImpulseResponse;
 	}
 	
 	public void lista() throws IOException {
