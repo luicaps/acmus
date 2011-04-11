@@ -38,6 +38,10 @@ public class MultiBandSimulationViewer {
 	public MultiBandSimulationViewer(String path) {
 		this.path = path;
 	}
+	
+	public String getPath() {
+		return path;
+	}
 
 	public void view(float[] floats, String title) {
 		view(floats, 1.f, title);
