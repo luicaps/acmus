@@ -6,7 +6,7 @@
    <aboutInfo>
       <image path="images/logo3.gif"/>
       <text>
-         AcMus ver 1.0.2, Copyright (C) 2008 AcMus Group.
+         AcMus ver 1.0.3, Copyright (C) 2011 AcMus Group.
 
 This program is free software; you can redistribute it
 and/or modify it under the terms of the GNU General
@@ -22,20 +22,18 @@ GNU General Public License for more details.
 
 http://gsd.ime.usp.br/acmus
 
-AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon,
+AcMus Group: Prof. Dr. Fernando Iazzetta, Prof. Dr. Fabio Kon
 Prof. Dr. Flávio S. C. da Silva, Prof. Dr. Marcelo G. de Queiroz,
 Prof. Dr. Marcio H. de Avelar Gomes, Fabio L. Figueiredo,
 Bruno Masiero, Yang Yili, Leo K. Ueda, Aletha Utimati,
-Thiago C. de Souza., Mario H.C. Torres
+Thiago C. de Souza., Mario H.C. Torres, Caio Braz, Miguel Ruiz
 
-eXtreme Programming Team:
-2008
-Cauê H.P.Guerra
-Leandro de Moraes
-Lucas Cavalcanti
-Nelson Lago
-Mario H.C. Torres
-Thiago Coraini
+eXtreme Programming Team 2008
+	Cauê H.P.Guerra
+	Leandro de Moraes
+	Lucas Cavalcanti
+	Nelson Lago
+	Thiago Coraini
       </text>
    </aboutInfo>
 
@@ -49,7 +47,8 @@ Thiago Coraini
    <windowImages i16="icons/appIcon16x16.gif" i32="icons/appIcon32x32.gif"/>
 
    <splash
-      location="acmus" />
+      location="acmus"
+      handlerType="extensible" />
    <launcher name="acmus">
       <linux icon="icons/appIcon.xpm"/>
       <macosx icon="icons/appIcon.icns"/>
@@ -59,6 +58,7 @@ Thiago Coraini
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
