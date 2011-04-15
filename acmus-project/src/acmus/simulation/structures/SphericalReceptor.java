@@ -23,9 +23,14 @@ public class SphericalReceptor implements Receptor{
 		this.directionImpulseResponse = directionImpulseResponse;
 	}
 	
-	public SphericalReceptor(Vector center, float radius, float interval) {
+	public SphericalReceptor(Vector center, float radius, float interval,
+			DirectionImpulseResponse directionImpulseResponse) {
 		this(center, radius, new EnergeticSimulatedImpulseResponse(interval),
-				new DirectionImpulseResponse(interval));
+				directionImpulseResponse);
+	}
+	
+	public SphericalReceptor(Vector center, float radius, float interval) {
+		this(center, radius, interval, new DirectionImpulseResponse(interval));
 	}
 
 	/**

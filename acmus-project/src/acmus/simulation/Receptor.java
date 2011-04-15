@@ -1,6 +1,7 @@
 package acmus.simulation;
 
 import acmus.simulation.math.Vector;
+import acmus.simulation.structures.DirectionImpulseResponse;
 
 /**
  * This interface is used to provide a uniform way to RayTracing use the
@@ -35,6 +36,11 @@ public interface Receptor {
 	 * @return the simulated impulse response
 	 */
 	public SimulatedImpulseResponse getSimulatedImpulseResponse();
+	
+	/**
+	 * @return the simulated directional impulse response
+	 */
+	public DirectionImpulseResponse getDirectionImpulseResponse();
 	
 	/**
 	 * @return the Receptor instance's center
