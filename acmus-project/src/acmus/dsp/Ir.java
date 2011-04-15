@@ -23,6 +23,7 @@
  */
 package acmus.dsp;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -193,8 +194,8 @@ public class Ir {
 
 		double ir[] = null;
 		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(recFile
-					.getContents());
+			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(recFile
+					.getContents()));
 			int data[] = WaveUtils.readData(ais);
 			double[] left = new double[data.length / 2];
 			double[] right = new double[data.length / 2];

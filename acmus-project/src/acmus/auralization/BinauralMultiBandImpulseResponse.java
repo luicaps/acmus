@@ -225,7 +225,7 @@ public class BinauralMultiBandImpulseResponse {
 				.println("Processing to get a multi-band impulse response...");
 		time = System.currentTimeMillis();
 		
-		// Direction managing
+		// TODO Direction managing
 		Map<Float, Vector> olla = sim.getDirectionIr().getEnergeticImpulseResponse();
 		
 		TreeSet<Float> orderedKeySet = new TreeSet<Float>(olla.keySet());

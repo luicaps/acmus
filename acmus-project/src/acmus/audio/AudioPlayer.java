@@ -27,6 +27,7 @@
  */
 package acmus.audio;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -191,8 +192,8 @@ public class AudioPlayer {
 			_gainControl = _player.getGainControl();
 			if (_audioStream != null)
 				_audioStream.close();
-			_audioStream = AudioSystem.getAudioInputStream(new FileInputStream(
-					filename));
+			_audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(
+					filename)));
 			_audioData = readData(_audioStream);
 
 			_jso = new JavaSoundOutput();

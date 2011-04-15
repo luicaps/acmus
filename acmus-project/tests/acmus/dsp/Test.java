@@ -23,8 +23,10 @@
  */
 package acmus.dsp;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
@@ -590,8 +592,8 @@ public class Test {
 							.getAudioInputStream(new File(
 									"/home/lku/Workspace/acmus/data/tone1.wav"));
 					int a[] = WaveUtils.readData(ais);
-					ais = AudioSystem.getAudioInputStream(new File(
-							"/home/lku/Workspace/acmus/data/ir3.wav"));
+					ais = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
+							"/home/lku/Workspace/acmus/data/ir3.wav"))));
 					int b[] = WaveUtils.readData(ais);
 
 					System.out.println(a.length + " " + b.length);

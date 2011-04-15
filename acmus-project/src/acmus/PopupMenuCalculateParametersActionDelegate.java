@@ -23,6 +23,7 @@
  */
 package acmus;
 
+import java.io.BufferedInputStream;
 import java.util.Properties;
 
 import javax.sound.sampled.AudioInputStream;
@@ -102,8 +103,8 @@ public class PopupMenuCalculateParametersActionDelegate implements
 					.getFile(props.getProperty("Signal"));
 			ir = Ir.calculateIr(recFile, irFile, sigFile, null);
 		} else {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(irFile
-					.getContents());
+			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(irFile
+					.getContents()));
 			int wav[] = WaveUtils.readData(ais);
 			ir = new double[wav.length];
 			ir = WaveUtils.scaleToUnitInPlace(ir, wav, ais.getFormat()

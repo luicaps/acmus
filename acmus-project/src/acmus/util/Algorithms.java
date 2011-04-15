@@ -1,6 +1,8 @@
 package acmus.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Random;
 
 import javax.sound.sampled.AudioFormat;
@@ -130,10 +132,10 @@ public class Algorithms {
 		int b[] = WaveUtils.wavRead(input2);
 	
 		try {
-			AudioInputStream ais1 = AudioSystem.getAudioInputStream(new File(
-					input1));
-			AudioInputStream ais2 = AudioSystem.getAudioInputStream(new File(
-					input2));
+			AudioInputStream ais1 = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
+					input1))));
+			AudioInputStream ais2 = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
+					input2))));
 			AudioFormat format1 = ais1.getFormat();
 			AudioFormat format2 = ais2.getFormat();
 			ais1.close();

@@ -1,7 +1,9 @@
 package acmus.util;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +68,8 @@ public class WaveUtils {
 	public final static int[] wavRead(String filename) {
 		int res[] = null;
 		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
-					filename));
+			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
+					filename))));
 			res = WaveUtils.readData(ais);
 			ais.close();
 		} catch (Exception e) {
@@ -79,8 +81,8 @@ public class WaveUtils {
 	public final static double[][] wavReadSplitDouble(String filename) {
 		double res[][] = null;
 		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
-					filename));
+			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
+					filename))));
 			int data[][] = WaveUtils.splitAudioStream(ais.getFormat().getChannels(),
 					WaveUtils.readData(ais));
 			res = new double[data.length][data[0].length];
