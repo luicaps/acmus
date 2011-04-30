@@ -13,12 +13,12 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
 import acmus.simulation.Receptor;
-import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
 import acmus.simulation.structures.DirectionImpulseResponse;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
+import acmus.util.math.Vector;
 
 /**
  * Class for dealing with the geometric aspects of a multi-band simulation
@@ -62,9 +62,10 @@ public class SimulatorBin {
 
 		this.sphericalReceptorCenter = new Vector(8, 8, 1);
 		float sphericalReceptorRadius = 3.0f;
-		this.directionIr = new DirectionImpulseResponse(1/44100);
+		float interval = (float) (1.0/44100.0);
+		this.directionIr = new DirectionImpulseResponse(interval);
 		this.receptor = new SphericalReceptor(sphericalReceptorCenter,
-				sphericalReceptorRadius);
+				sphericalReceptorRadius, interval, this.directionIr);
 
 		this.soundSpeed = 344.0; // in meters per second (m/s)
 		this.mCoeficient = 0.0001;

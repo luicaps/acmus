@@ -267,7 +267,7 @@ public class MonoauralMultiBandImpulseResponse {
 		out = aSig.convolve(irSig, bar);
 
 		if (conv.length != out.size()) {
-			System.out.println("Tamanhos diferentes");
+			System.out.println("Different sizes");
 		}
 
 		for (int i = 0; i < out.size(); i++) {

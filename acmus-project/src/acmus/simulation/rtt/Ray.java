@@ -3,7 +3,7 @@ package acmus.simulation.rtt;
 import java.util.List;
 
 import acmus.simulation.Receptor;
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 /**
  * Class representing a ray and encapsulates all the ray interactions while

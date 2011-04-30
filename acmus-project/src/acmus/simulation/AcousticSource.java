@@ -2,8 +2,8 @@ package acmus.simulation;
 
 import java.util.List;
 
-import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.Ray;
+import acmus.util.math.Vector;
 
 /**
  * This interface is used to provide a uniform way to RayTracing use the

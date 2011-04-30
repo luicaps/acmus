@@ -18,10 +18,10 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import acmus.AcmusApplication;
 import acmus.simulation.AcousticSource;
 import acmus.simulation.SimulatedImpulseResponse;
-import acmus.simulation.math.Vector;
 import acmus.simulation.structures.NormalDeviateAcousticSource;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
+import acmus.util.math.Vector;
 
 public abstract class RR3Infrasctructure {
 

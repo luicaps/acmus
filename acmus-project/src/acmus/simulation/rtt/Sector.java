@@ -1,6 +1,6 @@
 package acmus.simulation.rtt;
 
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 public class Sector {
 	public Vector normalVector;

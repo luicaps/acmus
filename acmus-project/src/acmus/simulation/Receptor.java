@@ -1,7 +1,7 @@
 package acmus.simulation;
 
-import acmus.simulation.math.Vector;
 import acmus.simulation.structures.DirectionImpulseResponse;
+import acmus.util.math.Vector;
 
 /**
  * This interface is used to provide a uniform way to RayTracing use the

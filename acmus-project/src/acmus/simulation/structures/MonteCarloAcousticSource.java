@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acmus.simulation.AcousticSource;
-import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.Ray;
+import acmus.util.math.Vector;
 
 
 /**

@@ -3,7 +3,7 @@ package acmus.simulation.structures;
 import org.junit.Before;
 import org.junit.Test;
 
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

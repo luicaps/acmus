@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 /**
  * Class that performs check and storage operations for direction

@@ -1,6 +1,6 @@
 package acmus.simulation.structures;
 
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 public final class ResisableSphericalReceptor extends SphericalReceptor{
 

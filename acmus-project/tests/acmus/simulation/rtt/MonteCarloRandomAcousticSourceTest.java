@@ -14,8 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import acmus.simulation.AcousticSource;
-import acmus.simulation.math.Vector;
 import acmus.simulation.structures.MonteCarloAcousticSource;
+import acmus.util.math.Vector;
 
 public class MonteCarloRandomAcousticSourceTest {
 

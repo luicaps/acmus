@@ -6,7 +6,7 @@ import java.util.Map;
 
 import acmus.simulation.Receptor;
 import acmus.simulation.SimulatedImpulseResponse;
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 public class SphericalReceptor implements Receptor{
 	private Vector center;

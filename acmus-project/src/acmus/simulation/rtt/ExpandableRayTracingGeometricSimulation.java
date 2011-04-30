@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 
 import acmus.simulation.GeometricAcousticSimulation;
 import acmus.simulation.SimulatedImpulseResponse;
-import acmus.simulation.math.Vector;
+import acmus.util.math.Vector;
 
 public class ExpandableRayTracingGeometricSimulation implements GeometricAcousticSimulation {
 

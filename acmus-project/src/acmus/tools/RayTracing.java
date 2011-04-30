@@ -61,13 +61,13 @@ import acmus.graphics.ChartBuilder;
 import acmus.simulation.AcousticSource;
 import acmus.simulation.GeometricAcousticSimulation;
 import acmus.simulation.Receptor;
-import acmus.simulation.math.Vector;
 import acmus.simulation.rtt.RayTracingGeometricAcousticSimulationImpl;
 import acmus.simulation.rtt.Sector;
 import acmus.simulation.structures.MonteCarloAcousticSource;
 import acmus.simulation.structures.SphericalReceptor;
 import acmus.util.ArrayUtils;
 import acmus.util.WaveUtils;
+import acmus.util.math.Vector;
 
 /**
  * @author mhct

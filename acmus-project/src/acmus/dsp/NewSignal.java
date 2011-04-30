@@ -128,14 +128,16 @@ public class NewSignal {
 	public NewSignal convolve(NewSignal g, IProgressMonitor monitor) {
 		NewSignal f = this;
 		
-		int size = nextPowerOf2(Math.max(g.size(), f.size()));
+		int lengthPar = g.size() + f.size() - 1;
+		
+		//int size = nextPowerOf2(Math.max(g.size(), f.size()));
+		int size = nextPowerOf2(lengthPar);
 		
 		NewSignal a = f.pad(size);
 		NewSignal b = g.pad(size);
 		
 		NewSignal conv = a.cconvolve(b, monitor);
 		
-		int lengthPar = g.size() + f.size() - 1;
 		
 		NewSignal result = new NewSignal(lengthPar);
 		
