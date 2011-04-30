@@ -10,7 +10,7 @@ public class DirectionTest {
 	 */
 	@Test
 	public void octaveHRTFTest() {
-		HRTFselector dir = new HRTFselector();
+		HRTFselector dir = new CipicOctaveHRTFselector();
 
 		double[][] result = dir.getPulse(30, 80);
 

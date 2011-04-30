@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AuralizationTest {
+public class MonoAuralizationTest {
 	private MonoauralMultiBandImpulseResponse aur;
 	private BandRangeSeq range;
 	private float[][] content;
