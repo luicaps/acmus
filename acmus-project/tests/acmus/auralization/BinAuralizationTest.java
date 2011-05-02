@@ -38,7 +38,7 @@ public class BinAuralizationTest {
 		System.out.println("Setting up...");
 
 		mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		revPath = "r190.30_04_11/";
+		revPath = "r193.02_05_11/";
 		runNum = "1";
 
 		fileName = mainPath + revPath + runNum + "/info.txt";
@@ -109,7 +109,8 @@ public class BinAuralizationTest {
 
 		float maxTime = 1.f;
 	
-		HRTFselector hrtfSelector = new CipicOctaveHRTFselector();
+//		HRTFselector hrtfSelector = new CipicOctaveHRTFselector();
+		HRTFselector hrtfSelector = new CipicJavaHRTFselector();
 		BinauralMultiBandImpulseResponse aur = new BinauralMultiBandImpulseResponse(
 				range, content, directionArray, hrtfSelector , maxTime);
 

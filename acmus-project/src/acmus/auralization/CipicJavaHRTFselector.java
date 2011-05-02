@@ -17,7 +17,6 @@ public class CipicJavaHRTFselector implements HRTFselector {
 	CipicJavaHRTFselector(String path) {
 		Scanner scanner = null;
 
-//		System.out.println("starting left hrir...");
 		try {
 			scanner = new Scanner(new FileInputStream(path + "hrir_l.txt"),
 					"UTF-8");
@@ -28,8 +27,6 @@ public class CipicJavaHRTFselector implements HRTFselector {
 					.nextInt();
 			hrir_l = new double[dim1][dim2][dim3];
 			scanner.nextLine();
-//			System.out.println("loading a matrix with size " + dim1 + " "
-//					+ dim2 + " " + dim3);
 			for (int k = 0; k < dim3; k++) {
 				for (int j = 0; j < dim2; j++) {
 					for (int i = 0; i < dim1; i++) {
@@ -43,9 +40,7 @@ public class CipicJavaHRTFselector implements HRTFselector {
 		} finally {
 			scanner.close();
 		}
-//		System.out.println("finished left hrir.");
 
-//		System.out.println("starting right hrir...");
 		try {
 			scanner = new Scanner(new FileInputStream(path + "hrir_r.txt"),
 					"UTF-8");
@@ -56,8 +51,6 @@ public class CipicJavaHRTFselector implements HRTFselector {
 					.nextInt();
 			hrir_r = new double[dim1][dim2][dim3];
 			scanner.nextLine();
-//			System.out.println("loading a matrix with size " + dim1 + " "
-//					+ dim2 + " " + dim3);
 			for (int k = 0; k < dim3; k++) {
 				for (int j = 0; j < dim2; j++) {
 					for (int i = 0; i < dim1; i++) {
@@ -71,7 +64,6 @@ public class CipicJavaHRTFselector implements HRTFselector {
 		} finally {
 			scanner.close();
 		}
-//		System.out.println("finished right hrir");
 	}
 
 	@Override
@@ -84,38 +76,6 @@ public class CipicJavaHRTFselector implements HRTFselector {
 
 	private double[][] getNearestUCDpulse(double azimuth, double elevation,
 			double[][][] h3D) {
-		/*
-		function [pulse, azerr, elerr] = getNearestUCDpulse(azimuth, elevation, h3D);
-		% [pulse, azerr, elerr] = getNearestUCDpulse(azimuth, elevation, h3D);
-		%
-		% retrieves the impulse response from h3D that is closest to the
-		% specified azimuth and elevation (in degrees);
-		
-		if nargin < 1,
-			fprintf('Format: [pulse, azerr, elerr] = getNearestUCDpulse(azimuth, elevation, h3D)\n');
-			return;
-		end;
-		
-		azimuth = pvaldeg(azimuth);
-		if (azimuth < -90) | (azimuth > 90),
-			error('invalid azimith');
-		end;
-		elevation = pvaldeg(elevation);
-		
-		elmax = 50;
-		elindices = 1:elmax;
-		elevations = -45 + 5.625*(elindices - 1);
-		el = round((elevation+45)/5.625 + 1);
-		el = max(el,1);
-		el = min(el,elmax);
-		elerr = pvaldeg(elevation - elevations(el));
-		
-		azimuths = [-80 -65 -55 -45:5:45 55 65 80];
-		[azerr, az] = min(abs(pvaldeg(abs(azimuths - azimuth))));
-		
-		pulse = squeeze(h3D(az,el,:));
-
-		 */
 
 		azimuth = pvaldeg(azimuth);
 		if (azimuth < -90 || azimuth > 90) {
@@ -133,16 +93,30 @@ public class CipicJavaHRTFselector implements HRTFselector {
 		el = Math.min(el, elmax);
 		double elerr = pvaldeg(elevation - elevations[el - 1]);
 
-		@SuppressWarnings("unused")
 		int[] azimuths = new int[] { -80, -65, -55, -45, -40, -35, -30, -25,
 				-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 55,
 				65, 80 };
-		// [azerr, az] = min(abs(pvaldeg(abs(azimuths - azimuth))));
-		// TODO translate from octave
-		// double pulse = squeeze(h3D[az][el][:]);
 
-		return new double[][] { null /* pulse */,
-				null /*new double[] { azerr }*/,
+		double azerrOld = Double.MAX_VALUE, azerr = 0;
+		int az = 1;
+		for (int i = 0; i < azimuths.length; i++) {
+			azerr = Math.abs(pvaldeg(Math.abs(azimuths[i] - azimuth)));
+			if (azerr < azerrOld) {
+				az = i + 1;
+				azerrOld = azerr;
+			} else {
+				azerr = azerrOld;
+			}
+		}
+
+		int length = h3D[az - 1][el - 1].length;
+		double[] pulse = new double[length];
+
+		for (int i = 0; i < length; i++) {
+			pulse[i] = h3D[az - 1][el - 1][i];
+		}
+
+		return new double[][] { pulse, new double[] { azerr },
 				new double[] { elerr } };
 	}
 

@@ -33,8 +33,8 @@ public class CipicJavaHRTFselectorTest {
 			Assert.assertEquals(javaPulse.length, octavePulse.length);
 			Assert.assertEquals(javaPulse[0].length, octavePulse[0].length);
 			Assert.assertEquals(javaPulse[1].length, octavePulse[1].length);
-			Assert.assertArrayEquals(octavePulse[0], javaPulse[0], 0.001);
-			Assert.assertArrayEquals(octavePulse[1], javaPulse[1], 0.001);
+			Assert.assertArrayEquals(octavePulse[0], javaPulse[0], 0.00001);
+			Assert.assertArrayEquals(octavePulse[1], javaPulse[1], 0.00001);
 		}
 	}
 }
