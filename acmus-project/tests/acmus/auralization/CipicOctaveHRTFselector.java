@@ -19,13 +19,7 @@ public class CipicOctaveHRTFselector implements HRTFselector {
 		octave.eval("load('" + path + "');");
 	}
 
-	/**
-	 * 
-	 * @param azimuth
-	 * @param elevation
-	 * @return double[][] result = dir.getPulse(azimuth, elevation); double[]
-	 *         leftPulse = result[0]; double[] rightPulse = result[1];
-	 */
+	@Override
 	public double[][] getPulse(double azimuth, double elevation) {
 		OctaveDouble azim = new OctaveDouble(new double[] { azimuth }, 1, 1);
 		OctaveDouble elev = new OctaveDouble(new double[] { elevation }, 1, 1);
