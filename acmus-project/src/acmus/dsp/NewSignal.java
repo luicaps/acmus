@@ -7,17 +7,33 @@ public class NewSignal {
 	
 	// Attributes
 	private Complex[] value;
+	private int size;
 	//private int SR;
 
 	// Constructors
 	public NewSignal(double[] a){
-		value = new Complex[a.length];
-		for (int i = 0; i < value.length; i++) {
+		size = a.length;
+		value = new Complex[size];
+		for (int i = 0; i < size; i++) {
 			value[i] = new Complex(a[i], 0.0);
+		}		
+	}
+	
+	public NewSignal(double[] a, int size){
+		this.size = size;
+		value = new Complex[size];
+		Complex ZERO = new Complex(0.0,	0.0);
+		for (int i = 0; i < size; i++) {
+			if (i < a.length) {
+				value[i] = new Complex(a[i], 0.0);
+			} else {
+				value[i] = ZERO;
+			}
 		}		
 	}
 
 	public NewSignal(int size){
+		this.size = size;
 		value = new Complex[size];
 		Complex ZERO = new Complex(0.0,	0.0);
 		for (int i = 0; i < size; i++) {
@@ -31,7 +47,25 @@ public class NewSignal {
 	}
 
 	public int size() {
-		return value.length;
+		return this.size;
+	}
+	
+	public void reSize(int size) {
+		if (this.value.length < size) {
+			Complex[] newValue = new Complex[size];
+			Complex ZERO = new Complex(0.0, 0.0);
+			int i = 0;
+			while (i < this.value.length) {
+				newValue[i] = this.value[i];
+				i++;
+			}
+			while (i < size) {
+				newValue[i] = ZERO;
+				i++;
+			}
+		} else {
+			this.size = size;
+		}
 	}
 
 	public void set(int index, Complex c) {
@@ -39,17 +73,19 @@ public class NewSignal {
 	}
 	
 	public NewSignal upsample(int factor) {
-		int size = this.size();
-		NewSignal g = new NewSignal(factor * size);
-		for (int i = 0; i < size; i++) {
+		NewSignal g = new NewSignal(factor * this.size);
+		for (int i = 0; i < this.size; i++) {
 			g.value[4 * i] = this.value[i / factor];
 		}
 		return g;
 	}
 
-	// Compute the FFT of this signal, assuming its length is a power of 2
+	/**
+	 * Compute the FFT of this signal, assuming its size is a power of 2
+	 * @return the FFT NewSignal
+	 */
 	public NewSignal fft() {
-		int N = this.value.length;
+		int N = this.size;
 
 		// Base
 		if (N == 1) {
@@ -92,9 +128,12 @@ public class NewSignal {
 		return signal;
 	}
 
-	// Compute the iFFT of this signal, assuming its length is a power of 2
+	/**
+	 * Compute the iFFT of this signal, assuming its size is a power of 2
+	 * @return the iFFT NewSignal
+	 */
 	public NewSignal ifft() {
-		int N = this.value.length;        
+		int N = this.size;        
 		NewSignal signal = new NewSignal(N);        
 
 		// Take conjugate
@@ -128,24 +167,16 @@ public class NewSignal {
 	public NewSignal convolve(NewSignal g, IProgressMonitor monitor) {
 		NewSignal f = this;
 		
-		int lengthPar = g.size() + f.size() - 1;
+		int size = g.size() + f.size() - 1;
+		int sizePO2 = nextPowerOf2(size);
 		
-		//int size = nextPowerOf2(Math.max(g.size(), f.size()));
-		int size = nextPowerOf2(lengthPar);
-		
-		NewSignal a = f.pad(size);
-		NewSignal b = g.pad(size);
+		NewSignal a = f.pad(sizePO2);
+		NewSignal b = g.pad(sizePO2);
 		
 		NewSignal conv = a.cconvolve(b, monitor);
+		conv.reSize(size);
 		
-		
-		NewSignal result = new NewSignal(lengthPar);
-		
-		for (int i = 0; i < lengthPar; i++) {
-			result.value[i] = conv.value[i];
-		}
-		
-		return result;
+		return conv;
 	}
 
 	public NewSignal pointwiseMultiply(NewSignal g) {

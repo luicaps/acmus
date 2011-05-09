@@ -38,8 +38,8 @@ public class BinAuralizationTest {
 		System.out.println("Setting up...");
 
 		mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		revPath = "r193.02_05_11/";
-		runNum = "1";
+		revPath = "r193.09_05_11/";
+		runNum = "2";
 
 		fileName = mainPath + revPath + runNum + "/info.txt";
 		fw = null;

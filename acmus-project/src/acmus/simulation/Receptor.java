@@ -32,6 +32,8 @@ public interface Receptor {
 			double soundSpeed, Vector rayOrigin, Vector rayDirection,
 			float rayEnergy, float rayLength);
 	
+	// TODO store directional information
+	
 	/**
 	 * @return the simulated impulse response
 	 */

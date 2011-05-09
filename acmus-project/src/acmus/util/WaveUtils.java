@@ -54,7 +54,7 @@ public class WaveUtils {
 			AudioFormat format = new AudioFormat((float) rate, bitsPerSample,
 					channels, true, bigEndian);
 			AudioInputStream ais = new AudioInputStream(baos, format,
-					data.length * 8 / bitsPerSample);
+					data.length * 8 / bitsPerSample / channels);
 			if (AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(
 					filename)) == -1) {
 				throw new IOException("Problems writing to file");
