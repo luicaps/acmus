@@ -1,7 +1,11 @@
 package acmus.auralization;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -19,11 +23,8 @@ import acmus.util.WaveUtils;
 import acmus.util.math.Vector;
 
 public class BinAuralizationTest {
-	
-	private String mainPath;
-	private String revPath;
-	private String runNum;
-	private String fileName;
+
+	private String mainPath, revPath, runNum, path;
 	private FileWriter fw;
 	private StringBuilder sb;
 	private long time;
@@ -31,20 +32,23 @@ public class BinAuralizationTest {
 	private BandRangeSeq range;
 	private float[][] content;
 	private Vector[] directionArray;
-	
+
 	@Before
 	public void setUp() {
 
 		System.out.println("Setting up...");
 
-		mainPath = "/home/migmruiz/Documentos/IniciaçãoCientífica/sons/";
-		revPath = "r193.09_05_11/";
-		runNum = "2";
+		mainPath = "data" + File.separator + "tests" + File.separator;
+		revPath = (DateFormat.getDateInstance(DateFormat.SHORT,
+				Locale.getDefault())).format(Calendar.getInstance().getTime()).replace('/', '_')
+				+ File.separator;
+		runNum = "r1";
 
-		fileName = mainPath + revPath + runNum + "/info.txt";
+		path = mainPath + revPath + runNum + File.separator;
 		fw = null;
 		try {
-			fw = new FileWriter(fileName);
+			File file = new File(path, "info.txt");
+			fw = new FileWriter(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -70,8 +74,8 @@ public class BinAuralizationTest {
 
 		content = new float[range.howMany()][];
 
-		viewer = new MultiBandSimulationViewer(
-				mainPath + revPath + runNum + "/");
+		viewer = new MultiBandSimulationViewer(mainPath + revPath + runNum
+				+ "/");
 
 		content[0] = sim.simulateCoeff(0.01, 0.01, 0.001, 0.12, 0.05, 0.05);
 		viewer.view(content[0], "sim1");
@@ -103,16 +107,16 @@ public class BinAuralizationTest {
 			directionArray[i] = directionMap.get(key);
 		}
 	}
-	
+
 	@Test
 	public void auralizazationTest() {
 
 		float maxTime = 1.f;
-	
-//		HRTFselector hrtfSelector = new CipicOctaveHRTFselector();
+
+		// HRTFselector hrtfSelector = new CipicOctaveHRTFselector();
 		HRTFselector hrtfSelector = new CipicJavaHRTFselector();
 		BinauralMultiBandImpulseResponse aur = new BinauralMultiBandImpulseResponse(
-				range, content, directionArray, hrtfSelector , maxTime);
+				range, content, directionArray, hrtfSelector, maxTime);
 
 		double[] leftIr;
 		double[] rightIr;
@@ -185,7 +189,7 @@ public class BinAuralizationTest {
 		double[] rightScaled = ArrayUtils.scaleToMax(rightConv,
 				(double) WaveUtils.getLimit(16));
 		double[][] scaled = new double[][] { leftScaled, rightScaled };
-		
+
 		float sampleRate = (float) range.getSR();
 		WaveUtils.wavWrite(WaveUtils.joinAudioStream(scaled), 2, sampleRate,
 				outStr);

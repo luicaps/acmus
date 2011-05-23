@@ -76,6 +76,9 @@ public class CipicJavaHRTFselector implements HRTFselector {
 
 	private double[][] getNearestUCDpulse(double azimuth, double elevation,
 			double[][][] h3D) {
+		// radians to degrees
+		azimuth = azimuth * 180 / Math.PI;
+		elevation = elevation * 180 / Math.PI;
 
 		azimuth = pvaldeg(azimuth);
 		if (azimuth < -90 || azimuth > 90) {

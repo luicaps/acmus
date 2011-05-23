@@ -85,7 +85,7 @@ public class BinauralMultiBandImpulseResponse {
 
 			if (direction[j] != null) {
 				double[][] pulse = hrtfSelector.getPulse(
-						direction[j].azimuth(), direction[j].elevation());
+						direction[j].cipicAzimuth(), direction[j].cipicElevation());
 
 				NewSignal leftPulse = new NewSignal(pulse[0]);
 				NewSignal rightPulse = new NewSignal(pulse[1]);

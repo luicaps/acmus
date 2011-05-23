@@ -21,6 +21,10 @@ public class CipicOctaveHRTFselector implements HRTFselector {
 
 	@Override
 	public double[][] getPulse(double azimuth, double elevation) {
+		// radians to degrees
+		azimuth = azimuth * 180 / Math.PI;
+		elevation = elevation * 180 / Math.PI;
+		
 		OctaveDouble azim = new OctaveDouble(new double[] { azimuth }, 1, 1);
 		OctaveDouble elev = new OctaveDouble(new double[] { elevation }, 1, 1);
 		octave.put("azim", azim);

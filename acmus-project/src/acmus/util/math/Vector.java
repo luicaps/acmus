@@ -140,7 +140,21 @@ public class Vector {
 		this.y *= m;
 		this.z *= m;
 	}
-	
+
+	public double cipicAzimuth() {
+		return -Math.PI / 2 + Math.acos(this.y);
+
+	}
+
+	public double cipicElevation() {
+		int signX = 1;
+		if (this.x < 0) {
+			signX = -1;
+		}
+		return Math.acos(signX / Math.sqrt(1 + (this.z * this.z)
+				/ (this.x * this.x)));
+	}
+
 	public double azimuth() {
 		return Math.acos(this.z
 				/ (this.x * this.x + this.y * this.y + this.z * this.z));

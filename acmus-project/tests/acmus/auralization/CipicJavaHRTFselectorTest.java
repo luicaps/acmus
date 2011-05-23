@@ -13,12 +13,6 @@ public class CipicJavaHRTFselectorTest {
 		sel = new CipicJavaHRTFselector();
 		
 		Assert.assertNotNull(sel);
-		
-//		System.out.println("\n" + "first value of hrir_l: " + sel.hrir_l(1,1,1));
-//		System.out.println("value of hrir_l(25,1,1): " + sel.hrir_l(25,1,1));
-//		
-//		System.out.println("\n" + "first value of hrir_r: " + sel.hrir_r(1,1,1));
-//		System.out.println("value of hrir_r(25,1,1): " + sel.hrir_r(25,1,1));
 	}
 	
 	@Test
@@ -28,8 +22,8 @@ public class CipicJavaHRTFselectorTest {
 		double rnd, azimuth, elevation;
 		for (int i = -9; i < 10; i++) {
 			rnd = Math.random();
-			azimuth = 9.9*i; // ~ from -90 to 90
-			elevation = 20*rnd*i + 90.0; // from -90 to 270 
+			azimuth = 9.9*i * Math.PI / 180.0; // ~ from -90 to 90
+			elevation = 20*rnd*i * Math.PI / 180.0 + Math.PI/2; // from -90 to 270 
 			octavePulse = octSel.getPulse(azimuth, elevation);
 			javaPulse = sel.getPulse(azimuth, elevation);
 			Assert.assertEquals(javaPulse.length, octavePulse.length);
