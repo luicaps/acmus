@@ -1,6 +1,8 @@
 package acmus.auralization;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -8,6 +10,9 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jmock.Expectations;
@@ -40,8 +45,8 @@ public class BinAuralizationTest {
 
 		mainPath = "data" + File.separator + "tests" + File.separator;
 		revPath = (DateFormat.getDateInstance(DateFormat.SHORT,
-				Locale.getDefault())).format(Calendar.getInstance().getTime()).replace('/', '_')
-				+ File.separator;
+				Locale.getDefault())).format(Calendar.getInstance().getTime())
+				.replace('/', '_') + File.separator;
 		runNum = "r1";
 
 		path = mainPath + revPath + runNum + File.separator;
@@ -141,8 +146,24 @@ public class BinAuralizationTest {
 		String archStr = mainPath + "44k.wav";
 		String outStr = mainPath + revPath + runNum + "/conv.wav";
 
-		int arch[] = WaveUtils.wavRead(archStr);
-		double a[] = ArrayUtils.scaleToUnit(arch);
+		double a[] = null;
+
+		try {
+			AudioInputStream ais = AudioSystem
+					.getAudioInputStream(new BufferedInputStream(
+							new FileInputStream(new File(archStr))));
+			if (ais.getFormat().getChannels() > 1) {
+				System.out.println("Please use mono audio files, "
+						+ "we are using now for the auralization "
+						+ "only the first channel.");
+			}
+
+			a = WaveUtils.wavReadSplitDouble(ais)[0];
+
+			ais.close();
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
 
 		double[] leftConv = new double[a.length + leftIr.length - 1];
 		double[] rightConv = new double[a.length + rightIr.length - 1];

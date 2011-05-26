@@ -15,14 +15,14 @@ import javax.sound.sampled.AudioSystem;
 
 import acmus.AcmusApplication;
 
-
 public class WaveUtils {
 
 	public static void wavWrite(double t[], float SR, String filename) {
 		WaveUtils.wavWrite(t, 1, SR, filename);
 	}
 
-	public static void wavWrite(double t[], int channels, float SR, String filename) {
+	public static void wavWrite(double t[], int channels, float SR,
+			String filename) {
 		WaveUtils.wavWrite(t, channels, 16, SR, filename, false);
 	}
 
@@ -68,8 +68,9 @@ public class WaveUtils {
 	public final static int[] wavRead(String filename) {
 		int res[] = null;
 		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
-					filename))));
+			AudioInputStream ais = AudioSystem
+					.getAudioInputStream(new BufferedInputStream(
+							new FileInputStream(new File(filename))));
 			res = WaveUtils.readData(ais);
 			ais.close();
 		} catch (Exception e) {
@@ -81,18 +82,25 @@ public class WaveUtils {
 	public final static double[][] wavReadSplitDouble(String filename) {
 		double res[][] = null;
 		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(new File(
-					filename))));
-			int data[][] = WaveUtils.splitAudioStream(ais.getFormat().getChannels(),
-					WaveUtils.readData(ais));
-			res = new double[data.length][data[0].length];
-			for (int i = 0; i < res.length; i++) {
-				WaveUtils.scaleToUnitInPlace(res[i], data[i], ais.getFormat()
-						.getSampleSizeInBits());
-			}
+			AudioInputStream ais = AudioSystem
+					.getAudioInputStream(new BufferedInputStream(
+							new FileInputStream(new File(filename))));
+			res = wavReadSplitDouble(ais);
 			ais.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return res;
+	}
+
+	public final static double[][] wavReadSplitDouble(AudioInputStream ais) {
+		double res[][] = null;
+		int data[][] = WaveUtils.splitAudioStream(ais.getFormat().getChannels(),
+				WaveUtils.readData(ais));
+		res = new double[data.length][data[0].length];
+		for (int i = 0; i < res.length; i++) {
+			WaveUtils.scaleToUnitInPlace(res[i], data[i], ais.getFormat()
+					.getSampleSizeInBits());
 		}
 		return res;
 	}
@@ -189,7 +197,8 @@ public class WaveUtils {
 	public final static int[] littleEndian16bitsToInt(byte[] data) {
 		int[] result = new int[data.length / 2];
 		for (int i = 0; i < result.length; ++i) {
-			result[i] = WaveUtils.littleEndianToInt(data[i * 2], data[i * 2 + 1]);
+			result[i] = WaveUtils.littleEndianToInt(data[i * 2],
+					data[i * 2 + 1]);
 		}
 		return result;
 	}
@@ -205,8 +214,8 @@ public class WaveUtils {
 	public final static int[] littleEndian32bitsToInt(byte[] data) {
 		int[] result = new int[data.length / 4];
 		for (int i = 0; i < result.length; ++i) {
-			result[i] = WaveUtils.littleEndianToInt(data[i * 4], data[i * 4 + 1],
-					data[i * 4 + 2], data[i * 4 + 3]);
+			result[i] = WaveUtils.littleEndianToInt(data[i * 4],
+					data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
 		}
 		return result;
 	}
@@ -279,7 +288,7 @@ public class WaveUtils {
 	}
 
 	public static int[] parseData(byte[] audioBytes, AudioFormat format) {
-	
+
 		int[] audioData = null;
 		if (format.getSampleSizeInBits() == 32) {
 			if (format.isBigEndian()) {
@@ -310,17 +319,17 @@ public class WaveUtils {
 	}
 
 	public static int[] readData(AudioInputStream ais) {
-	
+
 		AudioFormat format = ais.getFormat();
 		byte[] audioBytes = new byte[(int) (ais.getFrameLength() * format
 				.getFrameSize())];
-	
+
 		try {
 			ais.read(audioBytes);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 		return parseData(audioBytes, format);
 	}
 
@@ -328,9 +337,9 @@ public class WaveUtils {
 			int bits) {
 		// In ancient history (may/2008) this was calculated this way here;
 		// but it is most likely a bug (precedence is wrong).
-		//int max = (1 << bits - 1) - 1;
+		// int max = (1 << bits - 1) - 1;
 		// This is probably what the above line meant:
-		//int max = Util.getLimit(bits);
+		// int max = Util.getLimit(bits);
 		// But what is probably correct is this:
 		int max = ArrayUtils.maxAbs(data);
 		for (int i = 0; i < res.length; i++) {
