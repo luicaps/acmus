@@ -1,9 +1,0 @@
-Sample rate: 44100.0
-4 central frequencies:
-	20.0
-	200.00001372447713
-	2000.0002744895517
-	20000.0
-Simulation expended time:8.439 s
-Post processing expended time:26.019 s
-Convolve expended time:93.569 s
