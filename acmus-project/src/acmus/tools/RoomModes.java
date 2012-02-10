@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.jfree.experimental.chart.swt.ChartComposite;
-
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import acmus.AcmusPlugin;
 import acmus.graphics.ChartBuilder;
 
@@ -85,8 +85,36 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 						.setAxisLabels("Frequency (Hz)", "Incidence").setTitle(
 								"Resonance Frequencies").build());
 				parent.chart.forceRedraw();
-
-				displayFrequencies(cal);
+				/*
+				 * 025,0 = 022,4-028,1
+				 * 031,5 = 028,1-035,5
+				 * 040,0 = 035,5-044,7
+				 * 050,0 = 044,7-056,1
+				 * 063,0 = 056,1-070,7
+				 * 080,0 = 070,7-089,1
+				 * 100,0 = 089,1-112,0
+				 * 125,0 = 112,0-141,0
+				 * 160,0 = 141,0-179,0
+				 * 200,0 = 179,0-224,0
+				 * 250,0 = 224,0-281,0
+				 * 315,0 = 281,0-355,0
+				 * */
+				int ranges=12;
+				double freqRange[] = {22.4,28.1,35.5,44.7,56.1,70.7,89.1,112,141,179,224,281,355};
+                parent.chartFreqRange.setChart(new ChartBuilder().getHistogram(ranges,freqRange)
+						.addDataByRange(cal.getAxialFrequencyVector(), freqRange, ranges).
+						setAxisLabels("Frequency (Hz)", "Incidence").setTitle(
+								"Resonance Frequencies").build()
+						);
+                
+                
+                parent.chartFreqRange.getChart().getXYPlot().setForegroundAlpha(0.75f);
+                XYBarRenderer barRenderer = ((XYBarRenderer)parent.chartFreqRange.getChart().getXYPlot().getRenderer()); 
+                barRenderer.setShadowVisible(false);
+                //barRenderer.setMargin(0);
+                barRenderer.setDrawBarOutline(false);
+                parent.chartFreqRange.forceRedraw();
+                displayFrequencies(cal);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -166,7 +194,7 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 	private static String newLine = System.getProperty("line.separator");
 
 	private SelectionAdapter computeListener = new SelectionAdapterImpl(); /* computeListener */
-	private ChartComposite chart;
+	private ChartComposite chart,chartFreqRange;
 
 	/*
 	 * (non-Javadoc)
@@ -249,6 +277,7 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 		g2.setLayout(new GridLayout(1, false));
 
 		chart = createChart(g2);
+		chartFreqRange = createChart(g2);//new ChartComposite(g2, SWT.NONE);
 
 		this.inputErrorDialog = new MessageBox(this.shell, SWT.ICON_ERROR);
 		this.inputErrorDialog.setMessage("Please check the input data.");
@@ -259,7 +288,7 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 	private ChartComposite createChart(Composite g2) {
 		ChartComposite result = new ChartComposite(g2, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 420;
+		gridData.heightHint = 320;
 		gridData.widthHint = 400;
 		result.setLayoutData(gridData);
 		return result;
