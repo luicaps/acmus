@@ -277,6 +277,8 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 		g2.setLayout(new GridLayout(1, false));
 
 		chart = createChart(g2);
+		
+		
 		chartFreqRange = createChart(g2);//new ChartComposite(g2, SWT.NONE);
 
 		this.inputErrorDialog = new MessageBox(this.shell, SWT.ICON_ERROR);
