@@ -138,6 +138,8 @@ public class ChartBuilder {
 		    JFreeChart chart = ChartFactory.createHistogram(title, xLabel,
 			    yLabel, dataset, PlotOrientation.VERTICAL, true, false,
 			    false);
+		    
+
 	
 		    chart.getXYPlot().setForegroundAlpha(0.75f);
 		    // Setting the fonts for the axis
