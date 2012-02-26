@@ -53,6 +53,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import acmus.AcmusPlugin;
 import acmus.graphics.ChartBuilder;
+import acmus.graphics.ChartBuilder.HistogramBuilder;
 
 /**
  * @author lku
@@ -73,17 +74,19 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 		public void widgetSelected(SelectionEvent event) {
 			RoomModes parent = RoomModes.this;
 			try {
+				double axialWeight=1.0, obliqueWeight=1.0/2.0, tangentialWeight=1/4.0;
 				CalculateFrequency cal = new CalculateFrequency(parent.width
 						.getText(), parent.length.getText(), parent.height
 						.getText());
 				cal.calculateFrequencies();
 				parent.chart.setChart(new ChartBuilder().getHistogram()
-						.addData(cal.getAxialFrequencyVector(), "Axial")
+						.addData(cal.getAxialFrequencyVector(), "Axial",1)
 						.addData(cal.getTangentialFrequencyVector(),
-								"Tangential").addData(
-								cal.getObliqueFrequencyVector(), "Oblique")
+								"Tangential",1).addData(
+								cal.getObliqueFrequencyVector(), "Oblique",1)
 						.setAxisLabels("Frequency (Hz)", "Incidence").setTitle(
 								"Resonance Frequencies").build());
+				((XYBarRenderer)chart.getChart().getXYPlot().getRenderer()).setShadowVisible(false);
 				parent.chart.forceRedraw();
 				/*
 				 * 025,0 = 022,4-028,1
@@ -100,20 +103,35 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 				 * 315,0 = 281,0-355,0
 				 * */
 				int ranges=12;
+				String freqRangeName[] = {"25","31.5","40","50","63","80","100","125","160","200","250","315"};
 				double freqRange[] = {22.4,28.1,35.5,44.7,56.1,70.7,89.1,112,141,179,224,281,355};
-                parent.chartFreqRange.setChart(new ChartBuilder().getHistogram(ranges,freqRange)
-						.addDataByRange(cal.getAxialFrequencyVector(), freqRange, ranges).
-						setAxisLabels("Frequency (Hz)", "Incidence").setTitle(
-								"Resonance Frequencies").build()
+				HistogramBuilder freqHist = new ChartBuilder().getHistogram(ranges,freqRange,freqRangeName);
+                parent.chartFreqRange.setChart(freqHist
+						.addDataByRange(cal.getAxialFrequencyVector(), freqRange, freqRangeName,ranges,axialWeight).
+						 addDataByRange(cal.getObliqueFrequencyVector(), freqRange, freqRangeName,ranges,obliqueWeight).
+						 addDataByRange(cal.getTangentialFrequencyVector(), freqRange, freqRangeName,ranges,tangentialWeight).
+						setAxisLabels("Frequency Bands (Hz)", "Incidence (weighted)").setTitle(
+								"Resonance Frequencies").buildBarChart()
 						);
                 
                 
-                parent.chartFreqRange.getChart().getXYPlot().setForegroundAlpha(0.75f);
-                XYBarRenderer barRenderer = ((XYBarRenderer)parent.chartFreqRange.getChart().getXYPlot().getRenderer()); 
-                barRenderer.setShadowVisible(false);
+                //parent.chartFreqRange.getChart().getXYPlot().setForegroundAlpha(0.75f);
+                //XYBarRenderer barRenderer = ((XYBarRenderer)parent.chartFreqRange.getChart().getXYPlot().getRenderer()); 
+                //barRenderer.setShadowVisible(false);
                 //barRenderer.setMargin(0);
-                barRenderer.setDrawBarOutline(false);
+                //barRenderer.setDrawBarOutline(false);
                 parent.chartFreqRange.forceRedraw();
+                
+                
+                parent.chartModalDensity.setChart(
+                		freqHist
+						.setAxisLabels("Frequency Bands (Hz)", "Density").setTitle(
+								"Modal Density").buildLineChart()
+                		);
+                
+                parent.chartModalDensity.forceRedraw();
+                
+                
                 displayFrequencies(cal);
 
 			} catch (Exception e) {
@@ -194,7 +212,7 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 	private static String newLine = System.getProperty("line.separator");
 
 	private SelectionAdapter computeListener = new SelectionAdapterImpl(); /* computeListener */
-	private ChartComposite chart,chartFreqRange;
+	private ChartComposite chart,chartFreqRange,chartModalDensity;
 
 	/*
 	 * (non-Javadoc)
@@ -280,6 +298,8 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 		
 		
 		chartFreqRange = createChart(g2);//new ChartComposite(g2, SWT.NONE);
+		
+		chartModalDensity = createChart(g2);
 
 		this.inputErrorDialog = new MessageBox(this.shell, SWT.ICON_ERROR);
 		this.inputErrorDialog.setMessage("Please check the input data.");
@@ -290,7 +310,7 @@ public class RoomModes implements IWorkbenchWindowActionDelegate {
 	private ChartComposite createChart(Composite g2) {
 		ChartComposite result = new ChartComposite(g2, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 320;
+		gridData.heightHint = 150;
 		gridData.widthHint = 400;
 		result.setLayoutData(gridData);
 		return result;
